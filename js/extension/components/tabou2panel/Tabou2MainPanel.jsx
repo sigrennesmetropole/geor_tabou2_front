@@ -1,5 +1,8 @@
 import React from 'react';
 import BorderLayout from '@mapstore/components/layout/BorderLayout';
+//import Portal from '@mapstore/components/misc/Portal';
+//import Dialog from '@mapstore/components/misc/Dialog';
+//import DockablePanel from '@mapstore/components/panels/DockablePanel';
 import { Button, Glyphicon } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 
@@ -17,33 +20,103 @@ class Tabou2MainPanel extends React.Component {
         selected: 'search'
     }
 
-    renderHeader() {
-        return (
-            <div style={this.props.styling || { width: '100%' }}>
-                <div style={{ display: "flex", alignItems: "center" }}>
-                    <div>
-                        <Button className="square-button no-events">
-                            <Glyphicon glyph="comment" />
-                        </Button>
-                    </div>
-                    <div style={{ flex: "1 1 0%", padding: 8, textAlign: "center" }}>
-                        <h4>Tabou2</h4>
-                    </div>
-                    <div>
-                        <Button className="square-button no-border" onClick={this.props.toggleControl} >
-                            <Glyphicon glyph="1-close" />
-                        </Button>
-                    </div>
-                </div>
-            </div>
+    /*renderHeader() {
+        let els = this.tabs.map(tab =>
+            <Row key="ms-tabou-navbar" className="ms-row-tab">
+                <Col xs={12}>
+                    <Nav justified
+                        bsStyle="tabs"
+                        activeKey={this.activeTab}
+                        onSelect={(e) => { this.activeTab = e }}>
+                        {this.tabs.map(tab =>
+                            <NavItemT
+                                key={'ms-tab-settings-' + tab.id}
+                                tooltip={tab.tooltip}
+                                eventKey={tab.id}
+                                onClick={() => {
+                                    console.log(tab.id)
+                                }}>
+                                <Glyphicon glyph={tab.glyph} />
+                            </NavItemT>
+                        )}
+                    </Nav>
+                </Col>
+            </Row>
         );
-    };
+        return (
+            {
+                [...(this.tabs.length > 1 ? [<Row key="ms-tabou-navbar" className="ms-row-tab">
+                    <Col xs={12}>
+                        <Nav justified
+                            bsStyle="tabs"
+                            activeKey={this.activeTab}
+                            onSelect={(e) => { this.activeTab = e }}>
+                            {this.tabs.map(tab =>
+                                <NavItemT
+                                    key={'ms-tab-settings-' + tab.id}
+                                    tooltip={tab.tooltip}
+                                    eventKey={tab.id}
+                                    onClick={() => {
+                                        console.log(tab.id)
+                                    }}>
+                                    <Glyphicon glyph={tab.glyph} />
+                                </NavItemT>
+                            )}
+                        </Nav>
+                    </Col>
+                </Row>] : [])
+                    ]
+            }
+        );
+    };*/
 
     render() {
         return (
-            <BorderLayout id={this.props.id} header={this.renderHeader()}>
-                <h2>Plugin tabou2</h2>
-            </BorderLayout>
+            <div>
+                <DockablePanel
+                    open={true}
+                    glyph="th"
+                    title="Tabou2"
+                    className={''}
+                    onClose={this.props.toggleControl}
+                    size={500}
+                    draggable={true}
+                    dock={true}
+                    position={'right'}
+                    header={[
+                        ...(this.tabs.length > 1 ? [<Row key="ms-tabou-navbar" className="ms-row-tab">
+                            <Col xs={12}>
+                                <Nav justified
+                                    bsStyle="tabs"
+                                    activeKey={this.activeTab}
+                                    onSelect={(e) => { this.activeTab = e }}>
+                                    {this.tabs.map(tab =>
+                                        <NavItemT
+                                            key={'ms-tab-settings-' + tab.id}
+                                            tooltip={tab.tooltip}
+                                            eventKey={tab.id}
+                                            onClick={() => {
+                                                console.log(tab.id)
+                                            }}>
+                                            <Glyphicon glyph={tab.glyph} />
+                                        </NavItemT>
+                                    )}
+                                </Nav>
+                            </Col>
+                        </Row>] : [])
+                    ]}>
+                    {
+                        // return selected tab component
+                        this.tabs.filter(tab => tab.id && tab.id === this.activeTab).filter(tab => tab.component).map(tab => (
+                            <tab.component
+                                key={'ms-tab-tabou-body-' + tab.id}
+                                containerWidth={300}
+                                onChange={console.log('change')}
+                            />
+                        ))
+                    }
+                </DockablePanel>
+            </div >
         )
     };
 }

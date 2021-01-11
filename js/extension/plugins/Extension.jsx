@@ -2,15 +2,24 @@ import React from 'react';
 import ContainerDimensions from 'react-container-dimensions';
 import Dock from 'react-dock';
 import assign from 'object-assign';
+
 import PropTypes from 'prop-types';
-import { on, toggleControl } from "@mapstore/actions/controls";
-import { Glyphicon } from 'react-bootstrap';
+import { on, toggleControl, setControlProperty } from "@mapstore/actions/controls";
+import tooltip from '@mapstore/components/misc/enhancers/tooltip';
+
+import { Glyphicon, Row, Col, Nav, NavItem } from 'react-bootstrap';
 import { createSelector } from 'reselect';
 import isEmpty from 'lodash/isEmpty';
 import { connect } from "react-redux";
-import { closeTabou2 } from '../actions/tabou2.js';
+import { setActivePlotSelection } from '../actions/tabou2.js';
 
 import Tabou2MainPanel from '../components/tabou2panel/Tabou2MainPanel'
+
+import DockablePanel from '@mapstore/components/misc/panels/DockablePanel'
+
+
+
+const NavItemT = tooltip(NavItem);
 
 const compose = (...functions) => args => functions.reduceRight((arg, fn) => fn(arg), args);
 
@@ -34,9 +43,10 @@ class Tabou2Panel extends React.Component {
         style: PropTypes.object,
         dockProps: PropTypes.object,
         // side panel properties
-        width: PropTypes.number
+        width: PropTypes.number,
+        tabs: PropTypes.object,
+        activeTab: PropTypes.string
     };
-
 
     static defaultProps = {
         id: "mapstore-tabou-panel",
@@ -52,6 +62,7 @@ class Tabou2Panel extends React.Component {
         panelClassName: "tabou-panel",
         toggleControl: () => { },
         closeGlyph: "1-close",
+        activeTab: 'search',
 
         // side panel properties
         width: 330,
@@ -62,8 +73,45 @@ class Tabou2Panel extends React.Component {
             position: "right",
             zIndex: 1030
         },
-        dockStyle: {}
+        dockStyle: {},
+        tabs: []
     };
+
+    constructor(props) {
+        super(props);
+
+        this.tabs = [{
+            id: 'search',
+            tooltip: 'search',
+            glyph: 'search',
+            component: () => (
+                <div>
+                    SEARCH
+                </div>
+            )
+        }, {
+            id: 'add',
+            tooltip: 'add',
+            glyph: 'plus',
+            component: () => (
+                <div>
+                    ADD
+                </div>
+            )
+        }, {
+            id: 'identify',
+            tooltip: 'identify',
+            glyph: 'map-marker',
+            component: () => (
+                <div>
+                    IDENTIFY
+                </div>
+            )
+        }];
+
+        this.activeTab = 'search';
+    }
+
 
     renderHeader() {
         return (
@@ -87,30 +135,16 @@ class Tabou2Panel extends React.Component {
         );
     }
 
+    onSetTab() {
+        return setControlProperty.bind(null, 'tabou2', 'activeTab')
+    }
+
     render() {
-        return this.props.active ? (
-            <ContainerDimensions>
-                { ({ width }) =>
-                    <span className="ms-tabou-panel react-dock-no-resize ms-absolute-dock ms-side-panel">
-                        <Dock
-                            fluid
-                            dockStyle={this.props.dockStyle} {...this.props.dockProps}
-                            isVisible={this.props.active}
-                            size={getWidth(this.props.width, width)} >
-                            <div>
-                                <Tabou2MainPanel {...this.props} width={this.props.width} />
-                            </div>
-                        </Dock>
-                    </span>
-                }
-            </ContainerDimensions>
-        ) : null;
+        return (
+
+        )
     }
 }
-
-const conditionalToggle = on.bind(null, toggleControl(CONTROL_NAME, null), (state) =>
-    !(state.controls && state.controls[CONTROL_NAME] && state.controls[CONTROL_NAME].enabled && state[CONTROL_NAME] && state[CONTROL_NAME].editing)
-    , closeTabou2);
 
 /**
  * 
@@ -120,7 +154,7 @@ const conditionalToggle = on.bind(null, toggleControl(CONTROL_NAME, null), (stat
  */
 const tabou2Selector = createSelector(
     [
-        state => (state.controls && state.controls.tabou2 && state.controls[CONTROL_NAME].enabled) || (state[CONTROL_NAME] && state[CONTROL_NAME].closing) || false,
+        state => (state.controls && state.controls[CONTROL_NAME] && state.controls[CONTROL_NAME].enabled) || (state[CONTROL_NAME] && state[CONTROL_NAME].closing) || false,
     ],
     (active, dockStyle, list) => ({
         active,
