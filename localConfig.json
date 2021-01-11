@@ -279,7 +279,7 @@
             },
             "FeedbackMask"
         ],
-        "desktop": ["Details", "SampleExtension",
+        "desktop": ["Details", "Tabou2",
           {
             "name": "Map",
             "cfg": {

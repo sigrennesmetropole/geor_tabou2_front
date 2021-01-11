@@ -1,3 +1,3 @@
 module.exports = {
-    name: "SampleExtension"
+    name: "Tabou2"
 };
