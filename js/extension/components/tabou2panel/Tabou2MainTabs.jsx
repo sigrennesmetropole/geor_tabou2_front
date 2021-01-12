@@ -1,19 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
-
-import {
-    setMainActiveTab,
-} from '../../actions/tabou2';
-
-import {
-    currentActiveTabSelector,
-} from '../../selectors/tabou2';
-
 import { Glyphicon, Nav, NavItem } from 'react-bootstrap';
-import tooltip from '@mapstore/components/misc/enhancers/tooltip';
-const NavItemT = tooltip(NavItem);
 
+import tooltip from '@mapstore/components/misc/enhancers/tooltip';
+
+import { setMainActiveTab } from '../../actions/tabou2';
+import { currentActiveTabSelector } from '../../selectors/tabou2';
 import { TABS } from '../../constants';
+
+const NavItemT = tooltip(NavItem);
 
 function SelectionTab({ currentTab, onClick = () => { } }) {
     return (
@@ -36,11 +31,8 @@ function SelectionTab({ currentTab, onClick = () => { } }) {
     )
 }
 
-export default connect(
-    (state) => ({
-        currentTab: currentActiveTabSelector(state)
-    }),
-    {
-        onClick: setMainActiveTab
-    }
-)(SelectionTab);
+export default connect((state) => ({
+    currentTab: currentActiveTabSelector(state)
+}), {
+    onClick: setMainActiveTab
+})(SelectionTab);
