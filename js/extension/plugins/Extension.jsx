@@ -1,33 +1,21 @@
 import React from 'react';
-import ContainerDimensions from 'react-container-dimensions';
-import Dock from 'react-dock';
-import assign from 'object-assign';
 
 import PropTypes from 'prop-types';
-import { on, toggleControl, setControlProperty } from "@mapstore/actions/controls";
-import tooltip from '@mapstore/components/misc/enhancers/tooltip';
+import { toggleControl } from "@mapstore/actions/controls";
 
-import { Glyphicon, Row, Col, Nav, NavItem } from 'react-bootstrap';
+
+import { Glyphicon } from 'react-bootstrap';
 import { createSelector } from 'reselect';
 import isEmpty from 'lodash/isEmpty';
 import { connect } from "react-redux";
-import { setActivePlotSelection } from '../actions/tabou2.js';
 
-import Tabou2MainPanel from '../components/tabou2panel/Tabou2MainPanel'
+import Tabou2MainPanel from '../components/tabou2panel/Tabou2MainPanel';
 
-import DockablePanel from '@mapstore/components/misc/panels/DockablePanel'
+import tabou2 from '../reducers/tabou2';
 
-
-
-const NavItemT = tooltip(NavItem);
+import { CONTROL_NAME } from '../constants';
 
 const compose = (...functions) => args => functions.reduceRight((arg, fn) => fn(arg), args);
-
-const getWidth = (props, width) => {
-    return props.width / width > 1 ? 1 : props.width / width
-}
-
-const CONTROL_NAME = "tabou2";
 
 class Tabou2Panel extends React.Component {
     static propTypes = {
@@ -77,71 +65,11 @@ class Tabou2Panel extends React.Component {
         tabs: []
     };
 
-    constructor(props) {
-        super(props);
-
-        this.tabs = [{
-            id: 'search',
-            tooltip: 'search',
-            glyph: 'search',
-            component: () => (
-                <div>
-                    SEARCH
-                </div>
-            )
-        }, {
-            id: 'add',
-            tooltip: 'add',
-            glyph: 'plus',
-            component: () => (
-                <div>
-                    ADD
-                </div>
-            )
-        }, {
-            id: 'identify',
-            tooltip: 'identify',
-            glyph: 'map-marker',
-            component: () => (
-                <div>
-                    IDENTIFY
-                </div>
-            )
-        }];
-
-        this.activeTab = 'search';
-    }
-
-
-    renderHeader() {
-        return (
-            <div style={this.props.styling || { width: '100%' }}>
-                <div style={{ display: "flex", alignItems: "center" }}>
-                    <div>
-                        <Button className="square-button no-events">
-                            <Glyphicon glyph="comment" />
-                        </Button>
-                    </div>
-                    <div style={{ flex: "1 1 0%", padding: 8, textAlign: "center" }}>
-                        <h4><Message msgId="annotations.title" /></h4>
-                    </div>
-                    <div>
-                        <Button className="square-button no-border" onClick={this.props.toggleControl} >
-                            <Glyphicon glyph="1-close" />
-                        </Button>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
-    onSetTab() {
-        return setControlProperty.bind(null, 'tabou2', 'activeTab')
-    }
-
     render() {
         return (
-
+            <div>
+                <Tabou2MainPanel />
+            </div>
         )
     }
 }
@@ -175,7 +103,7 @@ const Tabou2Plugin = compose(
 export default {
     name: "Tabou2",
     component: Tabou2Plugin,
-    reducers: {},
+    reducers: { tabou2: tabou2 },
     epics: {},
     containers: {
         Toolbar: {

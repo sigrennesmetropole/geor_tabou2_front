@@ -23,7 +23,9 @@ export const tearDown = () => ({
     type: TEAR_DOWN
 });
 
-export const setMainActiveTab = (active) => ({
+
+
+export const setMainActiveTab = (activeTab) => ({
     type: SET_MAIN_ACTIVE_TAB,
-    active
-})
+    activeTab
+});
