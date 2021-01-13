@@ -13,25 +13,30 @@ import { CONTROL_NAME } from '../../constants';
 function Tabou2MainPanel({ enabled, onClose = () => { } }) {
     if (!enabled) return null;
     return (
-        <DockablePanel
-            open={true}
-            glyph="th"
-            title="Tabou2"
-            className={''}
-            onClose={onClose}
-            size={500}
-            draggable={true}
-            dock={true}
-            position={'right'}
-            header={
-                <Row key="ms-tabou-navbar" className="ms-row-tab">
-                    <Col xs={12}>
-                        {<Tabou2MainTabs />}
-                    </Col>
-                </Row>
-            }>
-            <Tabou2MainToolContainer />
-        </DockablePanel>
+        <span className="ms-annotations-panel react-dock-no-resize ms-absolute-dock ms-side-panel">
+            <DockablePanel
+                open={true}
+                glyph="th"
+                bsStyle="primary"
+                title="Tabou2"
+                className={''}
+                draggable={false}
+                onClose={onClose}
+                size={500}
+                dock={true}
+                fade={true}
+                clickOutEnabled={false}
+                position={'right'}
+                header={
+                    <Row key="ms-tabou-navbar" className="ms-row-tab">
+                        <Col xs={12}>
+                            {<Tabou2MainTabs />}
+                        </Col>
+                    </Row>
+                }>
+                <Tabou2MainToolContainer />
+            </DockablePanel>
+        </span>
     )
 }
 

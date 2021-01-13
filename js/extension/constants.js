@@ -1,31 +1,15 @@
-import React from 'react';
 export const TABS = [{
     id: 'search',
     tooltip: 'search',
-    glyph: 'search',
-    component: () => (
-        <div>
-            SEARCH
-        </div>
-    )
+    glyph: 'search'
 }, {
     id: 'add',
     tooltip: 'add',
-    glyph: 'plus',
-    component: () => (
-        <div>
-            ADD
-        </div>
-    )
+    glyph: 'plus'
 }, {
     id: 'identify',
     tooltip: 'identify',
-    glyph: 'map-marker',
-    component: () => (
-        <div>
-            IDENTIFY
-        </div>
-    )
+    glyph: 'map-marker'
 }];
 
 export const CONTROL_NAME = "tabou2";
