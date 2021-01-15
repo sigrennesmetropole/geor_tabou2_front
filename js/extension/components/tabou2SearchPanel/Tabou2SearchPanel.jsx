@@ -4,7 +4,9 @@ import { Checkbox, Col, Row, ControlLabel, FormGroup, Grid, FormControl } from '
 import { DropdownList, DateTimePicker, Combobox } from 'react-widgets';
 import { currentActiveTabSelector } from '../../selectors/tabou2';
 import Tabou2SearchToolbar from './Tabou2SearchToolbar';
+import Tabou2Combo from '../common/Tabou2Combo';
 import utcDateWrapper from '@mapstore/components/misc/enhancers/utcDateWrapper';
+import { getCommunes } from '../../api/search';
 
 const UTCDateTimePicker = utcDateWrapper({
     dateProp: "value",
@@ -16,6 +18,7 @@ function Tabou2SearchPanel({ currentTab }) {
     if (currentTab != 'search') return;
     const marginTop = '10px';
     const comboMarginTop = '5px';
+
     return (
         <>
             <div id="tabou2-tbar-container" style={{ display: "flex", margin: "auto", justifyContent: "center" }} className="text-center">
@@ -59,11 +62,18 @@ function Tabou2SearchPanel({ currentTab }) {
                     <Col xs={6}>
                         {/* left combo box */}
                         <FormGroup>
-                            <Combobox
+                            <Tabou2Combo
                                 style={{ marginTop: comboMarginTop }}
-                                key="search-commune-box"
-                                data={['Rennes', 'Cesson-Sévigné', 'Vezin-le-Coquet', 'Saint-Grégoire']}
-                                placeholder={'COMMUNES'} />
+                                key='search-commune-boxTest'
+                                load={getCommunes}
+                                data={[]}
+                                placeholder='COMMUNES'
+                                textField='nom'
+                                searchField='elements'
+                                valueField='code_insee'
+                                onLoad={(r) => { return r?.elements }}
+                                onSelect={(v) => { console.log(v) }}
+                            />
 
                             <Combobox
                                 style={{ marginTop: comboMarginTop }}
@@ -168,5 +178,9 @@ function Tabou2SearchPanel({ currentTab }) {
 }
 
 export default connect((state) => ({
+    // searchFilter: getSearchFilters
     currentTab: currentActiveTabSelector(state)
-}), {/*PASS EVT AND METHODS HERE*/ })(Tabou2SearchPanel);
+}), {
+    /*PASS EVT AND METHODS HERE*/
+    // changeFilter: setSearchFilters
+})(Tabou2SearchPanel);

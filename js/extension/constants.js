@@ -13,3 +13,5 @@ export const TABS = [{
 }];
 
 export const CONTROL_NAME = "tabou2";
+
+export const API_BASE_URL = 'https://jdev.stoplight.io/mocks/jdev/tabou_api_swagger/4964747';
