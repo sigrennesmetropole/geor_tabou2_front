@@ -5,8 +5,6 @@ import {
     currentActiveTabSelector,
 } from '../../selectors/tabou2';
 
-import { TABS } from '../../constants';
-
 import Tabou2SearchPanel from '../tabou2SearchPanel/Tabou2SearchPanel';
 import Tabou2AddPanel from '../tabou2AddPanel/Tabou2AddPanel';
 import Tabou2IdentifyPanel from '../tabou2IdentifyPanel/Tabou2IdentifyPanel';

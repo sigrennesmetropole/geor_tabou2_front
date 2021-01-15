@@ -10,10 +10,11 @@ import Tabou2MainToolContainer from './Tabou2MainToolContainer';
 import { CONTROL_NAME } from '../../constants';
 
 
-function Tabou2MainPanel({ enabled, onClose = () => { } }) {
+function Tabou2MainPanel({ enabled, dockStyle = {}, size = 500, onClose = () => { } }) {
     if (!enabled) return null;
+    console.log(dockStyle);
     return (
-        <span className="ms-annotations-panel react-dock-no-resize ms-absolute-dock ms-side-panel">
+        <span className="ms-tabou2-panel">
             <DockablePanel
                 open={true}
                 glyph="th"
@@ -22,8 +23,9 @@ function Tabou2MainPanel({ enabled, onClose = () => { } }) {
                 className={''}
                 draggable={false}
                 onClose={onClose}
-                size={500}
+                size={size}
                 dock={true}
+                style={dockStyle}
                 fade={true}
                 clickOutEnabled={false}
                 position={'right'}

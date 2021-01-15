@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Glyphicon } from 'react-bootstrap';
-import { createSelector } from 'reselect';
+import { createSelector, createStructuredSelector } from 'reselect';
 import { connect } from "react-redux";
 
 import { toggleControl } from "@mapstore/actions/controls";
@@ -9,6 +9,8 @@ import { toggleControl } from "@mapstore/actions/controls";
 import Tabou2MainPanel from '../components/tabou2panel/Tabou2MainPanel';
 import tabou2 from '../reducers/tabou2';
 import { CONTROL_NAME } from '../constants';
+
+import { mapLayoutValuesSelector } from "@mapstore/selectors/maplayout";
 
 const compose = (...functions) => args => functions.reduceRight((arg, fn) => fn(arg), args);
 
@@ -18,7 +20,8 @@ class Tabou2Panel extends React.Component {
         active: PropTypes.bool,
         toggleControl: PropTypes.func,
         tabs: PropTypes.object,
-        activeTab: PropTypes.string
+        activeTab: PropTypes.string,
+        size: PropTypes.number
     };
 
     static defaultProps = {
@@ -26,12 +29,17 @@ class Tabou2Panel extends React.Component {
         active: false,
         toggleControl: () => { },
         activeTab: 'search',
-        tabs: []
+        tabs: [],
+
+        dockStyle: {
+            right: 600
+        },
+        size: 500
     };
 
     render() {
         return (
-            <Tabou2MainPanel {...this.props} />
+            <Tabou2MainPanel dockStyle={this.props.dockStyle} size={this.props.size} {...this.props} />
         )
     }
 }
@@ -42,14 +50,21 @@ class Tabou2Panel extends React.Component {
  * FROM MAPSTORE2 ANNOTATION PLUGIN STRUCTURE
  * 
  */
-const tabou2Selector = createSelector(
+const tabou2SelectorOK = createSelector(
     [
         state => (state.controls && state.controls[CONTROL_NAME] && state.controls[CONTROL_NAME].enabled) || (state[CONTROL_NAME] && state[CONTROL_NAME].closing) || false,
+        state => mapLayoutValuesSelector(state, { right: true, bottom: true, left: true })
     ],
-    (active) => ({
-        active
+    (active, dockStyle) => ({
+        active,
+        dockStyle
     })
 );
+
+const tabou2Selector = createStructuredSelector({
+    active: state => (state.controls && state.controls[CONTROL_NAME] && state.controls[CONTROL_NAME].enabled) || (state[CONTROL_NAME] && state[CONTROL_NAME].closing) || false,
+    dockStyle: state => mapLayoutValuesSelector(state, { right: true, bottom: true, left: true }) // TODO : Fix - to changed right style of tools toolbar
+})
 
 const Tabou2Plugin = compose(
     connect(
