@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Combobox } from 'react-widgets';
 import { find, isObject } from 'lodash';
+import contenttabs from '@mapstore/epics/contenttabs';
 
 function Tabou2Combo({
     style = {},
-    value = {},
     placeholder = '',
     load = () => { },
-    onSelect = () => { },
-    valueField = '',
-    textField = '',
-    onLoad = () => { }
+    valueField,
+    textField,
+    onLoad = () => { },
+    ...props
 }) {
 
     // set default state according to param type
@@ -24,7 +24,6 @@ function Tabou2Combo({
                 //result = result[searchField];
                 result = onLoad(result);
             }
-            console.log(result);
             setData(result);
             setBusy(false);
         })
@@ -34,11 +33,11 @@ function Tabou2Combo({
         <Combobox
             busy={busy}
             style={style}
-            textField={textField}
             valueField={valueField}
+            textField={textField}
             data={data}
-            onSelect={onSelect}
-            placeholder={placeholder} />
+            placeholder={placeholder}
+            {...props} />
     )
 }
 

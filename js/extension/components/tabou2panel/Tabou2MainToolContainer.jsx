@@ -11,11 +11,11 @@ import Tabou2IdentifyPanel from '../tabou2IdentifyPanel/Tabou2IdentifyPanel';
 
 
 
-function toolContainer({ currentTab }) {
+function toolContainer({ currentTab, ...props }) {
     let toolsContainerList = {
         identify: (<Tabou2IdentifyPanel key={'ms-tab-tabou-identify'} />),
         add: (<Tabou2AddPanel key={'ms-tab-tabou-add'} />),
-        search: (<Tabou2SearchPanel key={'ms-tab-tabou-search'} />),
+        search: (<Tabou2SearchPanel key={'ms-tab-tabou-search'} {...props} />),
     }
     return toolsContainerList[currentTab];
 }

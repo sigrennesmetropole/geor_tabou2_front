@@ -1,3 +1,4 @@
+import * as Rx from 'rxjs';
 /**
  * Intercepts actions of type CADASTRAPP:SETUP.
  * - Load configuration if missing
@@ -18,4 +19,5 @@ export const tabou2SetupTearDown = (action$, { getState = () => { } }) => {
     action$.ofType(TEAR_DOWN).switchMap(() =>
         console.log('CLOSE TABOU2')
     );
+
 }

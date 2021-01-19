@@ -12,6 +12,10 @@ export default function tabou2(state = initialState, action) {
         case SET_MAIN_ACTIVE_TAB:
             const { activeTab } = action;
             return set(`activeTab`, activeTab, state);
+
+        /*case TABOU_UPDATE_LAYER:
+            const { layer } = action;
+            return set(`layer`, layer, state);*/
         default:
             return state;
     }

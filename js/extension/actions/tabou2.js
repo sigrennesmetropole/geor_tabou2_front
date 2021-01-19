@@ -34,8 +34,13 @@ export const setMainActiveTab = (activeTab) => ({
 
 export const applySearchQuery = () => ({
     type: APPLY_SEARCH_QUERY
-})
+});
 
 export const resetSearchFilters = () => ({
     type: RESET_SEARCH_FILTERS
-})
+});
+
+export const updateAllTabouLayers = (layer) => ({
+    type: UPDATE_TABOU_LAYER,
+    layer
+});

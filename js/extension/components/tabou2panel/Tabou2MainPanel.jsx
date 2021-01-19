@@ -10,9 +10,14 @@ import Tabou2MainToolContainer from './Tabou2MainToolContainer';
 import { CONTROL_NAME } from '../../constants';
 
 
-function Tabou2MainPanel({ enabled, dockStyle = {}, size = 500, onClose = () => { } }) {
+function Tabou2MainPanel({
+    enabled,
+    dockStyle = {},
+    size = 500,
+    onClose = () => { },
+    ...props
+}) {
     if (!enabled) return null;
-    console.log(dockStyle);
     return (
         <span className="ms-tabou2-panel">
             <DockablePanel
@@ -36,7 +41,7 @@ function Tabou2MainPanel({ enabled, dockStyle = {}, size = 500, onClose = () => 
                         </Col>
                     </Row>
                 }>
-                <Tabou2MainToolContainer />
+                <Tabou2MainToolContainer {...props} />
             </DockablePanel>
         </span>
     )

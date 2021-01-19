@@ -1,16 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Glyphicon } from 'react-bootstrap';
-import { createSelector, createStructuredSelector } from 'reselect';
 import { connect } from "react-redux";
 
 import { toggleControl } from "@mapstore/actions/controls";
+import { changeLayerProperties, changeLayerParams } from "@mapstore/actions/layers";
+import { search } from "@mapstore/actions/queryform";
 
 import Tabou2MainPanel from '../components/tabou2panel/Tabou2MainPanel';
 import tabou2 from '../reducers/tabou2';
 import { CONTROL_NAME } from '../constants';
 
 import { mapLayoutValuesSelector } from "@mapstore/selectors/maplayout";
+import { syncLayers, selectLayers } from "@mapstore/selectors/layerinfo";
+
+import { layersSelector } from '@mapstore/selectors/layers';
+
+import { selectedLayerIdSelector } from '@mapstore/selectors/featuregrid';
+
 
 const compose = (...functions) => args => functions.reduceRight((arg, fn) => fn(arg), args);
 
@@ -50,36 +57,28 @@ class Tabou2Panel extends React.Component {
  * FROM MAPSTORE2 ANNOTATION PLUGIN STRUCTURE
  * 
  */
-const tabou2SelectorOK = createSelector(
-    [
-        state => (state.controls && state.controls[CONTROL_NAME] && state.controls[CONTROL_NAME].enabled) || (state[CONTROL_NAME] && state[CONTROL_NAME].closing) || false,
-        state => mapLayoutValuesSelector(state, { right: true, bottom: true, left: true })
-    ],
-    (active, dockStyle) => ({
-        active,
-        dockStyle
-    })
-);
 
-const tabou2Selector = createStructuredSelector({
+const Tabou2PluginTest = connect((state) => ({
     active: state => (state.controls && state.controls[CONTROL_NAME] && state.controls[CONTROL_NAME].enabled) || (state[CONTROL_NAME] && state[CONTROL_NAME].closing) || false,
-    dockStyle: state => mapLayoutValuesSelector(state, { right: true, bottom: true, left: true }) // TODO : Fix - to changed right style of tools toolbar
-})
+    dockStyle: state => mapLayoutValuesSelector(state, { right: true, bottom: true, left: true }), // TODO : Fix - to changed right style of tools toolbar
+    tocLayers: layersSelector(state),
+    selectedLayerId: selectedLayerIdSelector(state)
+}), {
+    onClose: toggleControl.bind(null, CONTROL_NAME, null),
+    changeLayerParams: changeLayerParams,
+    changeLayerProperties: changeLayerProperties,
+    onSyncLayers: syncLayers,
+    onSelectLayers: selectLayers,
+    onQuery: search
 
-const Tabou2Plugin = compose(
-    connect(
-        tabou2Selector,
-        {
-            onClose: toggleControl.bind(null, CONTROL_NAME, null)
-        }
-    )
-)(Tabou2Panel);
+})(Tabou2Panel)
 
 export default {
     name: "Tabou2",
-    component: Tabou2Plugin,
+    component: Tabou2PluginTest,
     reducers: { tabou2: tabou2 },
-    epics: {},
+    epics: {
+    },
     containers: {
         Toolbar: {
             name: "Tabou2",
