@@ -4,6 +4,7 @@ export const TEAR_DOWN = "TABOU2:TEAR_DOWN";
 export const SET_MAIN_ACTIVE_TAB = "TABOU2:SET_MAIN_ACTIVE_TAB";
 export const APPLY_SEARCH_QUERY = "TABOU2:APPLY_SEARCH_QUERY";
 export const RESET_SEARCH_FILTERS = "TABOU2:RESET_SEARCH_FILTERS";
+export const SET_TABOU_FILTERS = "TABOU2:SET_TABOU_FILTERS";
 
 export const closeTabou2 = () => {
     return {
@@ -43,4 +44,10 @@ export const resetSearchFilters = () => ({
 export const updateAllTabouLayers = (layer) => ({
     type: UPDATE_TABOU_LAYER,
     layer
+});
+
+
+export const setTabouFilters = (filterObj) => ({
+    type: SET_TABOU_FILTERS,
+    filterObj
 });

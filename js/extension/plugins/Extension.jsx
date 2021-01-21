@@ -9,6 +9,7 @@ import { search } from "@mapstore/actions/queryform";
 
 import Tabou2MainPanel from '../components/tabou2panel/Tabou2MainPanel';
 import tabou2 from '../reducers/tabou2';
+import { tabouApplyFilter } from '../epics/search';
 import { CONTROL_NAME } from '../constants';
 
 import { mapLayoutValuesSelector } from "@mapstore/selectors/maplayout";
@@ -18,13 +19,11 @@ import { layersSelector } from '@mapstore/selectors/layers';
 
 import { selectedLayerIdSelector } from '@mapstore/selectors/featuregrid';
 
-
-const compose = (...functions) => args => functions.reduceRight((arg, fn) => fn(arg), args);
-
 class Tabou2Panel extends React.Component {
     static propTypes = {
         id: PropTypes.string,
         active: PropTypes.bool,
+        filterObj: PropTypes.object,
         toggleControl: PropTypes.func,
         tabs: PropTypes.object,
         activeTab: PropTypes.string,
@@ -34,10 +33,10 @@ class Tabou2Panel extends React.Component {
     static defaultProps = {
         id: "mapstore-tabou-panel",
         active: false,
+        filterObj: {},
         toggleControl: () => { },
         activeTab: 'search',
         tabs: [],
-
         dockStyle: {
             right: 600
         },
@@ -78,6 +77,7 @@ export default {
     component: Tabou2PluginTest,
     reducers: { tabou2: tabou2 },
     epics: {
+        tabouApplyFilter: tabouApplyFilter
     },
     containers: {
         Toolbar: {

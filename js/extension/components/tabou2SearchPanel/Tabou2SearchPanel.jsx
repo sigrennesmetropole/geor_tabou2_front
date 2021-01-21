@@ -1,16 +1,17 @@
 import React from 'react';
+import { isEqual, find } from 'lodash';
 import { connect } from 'react-redux';
 import { Checkbox, Col, Row, ControlLabel, FormGroup, Grid, FormControl } from 'react-bootstrap';
 import { DropdownList, DateTimePicker, Combobox } from 'react-widgets';
-import { currentActiveTabSelector } from '../../selectors/tabou2';
+import { currentActiveTabSelector, currentTabouFilters } from '../../selectors/tabou2';
 import Tabou2SearchToolbar from './Tabou2SearchToolbar';
 import Tabou2Combo from '../common/Tabou2Combo';
 import utcDateWrapper from '@mapstore/components/misc/enhancers/utcDateWrapper';
 import { getCommunes } from '../../api/search';
 import { getGeomByCql } from '../../api/wfs';
-import { COMMUNE_LAYER_ID, GEOSERVER_WFS_URL } from '../../constants';
+import { COMMUNE_LAYER_ID } from '../../constants';
 
-import filterBuilder from '@mapstore/utils/ogc/Filter/FilterBuilder';
+import { setTabouFilters } from '../../actions/tabou2';
 
 
 
@@ -20,74 +21,97 @@ const UTCDateTimePicker = utcDateWrapper({
     setDateProp: "onChange"
 })(DateTimePicker);
 
-function Tabou2SearchPanel({ changeLayer, currentTab, filters = [], ...props }) {
+function Tabou2SearchPanel({ currentTab, applyFilter = () => { }, currentFilters, ...props }) {
     console.log(props);
     if (currentTab != 'search') return;
     const marginTop = '10px';
     const comboMarginTop = '5px';
 
-    const getFilter = (layerTypeName, spatialFilter, textFilters, crossLayer) => {
+    const getFilter = (layerTypeName = '', spatialFilter = {}, textFilters = [], crossLayer = null) => {
         return {
-            "featureTypeName": layerTypeName,
+            "featureTypeName": layerTypeName || '',
             "groupFields": [{
                 "id": 1,
                 "logic": "OR",
                 "index": 0
             }],
-            "filterFields": textFilters,
-            "spatialField": spatialFilter,
+            "filterFields": textFilters || [],
+            "spatialField": spatialFilter || {},
             "pagination": null,
             "filterType": "OGC",
             "ogcVersion": "1.1.0",
             "sortOptions": null,
-            "crossLayerFilter": crossLayer,
+            "crossLayerFilter": crossLayer || null,
             "hits": false
         }
-    }
+    };
 
+
+    // set commune filter
+    const addTextCommFilters = (layer, val) => {
+        if (!val) return currentFilters
+        console.log(currentFilters);
+        const newFilter = {
+            attribute: 'code_insee',
+            exception: null,
+            fieldOptions: { valuesCount: 0, currentPage: 1 },
+            groupId: 1,
+            operator: "=",
+            rowId: null,
+            type: 'number', // number, string
+            value: val,
+        }
+        if (!Object.keys(currentFilters).length) {
+            currentFilters = getFilter(layer, null, [], null);
+        }
+        let filters = currentFilters.filterFields;
+        // drop already exist attribute filter on this field
+        filters = filters.filter(f => !f.attribute === 'code_insee');
+        filters.push(newFilter);
+
+        currentFilters.filterFields = filters;
+
+        return applyFilter(currentFilters);
+    };
+
+
+    // set commune filter
+    const changeQuartJardin = (layer, val) => {
+        if (!val) return currentFilters
+        const newFilter = {
+            attribute: 'nuquart',
+            exception: null,
+            fieldOptions: { valuesCount: 0, currentPage: 1 },
+            groupId: 1,
+            operator: "=",
+            rowId: null,
+            type: 'number', // number, string
+            value: val,
+        }
+
+        currentFilters = getFilter(layer, null, [], null);
+
+        let filters = currentFilters.filterFields;
+        // drop already exist attribute filter on this field
+        filters = filters.filter(f => !f.attribute === 'nuquart');
+        filters.push(newFilter);
+
+        currentFilters.filterFields = filters;
+
+        return applyFilter(currentFilters);
+    };
+
+
+    // WFS request
     const getCommuneGeom = (layerName = 'urba_proj:v_oa_programme', code) => {
+        return addTextCommFilters(layerName, code);
         getGeomByCql(COMMUNE_LAYER_ID, `code_insee in ('${code}')`).then(
             response => {
-
                 if (!response.totalFeatures) return; // no CQL result
-
-                //let layer = props.tocLayers.filter(lyr => lyr.name === layerName);
-                /*let filter = getFilter(
-                    layerName,
-                    {
-                        "method": null,
-                        "operation": "INTERSECTS",
-                        "geometry": response?.features[0]?.geometry,
-                        "attribute": "shape"
-                    },
-                    null,
-                    true
-                );*/
-
-                let layer = props.tocLayers.filter(lyr => lyr.name === 'espub_mob:gev_jeu');
-
-                let url = "https://public.sig.rennesmetropole.fr/geoserver/wfs";
-                let filterObj = JSON.parse('{"featureTypeName":"espub_mob:gev_jeu","groupFields":[{"id":1,"logic":"OR","index":0}],"filterFields":[{"rowId":1610996284418,"groupId":1,"attribute":"nom","operator":"like","value":"PLACE SIMON","type":"string","fieldOptions":{"valuesCount":0,"currentPage":1},"exception":null}],"spatialField":{"method":null,"operation":"INTERSECTS","geometry":null,"attribute":"shape"},"pagination":null,"filterType":"OGC","ogcVersion":"1.1.0","sortOptions":null,"crossLayerFilter":null,"hits":false}');
-
-                filterObj.spatialField = {
-                    "method": "BBOX",
-                    "operation": "INTERSECTS",
-                    "geometry": response?.features[0]?.geometry,
-                    "attribute": "shape"
-                };
-
-                console.log(filterObj);
-
-                // Apply attribute filter only ==> WORK WITHOUT SPATIAL FIELD !!
-                //props.changeLayerProperties(layer[0]?.id, { layerFilter: filterObj });
-
-
-                //props.onQuery(url, filterObj, { typeName: 'espub_mob:gev_jeu' });
-                addFilterToLayer(layer.id, newFilter)
-
+                return;
             }
         )
-    }
+    };
 
     return (
         <>
@@ -111,20 +135,17 @@ function Tabou2SearchPanel({ changeLayer, currentTab, filters = [], ...props }) 
                     </Col>
                 </Row>
                 <Row style={{ marginTop: marginTop }}>
-                    <Col xs={6}>
-                        {/* left checkbox group */}
+                    <Col xs={12}>
                         <FormGroup>
-                            <Checkbox key="search-chbox-oa" >Opération</Checkbox>
-                            <Checkbox key="search-chbox-sa" >Secteur</Checkbox>
-                            <Checkbox key="search-chbox-pr" >Programme</Checkbox>
+                            <Checkbox inline key="search-chbox-diffus" className="col-xs-3">En diffus</Checkbox>
                         </FormGroup>
                     </Col>
-                    <Col xs={6}>
-                        {/* right checkbox group */}
+                </Row>
+                <Row style={{ marginTop: marginTop }}>
+                    <Col xs={12}>
                         <FormGroup>
-                            <Checkbox key="search-chbox-zac" >ZAC</Checkbox>
-                            <Checkbox key="search-chbox-za" >ZA</Checkbox>
-                            <Checkbox key="search-chbox-diffus" >En diffus</Checkbox>
+                            <Checkbox inline key="search-chbox-isaide" className="col-xs-3">Est aidé</Checkbox>
+                            <Checkbox inline key="search-chbox-estpublic">Est public</Checkbox>
                         </FormGroup>
                     </Col>
                 </Row>
@@ -141,7 +162,23 @@ function Tabou2SearchPanel({ changeLayer, currentTab, filters = [], ...props }) 
                                 searchField='elements'
                                 valueField='code_insee'
                                 onLoad={(r) => { return r?.elements }}
-                                onChange={(t) => { getCommuneGeom('urba_proj:v_oa_programme', t['code_insee']) }}
+                                onChange={(t) => { addTextCommFilters('tabou2:v_oa_programme', t['code_insee']) }}
+                            />
+
+                            <Combobox
+                                style={{ marginTop: comboMarginTop }}
+                                key="search-quartierjardin-box"
+                                data={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
+                                placeholder={'DEV-QUARTIERS'}
+                                onChange={(t) => { changeQuartJardin('espub_mob:gev_jeu', t) }}
+                            />
+
+                            <Combobox
+                                style={{ marginTop: comboMarginTop }}
+                                key="search-irisjardin-box"
+                                data={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
+                                placeholder={'DEV-IRIS'}
+                                onChange={(t) => { changeQuartJardin('espub_mob:gev_jeu', t) }}
                             />
 
                             <Combobox
@@ -172,6 +209,11 @@ function Tabou2SearchPanel({ changeLayer, currentTab, filters = [], ...props }) 
                         <FormGroup >
                             <DropdownList
                                 style={{ marginTop: comboMarginTop }}
+                                key="search-secsamspeu-nature"
+                                data={['ZAC', 'ZA']}
+                                placeholder={'Nature'} />
+                            <DropdownList
+                                style={{ marginTop: comboMarginTop }}
                                 key="search-secsamspeu-box"
                                 data={[256, 512]}
                                 placeholder={'Sec. Sam/Speu'} />
@@ -198,14 +240,6 @@ function Tabou2SearchPanel({ changeLayer, currentTab, filters = [], ...props }) 
                                 key="search-anneeliv-box"
                                 data={[2021, 2020, 2019, 2018, 2017, 2016, 2015, 2014]}
                                 placeholder={'Année de livraison'} />
-                        </FormGroup>
-                    </Col>
-                </Row>
-                <Row style={{ marginTop: '20px' }}>
-                    <Col xs={12}>
-                        <FormGroup>
-                            <Checkbox inline key="search-chbox-isaide" className="col-xs-3">Est aidé</Checkbox>
-                            <Checkbox inline key="search-chbox-estpublic">Est public</Checkbox>
                         </FormGroup>
                     </Col>
                 </Row>
@@ -248,8 +282,10 @@ function Tabou2SearchPanel({ changeLayer, currentTab, filters = [], ...props }) 
 
 export default connect((state) => ({
     // searchFilter: getSearchFilters
-    currentTab: currentActiveTabSelector(state)
+    currentTab: currentActiveTabSelector(state),
+    currentFilters: currentTabouFilters(state),
+    getState: () => state
 }), {
     /*PASS EVT AND METHODS HERE*/
-    // changeFilter: setSearchFilters
+    applyFilter: setTabouFilters
 })(Tabou2SearchPanel);
