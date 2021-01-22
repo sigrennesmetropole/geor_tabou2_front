@@ -5,6 +5,8 @@ export const SET_MAIN_ACTIVE_TAB = "TABOU2:SET_MAIN_ACTIVE_TAB";
 export const APPLY_SEARCH_QUERY = "TABOU2:APPLY_SEARCH_QUERY";
 export const RESET_SEARCH_FILTERS = "TABOU2:RESET_SEARCH_FILTERS";
 export const SET_TABOU_FILTERS = "TABOU2:SET_TABOU_FILTERS";
+export const SET_DEFAULT_INFO_FORMAT = "TABOU2:SET_DEFAULT_INFO_FORMAT";
+export const LOAD_TABOU_FEATURE_INFO = "TABOU2:LOAD_TABOU_FEATURE_INFO";
 
 export const closeTabou2 = () => {
     return {
@@ -50,4 +52,15 @@ export const updateAllTabouLayers = (layer) => ({
 export const setTabouFilters = (filterObj) => ({
     type: SET_TABOU_FILTERS,
     filterObj
+});
+
+export const setDefaultInfoFormat = (infoFormat) => ({
+    type: SET_DEFAULT_INFO_FORMAT,
+    infoFormat
+});
+
+
+export const loadTabouFeatureInfo = (response) => ({
+    type: LOAD_TABOU_FEATURE_INFO,
+    response
 });

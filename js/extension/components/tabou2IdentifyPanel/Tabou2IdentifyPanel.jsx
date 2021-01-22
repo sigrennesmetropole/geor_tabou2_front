@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Row, Col, Grid } from 'react-bootstrap';
+import { Row, Grid } from 'react-bootstrap';
 import { currentActiveTabSelector } from '../../selectors/tabou2';
 import LayerSelector from '@mapstore/components/data/identify/LayerSelector';
 import { getDefaultInfoFormatValue, getValidator } from '@mapstore/utils/MapInfoUtils';
@@ -13,7 +13,6 @@ import {
     requestsSelector,
     responsesSelector
 } from '@mapstore/selectors/mapInfo';
-import IdentifyContainer from '@mapstore/components/data/identify/IdentifyContainer';
 
 function Tabou2IdentifyPanel({
     currentTab,
@@ -50,7 +49,7 @@ function Tabou2IdentifyPanel({
             <Row className="tabou-idToolbar-row" style={{ display: "flex", margin: "auto", justifyContent: "center" }} className="text-center">
                 <Tabou2IdentifyToolbar />
             </Row>
-            <Grid>
+            <Grid style={{ width: '100%' }}>
                 <Tabou2IdentifyContent />
             </Grid>
         </>

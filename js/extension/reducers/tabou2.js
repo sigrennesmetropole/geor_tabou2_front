@@ -1,12 +1,16 @@
 import { set } from '@mapstore/utils/ImmutableUtils';
 import {
     SET_MAIN_ACTIVE_TAB,
-    SET_TABOU_FILTERS
+    SET_TABOU_FILTERS,
+    SET_DEFAULT_INFO_FORMAT,
+    LOAD_TABOU_FEATURE_INFO
 } from '../actions/tabou2';
 
 const initialState = {
     activeTab: 'search',
-    filterObj: {}
+    filterObj: {},
+    infoFormat: 'text/plain',
+    response: []
 }
 
 export default function tabou2(state = initialState, action) {
@@ -14,10 +18,15 @@ export default function tabou2(state = initialState, action) {
         case SET_MAIN_ACTIVE_TAB:
             const { activeTab } = action;
             return set(`activeTab`, activeTab, state);
-
         case SET_TABOU_FILTERS:
             const { filterObj } = action;
             return set(`filterObj`, filterObj, state);
+        case SET_DEFAULT_INFO_FORMAT:
+            const { infoFormat } = action;
+            return set(`infoFormat`, infoFormat, state);
+        case LOAD_TABOU_FEATURE_INFO:
+            const { response } = action;
+            return set('response', response, state)
         default:
             return state;
     }

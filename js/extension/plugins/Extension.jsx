@@ -7,17 +7,19 @@ import { toggleControl } from "@mapstore/actions/controls";
 import { changeLayerProperties, changeLayerParams } from "@mapstore/actions/layers";
 import { search } from "@mapstore/actions/queryform";
 
-import Tabou2MainPanel from '../components/tabou2panel/Tabou2MainPanel';
-import tabou2 from '../reducers/tabou2';
-import { tabouApplyFilter } from '../epics/search';
-import { CONTROL_NAME } from '../constants';
-
 import { mapLayoutValuesSelector } from "@mapstore/selectors/maplayout";
 import { syncLayers, selectLayers } from "@mapstore/selectors/layerinfo";
-
 import { layersSelector } from '@mapstore/selectors/layers';
-
 import { selectedLayerIdSelector } from '@mapstore/selectors/featuregrid';
+
+import Tabou2MainPanel from '../components/tabou2panel/Tabou2MainPanel';
+
+import tabou2 from '../reducers/tabou2'
+
+import { tabouApplyFilter } from '../epics/search';
+import { tabouGfiClick, tabouGetInfoOnClick, tabouLoadIdentifyContent, tabouSetGFIFormat, testPurge } from '../epics/identify';
+
+import { CONTROL_NAME } from '../constants';
 
 class Tabou2Panel extends React.Component {
     static propTypes = {
@@ -57,7 +59,7 @@ class Tabou2Panel extends React.Component {
  * 
  */
 
-const Tabou2PluginTest = connect((state) => ({
+const Tabou2Plugin = connect((state) => ({
     active: state => (state.controls && state.controls[CONTROL_NAME] && state.controls[CONTROL_NAME].enabled) || (state[CONTROL_NAME] && state[CONTROL_NAME].closing) || false,
     dockStyle: state => mapLayoutValuesSelector(state, { right: true, bottom: true, left: true }), // TODO : Fix - to changed right style of tools toolbar
     tocLayers: layersSelector(state),
@@ -74,10 +76,15 @@ const Tabou2PluginTest = connect((state) => ({
 
 export default {
     name: "Tabou2",
-    component: Tabou2PluginTest,
+    component: Tabou2Plugin,
     reducers: { tabou2: tabou2 },
     epics: {
-        tabouApplyFilter: tabouApplyFilter
+        tabouApplyFilter: tabouApplyFilter,
+        tabouGetInfoOnClick: tabouGetInfoOnClick,
+        tabouLoadIdentifyContent: tabouLoadIdentifyContent,
+        tabouSetGFIFormat: tabouSetGFIFormat,
+        testPurge: testPurge,
+        tabouGfiClick: tabouGfiClick
     },
     containers: {
         Toolbar: {

@@ -22,7 +22,6 @@ const UTCDateTimePicker = utcDateWrapper({
 })(DateTimePicker);
 
 function Tabou2SearchPanel({ currentTab, applyFilter = () => { }, currentFilters, ...props }) {
-    console.log(props);
     if (currentTab != 'search') return;
     const marginTop = '10px';
     const comboMarginTop = '5px';
