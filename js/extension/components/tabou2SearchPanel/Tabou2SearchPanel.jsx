@@ -49,7 +49,6 @@ function Tabou2SearchPanel({ currentTab, applyFilter = () => { }, currentFilters
     // set commune filter
     const addTextCommFilters = (layer, val) => {
         if (!val) return currentFilters
-        console.log(currentFilters);
         const newFilter = {
             attribute: 'code_insee',
             exception: null,

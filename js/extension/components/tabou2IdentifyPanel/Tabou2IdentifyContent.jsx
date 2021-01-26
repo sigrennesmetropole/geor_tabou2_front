@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { PanelGroup, Panel } from 'react-bootstrap';
-
+import { flatMap, isEmpty } from 'lodash';
 import { CSS } from './tabou2Identify-css';
 
 import {
@@ -9,17 +9,38 @@ import {
     responsesSelector
 } from '@mapstore/selectors/mapInfo';
 
-import { getTabouResponse } from '../../selectors/tabou2';
+import { getTabouResponse, getTabouIndexSelectors } from '../../selectors/tabou2';
+import { ID_SELECTOR } from '../../constants';
+
+
 
 function Tabou2IdentifyContent({
-    currentFeature,
     defaultActiveKey = [1],
     cssLoaded = false,
-    response = [],
-    gfiResponse = []
+    response,
+    loadIndex,
+    layer
 }) {
-    const tabs = [1, 2, 3];
     const [status, setStatus] = useState({});
+    const [features, setFeatures] = useState([]);
+
+    console.log(loadIndex);
+
+    useEffect(() => {
+        if (layer && !isEmpty(response)) {
+            let dataFilter = response.filter(d => d?.layer?.name === layer);
+            console.log(dataFilter);
+            setFeatures(dataFilter.length ? dataFilter[0].data?.features : []);
+        }
+    }, [layer, response]);
+
+    useEffect(() => {
+        if (loadIndex > -1 && !isEmpty(response) && !layer) {
+            console.log('FIRST LOAD');
+            setFeatures(response[loadIndex].data?.features || []);
+        }
+    }, [loadIndex, response, layer]);
+
     useEffect(() => {
         if (!cssLoaded) { // load CSS
             let script = document.createElement('style');
@@ -30,43 +51,45 @@ function Tabou2IdentifyContent({
         }
     }, []);
 
+
     const setPanelStatus = (panelId, val) => {
         status[panelId] = val;
         setStatus(status);
     }
 
-    const GetPanelGroup = ({ idTab = null, statusObj, features }) => {
-        if (!idTab) return;
-        const isOpen = defaultActiveKey.indexOf(idTab) > -1 ? true : false;
-        setPanelStatus(idTab, isOpen ? 'minus' : 'plus');
-        return (<PanelGroup
-            key={idTab} defaultActiveKey={isOpen ? idTab : null} accordion>
-            <Panel
-                className='idContentHeader'
-                header={(
-                    <span onClick={() => setPanelStatus(idTab, statusObj[idTab] == 'plus' ? 'minus' : 'plus'), features}>
-                        <label>
-                            Grouppe d'attribut {idTab}
-                        </label>
-                    </span>
-                )}
-                eventKey={idTab}>
-                At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
-            </Panel>
-        </PanelGroup>)
+    // Thematiques : general / logement / habitat / droit des sols / activité
+    const GetPanel = ({ feature = {}, i = 0, statusObj = [] }) => {
+        const isOpen = defaultActiveKey.indexOf(i) > -1 ? true : false;
+        setPanelStatus(i, isOpen ? 'minus' : 'plus');
+        if (!feature || !feature.properties) return null;
+        return (
+            <PanelGroup
+                key={i} defaultActiveKey={isOpen ? i : null} accordion>
+                <Panel
+                    className='idContentHeader'
+                    header={(
+                        <span onClick={() => setPanelStatus(i, statusObj[i] == 'plus' ? 'minus' : 'plus')}>
+                            <label>
+                                Objet - {feature.id}
+                            </label>
+                        </span>
+                    )}
+                    eventKey={i}>
+                    {Object.keys(feature.properties).map(props => (<span>{props}:{feature.properties[props]} <br /> </span>))}
+                </Panel>
+            </PanelGroup>
+        )
     }
-
     return (
+
         <>
-            {
-                tabs.map(tab => <GetPanelGroup key={'panelGroup-' + tab} statusObj={status} idTab={tab} features={currentFeature} />)
+            {   // create one acordion by item
+                features.map((feature, id) => <GetPanel key={'panelGroup-' + id} statusObj={status} i={id} feature={feature} />)
             }
         </>
 
     )
 }
 export default connect((state) => ({
-    currentFeature: currentFeatureSelector(state),
-    response: responsesSelector(state),
-    gfiResponse: getTabouResponse(state)
+    currentFeature: currentFeatureSelector(state)
 }), {/*PASS EVT AND METHODS HERE*/ })(Tabou2IdentifyContent);

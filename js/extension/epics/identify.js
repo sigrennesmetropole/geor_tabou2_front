@@ -1,7 +1,6 @@
 import * as Rx from 'rxjs';
 import { get, find, reverse } from 'lodash';
 import { CONTROL_NAME } from '../constants';
-import uuid from 'uuid';
 
 import {
     queryableLayersSelector,
@@ -18,10 +17,10 @@ import {
     CLOSE_IDENTIFY, TOGGLE_HIGHLIGHT_FEATURE,
     EDIT_LAYER_FEATURES,
     UPDATE_FEATURE_INFO_CLICK_POINT,
-    featureInfoClick, updateCenterToMarker, purgeMapInfoResults,
-    exceptionsFeatureInfo, loadFeatureInfo, errorFeatureInfo,
-    noQueryableLayers, newMapInfoRequest, getVectorInfo,
-    showMapinfoMarker, hideMapinfoMarker, setCurrentEditFeatureQuery,
+    featureInfoClick, updateCenterToMarker,
+    exceptionsFeatureInfo, loadFeatureInfo,
+    noQueryableLayers, getVectorInfo,
+    showMapinfoMarker, hideMapinfoMarker, setCurrentEditFeatureQuery, identifyOptionsSelector,
     SET_MAP_TRIGGER, CLEAR_WARNING
 } from '@mapstore/selectors/mapInfo';
 
@@ -37,14 +36,15 @@ import {
     LOAD_FEATURE_INFO,
     FEATURE_INFO_CLICK,
     closeIdentify,
-    changeMapInfoFormat, PURGE_MAPINFO_RESULTS
+    changeMapInfoFormat, PURGE_MAPINFO_RESULTS, purgeMapInfoResults, newMapInfoRequest, errorFeatureInfo
 } from "@mapstore/actions/mapInfo";
 
 import { TOGGLE_CONTROL } from '@mapstore/actions/controls';
 
-import { isTabou2Activate, defaultInfoFormat } from '../selectors/tabou2';
+import { isTabou2Activate, defaultInfoFormat, getTabouResponse } from '../selectors/tabou2';
 
 import { loadTabouFeatureInfo, setDefaultInfoFormat } from '../actions/tabou2';
+import FilterLayer from '@mapstore/plugins/FilterLayer';
 
 /**
  * Catch GFI on map click event
@@ -52,6 +52,7 @@ import { loadTabouFeatureInfo, setDefaultInfoFormat } from '../actions/tabou2';
  * @param {*} store 
  */
 export function tabouGetInfoOnClick(action$, store) {
+    return Rx.Observable.empty();
     return action$.ofType(FEATURE_INFO_CLICK).switchMap(({ point, filterNameList = [], overrideParams = {} }) => {
         // Reverse - To query layer in same order as in TOC
         let queryableLayers = reverse(queryableLayersSelector(store.getState()));
@@ -73,14 +74,13 @@ export function tabouGetInfoOnClick(action$, store) {
 export function tabouLoadIdentifyContent(action$, store) {
     return action$.ofType(LOAD_FEATURE_INFO)
         .filter(action => isTabou2Activate(store.getState()))
-        .switchMap(({
-            data = []
-        }) => {
-            console.log(data);
-            console.log(store.getState());
-            const isIdentifyTabName = store.getState()?.tabou2.activeTab === 'identify';
-            return Rx.Observable.of(loadTabouFeatureInfo(data))
-                .concat(isIdentifyTabName ? Rx.Observable.of(closeIdentify()) : Rx.Observable.empty());
+        .switchMap((action) => {
+            if (action.layer && action.layer.id) {
+                const isIdentifyTabName = store.getState()?.tabou2.activeTab === 'identify';
+                let resp = getTabouResponse(store.getState());
+                resp[action.layer.id] = action;
+                return Rx.Observable.of(loadTabouFeatureInfo(resp)).concat(Rx.Observable.of(closeIdentify()));
+            }
         })
 }
 
@@ -97,8 +97,7 @@ export function tabouSetGFIFormat(action$, store) {
             // to save default info format from config or default MS2 config
             const defaultMime = generalInfoFormatSelector(store.getState());
             // change format to application/json
-            return Rx.Observable.of(closeIdentify())
-                .concat(Rx.Observable.of(setDefaultInfoFormat(defaultMime)))
+            return Rx.Observable.of(setDefaultInfoFormat(defaultMime))
                 .concat(Rx.Observable.of(changeMapInfoFormat('application/json')))
                 .concat(Rx.Observable.of(updateUserPlugin("Identify", { active: false })));
         } else {
@@ -111,81 +110,8 @@ export function tabouSetGFIFormat(action$, store) {
 }
 
 
-export function testPurge(action$, store) {
-    return action$.ofType(PURGE_MAPINFO_RESULTS).switchMap((action) => {
-        console.log(action);
-        return Rx.Observable.empty();
+export function purgeTabou(action$, store) {
+    return action$.ofType(FEATURE_INFO_CLICK).switchMap(() => {
+        return Rx.Observable.of(loadTabouFeatureInfo({}));
     });
 }
-
-
-export const tabouGfiClick = (action$, { getState = () => { } }) =>
-    action$.ofType(FEATURE_INFO_CLICK)
-        .switchMap(({ point, filterNameList = [], overrideParams = {} }) => {
-            console.log('TABOU -- FEATURE INFO CLICK IDENTIFY');
-            closeIdentify();
-            // Reverse - To query layer in same order as in TOC
-            let queryableLayers = reverse(queryableLayersSelector(getState()));
-            const queryableSelectedLayers = queryableSelectedLayersSelector(getState());
-            if (queryableSelectedLayers.length) {
-                queryableLayers = queryableSelectedLayers;
-            }
-
-            const selectedLayers = selectedNodesSelector(getState());
-
-            if (queryableLayers.length === 0 || queryableSelectedLayers.length === 0 && selectedLayers.length !== 0) {
-                return Rx.Observable.of(purgeMapInfoResults(), noQueryableLayers());
-            }
-
-            // TODO: make it in the application getState()
-            const excludeParams = ["SLD_BODY"];
-            const includeOptions = [
-                "buffer",
-                "cql_filter",
-                "filter",
-                "propertyName"
-            ];
-            const out$ = Rx.Observable.from((queryableLayers.filter(l => {
-                // filtering a subset of layers
-                return filterNameList.length ? (filterNameList.filter(name => name.indexOf(l.name) !== -1).length > 0) : true;
-            })))
-                .mergeMap(layer => {
-                    let env = localizedLayerStylesEnvSelector(getState());
-                    let { url, request, metadata } = buildIdentifyRequest(layer, { ...identifyOptionsSelector(getState()), env });
-                    // request override
-                    if (itemIdSelector(getState()) && overrideParamsSelector(getState())) {
-                        request = { ...request, ...overrideParamsSelector(getState())[layer.name] };
-                    }
-                    if (overrideParams[layer.name]) {
-                        request = { ...request, ...overrideParams[layer.name] };
-                    }
-                    if (url) {
-                        const basePath = url;
-                        const requestParams = request;
-                        const lMetaData = metadata;
-                        const appParams = filterRequestParams(layer, includeOptions, excludeParams);
-                        const attachJSON = isHighlightEnabledSelector(getState());
-                        const itemId = itemIdSelector(getState());
-                        const reqId = uuid.v1();
-                        const param = { ...appParams, ...requestParams };
-                        return getFeatureInfo(basePath, param, layer, { attachJSON, itemId })
-                            .map((response) => {
-                                console.log('TABOU2 RESPONSE');
-                                console.log(response);
-                                response.data.exceptions
-                                    ? exceptionsFeatureInfo(reqId, response.data.exceptions, requestParams, lMetaData)
-                                    : loadFeatureInfo(reqId, response.data, requestParams, { ...lMetaData, features: response.features, featuresCrs: response.featuresCrs }, layer)
-                            }
-                            )
-                            .catch((e) => Rx.Observable.of(errorFeatureInfo(reqId, e.data || e.statusText || e.status, requestParams, lMetaData)))
-                            .startWith(newMapInfoRequest(reqId, param));
-                    }
-                    return Rx.Observable.of(getVectorInfo(layer, request, metadata, queryableLayers));
-                });
-            // NOTE: multiSelection is inside the event
-            // TODO: move this flag in the application state
-            if (point && point.modifiers && point.modifiers.ctrl === true && point.multiSelection) {
-                return out$;
-            }
-            return out$.startWith(purgeMapInfoResults());
-        });

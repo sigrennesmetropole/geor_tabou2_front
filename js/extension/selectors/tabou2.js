@@ -18,3 +18,7 @@ export function defaultInfoFormat(state) {
 export function getTabouResponse(state) {
     return state?.tabou2.response;
 };
+
+export function getTabouIndexSelectors(state) {
+    return state?.tabou2.selectorsIndex;
+};

@@ -2,9 +2,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Toolbar from '@mapstore/components/misc/toolbar/Toolbar';
 
-function Tabou2IdentifyToolbar({ addDoc = () => { }, addTiers = () => { }, addEvent = () => { } }) {
+import { getTabouResponse } from '../../selectors/tabou2';
 
+function Tabou2IdentifyToolbar({ addDoc = () => { }, addTiers = () => { }, addEvent = () => { } }) {
     return (
+
         <Toolbar
             btnDefaultProps={{
                 className: 'square-button-md',

@@ -7,12 +7,7 @@ export const RESET_SEARCH_FILTERS = "TABOU2:RESET_SEARCH_FILTERS";
 export const SET_TABOU_FILTERS = "TABOU2:SET_TABOU_FILTERS";
 export const SET_DEFAULT_INFO_FORMAT = "TABOU2:SET_DEFAULT_INFO_FORMAT";
 export const LOAD_TABOU_FEATURE_INFO = "TABOU2:LOAD_TABOU_FEATURE_INFO";
-
-export const closeTabou2 = () => {
-    return {
-        type: CLOSE_TABOU2
-    };
-};
+export const SET_SELECTOR_INDEX = "TABOU2:SET_SELECTOR_INDEX";
 
 /**
  * Triggered on plugin activation
@@ -63,4 +58,9 @@ export const setDefaultInfoFormat = (infoFormat) => ({
 export const loadTabouFeatureInfo = (response) => ({
     type: LOAD_TABOU_FEATURE_INFO,
     response
+});
+
+export const setSelectorIndex = (selectorsIndex) => ({
+    type: SET_SELECTOR_INDEX,
+    selectorsIndex
 });

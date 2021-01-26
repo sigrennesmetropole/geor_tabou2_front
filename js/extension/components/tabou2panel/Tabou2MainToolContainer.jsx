@@ -1,8 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
+import { keys } from 'lodash';
+
 import {
-    currentActiveTabSelector,
+    currentActiveTabSelector, getTabouResponse, getTabouIndexSelectors
 } from '../../selectors/tabou2';
 
 import Tabou2SearchPanel from '../tabou2SearchPanel/Tabou2SearchPanel';
@@ -11,18 +13,27 @@ import Tabou2IdentifyPanel from '../tabou2IdentifyPanel/Tabou2IdentifyPanel';
 
 
 
-function toolContainer({ currentTab, ...props }) {
+
+function GetToolContainer({ ...props }) {
     let toolsContainerList = {
-        identify: (<Tabou2IdentifyPanel key={'ms-tab-tabou-identify'} />),
-        add: (<Tabou2AddPanel key={'ms-tab-tabou-add'} />),
+        identify: (<Tabou2IdentifyPanel key={'ms-tab-tabou-identify'} {...props} />),
+        add: (<Tabou2AddPanel key={'ms-tab-tabou-add'} {...props} />),
         search: (<Tabou2SearchPanel key={'ms-tab-tabou-search'} {...props} />),
     }
-    return toolsContainerList[currentTab];
+    return toolsContainerList[props.currentTab];
+}
+
+function toolContainer({ currentTab, data = {}, allIndex = {} }) {
+    return (
+        <GetToolContainer currentTab={currentTab} data={keys(data).map(e => data[e])} />
+    )
 }
 
 export default connect(
     (state) => ({
-        currentTab: currentActiveTabSelector(state)
+        currentTab: currentActiveTabSelector(state),
+        data: getTabouResponse(state),
+        allIndex: getTabouIndexSelectors(state)
     }),
     {
 

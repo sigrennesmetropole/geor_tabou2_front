@@ -11,7 +11,7 @@ export const tabou2Setup = (action$, { getState = () => { } }) => {
 }
 
 /**
- * Intercept cadastrapp close event.
+ * Intercept close event.
  * - Removes the layers from the map
  * - Disable tools
  */

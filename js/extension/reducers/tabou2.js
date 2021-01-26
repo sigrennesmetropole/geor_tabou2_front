@@ -3,14 +3,17 @@ import {
     SET_MAIN_ACTIVE_TAB,
     SET_TABOU_FILTERS,
     SET_DEFAULT_INFO_FORMAT,
-    LOAD_TABOU_FEATURE_INFO
+    LOAD_TABOU_FEATURE_INFO,
+    SET_SELECTOR_INDEX,
+    PURGE_INFOS
 } from '../actions/tabou2';
 
 const initialState = {
     activeTab: 'search',
     filterObj: {},
     infoFormat: 'text/plain',
-    response: []
+    response: {},
+    selectorsIndex: {}
 }
 
 export default function tabou2(state = initialState, action) {
@@ -27,6 +30,9 @@ export default function tabou2(state = initialState, action) {
         case LOAD_TABOU_FEATURE_INFO:
             const { response } = action;
             return set('response', response, state)
+        case SET_SELECTOR_INDEX:
+            const { selectorsIndex } = action;
+            return set('index', selectorsIndex, state)
         default:
             return state;
     }
