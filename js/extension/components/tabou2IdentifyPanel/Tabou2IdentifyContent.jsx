@@ -24,18 +24,16 @@ function Tabou2IdentifyContent({
     const [status, setStatus] = useState({});
     const [features, setFeatures] = useState([]);
 
-    console.log(loadIndex);
-
     useEffect(() => {
-        if (layer && !isEmpty(response)) {
+        let idx = layer || 0
+        if ((layer || 0) && !isEmpty(response)) {
             let dataFilter = response.filter(d => d?.layer?.name === layer);
-            console.log(dataFilter);
             setFeatures(dataFilter.length ? dataFilter[0].data?.features : []);
         }
     }, [layer, response]);
 
     useEffect(() => {
-        if (loadIndex > -1 && !isEmpty(response) && !layer) {
+        if (loadIndex && loadIndex > -1 && !isEmpty(response) && !layer) {
             console.log('FIRST LOAD');
             setFeatures(response[loadIndex].data?.features || []);
         }

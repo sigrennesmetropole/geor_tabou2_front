@@ -9,6 +9,7 @@ function Tabou2Combo({
     load = () => { },
     valueField,
     textField,
+    firstItem,
     onLoad = () => { },
     ...props
 }) {
@@ -24,6 +25,7 @@ function Tabou2Combo({
                 //result = result[searchField];
                 result = onLoad(result);
             }
+            if(firstItem) result.unshift(firstItem);
             setData(result);
             setBusy(false);
         })

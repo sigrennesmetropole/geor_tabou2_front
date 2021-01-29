@@ -10,7 +10,7 @@ import {
 
 const initialState = {
     activeTab: 'search',
-    filterObj: {},
+    filterObj: {'PA':{},'OA':{}, 'SA':{}},
     infoFormat: 'text/plain',
     response: {},
     selectorsIndex: {}

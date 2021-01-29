@@ -30,6 +30,10 @@ function Tabou2IdentifyPanel({
 
     const createOptions = (data) => {
         return data.map((opt, idx) => {
+            console.log(opt);
+            if(!opt.data.features.length) {
+                return {labe:'Aucun résultat', value: 0}
+            };
             let label = opt?.layerMetadata?.title;
             return { label: label, value: idx, name: opt?.layer.name };
         })

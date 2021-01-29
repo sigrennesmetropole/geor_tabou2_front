@@ -7,11 +7,12 @@ import { currentActiveTabSelector, currentTabouFilters } from '../../selectors/t
 import Tabou2SearchToolbar from './Tabou2SearchToolbar';
 import Tabou2Combo from '../common/Tabou2Combo';
 import utcDateWrapper from '@mapstore/components/misc/enhancers/utcDateWrapper';
-import { getCommunes } from '../../api/search';
-import { getGeomByCql } from '../../api/wfs';
+import { getCommunes, getQuartiers, getIris, getPAFromCQL } from '../../api/search';
 import { COMMUNE_LAYER_ID } from '../../constants';
 
 import { setTabouFilters } from '../../actions/tabou2';
+
+import { getNewFilter, getCqlExpression, onChangeCommune, onChangeQuartier, onChangeIris } from '../../utils/search';
 
 
 
@@ -26,90 +27,34 @@ function Tabou2SearchPanel({ currentTab, applyFilter = () => { }, currentFilters
     const marginTop = '10px';
     const comboMarginTop = '5px';
 
-    const getFilter = (layerTypeName = '', spatialFilter = {}, textFilters = [], crossLayer = null) => {
-        return {
-            "featureTypeName": layerTypeName || '',
-            "groupFields": [{
-                "id": 1,
-                "logic": "OR",
-                "index": 0
-            }],
-            "filterFields": textFilters || [],
-            "spatialField": spatialFilter || {},
-            "pagination": null,
-            "filterType": "OGC",
-            "ogcVersion": "1.1.0",
-            "sortOptions": null,
-            "crossLayerFilter": crossLayer || null,
-            "hits": false
+    const changeFilter = (layer, val, doFn, layerFilter) => {
+        if(!layerFilter) {
+            layerFilter = getNewFilter(layer, null, [], null);
         }
+        let newFilter = doFn(layer, val, layerFilter);
+        applyFilter(newFilter);
     };
 
+    const getData = () => {
+        getPAFromCQL().then(r => console.log(r));
+    }
 
-    // set commune filter
-    const addTextCommFilters = (layer, val) => {
-        if (!val) return currentFilters
-        const newFilter = {
-            attribute: 'code_insee',
-            exception: null,
-            fieldOptions: { valuesCount: 0, currentPage: 1 },
-            groupId: 1,
-            operator: "=",
-            rowId: null,
-            type: 'number', // number, string
-            value: val,
-        }
-        if (!Object.keys(currentFilters).length) {
-            currentFilters = getFilter(layer, null, [], null);
-        }
-        let filters = currentFilters.filterFields;
-        // drop already exist attribute filter on this field
-        filters = filters.filter(f => !f.attribute === 'code_insee');
-        filters.push(newFilter);
+    const changeCqlFilter = (layer, value) => {
+        const layers = ['PA','OA','SA'];
+        const cql = getCqlExpression(value, layer);
 
-        currentFilters.filterFields = filters;
-
-        return applyFilter(currentFilters);
-    };
-
-
-    // set commune filter
-    const changeQuartJardin = (layer, val) => {
-        if (!val) return currentFilters
-        const newFilter = {
-            attribute: 'nuquart',
-            exception: null,
-            fieldOptions: { valuesCount: 0, currentPage: 1 },
-            groupId: 1,
-            operator: "=",
-            rowId: null,
-            type: 'number', // number, string
-            value: val,
-        }
-
-        currentFilters = getFilter(layer, null, [], null);
-
-        let filters = currentFilters.filterFields;
-        // drop already exist attribute filter on this field
-        filters = filters.filter(f => !f.attribute === 'nuquart');
-        filters.push(newFilter);
-
-        currentFilters.filterFields = filters;
-
-        return applyFilter(currentFilters);
-    };
-
-
-    // WFS request
-    const getCommuneGeom = (layerName = 'urba_proj:v_oa_programme', code) => {
-        return addTextCommFilters(layerName, code);
-        getGeomByCql(COMMUNE_LAYER_ID, `code_insee in ('${code}')`).then(
-            response => {
-                if (!response.totalFeatures) return; // no CQL result
-                return;
+        layers.forEach(lyr => {
+            if(!currentFilters[lyr]) {
+                currentFilters[lyr] = {};
             }
-        )
-    };
+            delete currentFilters[lyr][layer];
+            if(value) {
+                currentFilters[lyr][layer] = cql;
+            }
+        })
+        setTabouFilters(currentFilters);
+        console.log(currentFilters);
+    }
 
     return (
         <>
@@ -117,33 +62,11 @@ function Tabou2SearchPanel({ currentTab, applyFilter = () => { }, currentFilters
                 <Tabou2SearchToolbar />
             </div>
             <Grid fluid className={"fluid-container adjust-display"}>
-                <Row>
-                    <Col xs={8}>
-                        {/* search by input */}
-                        <FormGroup controlId="searchInWfs">
-                            <ControlLabel inline>Recherche :</ControlLabel>
-                            <FormControl
-                                className='col-xs-8'
-                                inline
-                                placeholder="Saisir un nom..."
-                                key="search-in-wfs-title"
-                                size="sm"
-                                type="text" />
-                        </FormGroup>
-                    </Col>
-                </Row>
-                <Row style={{ marginTop: marginTop }}>
-                    <Col xs={12}>
-                        <FormGroup>
-                            <Checkbox inline key="search-chbox-diffus" className="col-xs-3">En diffus</Checkbox>
-                        </FormGroup>
-                    </Col>
-                </Row>
                 <Row style={{ marginTop: marginTop }}>
                     <Col xs={12}>
                         <FormGroup>
                             <Checkbox inline key="search-chbox-isaide" className="col-xs-3">Est aidé</Checkbox>
-                            <Checkbox inline key="search-chbox-estpublic">Est public</Checkbox>
+                            <Checkbox inline key="search-pbil-isaide" className="col-xs-3">PBIL</Checkbox>
                         </FormGroup>
                     </Col>
                 </Row>
@@ -153,68 +76,101 @@ function Tabou2SearchPanel({ currentTab, applyFilter = () => { }, currentFilters
                         <FormGroup>
                             <Tabou2Combo
                                 style={{ marginTop: comboMarginTop }}
+                                firstItem={{nom:'Tous', code_insee: null}}
                                 key='search-commune-boxTest'
                                 load={getCommunes}
                                 placeholder='COMMUNES'
                                 textField='nom'
+                                suggest={true}
                                 searchField='elements'
                                 valueField='code_insee'
                                 onLoad={(r) => { return r?.elements }}
-                                onChange={(t) => { addTextCommFilters('tabou2:v_oa_programme', t['code_insee']) }}
+                                onChange={(t) => {
+                                     changeCqlFilter('commune_emprise', t['code_insee'])
+                                    }
+                                }
+                            />
+
+                            <Tabou2Combo
+                                style={{ marginTop: comboMarginTop }}
+                                key='search-quartier-boxTest'
+                                firstItem={{nom:'Tous', nuquart: null}}
+                                load={getQuartiers}
+                                placeholder='QUARTIER'
+                                textField='nom'
+                                searchField='elements'
+                                valueField='nuquart'
+                                onLoad={(r) => { return r?.elements }}
+                                onChange={(t) => { 
+                                    //changeFilter('tabou2:quartier', t['nuquart'], onChangeQuartier);
+                                    changeCqlFilter('quartier', t['nuquart'])
+                                }}
+                            />
+
+                            <Tabou2Combo
+                                style={{ marginTop: comboMarginTop }}
+                                key='search-iris-boxTest'
+                                firstItem={{nmiris:'Tous', nuquart: null}}
+                                load={getIris}
+                                placeholder='IRIS'
+                                textField='nmiris'
+                                searchField='elements'
+                                valueField='code_iris'
+                                onLoad={(r) => { return r?.elements }}
+                                onChange={(t) => {
+                                    changeCqlFilter('iris', t['code_iris'])
+                                }}
                             />
 
                             <Combobox
                                 style={{ marginTop: comboMarginTop }}
-                                key="search-quartierjardin-box"
-                                data={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
-                                placeholder={'DEV-QUARTIERS'}
-                                onChange={(t) => { changeQuartJardin('espub_mob:gev_jeu', t) }}
-                            />
-
-                            <Combobox
-                                style={{ marginTop: comboMarginTop }}
-                                key="search-irisjardin-box"
-                                data={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
-                                placeholder={'DEV-IRIS'}
-                                onChange={(t) => { changeQuartJardin('espub_mob:gev_jeu', t) }}
-                            />
-
-                            <Combobox
-                                style={{ marginTop: comboMarginTop }}
-                                key="search-quartier-box"
-                                data={['Centre', 'Cleunay', 'Sacrés-Coeur', 'Thabor', 'Poterie', 'Patton']}
-                                placeholder={'QUARTIER'} />
-
-                            <Combobox
-                                style={{ marginTop: comboMarginTop }}
-                                key="search-iris-box"
-                                data={['RENNES', 'LAILLE', 'TORIGNE OUEST', 'BRUZ CENTRE NORD', 'VERN SUR SEICHE SUD ET EST', 'PACE SUD']}
-                                placeholder={'IRIS'} />
-
-                            <Combobox
-                                style={{ marginTop: comboMarginTop }}
-                                key="search-etape-box"
+                                key="search-amemagoa-box"
                                 data={[256, 512]}
-                                placeholder={'ETAPE'} />
+                                placeholder={'Aménageur OA'} />
+
                             <Combobox
                                 style={{ marginTop: comboMarginTop }}
-                                key="search-maitre-box"
+                                key="search-amemagpa-box"
                                 data={[256, 512]}
-                                placeholder={"MAITRE D\'OUVRAGE"} />
+                                placeholder={'Aménageur PA'} />
+
+                            <Combobox
+                                style={{ marginTop: comboMarginTop }}
+                                key="search-typefin-box"
+                                data={[256, 512]}
+                                placeholder={'Type financement'} />
+
+                            <DropdownList
+                                style={{ marginTop: comboMarginTop }}
+                                key="search-plui-box"
+                                data={[256, 512]}
+                                placeholder={'PLUI'} />
                         </FormGroup>
                     </Col>
                     <Col xs={6}>
                         <FormGroup >
                             <DropdownList
                                 style={{ marginTop: comboMarginTop }}
-                                key="search-secsamspeu-nature"
+                                key="search-nature"
                                 data={['ZAC', 'ZA']}
                                 placeholder={'Nature'} />
                             <DropdownList
                                 style={{ marginTop: comboMarginTop }}
-                                key="search-secsamspeu-box"
+                                key="search-secsam"
                                 data={[256, 512]}
-                                placeholder={'Sec. Sam/Speu'} />
+                                placeholder={'Sec. Sam'} />
+
+                            <DropdownList
+                                style={{ marginTop: comboMarginTop }}
+                                key="search-secspeu-box"
+                                data={[256, 512]}
+                                placeholder={'Sec. Speu'} />
+
+                            <DropdownList
+                                style={{ marginTop: comboMarginTop }}
+                                key="search-secssds-box"
+                                data={[256, 512]}
+                                placeholder={'Sec. Sds'} />
 
                             <DropdownList
                                 style={{ marginTop: comboMarginTop }}
@@ -224,27 +180,86 @@ function Tabou2SearchPanel({ currentTab, applyFilter = () => { }, currentFilters
 
                             <DropdownList
                                 style={{ marginTop: comboMarginTop }}
-                                key="search-sechab-box"
+                                key="search-etapeoa-box"
                                 data={[256, 512]}
-                                placeholder={'Sec. Habitat'} />
+                                placeholder={'Etape OA'} />
 
                             <DropdownList
                                 style={{ marginTop: comboMarginTop }}
-                                key="search-typefinan-box"
+                                key="search-etapepa-box"
                                 data={[256, 512]}
-                                placeholder={'Type Financement'} />
-                            <DropdownList
-                                style={{ marginTop: comboMarginTop }}
-                                key="search-anneeliv-box"
-                                data={[2021, 2020, 2019, 2018, 2017, 2016, 2015, 2014]}
-                                placeholder={'Année de livraison'} />
+                                placeholder={'Etape PA'} />
                         </FormGroup>
                     </Col>
                 </Row>
                 <Row style={{ marginTop: '20px' }}>
                     <Col xs={6}>
                         <FormGroup>
-                            <ControlLabel inline>Livraison du :
+                            <ControlLabel inline>Date DOC du 
+                            <UTCDateTimePicker inline
+                                    type='date'
+                                    calendar={true}
+                                    time={false}
+                                    culture='fr'
+                                    format='MM/DD/YYYY'
+                                    onChange={(date) => {
+                                        console.log(date);
+                                    }} />
+                            </ControlLabel>
+                        </FormGroup>
+                    </Col>
+                    <Col xs={6}>
+                        <FormGroup>
+                            <ControlLabel inline> à la date du :
+                            <UTCDateTimePicker inline
+                                    type='date'
+                                    calendar={true}
+                                    time={false}
+                                    culture='fr'
+                                    format='MM/DD/YYYY'
+                                    onChange={(date) => {
+                                        console.log(date);
+                                    }} />
+                            </ControlLabel>
+                        </FormGroup>
+                    </Col>
+                </Row>
+                <Row style={{ marginTop: '20px' }}>
+                    <Col xs={6}>
+                        <FormGroup>
+                            <ControlLabel inline>Date DAT du :
+                            <UTCDateTimePicker inline
+                                    type='date'
+                                    calendar={true}
+                                    time={false}
+                                    culture='fr'
+                                    format='MM/DD/YYYY'
+                                    onChange={(date) => {
+                                        console.log(date);
+                                    }} />
+                            </ControlLabel>
+                        </FormGroup>
+                    </Col>
+                    <Col xs={6}>
+                        <FormGroup>
+                            <ControlLabel inline> à la date du :
+                            <UTCDateTimePicker inline
+                                    type='date'
+                                    calendar={true}
+                                    time={false}
+                                    culture='fr'
+                                    format='MM/DD/YYYY'
+                                    onChange={(date) => {
+                                        console.log(date);
+                                    }} />
+                            </ControlLabel>
+                        </FormGroup>
+                    </Col>
+                </Row>
+                <Row style={{ marginTop: '20px' }}>
+                    <Col xs={6}>
+                        <FormGroup>
+                            <ControlLabel inline>Date de livraison du :
                             <UTCDateTimePicker inline
                                     type='date'
                                     calendar={true}
