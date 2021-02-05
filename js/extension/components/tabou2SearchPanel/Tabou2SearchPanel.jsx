@@ -1,20 +1,20 @@
 import React from 'react';
-import { isEqual, find, keys } from 'lodash';
+import { keys } from 'lodash';
 import { connect } from 'react-redux';
 import axios from '@mapstore/libs/ajax';
 
-import { Checkbox, Col, Row, ControlLabel, FormGroup, Grid, FormControl } from 'react-bootstrap';
+import { Checkbox, Col, Row, ControlLabel, FormGroup, Grid } from 'react-bootstrap';
 import { DropdownList, DateTimePicker, Combobox } from 'react-widgets';
 import { currentActiveTabSelector, currentTabouFilters, getLayerFilterObj } from '../../selectors/tabou2';
 import Tabou2SearchToolbar from './Tabou2SearchToolbar';
 import Tabou2Combo from '../common/Tabou2Combo';
 import utcDateWrapper from '@mapstore/components/misc/enhancers/utcDateWrapper';
-import { getCommunes, getQuartiers, getIris, getPAFromCQL } from '../../api/search';
+import { getRequestApi, getCommunes, getQuartiers, getIris, getEtapeOA, getEtapePA, getPlui, getNatures } from '../../api/search';
 import { COMMUNE_LAYER_ID } from '../../constants';
 
 import { setTabouFilters, setTabouFilterObj, applyFilterObj } from '../../actions/tabou2';
 
-import { getNewFilter, getNewCqlFilter, getCqlExpression, onChangeCommune, onChangeQuartier, onChangeIris } from '../../utils/search';
+import { getNewFilter, getNewCqlFilter, getCqlExpression } from '../../utils/search';
 
 
 
@@ -127,17 +127,16 @@ function Tabou2SearchPanel({ apply, getFiltersObj, setFiltersObj, currentTab, ap
                         <FormGroup>
                             <Tabou2Combo
                                 style={{ marginTop: comboMarginTop }}
-                                firstItem={{nom:'Tous', code_insee: null}}
+                                firstItem={{nom:'Tous', code_insee: null, all: true}}
                                 key='search-commune-boxTest'
-                                load={getCommunes}
+                                load={() => getRequestApi('communes')}
                                 placeholder='COMMUNES'
                                 textField='nom'
                                 suggest={true}
-                                searchField='elements'
                                 valueField='code_insee'
                                 onLoad={(r) => { return r?.elements }}
                                 onChange={(t) => {
-                                     changeCqlFilter('commune_emprise', t['code_insee']);
+                                     changeCqlFilter('commune_emprise', t?.all ? null : t.code_insee);
                                     }
                                 }
                             />
@@ -145,30 +144,28 @@ function Tabou2SearchPanel({ apply, getFiltersObj, setFiltersObj, currentTab, ap
                             <Tabou2Combo
                                 style={{ marginTop: comboMarginTop }}
                                 key='search-quartier-boxTest'
-                                firstItem={{nom:'Tous', nuquart: null}}
-                                load={getQuartiers}
+                                firstItem={{nom:'Tous', all: true}}
+                                load={() => getRequestApi('quartiers')}
                                 placeholder='QUARTIER'
                                 textField='nom'
-                                searchField='elements'
                                 valueField='nuquart'
                                 onLoad={(r) => { return r?.elements }}
                                 onChange={(t) => { 
-                                    changeCqlFilter('quartier', t['nuquart'])
+                                    changeCqlFilter('quartier', t?.all ? null : t.nuquart)
                                 }}
                             />
 
                             <Tabou2Combo
                                 style={{ marginTop: comboMarginTop }}
                                 key='search-iris-boxTest'
-                                firstItem={{nmiris:'Tous', nuquart: null}}
-                                load={getIris}
+                                firstItem={{nmiris:'Tous', all:true, nuquart: null}}
+                                load={() => getRequestApi('iris')}
                                 placeholder='IRIS'
                                 textField='nmiris'
-                                searchField='elements'
                                 valueField='code_iris'
                                 onLoad={(r) => { return r?.elements }}
                                 onChange={(t) => {
-                                    changeCqlFilter('iris', t['code_iris'])
+                                    changeCqlFilter('iris', t?.all ? null : t.code_iris)
                                 }}
                             />
 
@@ -190,55 +187,116 @@ function Tabou2SearchPanel({ apply, getFiltersObj, setFiltersObj, currentTab, ap
                                 data={[256, 512]}
                                 placeholder={'Type financement'} />
 
-                            <DropdownList
+                            <Tabou2Combo
                                 style={{ marginTop: comboMarginTop }}
-                                key="search-plui-box"
-                                data={[256, 512]}
-                                placeholder={'PLUI'} />
+                                key='search-plui-combo'
+                                firstItem={{libelle:'Tous', all: true}}
+                                load={() => getRequestApi('plui')}
+                                placeholder='PLUI'
+                                textField='libelle'
+                                onLoad={(r) => { return r?.elements }}
+                                onChange={(t) => {
+                                    //changeCqlFilter('plui', t['libelle'])
+                                }}
+                            />
                         </FormGroup>
                     </Col>
                     <Col xs={6}>
                         <FormGroup >
-                            <DropdownList
+                        <Tabou2Combo
                                 style={{ marginTop: comboMarginTop }}
-                                key="search-nature"
-                                data={['ZAC', 'ZA']}
-                                placeholder={'Nature'} />
-                            <DropdownList
+                                key='search-natures-combo'
+                                firstItem={{code: '', id:0, libelle: 'Tous', all: true }}
+                                load={() => getRequestApi('natures')}
+                                placeholder='NATURES'
+                                textField='libelle'
+                                onLoad={(r) => { return r?.elements }}
+                                onChange={(t) => {
+                                    //changeCqlFilter('plui', t['libelle'])
+                                }}
+                            />
+                            <Tabou2Combo
                                 style={{ marginTop: comboMarginTop }}
-                                key="search-secsam"
-                                data={[256, 512]}
-                                placeholder={'Sec. Sam'} />
+                                key='search-sam-box'
+                                firstItem={{id: 0, nom_secteur: 'Tous', all: true}}
+                                load={() => getRequestApi('secteurs-sam')}
+                                placeholder={'Sec. SAM'}
+                                textField='nom_secteur'
+                                valueField='id'
+                                onLoad={(r) => { return r?.elements }}
+                                onChange={(t) => { 
+                                    //changeCqlFilter('quartier', t['nuquart'])
+                                }}
+                            />
 
-                            <DropdownList
+                            <Tabou2Combo
                                 style={{ marginTop: comboMarginTop }}
-                                key="search-secspeu-box"
-                                data={[256, 512]}
-                                placeholder={'Sec. Speu'} />
+                                key='search-speu-box'
+                                firstItem={{num_secteur: 0, nom_secteur: 'Tous', all: true}}
+                                load={() => getRequestApi('secteurs-speu')}
+                                placeholder={'Sec. SPEU'}
+                                textField='nom_secteur'
+                                valueField='num_secteur'
+                                onLoad={(r) => { return r?.elements }}
+                                onChange={(t) => { 
+                                    //changeCqlFilter('quartier', t['nuquart'])
+                                }}
+                            />
 
-                            <DropdownList
+                            <Tabou2Combo
                                 style={{ marginTop: comboMarginTop }}
-                                key="search-secssds-box"
-                                data={[256, 512]}
-                                placeholder={'Sec. Sds'} />
+                                key='search-sds-box'
+                                firstItem={{num_secteur: 0, secteur: 'Tous', all: true}}
+                                load={() => getRequestApi('secteurs-sds')}
+                                placeholder={'Sec. SDS'}
+                                textField='secteur'
+                                onLoad={(r) => { return r?.elements }}
+                                onChange={(t) => { 
+                                    //changeCqlFilter('quartier', t['nuquart'])
+                                }}
+                            />
 
-                            <DropdownList
+                            <Tabou2Combo
                                 style={{ marginTop: comboMarginTop }}
-                                key="search-secfon-box"
-                                data={[256, 512]}
-                                placeholder={'Sec. Foncier'} />
+                                key='search-etapeoa-box'
+                                firstItem={{id:0, all: true, nom_secteur: 'Tous'}}
+                                load={() => getRequestApi('secteurs-foncier')}
+                                placeholder={'Sec. Foncier'}
+                                textField='nom_secteur'
+                                valueField='id'
+                                onLoad={(r) => { return r?.elements }}
+                                onChange={(t) => { 
+                                    //changeCqlFilter('quartier', t['nuquart'])
+                                }}
+                            />
 
-                            <DropdownList
+                            <Tabou2Combo
                                 style={{ marginTop: comboMarginTop }}
-                                key="search-etapeoa-box"
-                                data={[256, 512]}
-                                placeholder={'Etape OA'} />
+                                key='search-etapeoa-box'
+                                firstItem={{id_etape_operation:0, all: true, libelle: 'Tous'}}
+                                load={() => getRequestApi('etapes-oa-mock')}
+                                placeholder={'Etape OA'}
+                                textField='libelle'
+                                valueField='id_etape_operation'
+                                onLoad={(r) => { return r?.elements }}
+                                onChange={(t) => { 
+                                    //changeCqlFilter('quartier', t['nuquart'])
+                                }}
+                            />
 
-                            <DropdownList
+                            <Tabou2Combo
                                 style={{ marginTop: comboMarginTop }}
-                                key="search-etapepa-box"
-                                data={[256, 512]}
-                                placeholder={'Etape PA'} />
+                                key='search-etapepa-box'
+                                firstItem={{id_etape_operation:0, all: null, libelle: 'Tous'}}
+                                load={() => getRequestApi('etapes-pa-mock')}
+                                placeholder={'Etape PA'}
+                                textField='libelle'
+                                valueField='id_etape_operation'
+                                onLoad={(r) => { return r?.elements }}
+                                onChange={(t) => { 
+                                    //changeCqlFilter('quartier', t['nuquart'])
+                                }}
+                            />
                         </FormGroup>
                     </Col>
                 </Row>

@@ -5,6 +5,13 @@ import { layersSelector } from '@mapstore/selectors/layers';
 import { currentTabouFilters, getLayerFilterObj } from '../selectors/tabou2';
 import { changeLayerProperties, updateNode } from "@mapstore/actions/layers";
 
+
+/**
+ * From Tabou2 search panel, apply filter for each Tabou layers.
+ * This action create filter replace filters inside TOC filter panel.
+ * @param {*} action$ 
+ * @param {*} store 
+ */
 export function tabouApplyFilter(action$, store) {
     return action$.ofType(UPDATE_LAYER_PARAMS).switchMap((action) => {
 
@@ -26,6 +33,12 @@ export function tabouApplyFilter(action$, store) {
 }
 
 
+/**
+ * Reset filters for each layers.
+ * This affect layer filter and reset TOC filter panel.
+ * @param {*} action$ 
+ * @param {*} store 
+ */
 export function tabouResetFilter(action$, store) {
     return action$.ofType(RESET_SEARCH_FILTERS).switchMap((action) => {
         const newFilterObj = {'tabou2:v_oa_programme':{},'tabou2:oa_secteur':{}, 'tabou2:za_sae':{}, 'tabou2:zac': {}};

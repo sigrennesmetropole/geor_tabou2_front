@@ -12,14 +12,6 @@ function Tabou2SearchToolbar({ apply, getFiltersObj, reset }) {
             apply(k);
         })
     };
-
-    const resetAll = () => {
-        console.log('RESET');
-        reset();
-        keys(getFiltersObj).forEach(k => {
-            //apply(k);
-        })
-    }
     return (
         <Toolbar
             btnDefaultProps={{
@@ -45,7 +37,7 @@ function Tabou2SearchToolbar({ apply, getFiltersObj, reset }) {
                 {
                     glyph: 'clear-filter',
                     tooltip: 'Supprimer les filtrer',
-                    onClick: resetAll
+                    onClick: reset
                 }
             ]}
         />

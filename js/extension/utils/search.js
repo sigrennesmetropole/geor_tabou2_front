@@ -87,97 +87,12 @@ export function getCqlExpression (val, layer) {
         commune_emprise: `(INTERSECTS(the_geom,collectGeometries(queryCollection('tabou2:commune_emprise', 'the_geom','("code_insee" = ${val})'))))`,
         quartier: `(INTERSECTS(the_geom,collectGeometries(queryCollection('tabou2:quartier', 'the_geom','("nuquart" = ${val})'))))`,
         iris: `(INTERSECTS(the_geom,collectGeometries(queryCollection('tabou2:iris', 'the_geom','("code_iris" = ${val})'))))`,
-        oa_secteur: getEtapeOA(layer, val),
+        etapeOA: getEtapeOA(layer, val),
         etapePA: getEtapePA(layer, val),
-        secteur_sam: `(INTERSECTS(the_geom,collectGeometries(queryCollection('tabou2:secteur_sam', 'the_geom','("nom_secteur" = ${val})'))))`,
-        secteur_speu: `(INTERSECTS(the_geom,collectGeometries(queryCollection('tabou2:secteur_speu', 'the_geom','("nom_secteur" = ${val})'))))`,
-        secteur_sds: `(INTERSECTS(the_geom,collectGeometries(queryCollection('tabou2:secteur_sds', 'the_geom','("nom_secteur" = ${val})'))))`,
-        ref_foncier: `(INTERSECTS(the_geom,collectGeometries(queryCollection('tabou2:ref_foncier', 'the_geom','("nom_secteur" = ${val})'))))`
+        secteur_sam: `(INTERSECTS(the_geom,collectGeometries(queryCollection('tabou2:v_chargedoperation_secteur', 'the_geom','("nom_secteu" = ${val})'))))`,
+        secteur_speu: `(INTERSECTS(the_geom,collectGeometries(queryCollection('tabou2:v_referent_urbaniste_secteur', 'the_geom','("nom_secteu" = ${val})'))))`,
+        secteur_sds: `(INTERSECTS(the_geom,collectGeometries(queryCollection('tabou2:v_instructeur_secteur', 'the_geom','("nom_secteu" = ${val})'))))`,
+        ref_foncier: `(INTERSECTS(the_geom,collectGeometries(queryCollection('tabou2:v_negociateurfoncier_secteur', 'the_geom','("nom" = ${val})'))))`
     }
     return exp[layer];
 }
-
-
-// set commune filter
-export function onChangeCommune (layer, val, layersFilter) {
-    if (!val) return layersFilter
-    console.log('CHANGE COMMUNE');
-    let filterGeom = getNewCrossLayerFilter({
-        mapLayerGeom: 'the_geom',
-        attribute: 'code_insee',
-        operator: '=',
-        type: 'number',
-        value: val,
-        crossGeom: 'the_geom',
-        crossName: 'tabou2:commune_emprise',
-        cqlFilter:`code_insee=${val}`
-    })
-
-    // get new filter
-    layersFilter = getNewFilter(layer, null, [], filterGeom);
-
-    // drop already exist attribute filter on this field
-    //filters = filters.filter(f => f.attribute != 'code_insee');
-
-    return layersFilter;
-};
-
-// set quartier filter
-export function onChangeQuartier (layer, val, layersFilter) {
-    if (!val) return layersFilter
-    const field = 'nuquart';
-    const newFilter = {
-        attribute: field,
-        exception: null,
-        fieldOptions: { valuesCount: 0, currentPage: 1 },
-        groupId: 1,
-        operator: "=",
-        rowId: null,
-        type: 'number', // number, string
-        value: val
-    }
-    
-    layersFilter = getNewFilter(layer, null, [], null);
-
-    if(!layersFilter || !layersFilter.filterFields) return;
-
-    let filters = layersFilter.filterFields;
-    
-    // drop already exist attribute filter on this field
-    filters = filters.filter(f => f.attribute != field);
-    filters.push(newFilter);
-
-    layersFilter.filterFields = filters;
-
-    return layersFilter;
-};
-
-// set quartier filter
-export function onChangeIris (layer, val, layersFilter) {
-    if (!val) return layersFilter
-    const field = 'code_iris';
-    const newFilter = {
-        attribute: field,
-        exception: null,
-        fieldOptions: { valuesCount: 0, currentPage: 1 },
-        groupId: 1,
-        operator: "=",
-        rowId: null,
-        type: 'string', // number, string
-        value: val,
-    }
-    
-    layersFilter = getNewFilter(layer, null, [], null);
-
-    if(!layersFilter || !layersFilter.filterFields) return;
-
-    let filters = layersFilter.filterFields;
-    
-    // drop already exist attribute filter on this field
-    filters = filters.filter(f => f.attribute != field);
-    filters.push(newFilter);
-
-    layersFilter.filterFields = filters;
-
-    return layersFilter;
-};

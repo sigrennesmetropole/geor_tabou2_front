@@ -22,7 +22,6 @@ function Tabou2Combo({
         setBusy(true);
         load().then(result => {
             if (onLoad) {
-                //result = result[searchField];
                 result = onLoad(result);
             }
             if(firstItem) result.unshift(firstItem);
