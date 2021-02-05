@@ -16,7 +16,7 @@ import Tabou2MainPanel from '../components/tabou2panel/Tabou2MainPanel';
 
 import tabou2 from '../reducers/tabou2'
 
-import { tabouApplyFilter } from '../epics/search';
+import { tabouApplyFilter, tabouResetFilter } from '../epics/search';
 import { tabouGetInfoOnClick, tabouLoadIdentifyContent, tabouSetGFIFormat, purgeTabou } from '../epics/identify';
 
 import { CONTROL_NAME } from '../constants';
@@ -83,7 +83,8 @@ export default {
         tabouGetInfoOnClick: tabouGetInfoOnClick,
         tabouLoadIdentifyContent: tabouLoadIdentifyContent,
         tabouSetGFIFormat: tabouSetGFIFormat,
-        purgeTabou: purgeTabou
+        purgeTabou: purgeTabou,
+        tabouResetFilter: tabouResetFilter
     },
     containers: {
         Toolbar: {

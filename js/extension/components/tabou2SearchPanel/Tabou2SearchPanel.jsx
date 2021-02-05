@@ -48,20 +48,7 @@ function Tabou2SearchPanel({ apply, getFiltersObj, setFiltersObj, currentTab, ap
         }
     };
 
-    const changeFilter = (layer, val, doFn, layerFilter) => {
-        if(!layerFilter) {
-            layerFilter = getNewFilter(layer, null, [], null);
-        }
-        let newFilter = doFn(layer, val, layerFilter);
-        applyFilter(newFilter);
-    };
-
-    const getData = () => {
-        getPAFromCQL().then(r => console.log(r));
-    }
-
     const changeCqlFilter = (layer, value) => {
-        //const layers = ['tabou2:v_oa_programme','tabou2:oa_secteur', 'tabou2:za_sae'];
         const layers = keys(currentFilters);
         const cql = getCqlExpression(value, layer);
         let filtersObj = getFiltersObj;
@@ -81,7 +68,7 @@ function Tabou2SearchPanel({ apply, getFiltersObj, setFiltersObj, currentTab, ap
             let CQLStr = keys(allFilters).map(k => allFilters[k]);
             // create WFS request
             const requestParams = {
-                CQL_FILTER: CQLStr.join(' OR '),
+                CQL_FILTER: CQLStr.join(' AND '),
                 SERVICE:'WFS',
                 REQUEST:'GetFeature',
                 TYPENAME: lyr, // tabou2:iris
@@ -114,9 +101,7 @@ function Tabou2SearchPanel({ apply, getFiltersObj, setFiltersObj, currentTab, ap
                 // update filter obj before change layer
                 
                 filtersObj[lyr] = newFilter;
-                console.log(filtersObj)
                 setTabouFilterObj(filtersObj);
-                apply(lyr);
             })
             .catch(error => console.log(error));
         })
@@ -153,7 +138,6 @@ function Tabou2SearchPanel({ apply, getFiltersObj, setFiltersObj, currentTab, ap
                                 onLoad={(r) => { return r?.elements }}
                                 onChange={(t) => {
                                      changeCqlFilter('commune_emprise', t['code_insee']);
-                                     //changeFilter('tabou2:v_oa_programme', t['code_insee'], onChangeCommune, null)
                                     }
                                 }
                             />
@@ -169,7 +153,6 @@ function Tabou2SearchPanel({ apply, getFiltersObj, setFiltersObj, currentTab, ap
                                 valueField='nuquart'
                                 onLoad={(r) => { return r?.elements }}
                                 onChange={(t) => { 
-                                    //changeFilter('tabou2:quartier', t['nuquart'], onChangeQuartier);
                                     changeCqlFilter('quartier', t['nuquart'])
                                 }}
                             />

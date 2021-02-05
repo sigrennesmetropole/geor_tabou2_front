@@ -6,7 +6,8 @@ import {
     LOAD_TABOU_FEATURE_INFO,
     SET_SELECTOR_INDEX,
     SET_TABOU_FILTEROBJ,
-    UPDATE_LAYER_PARAMS
+    UPDATE_LAYER_PARAMS,
+    RESET_SEARCH_FILTERS
 } from '../actions/tabou2';
 
 const initialState = {
@@ -38,11 +39,12 @@ export default function tabou2(state = initialState, action) {
             const { selectorsIndex } = action;
             return set('index', selectorsIndex, state)
         case SET_TABOU_FILTEROBJ:
-            const { layerFilterObj } = action;
             return set('layerFilterObj', layerFilterObj, state)
+        case RESET_SEARCH_FILTERS:
+            console.log('RESET FILTERS OBJ')
+            return set('layerFilterObj', {}, state)
         case UPDATE_LAYER_PARAMS:
             const { layerToFilter } = action;
-            console.log('UPDATE LAYER :' + layerToFilter)
             return set('layerToFilter', layerToFilter, state)
         default:
             return state;

@@ -1,41 +1,25 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { keys } from 'lodash';
 import Toolbar from '@mapstore/components/misc/toolbar/Toolbar';
-import { applySearchQuery, resetSearchFilters } from '../../actions/tabou2';
+import { applyFilterObj, resetSearchFilters } from '../../actions/tabou2';
+import { getLayerFilterObj } from '../../selectors/tabou2';
 
-const filtersBylayer = [
-    {
-        url: 'https://public.sig.rennesmetropole.fr/geoserver/wfs',
-        featureTypeName: 'espub_mob: gev_jeu',
-        groupFields: [{
-            id: 1,
-            logic: 'OR',
-            index: 0
-        }],
-        filterFields: [{ // this will change layers property by these props directly
-            attribute: 'nom',
-            operator: '=',
-            value: 'PLACE SIMONE'
-        }],
-        spatialeField: {
-            method: null,
-            operation: 'INTERSECTS',
-            geometry: null,
-            attribute: 'shape'
-        },
-        crossLayerFilter: null,
-        filterType: "OGC",
-        ogcVersion: "1.1.0"
-    }
-];
-
-function Tabou2SearchToolbar({ applyFilters = () => { }, resetFilters = () => { } }) {
+function Tabou2SearchToolbar({ apply, getFiltersObj, reset }) {
 
     const search = () => {
-        filtersBylayer.forEach((el, i) => {
-            applyFilters(el.url, filtersBylayer[i], el.featureTypeName)
+        keys(getFiltersObj).forEach(k => {
+            apply(k);
         })
     };
+
+    const resetAll = () => {
+        console.log('RESET');
+        reset();
+        keys(getFiltersObj).forEach(k => {
+            //apply(k);
+        })
+    }
     return (
         <Toolbar
             btnDefaultProps={{
@@ -61,7 +45,7 @@ function Tabou2SearchToolbar({ applyFilters = () => { }, resetFilters = () => { 
                 {
                     glyph: 'clear-filter',
                     tooltip: 'Supprimer les filtrer',
-                    onClick: resetFilters
+                    onClick: resetAll
                 }
             ]}
         />
@@ -70,7 +54,8 @@ function Tabou2SearchToolbar({ applyFilters = () => { }, resetFilters = () => { 
 
 export default connect((state) => ({
     // selectors
+    getFiltersObj: getLayerFilterObj(state),
 }), { //actions
-    applyFilters: applySearchQuery,
-    resetFilters: resetSearchFilters
+    apply: applyFilterObj,
+    reset: resetSearchFilters
 })(Tabou2SearchToolbar);
