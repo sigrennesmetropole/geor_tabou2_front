@@ -8,6 +8,8 @@ export const SET_TABOU_FILTERS = "TABOU2:SET_TABOU_FILTERS";
 export const SET_DEFAULT_INFO_FORMAT = "TABOU2:SET_DEFAULT_INFO_FORMAT";
 export const LOAD_TABOU_FEATURE_INFO = "TABOU2:LOAD_TABOU_FEATURE_INFO";
 export const SET_SELECTOR_INDEX = "TABOU2:SET_SELECTOR_INDEX";
+export const SET_TABOU_FILTEROBJ = "TABOU2:SET_TABOU_FILTEROBJ";
+export const UPDATE_LAYER_PARAMS = "TABOU2:UPDATE_LAYER_PARAMS";
 
 /**
  * Triggered on plugin activation
@@ -63,4 +65,14 @@ export const loadTabouFeatureInfo = (response) => ({
 export const setSelectorIndex = (selectorsIndex) => ({
     type: SET_SELECTOR_INDEX,
     selectorsIndex
+});
+
+export const setTabouFilterObj = (layerFilterObj) => ({
+    type: SET_TABOU_FILTEROBJ,
+    layerFilterObj
+});
+
+export const applyFilterObj = (layerToFilter) => ({
+    type: UPDATE_LAYER_PARAMS,
+    layerToFilter
 });

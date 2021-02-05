@@ -5,15 +5,19 @@ import {
     SET_DEFAULT_INFO_FORMAT,
     LOAD_TABOU_FEATURE_INFO,
     SET_SELECTOR_INDEX,
-    PURGE_INFOS
+    SET_TABOU_FILTEROBJ,
+    UPDATE_LAYER_PARAMS
 } from '../actions/tabou2';
 
 const initialState = {
     activeTab: 'search',
-    filterObj: {'PA':{},'OA':{}, 'SA':{}},
+    filterObj: {'tabou2:v_oa_programme':{},'tabou2:oa_secteur':{}, 'tabou2:za_sae':{}, 'tabou2:zac': {}},
     infoFormat: 'text/plain',
     response: {},
-    selectorsIndex: {}
+    selectorsIndex: {},
+    layerFilterObj: {},
+    layerToFilter: ''
+
 }
 
 export default function tabou2(state = initialState, action) {
@@ -33,6 +37,13 @@ export default function tabou2(state = initialState, action) {
         case SET_SELECTOR_INDEX:
             const { selectorsIndex } = action;
             return set('index', selectorsIndex, state)
+        case SET_TABOU_FILTEROBJ:
+            const { layerFilterObj } = action;
+            return set('layerFilterObj', layerFilterObj, state)
+        case UPDATE_LAYER_PARAMS:
+            const { layerToFilter } = action;
+            console.log('UPDATE LAYER :' + layerToFilter)
+            return set('layerToFilter', layerToFilter, state)
         default:
             return state;
     }

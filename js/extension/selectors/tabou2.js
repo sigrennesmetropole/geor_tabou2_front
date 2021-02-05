@@ -22,3 +22,7 @@ export function getTabouResponse(state) {
 export function getTabouIndexSelectors(state) {
     return state?.tabou2.selectorsIndex;
 };
+
+export function getLayerFilterObj(state) {
+    return state?.tabou2.layerFilterObj;
+};

@@ -1,18 +1,20 @@
 import React from 'react';
-import { isEqual, find } from 'lodash';
+import { isEqual, find, keys } from 'lodash';
 import { connect } from 'react-redux';
+import axios from '@mapstore/libs/ajax';
+
 import { Checkbox, Col, Row, ControlLabel, FormGroup, Grid, FormControl } from 'react-bootstrap';
 import { DropdownList, DateTimePicker, Combobox } from 'react-widgets';
-import { currentActiveTabSelector, currentTabouFilters } from '../../selectors/tabou2';
+import { currentActiveTabSelector, currentTabouFilters, getLayerFilterObj } from '../../selectors/tabou2';
 import Tabou2SearchToolbar from './Tabou2SearchToolbar';
 import Tabou2Combo from '../common/Tabou2Combo';
 import utcDateWrapper from '@mapstore/components/misc/enhancers/utcDateWrapper';
 import { getCommunes, getQuartiers, getIris, getPAFromCQL } from '../../api/search';
 import { COMMUNE_LAYER_ID } from '../../constants';
 
-import { setTabouFilters } from '../../actions/tabou2';
+import { setTabouFilters, setTabouFilterObj, applyFilterObj } from '../../actions/tabou2';
 
-import { getNewFilter, getCqlExpression, onChangeCommune, onChangeQuartier, onChangeIris } from '../../utils/search';
+import { getNewFilter, getNewCqlFilter, getCqlExpression, onChangeCommune, onChangeQuartier, onChangeIris } from '../../utils/search';
 
 
 
@@ -22,10 +24,29 @@ const UTCDateTimePicker = utcDateWrapper({
     setDateProp: "onChange"
 })(DateTimePicker);
 
-function Tabou2SearchPanel({ currentTab, applyFilter = () => { }, currentFilters, ...props }) {
+function Tabou2SearchPanel({ apply, getFiltersObj, setFiltersObj, currentTab, applyFilter = () => { }, currentFilters, ...props }) {
     if (currentTab != 'search') return;
     const marginTop = '10px';
     const comboMarginTop = '5px';
+
+    const fieldsId = {
+        'tabou2:v_oa_programme': {
+            id:'objectid',
+            type: 'number'
+        },
+        'tabou2:oa_secteur': {
+            id: 'objectid',
+            type: 'number'
+        },
+        'tabou2:za_sae': {
+            id: 'idza',
+            type: 'string'
+        },
+        'tabou2:zac': {
+            id: 'id_zac',
+            type: 'number'
+        }
+    };
 
     const changeFilter = (layer, val, doFn, layerFilter) => {
         if(!layerFilter) {
@@ -40,10 +61,13 @@ function Tabou2SearchPanel({ currentTab, applyFilter = () => { }, currentFilters
     }
 
     const changeCqlFilter = (layer, value) => {
-        const layers = ['PA','OA','SA'];
+        //const layers = ['tabou2:v_oa_programme','tabou2:oa_secteur', 'tabou2:za_sae'];
+        const layers = keys(currentFilters);
         const cql = getCqlExpression(value, layer);
-
+        let filtersObj = getFiltersObj;
         layers.forEach(lyr => {
+            const idField = fieldsId[lyr].id;
+            const idType = fieldsId[lyr].type;
             if(!currentFilters[lyr]) {
                 currentFilters[lyr] = {};
             }
@@ -51,9 +75,51 @@ function Tabou2SearchPanel({ currentTab, applyFilter = () => { }, currentFilters
             if(value) {
                 currentFilters[lyr][layer] = cql;
             }
+
+            // get WFS features from CQL
+            let allFilters = currentFilters[lyr];
+            let CQLStr = keys(allFilters).map(k => allFilters[k]);
+            // create WFS request
+            const requestParams = {
+                CQL_FILTER: CQLStr.join(' OR '),
+                SERVICE:'WFS',
+                REQUEST:'GetFeature',
+                TYPENAME: lyr, // tabou2:iris
+                OUTPUTFORMAT:'application/json',
+                VERSION: '1.0.0'
+            };
+            let paramsToStr = keys(requestParams).map(k => `${k}=${requestParams[k]}`);
+            axios.post('https://georchestra.example.org/geoserver/ows', paramsToStr.join('&'), {
+                    timeout: 60000,
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+            }).then(response => {
+                // read features id to filter toc layer
+                let ids = [];
+                let idsCql = '';
+                if(response.data && response.data.totalFeatures) {
+                    ids = response.data.features.map(feature => feature?.properties[idField] || '');
+                    ids = ids.filter(id => id);
+                    idsCql = idType === 'string' ? ids.map(i => `'${i}'`) : ids;
+                    idsCql = idsCql.join(',');
+                }
+                let geomFilter = getNewCqlFilter({
+                    mapLayerGeom: 'the_geom',
+                    crossGeom: 'the_geom',
+                    crossName: lyr,
+                    cqlFilter:`${idField} IN (${idsCql})`
+                })
+                // replace current layer filter
+                let newFilter = getNewFilter(lyr, null, [], null);
+                newFilter.crossLayerFilter = geomFilter;
+                // update filter obj before change layer
+                
+                filtersObj[lyr] = newFilter;
+                console.log(filtersObj)
+                setTabouFilterObj(filtersObj);
+                apply(lyr);
+            })
+            .catch(error => console.log(error));
         })
-        setTabouFilters(currentFilters);
-        console.log(currentFilters);
     }
 
     return (
@@ -86,7 +152,8 @@ function Tabou2SearchPanel({ currentTab, applyFilter = () => { }, currentFilters
                                 valueField='code_insee'
                                 onLoad={(r) => { return r?.elements }}
                                 onChange={(t) => {
-                                     changeCqlFilter('commune_emprise', t['code_insee'])
+                                     changeCqlFilter('commune_emprise', t['code_insee']);
+                                     //changeFilter('tabou2:v_oa_programme', t['code_insee'], onChangeCommune, null)
                                     }
                                 }
                             />
@@ -297,8 +364,11 @@ export default connect((state) => ({
     // searchFilter: getSearchFilters
     currentTab: currentActiveTabSelector(state),
     currentFilters: currentTabouFilters(state),
+    getFiltersObj: getLayerFilterObj(state),
     getState: () => state
 }), {
     /*PASS EVT AND METHODS HERE*/
-    applyFilter: setTabouFilters
+    applyFilter: setTabouFilters,
+    setFiltersObj: setTabouFilterObj,
+    apply: applyFilterObj 
 })(Tabou2SearchPanel);
