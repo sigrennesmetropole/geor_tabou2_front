@@ -4,15 +4,14 @@ import { connect } from 'react-redux';
 import axios from '@mapstore/libs/ajax';
 
 import { Checkbox, Col, Row, ControlLabel, FormGroup, Grid } from 'react-bootstrap';
-import { DropdownList, DateTimePicker, Combobox } from 'react-widgets';
+import { DateTimePicker, Combobox } from 'react-widgets';
 import { currentActiveTabSelector, currentTabouFilters, getLayerFilterObj } from '../../selectors/tabou2';
 import Tabou2SearchToolbar from './Tabou2SearchToolbar';
 import Tabou2Combo from '../common/Tabou2Combo';
 import utcDateWrapper from '@mapstore/components/misc/enhancers/utcDateWrapper';
-import { getRequestApi, getCommunes, getQuartiers, getIris, getEtapeOA, getEtapePA, getPlui, getNatures } from '../../api/search';
-import { COMMUNE_LAYER_ID } from '../../constants';
+import { getRequestApi } from '../../api/search';
 
-import { setTabouFilters, setTabouFilterObj, applyFilterObj } from '../../actions/tabou2';
+import { setTabouFilters, setTabouFilterObj, applyFilterObj, resetSearchFilters } from '../../actions/tabou2';
 
 import { getNewFilter, getNewCqlFilter, getCqlExpression } from '../../utils/search';
 
@@ -24,7 +23,7 @@ const UTCDateTimePicker = utcDateWrapper({
     setDateProp: "onChange"
 })(DateTimePicker);
 
-function Tabou2SearchPanel({ apply, getFiltersObj, setFiltersObj, currentTab, applyFilter = () => { }, currentFilters, ...props }) {
+function Tabou2SearchPanel({ reset, apply, getFiltersObj, setFiltersObj, currentTab, applyFilter = () => { }, currentFilters, ...props }) {
     if (currentTab != 'search') return;
     const marginTop = '10px';
     const comboMarginTop = '5px';
@@ -48,6 +47,12 @@ function Tabou2SearchPanel({ apply, getFiltersObj, setFiltersObj, currentTab, ap
         }
     };
 
+    /**
+     * Get info from request and set MapStore filters
+     * TODO : take no cql feature into account - call TOC layers to get filters already set
+     * @param {*} layer 
+     * @param {*} value 
+     */
     const changeCqlFilter = (layer, value) => {
         const layers = keys(currentFilters);
         const cql = getCqlExpression(value, layer);
@@ -66,6 +71,13 @@ function Tabou2SearchPanel({ apply, getFiltersObj, setFiltersObj, currentTab, ap
             // get WFS features from CQL
             let allFilters = currentFilters[lyr];
             let CQLStr = keys(allFilters).map(k => allFilters[k]);
+            if(!CQLStr.length) {
+                // Manage case when user select "All" value for each combo
+                // TODO : take exist filter or remove layerFilter param from layer
+                let newFilter = getNewFilter(lyr, null, [], null);
+                filtersObj[lyr] = newFilter;
+                return setTabouFilterObj(filtersObj);
+            }
             // create WFS request
             const requestParams = {
                 CQL_FILTER: CQLStr.join(' AND '),
@@ -99,7 +111,6 @@ function Tabou2SearchPanel({ apply, getFiltersObj, setFiltersObj, currentTab, ap
                 let newFilter = getNewFilter(lyr, null, [], null);
                 newFilter.crossLayerFilter = geomFilter;
                 // update filter obj before change layer
-                
                 filtersObj[lyr] = newFilter;
                 setTabouFilterObj(filtersObj);
             })
@@ -258,7 +269,7 @@ function Tabou2SearchPanel({ apply, getFiltersObj, setFiltersObj, currentTab, ap
 
                             <Tabou2Combo
                                 style={{ marginTop: comboMarginTop }}
-                                key='search-etapeoa-box'
+                                key='search-foncier-box'
                                 firstItem={{id:0, all: true, nom_secteur: 'Tous'}}
                                 load={() => getRequestApi('secteurs-foncier')}
                                 placeholder={'Sec. Foncier'}
@@ -411,5 +422,6 @@ export default connect((state) => ({
     /*PASS EVT AND METHODS HERE*/
     applyFilter: setTabouFilters,
     setFiltersObj: setTabouFilterObj,
-    apply: applyFilterObj 
+    apply: applyFilterObj,
+    reset: resetSearchFilters
 })(Tabou2SearchPanel);

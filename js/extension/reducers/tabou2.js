@@ -41,7 +41,6 @@ export default function tabou2(state = initialState, action) {
         case SET_TABOU_FILTEROBJ:
             return set('layerFilterObj', layerFilterObj, state)
         case RESET_SEARCH_FILTERS:
-            console.log('RESET FILTERS OBJ')
             return set('layerFilterObj', {}, state)
         case UPDATE_LAYER_PARAMS:
             const { layerToFilter } = action;
