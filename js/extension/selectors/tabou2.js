@@ -26,3 +26,7 @@ export function getTabouIndexSelectors(state) {
 export function getLayerFilterObj(state) {
     return state?.tabou2.layerFilterObj;
 };
+
+export function getPluginCfg(state) {
+    return state?.tabou2.pluginCfg;
+};

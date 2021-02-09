@@ -16,6 +16,8 @@ import Tabou2MainPanel from '../components/tabou2panel/Tabou2MainPanel';
 
 import tabou2 from '../reducers/tabou2'
 
+import { setUp } from '../actions/tabou2';
+
 import { tabouApplyFilter, tabouResetFilter } from '../epics/search';
 import { tabouGetInfoOnClick, tabouLoadIdentifyContent, tabouSetGFIFormat, purgeTabou } from '../epics/identify';
 
@@ -46,6 +48,8 @@ class Tabou2Panel extends React.Component {
     };
 
     render() {
+        // TODO : user compose as cadastrapp
+        //this.props.setCfg(this.props.pluginCfg);
         return (
             <Tabou2MainPanel dockStyle={this.props.dockStyle} size={this.props.size} {...this.props} />
         )
@@ -70,6 +74,7 @@ const Tabou2Plugin = connect((state) => ({
     onSyncLayers: syncLayers,
     onSelectLayers: selectLayers,
     onQuery: search,
+    setCfg: setUp,
     getState: state => state
 })(Tabou2Panel);
 

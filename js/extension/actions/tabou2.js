@@ -10,6 +10,10 @@ export const SET_SELECTOR_INDEX = "TABOU2:SET_SELECTOR_INDEX";
 export const SET_TABOU_FILTEROBJ = "TABOU2:SET_TABOU_FILTEROBJ";
 export const UPDATE_LAYER_PARAMS = "TABOU2:UPDATE_LAYER_PARAMS";
 
+
+export const setUp = () => ({
+    type: SETUP
+});
 /**
  * Triggered when plugin is close
  */
