@@ -23,9 +23,9 @@ function GetToolContainer({ ...props }) {
     return toolsContainerList[props.currentTab];
 }
 
-function toolContainer({ currentTab, data = {}, allIndex = {} }) {
+function toolContainer({ currentTab, data = {}, allIndex = {}, ...props }) {
     return (
-        <GetToolContainer currentTab={currentTab} data={keys(data).map(e => data[e])} />
+        <GetToolContainer currentTab={currentTab} data={keys(data).map(e => data[e])} {...props} />
     )
 }
 
@@ -34,8 +34,5 @@ export default connect(
         currentTab: currentActiveTabSelector(state),
         data: getTabouResponse(state),
         allIndex: getTabouIndexSelectors(state)
-    }),
-    {
-
-    }
+    }), {}
 )(toolContainer);

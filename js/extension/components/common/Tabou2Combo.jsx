@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Combobox } from 'react-widgets';
-import { find, isObject } from 'lodash';
-import contenttabs from '@mapstore/epics/contenttabs';
 
 function Tabou2Combo({
     style = {},

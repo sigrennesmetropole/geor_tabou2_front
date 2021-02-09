@@ -1,4 +1,4 @@
-import {keys } from 'lodash';
+import { keys, get } from 'lodash';
 
 import { currentTabouFilters } from '../selectors/tabou2';
 
@@ -68,31 +68,28 @@ export function getNewCqlFilter (props) {
     }
 }
 
-export function getEtapeOA (oa, val) {
-    if(!oa) { // for PA, SA layers
-        return `(INTERSECTS(the_geom,collectGeometries(queryCollection('tabou2:oa_secteur', 'the_geom','("code_etape" = ${val})'))))`
-    } // for OA
-    return `("code_etape" = ${val})`;
-}
-
-export function getEtapePA (pa, val) {
-    if(!pa) { // for PA, SA layers
-        return `(INTERSECTS(the_geom,collectGeometries(queryCollection('tabou2:pa_secteur', 'the_geom','("code_etape" = ${val})'))))`;
-    } // for OA
-    return `("code_etape" = ${val})`;
-}
-
-export function getCqlExpression (val, layer) {
-    const exp = {
-        commune_emprise: `(INTERSECTS(the_geom,collectGeometries(queryCollection('tabou2:commune_emprise', 'the_geom','("code_insee" = ${val})'))))`,
-        quartier: `(INTERSECTS(the_geom,collectGeometries(queryCollection('tabou2:quartier', 'the_geom','("nuquart" = ${val})'))))`,
-        iris: `(INTERSECTS(the_geom,collectGeometries(queryCollection('tabou2:iris', 'the_geom','("code_iris" = ${val})'))))`,
-        etapeOA: getEtapeOA(layer, val),
-        etapePA: getEtapePA(layer, val),
-        secteur_sam: `(INTERSECTS(the_geom,collectGeometries(queryCollection('tabou2:v_chargedoperation_secteur', 'the_geom','("nom_secteu" = ${val})'))))`,
-        secteur_speu: `(INTERSECTS(the_geom,collectGeometries(queryCollection('tabou2:v_referent_urbaniste_secteur', 'the_geom','("nom_secteu" = ${val})'))))`,
-        secteur_sds: `(INTERSECTS(the_geom,collectGeometries(queryCollection('tabou2:v_instructeur_secteur', 'the_geom','("nom_secteu" = ${val})'))))`,
-        ref_foncier: `(INTERSECTS(the_geom,collectGeometries(queryCollection('tabou2:v_negociateurfoncier_secteur', 'the_geom','("nom" = ${val})'))))`
+export function getCQL (type, geomA, layer, geomB, field, value) {
+    if(type === 'string') {
+        value = `''${value}''`;
     }
-    return exp[layer];
+    return `(INTERSECTS(${geomA},collectGeometries(queryCollection('${layer}', '${geomB}','${field} = ${value}'))))`;
+}
+
+export function getTabouLayersInfos(config) {
+    if(!config) return;
+    let infos = {};
+    let layers = keys(config);
+    if(!layers.length) return infos;
+    layers.forEach(lyr => {
+        return infos[get(config, `${lyr}.nom`)] = {
+            id: get(config, `${lyr}.idField`),
+            type: get(config, `${lyr}.idType`),
+            geom: get(config, `${lyr}.geomField`)
+        }
+    });
+    return infos;
+}
+
+export function getGeoServerUrl(props) {
+    return props?.pluginCfg?.geoserverURL || `https://${window.location.hostname}/geoserver`;
 }

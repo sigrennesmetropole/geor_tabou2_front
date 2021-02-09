@@ -18,7 +18,6 @@ const initialState = {
     selectorsIndex: {},
     layerFilterObj: {},
     layerToFilter: ''
-
 }
 
 export default function tabou2(state = initialState, action) {

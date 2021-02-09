@@ -58,7 +58,6 @@ class Tabou2Panel extends React.Component {
  * FROM MAPSTORE2 ANNOTATION PLUGIN STRUCTURE
  * 
  */
-
 const Tabou2Plugin = connect((state) => ({
     active: state => (state.controls && state.controls[CONTROL_NAME] && state.controls[CONTROL_NAME].enabled) || (state[CONTROL_NAME] && state[CONTROL_NAME].closing) || false,
     dockStyle: state => mapLayoutValuesSelector(state, { right: true, bottom: true, left: true }), // TODO : Fix - to changed right style of tools toolbar
@@ -70,9 +69,9 @@ const Tabou2Plugin = connect((state) => ({
     changeLayerProperties: changeLayerProperties,
     onSyncLayers: syncLayers,
     onSelectLayers: selectLayers,
-    onQuery: search
-
-})(Tabou2Panel)
+    onQuery: search,
+    getState: state => state
+})(Tabou2Panel);
 
 export default {
     name: "Tabou2",
