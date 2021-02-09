@@ -30,11 +30,6 @@ function Tabou2SearchToolbar({ apply, getFiltersObj, reset }) {
                     onClick: search
                 },
                 {
-                    glyph: 'floppy-disk',
-                    tooltip: 'Sauvegarder',
-                    onClick: () => { console.log('save'); }
-                },
-                {
                     glyph: 'clear-filter',
                     tooltip: 'Supprimer les filtrer',
                     onClick: reset

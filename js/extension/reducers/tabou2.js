@@ -1,5 +1,6 @@
 import { set } from '@mapstore/utils/ImmutableUtils';
 import {
+    SETUP,
     SET_MAIN_ACTIVE_TAB,
     SET_TABOU_FILTERS,
     SET_DEFAULT_INFO_FORMAT,
@@ -17,11 +18,15 @@ const initialState = {
     response: {},
     selectorsIndex: {},
     layerFilterObj: {},
-    layerToFilter: ''
+    layerToFilter: '',
+    pluginCfg: {}
 }
 
 export default function tabou2(state = initialState, action) {
     switch (action.type) {
+        case SETUP:
+            const { pluginCfg } = action;
+            return set(`pluginCfg`, pluginCfg, state);
         case SET_MAIN_ACTIVE_TAB:
             const { activeTab } = action;
             return set(`activeTab`, activeTab, state);

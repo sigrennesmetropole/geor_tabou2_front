@@ -21,7 +21,7 @@ import {
 
 import { TOGGLE_CONTROL } from '@mapstore/actions/controls';
 
-import { isTabou2Activate, defaultInfoFormat, getTabouResponse } from '../selectors/tabou2';
+import { isTabou2Activate, defaultInfoFormat, getTabouResponse, getPluginCfg } from '../selectors/tabou2';
 
 import { loadTabouFeatureInfo, setDefaultInfoFormat } from '../actions/tabou2';
 import FilterLayer from '@mapstore/plugins/FilterLayer';
@@ -57,9 +57,13 @@ export function tabouLoadIdentifyContent(action$, store) {
         .switchMap((action) => {
             if (action.layer && action.layer.id) {
                 const isIdentifyTabName = store.getState()?.tabou2.activeTab === 'identify';
+                const cfg = getPluginCfg(store.getState());
                 let resp = getTabouResponse(store.getState());
                 resp[action.layer.id] = action;
-                return Rx.Observable.of(loadTabouFeatureInfo(resp)).concat(Rx.Observable.of(closeIdentify()));
+                
+                return Rx.Observable.of(loadTabouFeatureInfo(resp)).concat(
+                   cfg.showIdentify ?  Rx.Observable.empty(): Rx.Observable.of(closeIdentify())
+                );
             }
         })
 }
