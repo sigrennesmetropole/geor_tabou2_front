@@ -8,35 +8,15 @@ import {
     selectedNodesSelector
 } from '@mapstore/selectors/layers';
 
-import {
-    responsesSelector,
-    generalInfoFormatSelector, itemIdSelector, overrideParamsSelector,
-    isHighlightEnabledSelector,
-
-    ERROR_FEATURE_INFO, GET_VECTOR_INFO,
-    CLOSE_IDENTIFY, TOGGLE_HIGHLIGHT_FEATURE,
-    EDIT_LAYER_FEATURES,
-    UPDATE_FEATURE_INFO_CLICK_POINT,
-    featureInfoClick, updateCenterToMarker,
-    exceptionsFeatureInfo, loadFeatureInfo,
-    noQueryableLayers, getVectorInfo,
-    showMapinfoMarker, hideMapinfoMarker, setCurrentEditFeatureQuery, identifyOptionsSelector,
-    SET_MAP_TRIGGER, CLEAR_WARNING
-} from '@mapstore/selectors/mapInfo';
+import { generalInfoFormatSelector } from '@mapstore/selectors/mapInfo';
 
 import { updateUserPlugin } from '@mapstore/actions/context';
-
-import { getFeatureInfo } from '@mapstore/api/identify';
-
-import { localizedLayerStylesEnvSelector } from '@mapstore/selectors/localizedLayerStyles';
-
-import { buildIdentifyRequest, filterRequestParams } from '@mapstore/utils/MapInfoUtils';
 
 import {
     LOAD_FEATURE_INFO,
     FEATURE_INFO_CLICK,
     closeIdentify,
-    changeMapInfoFormat, PURGE_MAPINFO_RESULTS, purgeMapInfoResults, newMapInfoRequest, errorFeatureInfo
+    changeMapInfoFormat
 } from "@mapstore/actions/mapInfo";
 
 import { TOGGLE_CONTROL } from '@mapstore/actions/controls';
@@ -109,7 +89,11 @@ export function tabouSetGFIFormat(action$, store) {
     });
 }
 
-
+/**
+ * Purge info from Tabou identify panel.
+ * @param {any} action$ 
+ * @param {any} store 
+ */
 export function purgeTabou(action$, store) {
     return action$.ofType(FEATURE_INFO_CLICK).switchMap(() => {
         return Rx.Observable.of(loadTabouFeatureInfo({}));

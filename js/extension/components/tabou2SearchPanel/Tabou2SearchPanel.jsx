@@ -31,8 +31,8 @@ function Tabou2SearchPanel({ reset, apply, getFiltersObj, setFiltersObj, current
     const config = props.pluginCfg.searchCfg;
 
     /**
-     * Get info from request and set MapStore filters
-     * TODO : take no cql feature into account - call TOC layers to get filters already set
+     * Get info from request and set / replace MapStore filters for each tabou2 layers
+     * TODO : Improve Rest CQL filter action
      * @param {*} layer 
      * @param {*} value 
      */
@@ -57,7 +57,6 @@ function Tabou2SearchPanel({ reset, apply, getFiltersObj, setFiltersObj, current
             let CQLStr = keys(allFilters).map(k => allFilters[k]);
             if(!CQLStr.length) {
                 // Manage case when user select "All" value for each combo
-                // TODO : take exist filter or remove layerFilter param from layer - to define with MOA
                 let newFilter = getNewFilter(lyr, null, [], null);
                 filtersObj[lyr] = newFilter;
                 return setTabouFilterObj(filtersObj);
