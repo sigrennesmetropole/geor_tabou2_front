@@ -1,46 +1,42 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { PanelGroup, Panel } from 'react-bootstrap';
-import { flatMap, isEmpty } from 'lodash';
+import { keys, isEmpty, get } from 'lodash';
 import { CSS } from './tabou2Identify-css';
+
+import Tabou2IdentContent from './Tabou2IdentContent';
+
+import { ACCORDIONS, ACC_ATTRIBUTE_IDENT, ACC_ATTRIBUTE_DESCRIBE } from '../../constants';
 
 import {
     currentFeatureSelector,
-    responsesSelector
 } from '@mapstore/selectors/mapInfo';
-
-import { getTabouResponse, getTabouIndexSelectors } from '../../selectors/tabou2';
-import { ID_SELECTOR } from '../../constants';
-
 
 
 function Tabou2IdentifyContent({
-    defaultActiveKey = [1],
+    defaultActiveKey = [0],
     cssLoaded = false,
     response,
-    loadIndex,
-    layer
+    loadIndex = 0,
+    layer,
+    ...props
 }) {
+    let selectedLayers = null;
+    let layerName = '';
+    layerName = layer || keys(response)[loadIndex];
+    selectedLayers = response[layerName];
+
     const [status, setStatus] = useState({});
-    const [features, setFeatures] = useState([]);
+    const setPanelStatus = (panelId, val) => {
+        status[panelId] = val;
+        setStatus(status);
+    };
 
+    /**
+     * load CSS
+     */
     useEffect(() => {
-        let idx = layer || 0
-        if ((layer || 0) && !isEmpty(response)) {
-            let dataFilter = response.filter(d => d?.layer?.name === layer);
-            setFeatures(dataFilter.length ? dataFilter[0].data?.features : []);
-        }
-    }, [layer, response]);
-
-    useEffect(() => {
-        if (loadIndex && loadIndex > -1 && !isEmpty(response) && !layer) {
-            console.log('FIRST LOAD');
-            setFeatures(response[loadIndex].data?.features || []);
-        }
-    }, [loadIndex, response, layer]);
-
-    useEffect(() => {
-        if (!cssLoaded) { // load CSS
+        if (!cssLoaded) {
             let script = document.createElement('style');
             script.innerHTML = CSS.join("\n");
             var head = document.getElementsByTagName('head')[0];
@@ -49,43 +45,44 @@ function Tabou2IdentifyContent({
         }
     }, []);
 
+    const GetAttributesPanel = ({ index = 0, statusObj = [], item = {} }) => {
+        const isOpen = defaultActiveKey.indexOf(index) > -1 ? true : false;
+        setPanelStatus(index, isOpen ? 'minus' : 'plus');
 
-    const setPanelStatus = (panelId, val) => {
-        status[panelId] = val;
-        setStatus(status);
-    }
-
-    // Thematiques : general / logement / habitat / droit des sols / activité
-    const GetPanel = ({ feature = {}, i = 0, statusObj = [] }) => {
-        const isOpen = defaultActiveKey.indexOf(i) > -1 ? true : false;
-        setPanelStatus(i, isOpen ? 'minus' : 'plus');
-        if (!feature || !feature.properties) return null;
         return (
             <PanelGroup
-                key={i} defaultActiveKey={isOpen ? i : null} accordion>
+                key={'panelgp-'+index} defaultActiveKey={isOpen ? index : null} accordion>
                 <Panel
                     className='idContentHeader'
                     header={(
-                        <span onClick={() => setPanelStatus(i, statusObj[i] == 'plus' ? 'minus' : 'plus')}>
+                        <span onClick={() => setPanelStatus(index, statusObj[index] == 'plus' ? 'minus' : 'plus')}>
                             <label>
-                                Objet - {feature.id}
+                                {item.title}
                             </label>
                         </span>
                     )}
-                    eventKey={i}>
-                    {Object.keys(feature.properties).map(props => (<span>{props}:{feature.properties[props]} <br /> </span>))}
+                    eventKey={index}>
+                    <Tabou2IdentContent key={'form-ident-'+index}/>
                 </Panel>
             </PanelGroup>
         )
     }
-    return (
 
+    return (
         <>
-            {   // create one acordion by item
-                features.map((feature, id) => <GetPanel key={'panelGroup-' + id} statusObj={status} i={id} feature={feature} />)
+            {
+                isEmpty(response) ? null :
+                    keys(props.layersCfg).filter(k => layerName === props.layersCfg[k].nom).map((tabouLayer, idx) => {
+                        return ACCORDIONS.filter(acc => !acc.layers || acc?.layers.indexOf(tabouLayer) > -1).map((acc, idx) => (
+                            <GetAttributesPanel
+                                index={'attr-panel-'+idx}
+                                statusObj={status}
+                                item={acc}
+                            />
+                        ))
+                    })
             }
         </>
-
     )
 }
 export default connect((state) => ({

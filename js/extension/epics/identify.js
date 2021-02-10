@@ -1,5 +1,5 @@
 import * as Rx from 'rxjs';
-import { get, find, reverse } from 'lodash';
+import { get, find, reverse, keys } from 'lodash';
 import { CONTROL_NAME } from '../constants';
 
 import {
@@ -51,15 +51,51 @@ export function tabouGetInfoOnClick(action$, store) {
  * @param {*} action$ 
  * @param {*} store 
  */
+export function tabouLoadIdentifyContentOld(action$, store) {
+    return action$.ofType(LOAD_FEATURE_INFO)
+        .filter(action => isTabou2Activate(store.getState()))
+        .switchMap((action) => {
+            if (action.layer && action.layer.id) {
+                const cfg = getPluginCfg(store.getState());
+                let resp = getTabouResponse(store.getState());
+                resp[action.layer.id] = action;
+
+                console.log(resp);
+                resp = keys(resp).forEach(r => {
+                    if(!resp[r].data?.features.length) {
+                        delete resp[r];
+                    }
+                });
+                console.log(resp);
+
+                
+                return Rx.Observable.of(loadTabouFeatureInfo(resp)).concat(
+                   cfg.showIdentify ?  Rx.Observable.empty(): Rx.Observable.of(closeIdentify())
+                );
+            }
+        })
+}
+
+/**
+ * Catch GFI response on identify load event and close identify if Tabou2 identify tabs is selected
+ * @param {*} action$ 
+ * @param {*} store 
+ */
 export function tabouLoadIdentifyContent(action$, store) {
     return action$.ofType(LOAD_FEATURE_INFO)
         .filter(action => isTabou2Activate(store.getState()))
         .switchMap((action) => {
             if (action.layer && action.layer.id) {
-                const isIdentifyTabName = store.getState()?.tabou2.activeTab === 'identify';
                 const cfg = getPluginCfg(store.getState());
                 let resp = getTabouResponse(store.getState());
-                resp[action.layer.id] = action;
+                
+                // delete response for this GFI layer response
+                delete resp[action.layer.name];
+
+                // just keep response with features
+                if(action?.data?.features && action.data.features.length) {
+                    resp[action.layer.name] = action;    
+                }
                 
                 return Rx.Observable.of(loadTabouFeatureInfo(resp)).concat(
                    cfg.showIdentify ?  Rx.Observable.empty(): Rx.Observable.of(closeIdentify())
@@ -101,5 +137,19 @@ export function tabouSetGFIFormat(action$, store) {
 export function purgeTabou(action$, store) {
     return action$.ofType(FEATURE_INFO_CLICK).switchMap(() => {
         return Rx.Observable.of(loadTabouFeatureInfo({}));
+    });
+}
+
+
+/**
+ * Purge info from Tabou identify panel.
+ * @param {any} action$ 
+ * @param {any} store 
+ */
+export function setAccordions(action$, store) {
+    return action$.ofType(SET_SELECTOR_INDEX).switchMap((action) => {
+        let cfg = getPluginCfg(store.getState());
+        let layerType = keys(cfg.layersCfg).map((lyr) => cfg.layersCfg[lyr].nom == action.layer);
+        return Rx.Observable.empty();
     });
 }

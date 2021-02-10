@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import Select from 'react-select';
-import { isEmpty, keys, isEqual } from 'lodash';
+import { isEmpty, isEqual } from 'lodash';
 import { DropdownList } from 'react-widgets';
 
 function Tabou2Selector({
@@ -15,8 +14,11 @@ function Tabou2Selector({
     const [options, setOptions] = useState([]);
 
     useEffect(() => { // options
-        if (!isEmpty(data)) {
-            setOptions(createOptions(data));
+        if (!isEmpty(data) && createOptions) {
+            let newOptions = createOptions(data);
+            if(!isEqual(newOptions, options)) {
+                setOptions(newOptions);
+            }
             //setIndex(0);
         }
     }, [data, setIndex]);
@@ -38,4 +40,5 @@ function Tabou2Selector({
 
 }
 
-export default connect((state) => ({}), {})(Tabou2Selector);
+export default connect((state) => ({
+}), {})(Tabou2Selector);
