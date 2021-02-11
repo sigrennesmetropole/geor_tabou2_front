@@ -11,7 +11,8 @@ module.exports = function karmaConfig(config) {
         singleRun: false,
         alias: {
             "@mapstore": path.resolve(__dirname, "MapStore2", "web", "client"),
-            "@js": path.resolve(__dirname, "js")
+            "@js": path.resolve(__dirname, "js"),
+            "@ext": path.resolve(__dirname, "js", "extension")
         }
     }));
 };

@@ -11,6 +11,7 @@ module.exports = {
     // to compile properly also mapstore dependencies
     alias: {
         "@mapstore": path.resolve(__dirname, '..', '..', "MapStore2", "web", "client"),
-        "@js": path.resolve(__dirname, '..', '..', "js")
+        "@js": path.resolve(__dirname, '..', '..', "js"),
+        "@ext": path.resolve(__dirname, "js", "extension")
     }
 };
