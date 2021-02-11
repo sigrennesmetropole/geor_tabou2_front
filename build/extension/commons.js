@@ -12,6 +12,6 @@ module.exports = {
     alias: {
         "@mapstore": path.resolve(__dirname, '..', '..', "MapStore2", "web", "client"),
         "@js": path.resolve(__dirname, '..', '..', "js"),
-        "@ext": path.resolve(__dirname, "js", "extension")
+        "@ext": path.resolve(__dirname, '..', '..',"js", "extension")
     }
 };
