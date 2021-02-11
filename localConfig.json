@@ -4,8 +4,6 @@
     "useCORS": [
       "https://gis.jdev.fr",
       "https://public.sig.rennesmetropole.fr",
-      "https://georchestra.example.org",
-      "http://georchestra.example.org",
       "https://localhost:8380",
       "https://jdev.stoplight.io",
       "http://demo.geo-solutions.it/geoserver",
@@ -344,7 +342,7 @@
       {
         "name": "Tabou2",
         "cfg": {
-          "geoserverURL": "https://georchestra.example.org/geoserver",
+          "geoserverURL": "https://gis.jdev.fr/geoserver",
           "showIdentify": false,
           "layersCfg": {
             "layerPA": {
