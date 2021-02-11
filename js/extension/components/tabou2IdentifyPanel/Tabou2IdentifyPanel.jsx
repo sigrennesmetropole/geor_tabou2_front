@@ -5,7 +5,6 @@ import { Row, Grid } from 'react-bootstrap';
 import { DropdownList } from 'react-widgets';
 
 import { currentActiveTabSelector } from '../../selectors/tabou2';
-import Tabou2Selector from '../common/Tabou2Selector';
 import { getValidator } from '@mapstore/utils/MapInfoUtils';
 import Tabou2IdentifyToolbar from './Tabou2IdentifyToolbar';
 import Tabou2IdentifyContent from './Tabou2IdentifyContent';
@@ -14,8 +13,6 @@ import { setSelectorIndex } from '../../actions/tabou2';
 import { ID_SELECTOR } from '../../constants';
 
 import { createOptions } from '../../utils/identify';
-
-import { generalInfoFormatSelector } from '@mapstore/selectors/mapInfo';
 
 function Tabou2IdentifyPanel({
     currentTab,
@@ -30,7 +27,6 @@ function Tabou2IdentifyPanel({
     const defaultIndex = 0;
 
     const changeIndex = (clicked, allIndex) => {
-        console.log('Index change');
         allIndex[ID_SELECTOR] = clicked?.name;
         setIndex(allIndex);
     }
@@ -66,9 +62,7 @@ function Tabou2IdentifyPanel({
 export default connect((state) => ({
     currentTab: currentActiveTabSelector(state),
     getAllIndex: getTabouIndexSelectors(state),
-    getInfoFormat: generalInfoFormatSelector(state),
-    response: getTabouResponse(state),
-    config: getPluginCfg(state)
+    response: getTabouResponse(state)
 }), {
     setIndex: setSelectorIndex
 })(Tabou2IdentifyPanel);

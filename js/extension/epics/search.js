@@ -1,6 +1,6 @@
 import * as Rx from 'rxjs';
 import { keys } from 'lodash';
-import { RESET_SEARCH_FILTERS, UPDATE_LAYER_PARAMS, setTabouFilterObj, applyFilterObj  } from '../actions/tabou2';
+import { RESET_SEARCH_FILTERS, UPDATE_LAYER_PARAMS, setTabouFilterObj, setTabouFilters } from '../actions/tabou2';
 import { layersSelector } from '@mapstore/selectors/layers';
 import { currentTabouFilters, getLayerFilterObj } from '../selectors/tabou2';
 import { changeLayerProperties, updateNode } from "@mapstore/actions/layers";
@@ -41,13 +41,10 @@ export function tabouApplyFilter(action$, store) {
  */
 export function tabouResetFilter(action$, store) {
     return action$.ofType(RESET_SEARCH_FILTERS).switchMap((action) => {
-        const newFilterObj = {'tabou2:v_oa_programme':{},'tabou2:oa_secteur':{}, 'tabou2:za_sae':{}, 'tabou2:zac': {}};
-        let filterObj = setTabouFilterObj(newFilterObj);
-        const layers = keys(newFilterObj);
-
+        const layers = keys(currentTabouFilters(store.getState()));
         const tocLayers = layersSelector(store.getState()) ?? [];
         const layersId = tocLayers.filter(layer => layers.indexOf(layer.name) > -1).map(layer => layer.id);
-                
+
         return Rx.Observable.from((layersId)).mergeMap(id => {
             return Rx.Observable.of(changeLayerProperties(id, { layerFilter: {} }))
         });

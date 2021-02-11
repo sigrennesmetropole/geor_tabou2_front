@@ -11,7 +11,7 @@ import Tabou2Combo from '../common/Tabou2Combo';
 import utcDateWrapper from '@mapstore/components/misc/enhancers/utcDateWrapper';
 import { getRequestApi } from '../../api/search';
 
-import { setTabouFilters, setTabouFilterObj, applyFilterObj, resetSearchFilters } from '../../actions/tabou2';
+import { setTabouFilterObj, setTabouFilters } from '../../actions/tabou2';
 
 import { getNewFilter, getNewCqlFilter, getGeoServerUrl, getCQL, getTabouLayersInfos } from '../../utils/search';
 
@@ -23,7 +23,7 @@ const UTCDateTimePicker = utcDateWrapper({
     setDateProp: "onChange"
 })(DateTimePicker);
 
-function Tabou2SearchPanel({ reset, apply, getFiltersObj, setFiltersObj, currentTab, applyFilter = () => { }, currentFilters, ...props }) {
+function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, changeFilters, currentFilters, ...props }) {
     if (currentTab != 'search') return;
     const marginTop = '10px';
     const comboMarginTop = '5px';
@@ -32,7 +32,7 @@ function Tabou2SearchPanel({ reset, apply, getFiltersObj, setFiltersObj, current
 
     /**
      * Get info from request and set / replace MapStore filters for each tabou2 layers
-     * TODO : Improve Rest CQL filter action
+     * TODO : Improve Reset CQL filter action
      * @param {*} layer 
      * @param {*} value 
      */
@@ -51,6 +51,8 @@ function Tabou2SearchPanel({ reset, apply, getFiltersObj, setFiltersObj, current
             if(value) {
                 currentFilters[lyr][filter] = `${cql}`;
             }
+            changeFilters(currentFilters);
+            
 
             // get WFS features from CQL
             let allFilters = currentFilters[lyr];
@@ -59,7 +61,8 @@ function Tabou2SearchPanel({ reset, apply, getFiltersObj, setFiltersObj, current
                 // Manage case when user select "All" value for each combo
                 let newFilter = getNewFilter(lyr, null, [], null);
                 filtersObj[lyr] = newFilter;
-                return setTabouFilterObj(filtersObj);
+                // stock MapStore layer filter object
+                return changeFiltersObj(filtersObj);
             }
             // create WFS request
             const requestParams = {
@@ -96,7 +99,7 @@ function Tabou2SearchPanel({ reset, apply, getFiltersObj, setFiltersObj, current
                 newFilter.crossLayerFilter = geomFilter;
                 // update filter obj before change layer
                 filtersObj[lyr] = newFilter;
-                setTabouFilterObj(filtersObj);
+                changeFiltersObj(filtersObj);
             })
             .catch(error => console.log(error));
         })
@@ -416,8 +419,6 @@ export default connect((state) => ({
     getState: () => state
 }), {
     /*PASS EVT AND METHODS HERE*/
-    applyFilter: setTabouFilters,
-    setFiltersObj: setTabouFilterObj,
-    apply: applyFilterObj,
-    reset: resetSearchFilters
+    changeFilters: setTabouFilters,
+    changeFiltersObj: setTabouFilterObj
 })(Tabou2SearchPanel);

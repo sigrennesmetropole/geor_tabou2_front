@@ -9,6 +9,7 @@ export const LOAD_TABOU_FEATURE_INFO = "TABOU2:LOAD_TABOU_FEATURE_INFO";
 export const SET_SELECTOR_INDEX = "TABOU2:SET_SELECTOR_INDEX";
 export const SET_TABOU_FILTEROBJ = "TABOU2:SET_TABOU_FILTEROBJ";
 export const UPDATE_LAYER_PARAMS = "TABOU2:UPDATE_LAYER_PARAMS";
+export const RESET_CQL_FILTERS = "TABOU2:RESET_CQL_FILTERS";
 
 
 export const setUp = () => ({
@@ -34,11 +35,14 @@ export const resetSearchFilters = () => ({
     type: RESET_SEARCH_FILTERS
 });
 
+export const resetCqlFilters = () => ({
+    type: RESET_CQL_FILTERS
+});
+
 export const updateAllTabouLayers = (layer) => ({
     type: UPDATE_TABOU_LAYER,
     layer
 });
-
 
 export const setTabouFilters = (filterObj) => ({
     type: SET_TABOU_FILTERS,

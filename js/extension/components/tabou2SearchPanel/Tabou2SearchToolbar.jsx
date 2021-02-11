@@ -2,16 +2,21 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { keys } from 'lodash';
 import Toolbar from '@mapstore/components/misc/toolbar/Toolbar';
-import { applyFilterObj, resetSearchFilters } from '../../actions/tabou2';
+import { applyFilterObj, resetSearchFilters, resetCqlFilters } from '../../actions/tabou2';
 import { getLayerFilterObj } from '../../selectors/tabou2';
 
-function Tabou2SearchToolbar({ apply, getFiltersObj, reset }) {
+function Tabou2SearchToolbar({ apply, getFiltersObj, resetFiltersObj, resetFiltersCql }) {
 
     const search = () => {
         keys(getFiltersObj).forEach(k => {
             apply(k);
         })
     };
+
+    const resetFilters = () => {
+        resetFiltersObj();
+        resetFiltersCql();
+    }
     return (
         <Toolbar
             btnDefaultProps={{
@@ -32,7 +37,7 @@ function Tabou2SearchToolbar({ apply, getFiltersObj, reset }) {
                 {
                     glyph: 'clear-filter',
                     tooltip: 'Supprimer les filtrer',
-                    onClick: reset
+                    onClick: resetFilters
                 }
             ]}
         />
@@ -44,5 +49,6 @@ export default connect((state) => ({
     getFiltersObj: getLayerFilterObj(state),
 }), { //actions
     apply: applyFilterObj,
-    reset: resetSearchFilters
+    resetFiltersObj: resetSearchFilters,
+    resetFiltersCql:resetCqlFilters
 })(Tabou2SearchToolbar);
