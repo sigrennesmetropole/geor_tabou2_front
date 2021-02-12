@@ -35,6 +35,7 @@ function Tabou2Combo({
             valueField={valueField}
             textField={textField}
             data={data}
+            defaultValue={props.defaultValue}
             placeholder={placeholder}
             {...props} />
     )

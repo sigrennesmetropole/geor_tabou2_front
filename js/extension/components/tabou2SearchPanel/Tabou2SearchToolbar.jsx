@@ -5,18 +5,14 @@ import Toolbar from '@mapstore/components/misc/toolbar/Toolbar';
 import { applyFilterObj, resetSearchFilters, resetCqlFilters } from '../../actions/tabou2';
 import { getLayerFilterObj } from '../../selectors/tabou2';
 
-function Tabou2SearchToolbar({ apply, getFiltersObj, resetFiltersObj, resetFiltersCql }) {
+function Tabou2SearchToolbar({ apply, getFiltersObj, ...props }) {
 
     const search = () => {
         keys(getFiltersObj).forEach(k => {
             apply(k);
         })
     };
-
-    const resetFilters = () => {
-        resetFiltersObj();
-        resetFiltersCql();
-    }
+    console.log(props)
     return (
         <Toolbar
             btnDefaultProps={{
@@ -37,7 +33,7 @@ function Tabou2SearchToolbar({ apply, getFiltersObj, resetFiltersObj, resetFilte
                 {
                     glyph: 'clear-filter',
                     tooltip: 'Supprimer les filtrer',
-                    onClick: resetFilters
+                    onClick: props.reset
                 }
             ]}
         />

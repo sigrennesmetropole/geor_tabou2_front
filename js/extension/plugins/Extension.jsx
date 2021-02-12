@@ -12,16 +12,16 @@ import { syncLayers, selectLayers } from "@mapstore/selectors/layerinfo";
 import { layersSelector } from '@mapstore/selectors/layers';
 import { selectedLayerIdSelector } from '@mapstore/selectors/featuregrid';
 
-import Tabou2MainPanel from '../components/tabou2panel/Tabou2MainPanel';
+import Tabou2MainPanel from '@ext/components/tabou2panel/Tabou2MainPanel';
 
-import tabou2 from '../reducers/tabou2'
+import tabou2 from '@ext/reducers/tabou2'
 
-import { setUp } from '../actions/tabou2';
+import { setUp } from '@ext/actions/tabou2';
 
-import { tabouApplyFilter, tabouResetFilter } from '../epics/search';
-import { tabouGetInfoOnClick, tabouLoadIdentifyContent, tabouSetGFIFormat, purgeTabou } from '../epics/identify';
+import { tabouApplyFilter, tabouResetFilter } from '@ext/epics/search';
+import { tabouGetInfoOnClick, tabouLoadIdentifyContent, tabouSetGFIFormat, purgeTabou } from '@ext/epics/identify';
 
-import { CONTROL_NAME } from '../constants';
+import { CONTROL_NAME } from '@ext/constants';
 
 class Tabou2Panel extends React.Component {
     static propTypes = {
@@ -59,7 +59,6 @@ class Tabou2Panel extends React.Component {
 /**
  * 
  * TABOU 2 PLUGIN
- * FROM MAPSTORE2 ANNOTATION PLUGIN STRUCTURE
  * 
  */
 const Tabou2Plugin = connect((state) => ({

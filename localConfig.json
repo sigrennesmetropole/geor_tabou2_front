@@ -422,6 +422,7 @@
               "layer": "tabou2:v_instructeur_secteur",
               "geom": "the_geom",
               "filterField": "secteur",
+              "apiField": "secteur",
               "apiLabel": "secteur",
               "placeholder": "Sec. SDS"
             },

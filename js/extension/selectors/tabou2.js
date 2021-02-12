@@ -1,4 +1,4 @@
-import { CONTROL_NAME } from '../constants';
+import { CONTROL_NAME } from '@ext/constants';
 export function currentActiveTabSelector(state) {
     return state?.tabou2.activeTab;
 };
