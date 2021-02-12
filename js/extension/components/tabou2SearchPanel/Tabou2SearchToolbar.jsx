@@ -12,7 +12,6 @@ function Tabou2SearchToolbar({ apply, getFiltersObj, ...props }) {
             apply(k);
         })
     };
-    console.log(props)
     return (
         <Toolbar
             btnDefaultProps={{

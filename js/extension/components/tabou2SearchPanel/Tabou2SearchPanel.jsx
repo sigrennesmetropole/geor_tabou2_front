@@ -33,8 +33,9 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
     /**
      * Get info from request and set / replace MapStore filters for each tabou2 layers
      * TODO : 
-     *  1 - clear combobox
+     *  1 - End change / select and autocompletion event
      *  2 - Externalize this function outside by action, epic or util
+     *  3 - Short code to generate combo with only one function or component
      * @param {*} layer 
      * @param {*} value 
      */
@@ -108,10 +109,10 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
     }
 
     const [values, setValues] = useState({});
-    const changeState = (type, name, value) => {
-        changeCqlFilter(type, name, value, config[name]);
+    const changeState = (type, name, value, changeCQL) => {
         values[name] = value;
         setValues(values);
+        changeCqlFilter(type, name, value, config[name]);
     }
 
     /**
@@ -147,50 +148,50 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                         <FormGroup>
                             <Tabou2Combo
                                 style={{ marginTop: comboMarginTop }}
-                                firstItem={{nom:'Toutes les communes', code_insee: null}}
-                                key='search-commune-boxTest'
+                                key='search-d-boxTest'
                                 load={() => getRequestApi('communes')}
-                                value={values?.communes || null}
+                                value={values?.communes}
+                                suggest={true}
+                                placeholder='Toutes Communes'
                                 filter="contains"
                                 textField= {get(config, 'communes.apiLabel') || 'nom'}
-                                suggest={true}
-                                valueField={'code_insee'}
                                 onLoad={(r) => r?.elements}
-                                onChange={(t) => {
-                                    changeState(null, 'communes', t?.all ? null : t[get(config, 'communes.filterField')], values);
+                                onSelect={(t) => {
+                                    changeState(null, 'communes', t?.all ? null : t[get(config, 'communes.filterField')]);
                                 }}
+                                onChange={(t) => !t ? changeState(null, 'communes', t) : null}
                             />
 
                             <Tabou2Combo
                                 style={{ marginTop: comboMarginTop }}
                                 key='search-quartier-boxTest'
-                                firstItem={{nom:'Tous les quartiers', nuquart: null}}
                                 filter="contains"
-                                value={values?.quartiers || null}
-                                valueField={'nuquart'}
+                                value={values?.quartiers}
                                 load={() => getRequestApi('quartiers')}
                                 suggest={true}
+                                placeholder='Tous Quartiers'
                                 textField={get(config, 'quartiers.apiLabel') || 'nom'}
                                 onLoad={(r) => r?.elements}
-                                onChange={(t) => {
-                                    changeState(null, 'quartiers', t?.all ? null : t[get(config, 'quartiers.filterField')], values)
+                                onSelect={(t) => {
+                                    changeState(null, 'quartiers', t?.all ? null : t[get(config, 'quartiers.filterField')])
                                 }}
+                                onChange={(t) => !t ? changeState(null, 'quartiers', t) : null}
                             />
 
                             <Tabou2Combo
                                 style={{ marginTop: comboMarginTop }}
                                 filter="contains"
                                 key='search-iris-boxTest'
-                                firstItem={{nmiris:'Tous les iris', code_iris: null}}
                                 load={() => getRequestApi('iris')}
                                 textField={get(config, 'iris.apiLabel') || 'nmiris'}
                                 suggest={true}
-                                value={values?.iris || null}
-                                valueField={'code_iris'}
+                                placeholder='Tous Iris'
+                                value={values?.iris}
                                 onLoad={(r) => r?.elements}
-                                onChange={(t) => {
-                                    changeState(null, 'iris', t?.all ? null : t[get(config, 'iris.filterField')], values)
+                                onSelect={(t) => {
+                                    changeState(null, 'iris', t?.all ? null : t[get(config, 'iris.filterField')])
                                 }}
+                                onChange={(t) => !t ? changeState(null, 'iris', t) : null}
                             />
 
                             <Combobox
@@ -219,19 +220,19 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
 
                             <Tabou2Combo
                                 style={{ marginTop: comboMarginTop }}
-                                value={values?.plui || null}
-                                valueField={'all'}
+                                value={values?.plui}
+                                placeholder="Tous PLUI"
                                 key='search-plui-combo'
                                 suggest={true}
                                 disabled={true}
-                                firstItem={{libelle:'Tous les PLUI', all: null}}
                                 load={() => getRequestApi('plui')}
                                 filter="contains"
                                 textField='libelle'
                                 onLoad={(r) => r?.elements}
-                                onChange={(t) => {
-                                    //changeCqlFilter('plui', t?.all ? null : t[get(config, 'plui.apiField')].plui);
+                                onSelect={(t) => {
+                                    changeState(null, 'plui', t?.all ? null : t[get(config, 'plui.filterField')])
                                 }}
+                                onChange={(t) => !t ? changeState(null, 'plui', t) : null}
                             />
                         </FormGroup>
                     </Col>
@@ -239,82 +240,82 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                         <FormGroup >
                         <Tabou2Combo
                                 style={{ marginTop: comboMarginTop }}
-                                value={values?.natures || null}
-                                valueField={'all'}
+                                value={values?.natures}
+                                placeholder="Toutes Natures"
                                 key='search-natures-combo'
                                 disabled={true}
                                 filter="contains"
-                                firstItem={{libelle: 'Toutes les natures', all: null }}
                                 load={() => getRequestApi('natures')}
                                 suggest={true}
                                 textField={get(config, 'natures.apiLabel') || 'libelle'}
                                 onLoad={(r) => r?.elements}
                                 onChange={(t) => {
-                                    changeState('string', 'natures', t?.all ? null : t[get(config, 'natures.filterField')], values);
+                                    changeState('string', 'natures', t?.all ? null : t[get(config, 'natures.filterField')]);
                                 }}
+                                onChange={(t) => !t ? changeState(null, 'natures', t) : null}
                             />
                             <Tabou2Combo
                                 style={{ marginTop: comboMarginTop }}
-                                value={get(values,'secteurs-sam') || null}
-                                valueField={'all'}
+                                value={get(values,'secteurs-sam')}
                                 key='search-sam-box'
                                 filter="contains"
+                                placeholder='Tous SAM'
                                 suggest={true}
-                                firstItem={{nom_secteur: 'Tous les Sec. SAM', all: null}}
                                 load={() => getRequestApi('secteurs-sam')}
                                 textField={get(config, 'secteurs-sam.apiLabel') || 'nom_secteur'}
                                 onLoad={(r) => r?.elements}
                                 onChange={(t) => {
-                                    changeState('string', 'secteurs-sam', t?.all ? null : t[get(config, 'secteurs-sam.apiField')], values);
+                                    changeState('string', 'secteurs-sam', t?.all ? null : t[get(config, 'secteurs-sam.apiField')]);
                                 }}
+                                onChange={(t) => !t ?  changeState(null, 'secteurs-sam', t) : null}
                             />
 
                             <Tabou2Combo
                                 style={{ marginTop: comboMarginTop }}
-                                value={get(values,'secteurs-speu') || null}
-                                valueField={'all'}
+                                value={get(values,'secteurs-speu')}
                                 key='search-speu-box'
                                 filter="contains"
                                 suggest={true}
-                                firstItem={{nom_secteur: 'Tous les Sec. SPEU', all: null}}
                                 load={() => getRequestApi('secteurs-speu')}
                                 textField={get(config, 'secteurs-speu.apiLabel') || 'nom_secteur'}
                                 onLoad={(r) => r?.elements}
+                                placeholder='Tous SPEU'
                                 onChange={(t) => { 
-                                    changeState('string', 'secteurs-speu', t?.all ? null : t[get(config, 'secteurs-speu.apiField')], values);
+                                    changeState('string', 'secteurs-speu', t?.all ? null : t[get(config, 'secteurs-speu.apiField')]);
                                 }}
+                                onChange={(t) => !t ?  changeState(null, 'secteurs-speu', t) : null}
                             />
 
                             <Tabou2Combo
                                 style={{ marginTop: comboMarginTop }}
-                                value={get(values,'secteurs-sds') || null}
-                                valueField={'all'}
+                                value={get(values,'secteurs-sds')}
                                 key='search-sds-box'
                                 filter="contains"
                                 suggest={true}
-                                firstItem={{secteur: 'Tous les Sec. SDS', all: null}}
                                 load={() => getRequestApi('secteurs-sds')}
                                 textField={get(config, 'secteurs-sds.apiLabel') || 'secteur'}
                                 onLoad={(r) => r?.elements}
+                                placeholder='Tous SDS'
                                 onChange={(t) => { 
-                                    changeState('string', 'secteurs-sds', t?.all ? null : t[get(config, 'secteurs-sds.apiField')], values);
+                                    changeState('string', 'secteurs-sds', t?.all ? null : t[get(config, 'secteurs-sds.apiField')]);
                                 }}
+                                onChange={(t) => !t ? changeState(null, 'secteurs-sds', t) : null}
                             />
 
                             <Tabou2Combo
                                 style={{ marginTop: comboMarginTop }}
                                 key='search-foncier-box'
                                 filter="contains"
-                                value={get(values,'secteurs-foncier') || null}
-                                valueField={'all'}
+                                value={get(values,'secteurs-foncier')}
                                 suggest={true}
-                                firstItem={{nom_secteur: 'Tous les Sec. Foncier', all: null}}
                                 load={() => getRequestApi('secteurs-foncier')}
                                 textField={get(config, 'secteurs-foncier.apiLabel') || 'nom_secteur'}
                                 onLoad={(r) => r?.elements}
+                                placeholder='Tous Foncier'
                                 onChange={(t) => {
-                                    changeState('string', 'secteurs-foncier', t?.all ? null : t[get(config, 'secteurs-foncier.apiField')], values, );
+                                    changeState('string', 'secteurs-foncier', t?.all ? null : t[get(config, 'secteurs-foncier.apiField')], true);
                                 }}
+                                onChange={(t) => !t ? changeState(null, 'secteurs-foncier', t) : null}
                             />
 
                             <Tabou2Combo
