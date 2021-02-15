@@ -24,8 +24,8 @@ export const ID_SELECTOR = 'layerTabouId-selector';
 
 export const ACCORDIONS = [
     {title: 'Identification', id: 'ident'},
-    {title: 'Descriptif', id: 'describe'}, 
-    {title: 'Gouvernance', id:'gouvernance'},
+    {title: 'Descriptif', id: 'describe'},
+    {title: 'Gouvernance', id: 'gouvernance'},
     {title: 'Suivi Opérationnel', id: 'suivi'},
     {title: 'Programmation Habitat', id: 'habitat'},
     {title: 'Programmation Activités', id: 'activite', layers: ['layerOA', 'layerSA']},
@@ -110,4 +110,4 @@ export const ACC_ATTRIBUTE_DESCRIBE = [{
     api: '',
     type: 'string',
     layers: ['layerOA', 'layerSA']
-},];
+}];

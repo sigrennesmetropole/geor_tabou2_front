@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { keys, get } from 'lodash';
 import { connect } from 'react-redux';
 import axios from '@mapstore/libs/ajax';
@@ -16,7 +16,6 @@ import { setTabouFilterObj, setTabouFilters, resetSearchFilters, resetCqlFilters
 import { getNewFilter, getNewCqlFilter, getGeoServerUrl, getCQL, getTabouLayersInfos } from '../../utils/search';
 
 
-
 const UTCDateTimePicker = utcDateWrapper({
     dateProp: "value",
     dateTypeProp: "type",
@@ -24,7 +23,7 @@ const UTCDateTimePicker = utcDateWrapper({
 })(DateTimePicker);
 
 function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, changeFilters, currentFilters, ...props }) {
-    if (currentTab != 'search') return;
+    if (currentTab !== 'search') return;
     const marginTop = '10px';
     const comboMarginTop = '5px';
     const layersInfos = getTabouLayersInfos(props?.pluginCfg?.layersCfg || {});
@@ -32,12 +31,12 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
 
     /**
      * Get info from request and set / replace MapStore filters for each tabou2 layers
-     * TODO : 
+     * TODO :
      *  1 - End change / select and autocompletion event
      *  2 - Externalize this function outside by action, epic or util
      *  3 - Short code to generate combo with only one function or component
-     * @param {*} layer 
-     * @param {*} value 
+     * @param {*} layer
+     * @param {*} value
      */
     const changeCqlFilter = (type, filter, value, filterConf) => {
         const layers = keys(layersInfos);
@@ -47,20 +46,20 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
             const cql = getCQL(type, filterConf.geom, filterConf.layer, filterConf.geom,  filterConf.filterField, value);
             const idField = layersInfos[lyr].id;
             const idType = layersInfos[lyr].type;
-            if(!currentFilters[lyr]) {
+            if (!currentFilters[lyr]) {
                 currentFilters[lyr] = {};
             }
             delete currentFilters[lyr][filter];
-            if(value) {
+            if (value) {
                 currentFilters[lyr][filter] = `${cql}`;
             }
             changeFilters(currentFilters);
-            
+
 
             // get WFS features from CQL
             let allFilters = currentFilters[lyr];
             let CQLStr = keys(allFilters).map(k => allFilters[k]);
-            if(!CQLStr.length) {
+            if (!CQLStr.length) {
                 // Manage case when user select "All" value for each combo
                 let newFilter = getNewFilter(lyr, null, [], null);
                 filtersObj[lyr] = newFilter;
@@ -70,22 +69,22 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
             // create WFS request
             const requestParams = {
                 CQL_FILTER: CQLStr.join(' AND '),
-                SERVICE:'WFS',
-                REQUEST:'GetFeature',
+                SERVICE: 'WFS',
+                REQUEST: 'GetFeature',
                 TYPENAME: lyr, // tabou2:iris
-                OUTPUTFORMAT:'application/json',
+                OUTPUTFORMAT: 'application/json',
                 VERSION: '1.0.0'
             };
 
             let paramsToStr = keys(requestParams).map(k => `${k}=${requestParams[k]}`);
             axios.post(`${geoserverURL}/ows`, paramsToStr.join('&'), {
-                    timeout: 60000,
-                    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+                timeout: 60000,
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'}
             }).then(response => {
                 // read features id to filter toc layer
                 let ids = [];
                 let idsCql = '';
-                if(response.data && response.data.totalFeatures) {
+                if (response.data && response.data.totalFeatures) {
                     ids = response.data.features.map(feature => feature?.properties[idField] || '');
                     ids = ids.filter(id => id);
                     idsCql = idType === 'string' ? ids.map(i => `'${i}'`) : (ids.length ? ids : [0]);
@@ -95,8 +94,8 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                     mapLayerGeom: layersInfos[lyr].geom,
                     crossGeom: layersInfos[lyr].geom,
                     crossName: lyr,
-                    cqlFilter:`${idField} IN (${idsCql})`
-                })
+                    cqlFilter: `${idField} IN (${idsCql})`
+                });
                 // replace current layer filter
                 let newFilter = getNewFilter(lyr, null, [], null);
                 newFilter.crossLayerFilter = geomFilter;
@@ -104,16 +103,16 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                 filtersObj[lyr] = newFilter;
                 changeFiltersObj(filtersObj);
             })
-            .catch(error => console.log(error));
-        })
-    }
+                .catch(error => console.log(error));
+        });
+    };
 
     const [values, setValues] = useState({});
-    const changeState = (type, name, value, changeCQL) => {
+    const changeState = (type, name, value) => {
         values[name] = value;
         setValues(values);
         changeCqlFilter(type, name, value[get(config, `${name}.apiField`)], config[name]);
-    }
+    };
 
     /**
      * Reset all filters value
@@ -124,9 +123,9 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
         keys(values).forEach(k => {
             // null value allow to force value to element find with null valueField value
             values[k] = null;
-        })
+        });
         setValues(values);
-    }
+    };
 
     return (
         <>
@@ -230,7 +229,7 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                     </Col>
                     <Col xs={6}>
                         <FormGroup >
-                        <Tabou2Combo
+                            <Tabou2Combo
                                 style={{ marginTop: comboMarginTop }}
                                 value={values?.natures}
                                 placeholder="Toutes Natures"
@@ -246,7 +245,7 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                             />
                             <Tabou2Combo
                                 style={{ marginTop: comboMarginTop }}
-                                value={get(values,'secteurs-sam')}
+                                value={get(values, 'secteurs-sam')}
                                 key='search-sam-box'
                                 filter="contains"
                                 placeholder='Tous SAM'
@@ -260,7 +259,7 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
 
                             <Tabou2Combo
                                 style={{ marginTop: comboMarginTop }}
-                                value={get(values,'secteurs-speu')}
+                                value={get(values, 'secteurs-speu')}
                                 key='search-speu-box'
                                 filter="contains"
                                 suggest={true}
@@ -274,7 +273,7 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
 
                             <Tabou2Combo
                                 style={{ marginTop: comboMarginTop }}
-                                value={get(values,'secteurs-sds')}
+                                value={get(values, 'secteurs-sds')}
                                 key='search-sds-box'
                                 filter="contains"
                                 suggest={true}
@@ -290,7 +289,7 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                                 style={{ marginTop: comboMarginTop }}
                                 key='search-foncier-box'
                                 filter="contains"
-                                value={get(values,'secteurs-foncier')}
+                                value={get(values, 'secteurs-foncier')}
                                 suggest={true}
                                 load={() => getRequestApi('secteurs-foncier')}
                                 textField={get(config, 'secteurs-foncier.apiLabel') || 'nom_secteur'}
@@ -311,16 +310,16 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                                 disabled={true}
                                 textField='libelle'
                                 suggest={true}
-                                onLoad={(r) => { return r?.elements }}
-                                onChange={(t) => { 
-                                    //changeCqlFilter('quartier', t['nuquart'])
+                                onLoad={(r) => { return r?.elements; }}
+                                onChange={(t) => {
+                                    // changeCqlFilter('quartier', t['nuquart'])
                                 }}
                             />
 
                             <Tabou2Combo
                                 style={{ marginTop: comboMarginTop }}
                                 key='search-etapepa-box'
-                                firstItem={{id_etape_operation:0, all: null, libelle: 'Toutes les Etapes PA'}}
+                                firstItem={{id_etape_operation: 0, all: null, libelle: 'Toutes les Etapes PA'}}
                                 load={() => getRequestApi('etapes-pa-mock')}
                                 disabled={true}
                                 filter="contains"
@@ -328,9 +327,9 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                                 textField='libelle'
                                 defaultValue={null}
                                 valueField={'all'}
-                                onLoad={(r) => { return r?.elements }}
-                                onChange={(t) => { 
-                                    //changeCqlFilter('quartier', t['nuquart'])
+                                onLoad={(r) => { return r?.elements; }}
+                                onChange={(t) => {
+                                    // changeCqlFilter('quartier', t['nuquart'])
                                 }}
                             />
                         </FormGroup>
@@ -339,8 +338,8 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                 <Row style={{ marginTop: '20px' }}>
                     <Col xs={6}>
                         <FormGroup>
-                            <ControlLabel inline>Date DOC du 
-                            <UTCDateTimePicker inline
+                            <ControlLabel inline>Date DOC du
+                                <UTCDateTimePicker inline
                                     type='date'
                                     calendar={true}
                                     time={false}
@@ -355,7 +354,7 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                     <Col xs={6}>
                         <FormGroup>
                             <ControlLabel inline> à la date du :
-                            <UTCDateTimePicker inline
+                                <UTCDateTimePicker inline
                                     type='date'
                                     calendar={true}
                                     time={false}
@@ -372,7 +371,7 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                     <Col xs={6}>
                         <FormGroup>
                             <ControlLabel inline>Date DAT du :
-                            <UTCDateTimePicker inline
+                                <UTCDateTimePicker inline
                                     type='date'
                                     calendar={true}
                                     time={false}
@@ -387,7 +386,7 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                     <Col xs={6}>
                         <FormGroup>
                             <ControlLabel inline> à la date du :
-                            <UTCDateTimePicker inline
+                                <UTCDateTimePicker inline
                                     type='date'
                                     calendar={true}
                                     time={false}
@@ -404,7 +403,7 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                     <Col xs={6}>
                         <FormGroup>
                             <ControlLabel inline>Date de livraison du :
-                            <UTCDateTimePicker inline
+                                <UTCDateTimePicker inline
                                     type='date'
                                     calendar={true}
                                     time={false}
@@ -419,7 +418,7 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                     <Col xs={6}>
                         <FormGroup>
                             <ControlLabel inline> à la date du :
-                            <UTCDateTimePicker inline
+                                <UTCDateTimePicker inline
                                     type='date'
                                     calendar={true}
                                     time={false}
@@ -434,7 +433,7 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                 </Row>
             </Grid >
         </>
-    )
+    );
 }
 
 export default connect((state) => ({
@@ -443,7 +442,7 @@ export default connect((state) => ({
     currentFilters: currentTabouFilters(state),
     getFiltersObj: getLayerFilterObj(state)
 }), {
-    /*PASS EVT AND METHODS HERE*/
+    /* PASS EVT AND METHODS HERE*/
     changeFilters: setTabouFilters,
     changeFiltersObj: setTabouFilterObj,
     resetFiltersObj: resetSearchFilters,

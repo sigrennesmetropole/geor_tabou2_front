@@ -21,7 +21,7 @@ function Tabou2MainPanel({
     return (
         <span className="ms-tabou2-panel">
             <DockablePanel
-                open={true}
+                open="true"
                 glyph="th"
                 bsStyle="primary"
                 title="Tabou2"
@@ -29,9 +29,9 @@ function Tabou2MainPanel({
                 draggable={false}
                 onClose={onClose}
                 size={size}
-                dock={true}
+                dock="true"
                 style={dockStyle}
-                fade={true}
+                fade="true"
                 clickOutEnabled={false}
                 position={'right'}
                 header={
@@ -44,7 +44,7 @@ function Tabou2MainPanel({
                 <Tabou2MainToolContainer {...props} />
             </DockablePanel>
         </span>
-    )
+    );
 }
 
 export default connect(state => ({
