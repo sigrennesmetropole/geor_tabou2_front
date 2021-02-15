@@ -19,41 +19,41 @@ const initialState = {
     selectorsIndex: {},
     filterObj: {},
     layerFilterObj: {},
-    layerToFilter: ''
-}
+    layerToFilter: '',
+    pluginCfg: {}
+};
 
 export default function tabou2(state = initialState, action) {
     switch (action.type) {
-        case SETUP:
-            const { pluginCfg } = action;
-            return set(`pluginCfg`, pluginCfg, state);
-        case SET_MAIN_ACTIVE_TAB:
-            const { activeTab } = action;
-            return set(`activeTab`, activeTab, state);
-        case SET_TABOU_FILTERS:
-            const { filterObj } = action;
-            console.log(filterObj);
-            return set(`filterObj`, filterObj, state);
-        case SET_DEFAULT_INFO_FORMAT:
-            const { infoFormat } = action;
-            return set(`infoFormat`, infoFormat, state);
-        case LOAD_TABOU_FEATURE_INFO:
-            const { response } = action;
-            return set('response', response, state)
-        case SET_SELECTOR_INDEX:
-            const { selectorsIndex } = action;
-            return set('index', selectorsIndex, state)
-        case SET_TABOU_FILTEROBJ:
-            const { layerFilterObj } = action;
-            return set('layerFilterObj', layerFilterObj, state)
-        case RESET_SEARCH_FILTERS:
-            return set('layerFilterObj', {}, state)
-        case RESET_CQL_FILTERS:
-            return set('filterObj', {}, state)
-        case UPDATE_LAYER_PARAMS:
-            const { layerToFilter } = action;
-            return set('layerToFilter', layerToFilter, state)
-        default:
-            return state;
+    case SETUP:
+        const { pluginCfg } = action;
+        return set(`pluginCfg`, pluginCfg, state);
+    case SET_MAIN_ACTIVE_TAB:
+        const { activeTab } = action;
+        return set(`activeTab`, activeTab, state);
+    case SET_TABOU_FILTERS:
+        const { filterObj } = action;
+        return set(`filterObj`, filterObj, state);
+    case SET_DEFAULT_INFO_FORMAT:
+        const { infoFormat } = action;
+        return set(`infoFormat`, infoFormat, state);
+    case LOAD_TABOU_FEATURE_INFO:
+        const { response } = action;
+        return set('response', response, state);
+    case SET_SELECTOR_INDEX:
+        const { selectorsIndex } = action;
+        return set('index', selectorsIndex, state);
+    case SET_TABOU_FILTEROBJ:
+        const { layerFilterObj } = action;
+        return set('layerFilterObj', layerFilterObj, state);
+    case RESET_SEARCH_FILTERS:
+        return set('layerFilterObj', {}, state);
+    case RESET_CQL_FILTERS:
+        return set('filterObj', {}, state);
+    case UPDATE_LAYER_PARAMS:
+        const { layerToFilter } = action;
+        return set('layerToFilter', layerToFilter, state);
+    default:
+        return state;
     }
 }

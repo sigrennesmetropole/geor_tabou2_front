@@ -23,7 +23,7 @@ const UTCDateTimePicker = utcDateWrapper({
 })(DateTimePicker);
 
 function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, changeFilters, currentFilters, ...props }) {
-    if (currentTab !== 'search') return;
+    if (currentTab !== 'search') return null;
     const marginTop = '10px';
     const comboMarginTop = '5px';
     const layersInfos = getTabouLayersInfos(props?.pluginCfg?.layersCfg || {});
@@ -77,7 +77,7 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
             };
 
             let paramsToStr = keys(requestParams).map(k => `${k}=${requestParams[k]}`);
-            axios.post(`${geoserverURL}/ows`, paramsToStr.join('&'), {
+            return axios.post(`${geoserverURL}/ows`, paramsToStr.join('&'), {
                 timeout: 60000,
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'}
             }).then(response => {
@@ -103,6 +103,7 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                 filtersObj[lyr] = newFilter;
                 changeFiltersObj(filtersObj);
             })
+                // eslint-disable-next-line no-console
                 .catch(error => console.log(error));
         });
     };
@@ -147,26 +148,26 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                         <FormGroup>
                             <Tabou2Combo
                                 style={{ marginTop: comboMarginTop }}
-                                key='search-d-boxTest'
+                                key="earch-d-boxTest"
                                 load={() => getRequestApi('communes')}
                                 value={values?.communes}
-                                suggest={true}
-                                placeholder='Toutes Communes'
+                                suggest="true"
+                                placeholder="Toutes Communes"
                                 filter="contains"
-                                textField= {get(config, 'communes.apiLabel') || 'nom'}
+                                textField= {get(config, "communes.apiLabel") || "nom"}
                                 onLoad={(r) => r?.elements}
-                                onSelect={(t) => changeState(null, 'communes', t)}
-                                onChange={(t) => changeState(null, 'communes', t)}
+                                onSelect={(t) => changeState(null, "communes", t)}
+                                onChange={(t) => changeState(null, "communes", t)}
                             />
 
                             <Tabou2Combo
                                 style={{ marginTop: comboMarginTop }}
-                                key='search-quartier-boxTest'
+                                key="search-quartier-boxTest"
                                 filter="contains"
                                 value={values?.quartiers}
                                 load={() => getRequestApi('quartiers')}
-                                suggest={true}
-                                placeholder='Tous Quartiers'
+                                suggest="true"
+                                placeholder="Tous Quartiers"
                                 textField={get(config, 'quartiers.apiLabel') || 'nom'}
                                 onLoad={(r) => r?.elements}
                                 onSelect={(t) => changeState(null, 'quartiers', t)}
@@ -176,11 +177,11 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                             <Tabou2Combo
                                 style={{ marginTop: comboMarginTop }}
                                 filter="contains"
-                                key='search-iris-boxTest'
+                                key="search-iris-boxTest"
                                 load={() => getRequestApi('iris')}
                                 textField={get(config, 'iris.apiLabel') || 'nmiris'}
-                                suggest={true}
-                                placeholder='Tous Iris'
+                                suggest="true"
+                                placeholder="Tous Iris"
                                 value={values?.iris}
                                 onLoad={(r) => r?.elements}
                                 onSelect={(t) => changeState(null, 'iris', t)}
@@ -192,7 +193,7 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                                 key="search-amemagoa-box"
                                 data={[256, 512]}
                                 filter="contains"
-                                disabled={true}
+                                disabled="true"
                                 placeholder={'Aménageur OA'} />
 
                             <Combobox
@@ -200,14 +201,14 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                                 key="search-promoteuroa-box"
                                 filter="contains"
                                 data={[256, 512]}
-                                disabled={true}
+                                disabled="true"
                                 placeholder={'Aménageur PA'} />
 
                             <Combobox
                                 style={{ marginTop: comboMarginTop }}
                                 key="search-typefin-box"
                                 data={[256, 512]}
-                                disabled={true}
+                                disabled="true"
                                 filter="contains"
                                 placeholder={'Type financement'} />
 
@@ -215,15 +216,15 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                                 style={{ marginTop: comboMarginTop }}
                                 value={values?.plui}
                                 placeholder="Tous PLUI"
-                                key='search-plui-combo'
-                                suggest={true}
-                                disabled={true}
+                                key="search-plui-combo"
+                                suggest="true"
+                                disabled="true"
                                 load={() => getRequestApi('plui')}
                                 filter="contains"
-                                textField='libelle'
+                                textField="libelle"
                                 onLoad={(r) => r?.elements}
-                                onSelect={(t) => changeState(null, 'plui', t)}
-                                onChange={(t) => changeState(null, 'plui', t)}
+                                onSelect={(t) => changeState(null, "plui", t)}
+                                onChange={(t) => changeState(null, "plui", t)}
                             />
                         </FormGroup>
                     </Col>
@@ -233,40 +234,40 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                                 style={{ marginTop: comboMarginTop }}
                                 value={values?.natures}
                                 placeholder="Toutes Natures"
-                                key='search-natures-combo'
-                                disabled={true}
+                                key="search-natures-combo"
+                                disabled="true"
                                 filter="contains"
-                                load={() => getRequestApi('natures')}
-                                suggest={true}
-                                textField={get(config, 'natures.apiLabel') || 'libelle'}
+                                load={() => getRequestApi("natures")}
+                                suggest="true"
+                                textField={get(config, "natures.apiLabel") || "libelle"}
                                 onLoad={(r) => r?.elements}
-                                onSelect={(t) => changeState(null, 'natures', t)}
-                                onChange={(t) => changeState(null, 'natures', t)}
+                                onSelect={(t) => changeState(null, "natures", t)}
+                                onChange={(t) => changeState(null, "natures", t)}
                             />
                             <Tabou2Combo
                                 style={{ marginTop: comboMarginTop }}
                                 value={get(values, 'secteurs-sam')}
-                                key='search-sam-box'
+                                key="search-sam-box"
                                 filter="contains"
-                                placeholder='Tous SAM'
-                                suggest={true}
-                                load={() => getRequestApi('secteurs-sam')}
-                                textField={get(config, 'secteurs-sam.apiLabel') || 'nom_secteur'}
+                                placeholder="Tous SAM"
+                                suggest="true"
+                                load={() => getRequestApi("secteurs-sam")}
+                                textField={get(config, "secteurs-sam.apiLabel") || 'nom_secteur'}
                                 onLoad={(r) => r?.elements}
-                                onSelect={(t) => changeState('string', 'secteurs-sam', t)}
-                                onChange={(t) => changeState('string', 'secteurs-sam', t)}
+                                onSelect={(t) => changeState("string", "secteurs-sam", t)}
+                                onChange={(t) => changeState("string", "secteurs-sam", t)}
                             />
 
                             <Tabou2Combo
                                 style={{ marginTop: comboMarginTop }}
                                 value={get(values, 'secteurs-speu')}
-                                key='search-speu-box'
+                                key="search-speu-box"
                                 filter="contains"
-                                suggest={true}
+                                suggest="true"
                                 load={() => getRequestApi('secteurs-speu')}
                                 textField={get(config, 'secteurs-speu.apiLabel') || 'nom_secteur'}
                                 onLoad={(r) => r?.elements}
-                                placeholder='Tous SPEU'
+                                placeholder="Tous SPEU"
                                 onSelect={(t) => changeState('string', 'secteurs-speu', t)}
                                 onChange={(t) => changeState('string', 'secteurs-speu', t)}
                             />
@@ -274,63 +275,57 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                             <Tabou2Combo
                                 style={{ marginTop: comboMarginTop }}
                                 value={get(values, 'secteurs-sds')}
-                                key='search-sds-box'
+                                key="search-sds-box"
                                 filter="contains"
-                                suggest={true}
+                                suggest="true"
                                 load={() => getRequestApi('secteurs-sds')}
                                 textField={get(config, 'secteurs-sds.apiLabel') || 'secteur'}
                                 onLoad={(r) => r?.elements}
-                                placeholder='Tous SDS'
+                                placeholder="Tous SDS"
                                 onSelect={(t) => changeState('string', 'secteurs-sds', t)}
                                 onChange={(t) => changeState('string', 'secteurs-sds', t)}
                             />
 
                             <Tabou2Combo
                                 style={{ marginTop: comboMarginTop }}
-                                key='search-foncier-box'
+                                key="search-foncier-box"
                                 filter="contains"
                                 value={get(values, 'secteurs-foncier')}
-                                suggest={true}
+                                suggest="true"
                                 load={() => getRequestApi('secteurs-foncier')}
                                 textField={get(config, 'secteurs-foncier.apiLabel') || 'nom_secteur'}
                                 onLoad={(r) => r?.elements}
-                                placeholder='Tous Foncier'
+                                placeholder="Tous Foncier"
                                 onSelect={(t) => changeState('string', 'secteurs-foncier', t)}
                                 onChange={(t) => changeState('string', 'secteurs-foncier', t)}
                             />
 
                             <Tabou2Combo
                                 style={{ marginTop: comboMarginTop }}
-                                key='search-etapeoa-box'
-                                defaultValue={true}
+                                key="search-etapeoa-box"
+                                defaultValue="true"
                                 valueField={'all'}
                                 firstItem={{all: true, libelle: 'Toutes les Etapes OA'}}
                                 load={() => getRequestApi('etapes-oa-mock')}
                                 filter="contains"
-                                disabled={true}
-                                textField='libelle'
-                                suggest={true}
+                                disabled="true"
+                                textField="libelle"
+                                suggest="true"
                                 onLoad={(r) => { return r?.elements; }}
-                                onChange={(t) => {
-                                    // changeCqlFilter('quartier', t['nuquart'])
-                                }}
                             />
 
                             <Tabou2Combo
                                 style={{ marginTop: comboMarginTop }}
-                                key='search-etapepa-box'
+                                key="search-etapepa-box"
                                 firstItem={{id_etape_operation: 0, all: null, libelle: 'Toutes les Etapes PA'}}
                                 load={() => getRequestApi('etapes-pa-mock')}
-                                disabled={true}
+                                disabled="true"
                                 filter="contains"
-                                suggest={true}
-                                textField='libelle'
+                                suggest="true"
+                                textField="libelle"
                                 defaultValue={null}
                                 valueField={'all'}
                                 onLoad={(r) => { return r?.elements; }}
-                                onChange={(t) => {
-                                    // changeCqlFilter('quartier', t['nuquart'])
-                                }}
                             />
                         </FormGroup>
                     </Col>
@@ -340,14 +335,12 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                         <FormGroup>
                             <ControlLabel inline>Date DOC du
                                 <UTCDateTimePicker inline
-                                    type='date'
-                                    calendar={true}
-                                    time={false}
-                                    culture='fr'
-                                    format='MM/DD/YYYY'
-                                    onChange={(date) => {
-                                        console.log(date);
-                                    }} />
+                                    type="date"
+                                    calendar="true"
+                                    time="false"
+                                    culture="fr"
+                                    format="MM/DD/YYYY"
+                                    onChange={() => null} />
                             </ControlLabel>
                         </FormGroup>
                     </Col>
@@ -355,14 +348,12 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                         <FormGroup>
                             <ControlLabel inline> à la date du :
                                 <UTCDateTimePicker inline
-                                    type='date'
-                                    calendar={true}
-                                    time={false}
-                                    culture='fr'
-                                    format='MM/DD/YYYY'
-                                    onChange={(date) => {
-                                        console.log(date);
-                                    }} />
+                                    type="date"
+                                    calendar="true"
+                                    time="false"
+                                    culture="fr"
+                                    format="MM/DD/YYYY"
+                                    onChange={() => null} />
                             </ControlLabel>
                         </FormGroup>
                     </Col>
@@ -372,14 +363,12 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                         <FormGroup>
                             <ControlLabel inline>Date DAT du :
                                 <UTCDateTimePicker inline
-                                    type='date'
-                                    calendar={true}
-                                    time={false}
-                                    culture='fr'
-                                    format='MM/DD/YYYY'
-                                    onChange={(date) => {
-                                        console.log(date);
-                                    }} />
+                                    type="date"
+                                    calendar="true"
+                                    time="false"
+                                    culture="fr"
+                                    format="MM/DD/YYYY"
+                                    onChange={() => null} />
                             </ControlLabel>
                         </FormGroup>
                     </Col>
@@ -387,14 +376,12 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                         <FormGroup>
                             <ControlLabel inline> à la date du :
                                 <UTCDateTimePicker inline
-                                    type='date'
-                                    calendar={true}
-                                    time={false}
-                                    culture='fr'
-                                    format='MM/DD/YYYY'
-                                    onChange={(date) => {
-                                        console.log(date);
-                                    }} />
+                                    type="date"
+                                    calendar="true"
+                                    time="false"
+                                    culture="fr"
+                                    format="MM/DD/YYYY"
+                                    onChange={() => null} />
                             </ControlLabel>
                         </FormGroup>
                     </Col>
@@ -404,14 +391,12 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                         <FormGroup>
                             <ControlLabel inline>Date de livraison du :
                                 <UTCDateTimePicker inline
-                                    type='date'
-                                    calendar={true}
-                                    time={false}
-                                    culture='fr'
-                                    format='MM/DD/YYYY'
-                                    onChange={(date) => {
-                                        console.log(date);
-                                    }} />
+                                    type="date"
+                                    calendar="true"
+                                    time="false"
+                                    culture="fr"
+                                    format="MM/DD/YYYY"
+                                    onChange={() => null} />
                             </ControlLabel>
                         </FormGroup>
                     </Col>
@@ -419,14 +404,12 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                         <FormGroup>
                             <ControlLabel inline> à la date du :
                                 <UTCDateTimePicker inline
-                                    type='date'
-                                    calendar={true}
-                                    time={false}
-                                    culture='fr'
-                                    format='MM/DD/YYYY'
-                                    onChange={(date) => {
-                                        console.log(date);
-                                    }} />
+                                    type="date"
+                                    calendar="true"
+                                    time="false"
+                                    culture="fr"
+                                    format="MM/DD/YYYY"
+                                    onChange={() => null} />
                             </ControlLabel>
                         </FormGroup>
                     </Col>

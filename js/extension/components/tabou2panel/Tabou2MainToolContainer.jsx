@@ -12,21 +12,19 @@ import Tabou2AddPanel from '../tabou2AddPanel/Tabou2AddPanel';
 import Tabou2IdentifyPanel from '../tabou2IdentifyPanel/Tabou2IdentifyPanel';
 
 
-
-
 function GetToolContainer({ ...props }) {
     let toolsContainerList = {
         identify: (<Tabou2IdentifyPanel key={'ms-tab-tabou-identify'} {...props} />),
         add: (<Tabou2AddPanel key={'ms-tab-tabou-add'} {...props} />),
-        search: (<Tabou2SearchPanel key={'ms-tab-tabou-search'} {...props} />),
-    }
+        search: (<Tabou2SearchPanel key={'ms-tab-tabou-search'} {...props} />)
+    };
     return toolsContainerList[props.currentTab];
 }
 
-function toolContainer({ currentTab, data = {}, allIndex = {}, ...props }) {
+function toolContainer({ currentTab, data = {}, ...props }) {
     return (
         <GetToolContainer currentTab={currentTab} data={keys(data).map(e => data[e])} {...props} />
-    )
+    );
 }
 
 export default connect(

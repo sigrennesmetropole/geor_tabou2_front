@@ -10,7 +10,7 @@ function Tabou2SearchToolbar({ apply, getFiltersObj, ...props }) {
     const search = () => {
         keys(getFiltersObj).forEach(k => {
             apply(k);
-        })
+        });
     };
     return (
         <Toolbar
@@ -36,14 +36,13 @@ function Tabou2SearchToolbar({ apply, getFiltersObj, ...props }) {
                 }
             ]}
         />
-    )
+    );
 }
 
 export default connect((state) => ({
-    // selectors
-    getFiltersObj: getLayerFilterObj(state),
-}), { //actions
+    getFiltersObj: getLayerFilterObj(state)
+}), {
     apply: applyFilterObj,
     resetFiltersObj: resetSearchFilters,
-    resetFiltersCql:resetCqlFilters
+    resetFiltersCql: resetCqlFilters
 })(Tabou2SearchToolbar);

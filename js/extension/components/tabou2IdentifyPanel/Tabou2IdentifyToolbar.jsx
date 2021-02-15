@@ -2,8 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Toolbar from '@mapstore/components/misc/toolbar/Toolbar';
 
-import { getTabouResponse } from '../../selectors/tabou2';
-
 function Tabou2IdentifyToolbar({ addDoc = () => { }, addTiers = () => { }, addEvent = () => { } }) {
     return (
 
@@ -35,11 +33,7 @@ function Tabou2IdentifyToolbar({ addDoc = () => { }, addTiers = () => { }, addEv
                 }
             ]}
         />
-    )
+    );
 }
 
-export default connect((state) => ({
-    // selectors
-}), { //actions
-
-})(Tabou2IdentifyToolbar);
+export default connect(() => ({}), {})(Tabou2IdentifyToolbar);

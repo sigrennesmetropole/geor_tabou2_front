@@ -39,11 +39,6 @@ export const resetCqlFilters = () => ({
     type: RESET_CQL_FILTERS
 });
 
-export const updateAllTabouLayers = (layer) => ({
-    type: UPDATE_TABOU_LAYER,
-    layer
-});
-
 export const setTabouFilters = (filterObj) => ({
     type: SET_TABOU_FILTERS,
     filterObj

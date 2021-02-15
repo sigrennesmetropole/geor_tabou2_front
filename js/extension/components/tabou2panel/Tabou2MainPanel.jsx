@@ -9,7 +9,6 @@ import Tabou2MainTabs from './Tabou2MainTabs';
 import Tabou2MainToolContainer from './Tabou2MainToolContainer';
 import { CONTROL_NAME } from '../../constants';
 
-
 function Tabou2MainPanel({
     enabled,
     dockStyle = {},

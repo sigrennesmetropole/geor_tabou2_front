@@ -3,7 +3,7 @@ import { keys, get } from 'lodash';
 /**
  * Control if an object have null attribute value.
  *
- * @param {object} obj 
+ * @param {object} obj
  * @returns {Boolean} - True if object have empty or null or value equal to 0.
  */
 export function containEmpty(obj) {
@@ -13,13 +13,13 @@ export function containEmpty(obj) {
 /**
  * Create layerFilter params expected by MapStore to attach a filter to a layer as param.
  * This structure is expected by TOC filters plugin to work correctly.
- * @param {string} layerTypeName 
- * @param {object} spatialFilter 
- * @param {object} textFilters 
+ * @param {string} layerTypeName
+ * @param {object} spatialFilter
+ * @param {object} textFilters
  * @param {object} crossLayer
- * @returns {object} 
+ * @returns {object}
  */
-export function getNewFilter (layerTypeName = '', spatialFilter = {}, textFilters = [], crossLayer = null) {
+export function getNewFilter(layerTypeName = '', spatialFilter = {}, textFilters = [], crossLayer = null) {
     return {
         featureTypeName: layerTypeName || '',
         groupFields: [{
@@ -35,8 +35,8 @@ export function getNewFilter (layerTypeName = '', spatialFilter = {}, textFilter
         sortOptions: null,
         crossLayerFilter: crossLayer || null,
         hits: false
-    }
-};
+    };
+}
 
 /**
  * Return simple CQL Cross layer filter from complexe CQL expression.
@@ -44,8 +44,8 @@ export function getNewFilter (layerTypeName = '', spatialFilter = {}, textFilter
  * @param {object} props
  * @returns {object} as CQL filter's crossLayer param object.
  */
-export function getNewCrossLayerFilter (props) {
-    if(containEmpty(props)) return;
+export function getNewCrossLayerFilter(props) {
+    if (containEmpty(props)) return null;
     return {
         operation: "INTERSECTS",
         attribute: props.mapLayerGeom,
@@ -69,7 +69,7 @@ export function getNewCrossLayerFilter (props) {
                 typeName: props.crossName
             }
         }
-    }
+    };
 }
 
 /**
@@ -78,8 +78,8 @@ export function getNewCrossLayerFilter (props) {
  * @param {object} props
  * @returns {object} as CQL filter's crossLayer param object.
  */
-export function getNewCqlFilter (props) {
-    if(containEmpty(props)) return;
+export function getNewCqlFilter(props) {
+    if (containEmpty(props)) return null;
     return {
         operation: "INTERSECTS",
         attribute: props.mapLayerGeom,
@@ -90,42 +90,43 @@ export function getNewCqlFilter (props) {
                 typeName: props.crossName
             }
         }
-    }
+    };
 }
 
 /**
  * Create standard CQL Cross Layer filter expression
- * @param {string} type 
- * @param {string} geomA 
- * @param {string} layer 
- * @param {string} geomB 
- * @param {string} field 
+ * @param {string} type
+ * @param {string} geomA
+ * @param {string} layer
+ * @param {string} geomB
+ * @param {string} field
  * @param {any} value
  * @returns {string} as CQL expression value
  */
-export function getCQL (type, geomA, layer, geomB, field, value) {
-    if(type === 'string') {
-        value = `''${value}''`;
+export function getCQL(type, geomA, layer, geomB, field, value) {
+    let cqlVal = value;
+    if (type === 'string') {
+        cqlVal = `''${value}''`;
     }
-    return `(INTERSECTS(${geomA},collectGeometries(queryCollection('${layer}', '${geomB}','${field} = ${value}'))))`;
+    return `(INTERSECTS(${geomA},collectGeometries(queryCollection('${layer}', '${geomB}','${field} = ${cqlVal}'))))`;
 }
 
 /**
  * Create an config object from pluginCfg to easily work with OA, SA, PA layers params
- * @param {object} config 
+ * @param {object} config
  * @returns {object} infos
  */
 export function getTabouLayersInfos(config) {
-    if(!config) return;
+    if (!config) return null;
     let infos = {};
     let layers = keys(config);
-    if(!layers.length) return infos;
+    if (!layers.length) return infos;
     layers.forEach(lyr => {
-        return infos[get(config, `${lyr}.nom`)] = {
+        infos[get(config, `${lyr}.nom`)] = {
             id: get(config, `${lyr}.idField`),
             type: get(config, `${lyr}.idType`),
             geom: get(config, `${lyr}.geomField`)
-        }
+        };
     });
     return infos;
 }

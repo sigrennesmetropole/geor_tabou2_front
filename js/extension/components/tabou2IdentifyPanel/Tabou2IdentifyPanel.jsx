@@ -4,11 +4,9 @@ import { connect } from 'react-redux';
 import { Row, Grid } from 'react-bootstrap';
 import { DropdownList } from 'react-widgets';
 
-import { currentActiveTabSelector } from '../../selectors/tabou2';
-import { getValidator } from '@mapstore/utils/MapInfoUtils';
 import Tabou2IdentifyToolbar from './Tabou2IdentifyToolbar';
 import Tabou2IdentifyContent from './Tabou2IdentifyContent';
-import { getTabouIndexSelectors, getTabouResponse, getPluginCfg } from '../../selectors/tabou2';
+import { getTabouIndexSelectors, getTabouResponse, currentActiveTabSelector } from '../../selectors/tabou2';
 import { setSelectorIndex } from '../../actions/tabou2';
 import { ID_SELECTOR } from '../../constants';
 
@@ -16,20 +14,19 @@ import { createOptions } from '../../utils/identify';
 
 function Tabou2IdentifyPanel({
     currentTab,
-    validator = getValidator,
     format,
     setIndex = () => { },
     getAllIndex,
     selectedLayer,
     ...props
 }) {
-    if (currentTab != 'identify') return;
+    if (currentTab !== 'identify') return null;
     const defaultIndex = 0;
 
     const changeIndex = (clicked, allIndex) => {
         allIndex[ID_SELECTOR] = clicked?.name;
         setIndex(allIndex);
-    }
+    };
 
     return (
         <>
@@ -49,14 +46,14 @@ function Tabou2IdentifyPanel({
                     </div>
                 </div>
             </Row>
-            <Row className="tabou-idToolbar-row" style={{ display: "flex", margin: "auto", justifyContent: "center" }} className="text-center">
+            <Row className="tabou-idToolbar-row text-center" style={{ display: "flex", margin: "auto", justifyContent: "center" }}>
                 <Tabou2IdentifyToolbar />
             </Row>
             <Grid style={{ width: '100%' }}>
                 <Tabou2IdentifyContent response={keys(props.response).map(e => props.response[e])} layer={getAllIndex[ID_SELECTOR] || selectedLayer} loadIndex={defaultIndex} {...props} />
             </Grid>
         </>
-    )
+    );
 }
 
 export default connect((state) => ({

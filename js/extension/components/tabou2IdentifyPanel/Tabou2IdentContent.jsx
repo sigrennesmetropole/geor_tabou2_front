@@ -4,11 +4,7 @@ import { connect } from 'react-redux';
 import { Checkbox, Col, Row, FormGroup, FormControl, Grid } from 'react-bootstrap';
 
 
-function Tabou2IdentContent({
-    response,
-    layerName,
-    ...props
-}) {
+function Tabou2IdentContent() {
     const fields = [
         {
             name: 'estoff',
@@ -76,9 +72,9 @@ function Tabou2IdentContent({
 
                                 }
                                 {
-                                    field.type != 'boolean' ?
+                                    field.type !== 'boolean' ?
                                         (<FormControl
-                                            type='text'
+                                            type="text"
                                             key={`key-ctrl-${field.name}`}
                                             placeholder={field.label} />) : null
                                 }
@@ -89,6 +85,6 @@ function Tabou2IdentContent({
             }
 
         </Grid>
-    )
+    );
 }
-export default connect((state) => ({}), {/*PASS EVT AND METHODS HERE*/ })(Tabou2IdentContent);
+export default connect(() => ({}), {})(Tabou2IdentContent);

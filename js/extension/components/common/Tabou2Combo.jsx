@@ -19,13 +19,14 @@ function Tabou2Combo({
     useEffect(() => {
         setBusy(true);
         load().then(result => {
+            let response;
             if (onLoad) {
-                result = onLoad(result);
+                response = onLoad(result);
             }
-            if(firstItem) result.unshift(firstItem);
-            setData(result);
+            if (firstItem) response.unshift(firstItem);
+            setData(response);
             setBusy(false);
-        })
+        });
     }, []); // pass array to stop inifity loop
 
     return (
@@ -38,7 +39,7 @@ function Tabou2Combo({
             defaultValue={props.defaultValue}
             placeholder={placeholder}
             {...props} />
-    )
+    );
 }
 
 export default Tabou2Combo;

@@ -15,20 +15,20 @@ function SelectionTab({ currentTab, onClick = () => { } }) {
         <Nav justified
             bsStyle="tabs"
             activeKey={currentTab}
-            onSelect={(selectedId) => { onClick(selectedId) }}>
+            onSelect={(selectedId) => onClick(selectedId) }>
             {
                 TABS.map(tab =>
                     <NavItemT
                         key={'ms-tab-settings-' + tab.id}
                         tooltip={tab.tooltip}
                         eventKey={tab.id}
-                        onClick={() => { onClick(tab.id) }}>
+                        onClick={() => onClick(tab.id) }>
                         <Glyphicon glyph={tab.glyph} />
                     </NavItemT>
                 )
             }
         </Nav>
-    )
+    );
 }
 
 export default connect((state) => ({

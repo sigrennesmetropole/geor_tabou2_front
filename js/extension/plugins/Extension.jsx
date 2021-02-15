@@ -7,19 +7,18 @@ import { toggleControl } from "@mapstore/actions/controls";
 import { changeLayerProperties, changeLayerParams } from "@mapstore/actions/layers";
 import { search } from "@mapstore/actions/queryform";
 
-import { mapLayoutValuesSelector } from "@mapstore/selectors/maplayout";
 import { syncLayers, selectLayers } from "@mapstore/selectors/layerinfo";
 import { layersSelector } from '@mapstore/selectors/layers';
 import { selectedLayerIdSelector } from '@mapstore/selectors/featuregrid';
 
 import Tabou2MainPanel from '@ext/components/tabou2panel/Tabou2MainPanel';
 
-import tabou2 from '@ext/reducers/tabou2'
+import tabou2 from '@ext/reducers/tabou2';
 
 import { setUp } from '@ext/actions/tabou2';
 
 import { tabouApplyFilter, tabouResetFilter } from '@ext/epics/search';
-import { tabouGetInfoOnClick, tabouLoadIdentifyContent, tabouSetGFIFormat, purgeTabou } from '@ext/epics/identify';
+import { tabouLoadIdentifyContent, tabouSetGFIFormat, purgeTabou } from '@ext/epics/identify';
 
 import { CONTROL_NAME } from '@ext/constants';
 
@@ -41,29 +40,23 @@ class Tabou2Panel extends React.Component {
         toggleControl: () => { },
         activeTab: 'search',
         tabs: [],
-        dockStyle: {
-            right: 600
-        },
         size: 500
     };
 
     render() {
-        // TODO : user compose as cadastrapp
-        //this.props.setCfg(this.props.pluginCfg);
         return (
-            <Tabou2MainPanel dockStyle={this.props.dockStyle} size={this.props.size} {...this.props} />
-        )
+            <Tabou2MainPanel size={this.props.size} {...this.props} />
+        );
     }
 }
 
 /**
- * 
+ *
  * TABOU 2 PLUGIN
- * 
+ *
  */
 const Tabou2Plugin = connect((state) => ({
-    active: state => (state.controls && state.controls[CONTROL_NAME] && state.controls[CONTROL_NAME].enabled) || (state[CONTROL_NAME] && state[CONTROL_NAME].closing) || false,
-    dockStyle: state => mapLayoutValuesSelector(state, { right: true, bottom: true, left: true }), // TODO : Fix - to changed right style of tools toolbar
+    active: () => (state.controls && state.controls[CONTROL_NAME] && state.controls[CONTROL_NAME].enabled) || (state[CONTROL_NAME] && state[CONTROL_NAME].closing) || false,
     tocLayers: layersSelector(state),
     selectedLayerId: selectedLayerIdSelector(state)
 }), {
@@ -83,7 +76,6 @@ export default {
     reducers: { tabou2: tabou2 },
     epics: {
         tabouApplyFilter: tabouApplyFilter,
-        tabouGetInfoOnClick: tabouGetInfoOnClick,
         tabouLoadIdentifyContent: tabouLoadIdentifyContent,
         tabouSetGFIFormat: tabouSetGFIFormat,
         purgeTabou: purgeTabou,
@@ -100,4 +92,4 @@ export default {
             priority: 1
         }
     }
-}
+};

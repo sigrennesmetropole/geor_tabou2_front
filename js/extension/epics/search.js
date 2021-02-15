@@ -1,6 +1,6 @@
 import * as Rx from 'rxjs';
 import { keys } from 'lodash';
-import { RESET_SEARCH_FILTERS, UPDATE_LAYER_PARAMS, setTabouFilterObj, setTabouFilters } from '../actions/tabou2';
+import { RESET_SEARCH_FILTERS, UPDATE_LAYER_PARAMS } from '../actions/tabou2';
 import { layersSelector } from '@mapstore/selectors/layers';
 import { currentTabouFilters, getLayerFilterObj } from '../selectors/tabou2';
 import { changeLayerProperties, updateNode } from "@mapstore/actions/layers";
@@ -9,8 +9,8 @@ import { changeLayerProperties, updateNode } from "@mapstore/actions/layers";
 /**
  * From Tabou2 search panel, apply filter for each Tabou layers.
  * This action create filter replace filters inside TOC filter panel.
- * @param {*} action$ 
- * @param {*} store 
+ * @param {*} action$
+ * @param {*} store
  */
 export function tabouApplyFilter(action$, store) {
     return action$.ofType(UPDATE_LAYER_PARAMS).switchMap((action) => {
@@ -18,7 +18,7 @@ export function tabouApplyFilter(action$, store) {
         let filterObj = getLayerFilterObj(store.getState()) ?? {};
         const tocLayers = layersSelector(store.getState()) ?? [];
         let layer = tocLayers.filter(lyr => lyr.name === action.layerToFilter);
-        if(!action.layerToFilter || !filterObj[action.layerToFilter] || !layer.length) {
+        if (!action.layerToFilter || !filterObj[action.layerToFilter] || !layer.length) {
             return Rx.Observable.empty();
         }
         filterObj = filterObj[action.layerToFilter];
@@ -36,17 +36,17 @@ export function tabouApplyFilter(action$, store) {
 /**
  * Reset filters for each layers.
  * This affect layer filter and reset TOC filter panel.
- * @param {*} action$ 
- * @param {*} store 
+ * @param {*} action$
+ * @param {*} store
  */
 export function tabouResetFilter(action$, store) {
-    return action$.ofType(RESET_SEARCH_FILTERS).switchMap((action) => {
+    return action$.ofType(RESET_SEARCH_FILTERS).switchMap(() => {
         const layers = keys(currentTabouFilters(store.getState()));
         const tocLayers = layersSelector(store.getState()) ?? [];
         const layersId = tocLayers.filter(layer => layers.indexOf(layer.name) > -1).map(layer => layer.id);
 
         return Rx.Observable.from((layersId)).mergeMap(id => {
-            return Rx.Observable.of(changeLayerProperties(id, { layerFilter: {} }))
+            return Rx.Observable.of(changeLayerProperties(id, { layerFilter: {} }));
         });
     });
 }
