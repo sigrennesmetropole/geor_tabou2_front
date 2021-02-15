@@ -77,6 +77,29 @@ export const SEARCH_ITEMS = [{
     group: 2
 }];
 
+export const SEARCH_CALENDARS = [{
+    items: [{
+        label: "Date DOC du :"
+    },
+    {
+        label: "A la date du :"
+    }]
+}, {
+    items: [{
+        label: "Date DOC du :"
+    },
+    {
+        label: "A la date du :"
+    }]
+}, {
+    items: [{
+        label: "Date de livraison du :"
+    },
+    {
+        label: "A la date du :"
+    }]
+}];
+
 export const ACCORDIONS = [
     {title: 'Identification', id: 'ident'},
     {title: 'Descriptif', id: 'describe'},

@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import axios from '@mapstore/libs/ajax';
 
 import { Checkbox, Col, Row, ControlLabel, FormGroup, Grid } from 'react-bootstrap';
-import { DateTimePicker, Combobox } from 'react-widgets';
+import { DateTimePicker } from 'react-widgets';
 import { currentActiveTabSelector, currentTabouFilters, getLayerFilterObj } from '../../selectors/tabou2';
 import Tabou2SearchToolbar from './Tabou2SearchToolbar';
 import Tabou2Combo from '../form/Tabou2Combo';
@@ -15,7 +15,7 @@ import { setTabouFilterObj, setTabouFilters, resetSearchFilters, resetCqlFilters
 
 import { getNewFilter, getNewCqlFilter, getGeoServerUrl, getCQL, getTabouLayersInfos } from '../../utils/search';
 
-import { SEARCH_ITEMS } from '@ext/constants';
+import { SEARCH_ITEMS, SEARCH_CALENDARS } from '@ext/constants';
 
 
 const UTCDateTimePicker = utcDateWrapper({
@@ -148,6 +148,26 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
         );
     };
 
+    const getDate = (item, pos, type) => {
+        return (
+            <Col xs={6}>
+                <FormGroup>
+                    <ControlLabel inline> {item.label}
+                        <UTCDateTimePicker inline
+                            key={`calendar-st-${pos}`}
+                            type="date"
+                            placeholder="Choisir une date"
+                            calendar={get(type, "isCalendar") || true}
+                            time={get(type, "isTime") || false}
+                            culture="fr"
+                            format="MM/DD/YYYY"
+                            onChange={(e) => e} />
+                    </ControlLabel>
+                </FormGroup>
+            </Col>
+        );
+    };
+
     return (
         <>
             <div id="tabou2-tbar-container" style={{ display: "flex", margin: "auto", justifyContent: "center" }} className="text-center">
@@ -169,30 +189,6 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                             {
                                 SEARCH_ITEMS.filter(f => f.group === 1).map((cb, i) => getCombo(cb, i))
                             }
-
-                            <Combobox
-                                style={{ marginTop: comboMarginTop }}
-                                key="search-amemagoa-box"
-                                data={[256, 512]}
-                                filter="contains"
-                                disabled="true"
-                                placeholder={'Aménageur OA'} />
-
-                            <Combobox
-                                style={{ marginTop: comboMarginTop }}
-                                key="search-promoteuroa-box"
-                                filter="contains"
-                                data={[256, 512]}
-                                disabled="true"
-                                placeholder={'Aménageur PA'} />
-
-                            <Combobox
-                                style={{ marginTop: comboMarginTop }}
-                                key="search-typefin-box"
-                                data={[256, 512]}
-                                disabled="true"
-                                filter="contains"
-                                placeholder={'Type financement'} />
                         </FormGroup>
                     </Col>
                     <Col xs={6}>
@@ -203,90 +199,9 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                         </FormGroup>
                     </Col>
                 </Row>
-                <Row style={{ marginTop: '20px' }}>
-                    <Col xs={6}>
-                        <FormGroup>
-                            <ControlLabel inline>Date DOC du
-                                <UTCDateTimePicker inline
-                                    type="date"
-                                    calendar="true"
-                                    time="false"
-                                    culture="fr"
-                                    format="MM/DD/YYYY"
-                                    onChange={() => null} />
-                            </ControlLabel>
-                        </FormGroup>
-                    </Col>
-                    <Col xs={6}>
-                        <FormGroup>
-                            <ControlLabel inline> à la date du :
-                                <UTCDateTimePicker inline
-                                    type="date"
-                                    calendar="true"
-                                    time="false"
-                                    culture="fr"
-                                    format="MM/DD/YYYY"
-                                    onChange={() => null} />
-                            </ControlLabel>
-                        </FormGroup>
-                    </Col>
-                </Row>
-                <Row style={{ marginTop: '20px' }}>
-                    <Col xs={6}>
-                        <FormGroup>
-                            <ControlLabel inline>Date DAT du :
-                                <UTCDateTimePicker inline
-                                    type="date"
-                                    calendar="true"
-                                    time="false"
-                                    culture="fr"
-                                    format="MM/DD/YYYY"
-                                    onChange={() => null} />
-                            </ControlLabel>
-                        </FormGroup>
-                    </Col>
-                    <Col xs={6}>
-                        <FormGroup>
-                            <ControlLabel inline> à la date du :
-                                <UTCDateTimePicker inline
-                                    type="date"
-                                    calendar="true"
-                                    time="false"
-                                    culture="fr"
-                                    format="MM/DD/YYYY"
-                                    onChange={() => null} />
-                            </ControlLabel>
-                        </FormGroup>
-                    </Col>
-                </Row>
-                <Row style={{ marginTop: '20px' }}>
-                    <Col xs={6}>
-                        <FormGroup>
-                            <ControlLabel inline>Date de livraison du :
-                                <UTCDateTimePicker inline
-                                    type="date"
-                                    calendar="true"
-                                    time="false"
-                                    culture="fr"
-                                    format="MM/DD/YYYY"
-                                    onChange={() => null} />
-                            </ControlLabel>
-                        </FormGroup>
-                    </Col>
-                    <Col xs={6}>
-                        <FormGroup>
-                            <ControlLabel inline> à la date du :
-                                <UTCDateTimePicker inline
-                                    type="date"
-                                    calendar="true"
-                                    time="false"
-                                    culture="fr"
-                                    format="MM/DD/YYYY"
-                                    onChange={() => null} />
-                            </ControlLabel>
-                        </FormGroup>
-                    </Col>
-                </Row>
+                {
+                    SEARCH_CALENDARS.map((els) => { return (<Row style={{ marginTop: marginTop }}>{els.items.map((el, i) => getDate(el, i))}</Row>); })
+                }
             </Grid >
         </>
     );
