@@ -386,6 +386,7 @@
               "geom": "the_geom",
               "placeholder": "Iris",
               "filterField": "code_iris",
+              "apiField": "code_iris",
               "apiLabel": "nmiris"
             },
             "etapes-oa-mock": {
@@ -437,6 +438,7 @@
             },
             "natures": {
               "filterField": "libelle",
+              "apiField": "libelle",
               "apiLabel": "libelle",
               "placeholder": "Natures"
             },

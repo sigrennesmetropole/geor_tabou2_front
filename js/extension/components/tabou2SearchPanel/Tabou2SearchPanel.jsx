@@ -112,7 +112,7 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
     const changeState = (type, name, value, changeCQL) => {
         values[name] = value;
         setValues(values);
-        changeCqlFilter(type, name, value, config[name]);
+        changeCqlFilter(type, name, value[get(config, `${name}.apiField`)], config[name]);
     }
 
     /**
@@ -156,10 +156,8 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                                 filter="contains"
                                 textField= {get(config, 'communes.apiLabel') || 'nom'}
                                 onLoad={(r) => r?.elements}
-                                onSelect={(t) => {
-                                    changeState(null, 'communes', t?.all ? null : t[get(config, 'communes.filterField')]);
-                                }}
-                                onChange={(t) => !t ? changeState(null, 'communes', t) : null}
+                                onSelect={(t) => changeState(null, 'communes', t)}
+                                onChange={(t) => changeState(null, 'communes', t)}
                             />
 
                             <Tabou2Combo
@@ -172,10 +170,8 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                                 placeholder='Tous Quartiers'
                                 textField={get(config, 'quartiers.apiLabel') || 'nom'}
                                 onLoad={(r) => r?.elements}
-                                onSelect={(t) => {
-                                    changeState(null, 'quartiers', t?.all ? null : t[get(config, 'quartiers.filterField')])
-                                }}
-                                onChange={(t) => !t ? changeState(null, 'quartiers', t) : null}
+                                onSelect={(t) => changeState(null, 'quartiers', t)}
+                                onChange={(t) => changeState(null, 'quartiers', t)}
                             />
 
                             <Tabou2Combo
@@ -188,10 +184,8 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                                 placeholder='Tous Iris'
                                 value={values?.iris}
                                 onLoad={(r) => r?.elements}
-                                onSelect={(t) => {
-                                    changeState(null, 'iris', t?.all ? null : t[get(config, 'iris.filterField')])
-                                }}
-                                onChange={(t) => !t ? changeState(null, 'iris', t) : null}
+                                onSelect={(t) => changeState(null, 'iris', t)}
+                                onChange={(t) => changeState(null, 'iris', t)}
                             />
 
                             <Combobox
@@ -229,10 +223,8 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                                 filter="contains"
                                 textField='libelle'
                                 onLoad={(r) => r?.elements}
-                                onSelect={(t) => {
-                                    changeState(null, 'plui', t?.all ? null : t[get(config, 'plui.filterField')])
-                                }}
-                                onChange={(t) => !t ? changeState(null, 'plui', t) : null}
+                                onSelect={(t) => changeState(null, 'plui', t)}
+                                onChange={(t) => changeState(null, 'plui', t)}
                             />
                         </FormGroup>
                     </Col>
@@ -249,10 +241,8 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                                 suggest={true}
                                 textField={get(config, 'natures.apiLabel') || 'libelle'}
                                 onLoad={(r) => r?.elements}
-                                onChange={(t) => {
-                                    changeState('string', 'natures', t?.all ? null : t[get(config, 'natures.filterField')]);
-                                }}
-                                onChange={(t) => !t ? changeState(null, 'natures', t) : null}
+                                onSelect={(t) => changeState(null, 'natures', t)}
+                                onChange={(t) => changeState(null, 'natures', t)}
                             />
                             <Tabou2Combo
                                 style={{ marginTop: comboMarginTop }}
@@ -264,10 +254,8 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                                 load={() => getRequestApi('secteurs-sam')}
                                 textField={get(config, 'secteurs-sam.apiLabel') || 'nom_secteur'}
                                 onLoad={(r) => r?.elements}
-                                onChange={(t) => {
-                                    changeState('string', 'secteurs-sam', t?.all ? null : t[get(config, 'secteurs-sam.apiField')]);
-                                }}
-                                onChange={(t) => !t ?  changeState(null, 'secteurs-sam', t) : null}
+                                onSelect={(t) => changeState('string', 'secteurs-sam', t)}
+                                onChange={(t) => changeState('string', 'secteurs-sam', t)}
                             />
 
                             <Tabou2Combo
@@ -280,10 +268,8 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                                 textField={get(config, 'secteurs-speu.apiLabel') || 'nom_secteur'}
                                 onLoad={(r) => r?.elements}
                                 placeholder='Tous SPEU'
-                                onChange={(t) => { 
-                                    changeState('string', 'secteurs-speu', t?.all ? null : t[get(config, 'secteurs-speu.apiField')]);
-                                }}
-                                onChange={(t) => !t ?  changeState(null, 'secteurs-speu', t) : null}
+                                onSelect={(t) => changeState('string', 'secteurs-speu', t)}
+                                onChange={(t) => changeState('string', 'secteurs-speu', t)}
                             />
 
                             <Tabou2Combo
@@ -296,10 +282,8 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                                 textField={get(config, 'secteurs-sds.apiLabel') || 'secteur'}
                                 onLoad={(r) => r?.elements}
                                 placeholder='Tous SDS'
-                                onChange={(t) => { 
-                                    changeState('string', 'secteurs-sds', t?.all ? null : t[get(config, 'secteurs-sds.apiField')]);
-                                }}
-                                onChange={(t) => !t ? changeState(null, 'secteurs-sds', t) : null}
+                                onSelect={(t) => changeState('string', 'secteurs-sds', t)}
+                                onChange={(t) => changeState('string', 'secteurs-sds', t)}
                             />
 
                             <Tabou2Combo
@@ -312,10 +296,8 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                                 textField={get(config, 'secteurs-foncier.apiLabel') || 'nom_secteur'}
                                 onLoad={(r) => r?.elements}
                                 placeholder='Tous Foncier'
-                                onChange={(t) => {
-                                    changeState('string', 'secteurs-foncier', t?.all ? null : t[get(config, 'secteurs-foncier.apiField')], true);
-                                }}
-                                onChange={(t) => !t ? changeState(null, 'secteurs-foncier', t) : null}
+                                onSelect={(t) => changeState('string', 'secteurs-foncier', t)}
+                                onChange={(t) => changeState('string', 'secteurs-foncier', t)}
                             />
 
                             <Tabou2Combo
