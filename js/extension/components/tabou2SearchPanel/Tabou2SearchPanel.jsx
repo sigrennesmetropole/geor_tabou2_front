@@ -7,13 +7,15 @@ import { Checkbox, Col, Row, ControlLabel, FormGroup, Grid } from 'react-bootstr
 import { DateTimePicker, Combobox } from 'react-widgets';
 import { currentActiveTabSelector, currentTabouFilters, getLayerFilterObj } from '../../selectors/tabou2';
 import Tabou2SearchToolbar from './Tabou2SearchToolbar';
-import Tabou2Combo from '../common/Tabou2Combo';
+import Tabou2Combo from '../form/Tabou2Combo';
 import utcDateWrapper from '@mapstore/components/misc/enhancers/utcDateWrapper';
 import { getRequestApi } from '../../api/search';
 
 import { setTabouFilterObj, setTabouFilters, resetSearchFilters, resetCqlFilters } from '../../actions/tabou2';
 
 import { getNewFilter, getNewCqlFilter, getGeoServerUrl, getCQL, getTabouLayersInfos } from '../../utils/search';
+
+import { SEARCH_ITEMS } from '@ext/constants';
 
 
 const UTCDateTimePicker = utcDateWrapper({
@@ -128,6 +130,24 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
         setValues(values);
     };
 
+    const getCombo = (combo, pos) => {
+        return (
+            <Tabou2Combo
+                style={{ marginTop: comboMarginTop }}
+                key={`${combo.name}-${pos}-key`}
+                load={() => getRequestApi(get(combo, "api") || get(combo, "name"))}
+                value={values[combo.name]}
+                placeholder={combo.placeholder}
+                filter="contains"
+                textField={get(config, `${combo.name}.apiLabel`)}
+                onLoad={(r) => r?.elements}
+                disabled={get(combo, "disabled")}
+                onSelect={(t) => changeState(get(combo, 'type'), combo.name, t)}
+                onChange={(t) => changeState(get(combo, 'type'), combo.name, t)}
+            />
+        );
+    };
+
     return (
         <>
             <div id="tabou2-tbar-container" style={{ display: "flex", margin: "auto", justifyContent: "center" }} className="text-center">
@@ -146,47 +166,9 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                     <Col xs={6}>
                         {/* left combo box */}
                         <FormGroup>
-                            <Tabou2Combo
-                                style={{ marginTop: comboMarginTop }}
-                                key="earch-d-boxTest"
-                                load={() => getRequestApi('communes')}
-                                value={values?.communes}
-                                suggest="true"
-                                placeholder="Toutes Communes"
-                                filter="contains"
-                                textField= {get(config, "communes.apiLabel") || "nom"}
-                                onLoad={(r) => r?.elements}
-                                onSelect={(t) => changeState(null, "communes", t)}
-                                onChange={(t) => changeState(null, "communes", t)}
-                            />
-
-                            <Tabou2Combo
-                                style={{ marginTop: comboMarginTop }}
-                                key="search-quartier-boxTest"
-                                filter="contains"
-                                value={values?.quartiers}
-                                load={() => getRequestApi('quartiers')}
-                                suggest="true"
-                                placeholder="Tous Quartiers"
-                                textField={get(config, 'quartiers.apiLabel') || 'nom'}
-                                onLoad={(r) => r?.elements}
-                                onSelect={(t) => changeState(null, 'quartiers', t)}
-                                onChange={(t) => changeState(null, 'quartiers', t)}
-                            />
-
-                            <Tabou2Combo
-                                style={{ marginTop: comboMarginTop }}
-                                filter="contains"
-                                key="search-iris-boxTest"
-                                load={() => getRequestApi('iris')}
-                                textField={get(config, 'iris.apiLabel') || 'nmiris'}
-                                suggest="true"
-                                placeholder="Tous Iris"
-                                value={values?.iris}
-                                onLoad={(r) => r?.elements}
-                                onSelect={(t) => changeState(null, 'iris', t)}
-                                onChange={(t) => changeState(null, 'iris', t)}
-                            />
+                            {
+                                SEARCH_ITEMS.filter(f => f.group === 1).map((cb, i) => getCombo(cb, i))
+                            }
 
                             <Combobox
                                 style={{ marginTop: comboMarginTop }}
@@ -211,122 +193,13 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                                 disabled="true"
                                 filter="contains"
                                 placeholder={'Type financement'} />
-
-                            <Tabou2Combo
-                                style={{ marginTop: comboMarginTop }}
-                                value={values?.plui}
-                                placeholder="Tous PLUI"
-                                key="search-plui-combo"
-                                suggest="true"
-                                disabled="true"
-                                load={() => getRequestApi('plui')}
-                                filter="contains"
-                                textField="libelle"
-                                onLoad={(r) => r?.elements}
-                                onSelect={(t) => changeState(null, "plui", t)}
-                                onChange={(t) => changeState(null, "plui", t)}
-                            />
                         </FormGroup>
                     </Col>
                     <Col xs={6}>
                         <FormGroup >
-                            <Tabou2Combo
-                                style={{ marginTop: comboMarginTop }}
-                                value={values?.natures}
-                                placeholder="Toutes Natures"
-                                key="search-natures-combo"
-                                disabled="true"
-                                filter="contains"
-                                load={() => getRequestApi("natures")}
-                                suggest="true"
-                                textField={get(config, "natures.apiLabel") || "libelle"}
-                                onLoad={(r) => r?.elements}
-                                onSelect={(t) => changeState(null, "natures", t)}
-                                onChange={(t) => changeState(null, "natures", t)}
-                            />
-                            <Tabou2Combo
-                                style={{ marginTop: comboMarginTop }}
-                                value={get(values, 'secteurs-sam')}
-                                key="search-sam-box"
-                                filter="contains"
-                                placeholder="Tous SAM"
-                                suggest="true"
-                                load={() => getRequestApi("secteurs-sam")}
-                                textField={get(config, "secteurs-sam.apiLabel") || 'nom_secteur'}
-                                onLoad={(r) => r?.elements}
-                                onSelect={(t) => changeState("string", "secteurs-sam", t)}
-                                onChange={(t) => changeState("string", "secteurs-sam", t)}
-                            />
-
-                            <Tabou2Combo
-                                style={{ marginTop: comboMarginTop }}
-                                value={get(values, 'secteurs-speu')}
-                                key="search-speu-box"
-                                filter="contains"
-                                suggest="true"
-                                load={() => getRequestApi('secteurs-speu')}
-                                textField={get(config, 'secteurs-speu.apiLabel') || 'nom_secteur'}
-                                onLoad={(r) => r?.elements}
-                                placeholder="Tous SPEU"
-                                onSelect={(t) => changeState('string', 'secteurs-speu', t)}
-                                onChange={(t) => changeState('string', 'secteurs-speu', t)}
-                            />
-
-                            <Tabou2Combo
-                                style={{ marginTop: comboMarginTop }}
-                                value={get(values, 'secteurs-sds')}
-                                key="search-sds-box"
-                                filter="contains"
-                                suggest="true"
-                                load={() => getRequestApi('secteurs-sds')}
-                                textField={get(config, 'secteurs-sds.apiLabel') || 'secteur'}
-                                onLoad={(r) => r?.elements}
-                                placeholder="Tous SDS"
-                                onSelect={(t) => changeState('string', 'secteurs-sds', t)}
-                                onChange={(t) => changeState('string', 'secteurs-sds', t)}
-                            />
-
-                            <Tabou2Combo
-                                style={{ marginTop: comboMarginTop }}
-                                key="search-foncier-box"
-                                filter="contains"
-                                value={get(values, 'secteurs-foncier')}
-                                suggest="true"
-                                load={() => getRequestApi('secteurs-foncier')}
-                                textField={get(config, 'secteurs-foncier.apiLabel') || 'nom_secteur'}
-                                onLoad={(r) => r?.elements}
-                                placeholder="Tous Foncier"
-                                onSelect={(t) => changeState('string', 'secteurs-foncier', t)}
-                                onChange={(t) => changeState('string', 'secteurs-foncier', t)}
-                            />
-
-                            <Tabou2Combo
-                                style={{ marginTop: comboMarginTop }}
-                                key="search-etapeoa-box"
-                                defaultValue="true"
-                                valueField={'all'}
-                                firstItem={{all: true, libelle: 'Toutes les Etapes OA'}}
-                                load={() => getRequestApi('etapes-oa-mock')}
-                                filter="contains"
-                                disabled="true"
-                                textField="libelle"
-                                suggest="true"
-                                onLoad={(r) => { return r?.elements; }}
-                            />
-
-                            <Tabou2Combo
-                                style={{ marginTop: comboMarginTop }}
-                                key="search-etapepa-box"
-                                firstItem={{id_etape_operation: 0, all: null, libelle: 'Toutes les Etapes PA'}}
-                                load={() => getRequestApi('etapes-pa-mock')}
-                                disabled="true"
-                                filter="contains"
-                                suggest="true"
-                                textField="libelle"
-                                defaultValue={null}
-                                valueField={'all'}
-                                onLoad={(r) => { return r?.elements; }}
-                            />
+                            {
+                                SEARCH_ITEMS.filter(f => f.group === 2).map((cb, i) => getCombo(cb, i))
+                            }
                         </FormGroup>
                     </Col>
                 </Row>

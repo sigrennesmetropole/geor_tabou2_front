@@ -22,6 +22,61 @@ export const COMMUNE_LAYER_ID = 'ladm_terri:commune_emprise';
 
 export const ID_SELECTOR = 'layerTabouId-selector';
 
+export const SEARCH_ITEMS = [{
+    name: 'communes',
+    placeholder: 'Toutes communes',
+    group: 1
+}, {
+    name: 'quartiers',
+    placeholder: 'Tous quartiers',
+    group: 1
+}, {
+    name: 'iris',
+    placeholder: 'Tous iris',
+    group: 1
+}, {
+    name: 'plui',
+    disabled: true,
+    placeholder: 'Tous zonage PLUI',
+    group: 1
+}, {
+    name: "natures",
+    placeholder: "Toutes natures",
+    group: 2
+}, {
+    name: "secteurs-sam",
+    placeholder: 'Tous secteurs SAM',
+    type: 'string',
+    group: 2
+}, {
+    name: "secteurs-speu",
+    placeholder: 'Tous secteurs SPEU',
+    type: 'string',
+    group: 2
+}, {
+    name: "secteurs-sds",
+    placeholder: 'Tous secteurs SDS',
+    type: 'string',
+    group: 2
+}, {
+    name: "secteurs-foncier",
+    placeholder: "Tous secteurs Foncier",
+    type: 'string',
+    group: 2
+}, {
+    name: "etapeoa",
+    placeholder: "Toutes Etapes OA",
+    api: "etapes-oa-mock",
+    disabled: true,
+    group: 2
+}, {
+    name: "etapepa",
+    placeholder: "Toutes Etapes PA",
+    api: "etapes-pa-mock",
+    disabled: true,
+    group: 2
+}];
+
 export const ACCORDIONS = [
     {title: 'Identification', id: 'ident'},
     {title: 'Descriptif', id: 'describe'},
