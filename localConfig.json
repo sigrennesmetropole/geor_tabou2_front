@@ -346,19 +346,19 @@
           "showIdentify": false,
           "layersCfg": {
             "layerPA": {
-              "nom":"tabou2:v_oa_programme",
+              "nom": "tabou2:v_oa_programme",
               "geomField": "the_geom",
               "idField": "objectid",
               "idType": "number"
             },
             "layerOA": {
-              "nom":"tabou2:oa_secteur",
+              "nom": "tabou2:oa_secteur",
               "geomField": "the_geom",
               "idField": "objectid",
               "idType": "number"
             },
             "layerSA": {
-              "nom":"tabou2:zac",
+              "nom": "tabou2:zac",
               "geomField": "the_geom",
               "idField": "id_zac",
               "idType": "number"
@@ -444,8 +444,18 @@
             },
             "amenageurOA": {},
             "promoteurOA": {},
-            "typeFinancement": {},
-            "plui": {}
+            "type-financement": {
+              "filterField": "code",
+              "apiField": "code",
+              "apiLabel": "libelle",
+              "placeholder": "Type. Financement"
+            },
+            "plui": {
+              "filterField": "libelle",
+              "apiField": "libelle",
+              "apiLabel": "libelle",
+              "placeholder": "Zonage PLUI"
+            }
           },
           "apiCfg": {
             "apiURL": "https://jdev.stoplight.io/mocks/jdev/tabou_api_swagger/4964747"
