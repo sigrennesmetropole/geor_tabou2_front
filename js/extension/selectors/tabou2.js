@@ -1,4 +1,5 @@
 import { CONTROL_NAME } from '@ext/constants';
+import { keys } from 'lodash';
 export function currentActiveTabSelector(state) {
     return state?.tabou2.activeTab;
 }
@@ -17,6 +18,10 @@ export function defaultInfoFormat(state) {
 
 export function getTabouResponse(state) {
     return state?.tabou2.response;
+}
+
+export function getTabouResponseLayers(state) {
+    return keys(state?.tabou2.response);
 }
 
 export function getTabouIndexSelectors(state) {

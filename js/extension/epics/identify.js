@@ -48,6 +48,7 @@ export function tabouLoadIdentifyContentOld(action$, store) {
 
 /**
  * Catch GFI response on identify load event and close identify if Tabou2 identify tabs is selected
+ * TODO: take showIdentify pluginCfg param into account
  * @param {*} action$
  * @param {*} store
  */
@@ -56,9 +57,7 @@ export function tabouLoadIdentifyContent(action$, store) {
         .filter(() => isTabou2Activate(store.getState()))
         .switchMap((action) => {
             if (action.layer && action.layer.id) {
-                const cfg = getPluginCfg(store.getState());
                 let resp = getTabouResponse(store.getState());
-
                 // delete response for this GFI layer response
                 delete resp[action.layer.name];
 
@@ -68,7 +67,7 @@ export function tabouLoadIdentifyContent(action$, store) {
                 }
 
                 return Rx.Observable.of(loadTabouFeatureInfo(resp)).concat(
-                    cfg.showIdentify ?  Rx.Observable.empty() : Rx.Observable.of(closeIdentify())
+                    Rx.Observable.of(closeIdentify())
                 );
             }
             return Rx.Observable.empty();

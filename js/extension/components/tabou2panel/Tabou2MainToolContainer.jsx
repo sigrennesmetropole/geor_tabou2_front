@@ -23,7 +23,7 @@ function GetToolContainer({ ...props }) {
 
 function toolContainer({ currentTab, data = {}, ...props }) {
     return (
-        <GetToolContainer currentTab={currentTab} data={keys(data).map(e => data[e])} {...props} />
+        <GetToolContainer currentTab={currentTab} responseLayers={keys(data)} {...props} />
     );
 }
 

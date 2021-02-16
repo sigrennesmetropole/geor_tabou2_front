@@ -40,6 +40,11 @@ export const SEARCH_ITEMS = [{
     placeholder: 'Tous zonage PLUI',
     group: 1
 }, {
+    name: 'type-financement',
+    disabled: true,
+    placeholder: 'Tous Financement',
+    group: 1
+}, {
     name: "natures",
     placeholder: "Toutes natures",
     group: 2

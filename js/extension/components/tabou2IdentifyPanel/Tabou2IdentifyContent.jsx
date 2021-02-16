@@ -1,33 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
 import { PanelGroup, Panel } from 'react-bootstrap';
-import { keys, isEmpty } from 'lodash';
 import { CSS } from './tabou2Identify-css';
 
-import Tabou2IdentContent from './Tabou2IdentContent';
+import Tabou2IdentContent from '@ext/components/form/Tabou2IdentAccord';
 
-import { ACCORDIONS } from '../../constants';
+import { ACCORDIONS } from '@ext/constants';
 
-import {
-    currentFeatureSelector
-} from '@mapstore/selectors/mapInfo';
-
-
-function Tabou2IdentifyContent({
-    defaultActiveKey = [0],
-    response,
-    loadIndex = 0,
-    layer,
-    ...props
+export default function Tabou2IdentifyContent({
+    tabouLayer
 }) {
-    let layerName = '';
-    layerName = layer || keys(response)[loadIndex];
-
-    const [status, setStatus] = useState({});
     const [cssLoaded, setCss] = useState(false);
-    const setPanelStatus = (panelId, val) => {
-        status[panelId] = val;
-        setStatus(status);
+    const [accordions, setAccordions] = useState([]);
+    const [openedAccordions, setOpened] = useState({});
+    const toggleAccordion = (idx) => {
+        openedAccordions[idx] = openedAccordions[idx] ? false : true;
+        setOpened(openedAccordions);
     };
 
     /**
@@ -43,46 +30,36 @@ function Tabou2IdentifyContent({
         }
     }, []);
 
-    const GetAttributesPanel = ({ index = 0, statusObj = [], item = {} }) => {
-        const isOpen = defaultActiveKey.indexOf(index) > -1 ? true : false;
-        setPanelStatus(index, isOpen ? 'minus' : 'plus');
-
-        return (
-            <PanelGroup
-                key={'panelgp-' + index} defaultActiveKey={isOpen ? index : null} accordion>
-                <Panel
-                    className="idContentHeader"
-                    header={(
-                        <span onClick={() => setPanelStatus(index, statusObj[index] === 'plus' ? 'minus' : 'plus')}>
-                            <label>
-                                {item.title}
-                            </label>
-                        </span>
-                    )}
-                    eventKey={index}>
-                    <Tabou2IdentContent key={'form-ident-' + index}/>
-                </Panel>
-            </PanelGroup>
-        );
-    };
+    useEffect(() => {
+        if (tabouLayer) {
+            // get accordions according to layer
+            setAccordions(ACCORDIONS.filter(acc => !acc.layers || acc?.layers.indexOf(tabouLayer) > -1));
+        }
+    }, [tabouLayer]);
 
     return (
         <>
             {
-                isEmpty(response) ? null :
-                    keys(props.layersCfg).filter(k => layerName === props.layersCfg[k].nom).map((tabouLayer) => {
-                        return ACCORDIONS.filter(acc => !acc.layers || acc?.layers.indexOf(tabouLayer) > -1).map((acc, n) => (
-                            <GetAttributesPanel
-                                index={'attr-panel-' + n}
-                                statusObj={status}
-                                item={acc}
-                            />
-                        ));
-                    })
+                accordions.map((item, index) => (
+                    <PanelGroup
+                        defaultActiveKey={openedAccordions[index] ? index.toString() : null}
+                        onSelect={() => toggleAccordion(index)}
+                        key={'panelgp-' + index} accordion>
+                        <Panel
+                            className="idContentHeader"
+                            header={(
+                                <span onClick={() => toggleAccordion(index)}>
+                                    <label>
+                                        {item.title}
+                                    </label>
+                                </span>
+                            )}
+                            eventKey={index.toString()}>
+                            <Tabou2IdentContent key={'form-ident-' + index} />
+                        </Panel>
+                    </PanelGroup>
+                ))
             }
         </>
     );
 }
-export default connect((state) => ({
-    currentFeature: currentFeatureSelector(state)
-}), {})(Tabou2IdentifyContent);

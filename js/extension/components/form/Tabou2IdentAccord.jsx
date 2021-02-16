@@ -1,10 +1,8 @@
 import React from 'react';
-import { connect } from 'react-redux';
-
 import { Checkbox, Col, Row, FormGroup, FormControl, Grid } from 'react-bootstrap';
 
 
-function Tabou2IdentContent() {
+export default function Tabou2IdentAccord() {
     const fields = [
         {
             name: 'estoff',
@@ -87,4 +85,3 @@ function Tabou2IdentContent() {
         </Grid>
     );
 }
-export default connect(() => ({}), {})(Tabou2IdentContent);
