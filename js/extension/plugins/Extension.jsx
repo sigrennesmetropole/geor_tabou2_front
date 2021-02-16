@@ -19,6 +19,7 @@ import { setUp } from '@ext/actions/tabou2';
 
 import { tabouApplyFilter, tabouResetFilter } from '@ext/epics/search';
 import { tabouLoadIdentifyContent, tabouSetGFIFormat, purgeTabou } from '@ext/epics/identify';
+import { tabou2Close, tabou2Open } from '@ext/epics/setup';
 
 import { CONTROL_NAME } from '@ext/constants';
 
@@ -79,7 +80,9 @@ export default {
         tabouLoadIdentifyContent: tabouLoadIdentifyContent,
         tabouSetGFIFormat: tabouSetGFIFormat,
         purgeTabou: purgeTabou,
-        tabouResetFilter: tabouResetFilter
+        tabouResetFilter: tabouResetFilter,
+        tabou2Close: tabou2Close,
+        tabou2Open: tabou2Open
     },
     containers: {
         Toolbar: {
