@@ -7,12 +7,12 @@ import { toggleControl } from "@mapstore/actions/controls";
 
 import Tabou2MainTabs from './Tabou2MainTabs';
 import Tabou2MainToolContainer from './Tabou2MainToolContainer';
-import { CONTROL_NAME } from '../../constants';
+import { CONTROL_NAME, PANEL_SIZE } from '../../constants';
 
 function Tabou2MainPanel({
     enabled,
     dockStyle = {},
-    size = 500,
+    size = PANEL_SIZE,
     onClose = () => { },
     ...props
 }) {

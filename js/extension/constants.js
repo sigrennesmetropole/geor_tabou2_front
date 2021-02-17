@@ -22,6 +22,8 @@ export const COMMUNE_LAYER_ID = 'ladm_terri:commune_emprise';
 
 export const ID_SELECTOR = 'layerTabouId-selector';
 
+export const PANEL_SIZE = 500;
+
 export const SEARCH_ITEMS = [{
     name: 'communes',
     placeholder: 'Toutes communes',
