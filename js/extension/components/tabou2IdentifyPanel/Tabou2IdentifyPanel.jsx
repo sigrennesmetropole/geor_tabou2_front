@@ -30,7 +30,7 @@ function Tabou2IdentifyPanel({
     const [configLayer, setConfigLayer] = useState('');
 
     useEffect(() => {
-        if (!isEqual(gfiLayers, responseLayers) && !isEmpty(responseLayers)) {
+        if (!isEqual(gfiLayers, responseLayers)) {
             setGfiLayers(responseLayers);
             setGfinfos(responseGFI);
             setSelectedLayer(responseLayers[0]);
