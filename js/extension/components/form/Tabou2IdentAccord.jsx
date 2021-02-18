@@ -1,10 +1,18 @@
 import React from "react";
 import { isEmpty } from "lodash";
-import { Checkbox, Col, Row, FormGroup, FormControl, Grid } from "react-bootstrap";
+import { Checkbox, Col, Row, FormGroup, FormControl, Grid, ControlLabel } from "react-bootstrap";
 
 
 export default function Tabou2IdentAccord({keyVal, layer}) {
     const fields = [{
+        name: "estoff",
+        fieldApi: "diffusionRestreinte",
+        label: "Est off",
+        api: "/operations",
+        type: "boolean",
+        layers: ["layerOA", "layerSA"],
+        write: true
+    }, {
         name: "ID_Tabou",
         api: "/operations",
         type: "text",
@@ -78,14 +86,6 @@ export default function Tabou2IdentAccord({keyVal, layer}) {
         api: "/programmes",
         type: "string",
         layers: ["layerPA"]
-    }, {
-        name: "estoff",
-        fieldApi: "diffusionRestreinte",
-        label: "Est off",
-        api: "/operations",
-        type: "boolean",
-        layers: ["layerOA", "layerSA"],
-        write: true
     },
     {
         name: "numads",
@@ -105,8 +105,11 @@ export default function Tabou2IdentAccord({keyVal, layer}) {
                         <Col xs={12}>
                             <FormGroup key={`key-formgp-${field.name}`}>
                                 {
+                                    field.type !== "boolean" ? <ControlLabel>{field.label}</ControlLabel> :  null
+                                }
+                                {
                                     field.type === "boolean" ?
-                                        (<Checkbox inline key={`key-chbox-${field.name}`} className="col-xs-3">{field.label}</Checkbox>) : null
+                                        (<Checkbox inline key={`key-chbox-${field.name}`} className="col-xs-3"><ControlLabel>{field.label}</ControlLabel></Checkbox>) : null
 
                                 }
                                 {

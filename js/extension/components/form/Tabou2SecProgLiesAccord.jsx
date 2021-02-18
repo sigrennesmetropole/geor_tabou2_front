@@ -1,5 +1,5 @@
 import React from "react";
-import { Checkbox, Col, Row, FormGroup, FormControl, Grid } from "react-bootstrap";
+import { Checkbox, Col, Row, FormGroup, FormControl, Grid, ControlLabel } from "react-bootstrap";
 import { isEmpty } from "lodash";
 
 export default function Tabou2SecProgLiesAccord({ keyVal, layer }) {
@@ -29,6 +29,9 @@ export default function Tabou2SecProgLiesAccord({ keyVal, layer }) {
                     <Row style={{ marginTop: marginTop }} key={`key-formrow-${field.name}`}>
                         <Col xs={12}>
                             <FormGroup key={`key-formgp-${field.name}`}>
+                                {
+                                    field.type !== "boolean" ? <ControlLabel>{field.label}</ControlLabel> : null
+                                }
                                 {
                                     field.type === "boolean" ?
                                         (<Checkbox inline key={`key-chbox-${field.name}`} className="col-xs-3">{field.label}</Checkbox>) : null

@@ -1,5 +1,5 @@
 import React from "react";
-import { Checkbox, Col, Row, FormGroup, FormControl, Grid } from "react-bootstrap";
+import { Checkbox, Col, Row, FormGroup, FormControl, Grid, ControlLabel } from "react-bootstrap";
 import { isEmpty } from "lodash";
 
 export default function Tabou2ProgActiviteAccord({ keyVal, layer }) {
@@ -9,14 +9,14 @@ export default function Tabou2ProgActiviteAccord({ keyVal, layer }) {
             fieldApi: "ql2",
             label: "SCoT",
             api: "/",
-            type: "text",
+            type: "boolean",
             layers: ["layerOA", "layerSA"]
         }, {
             name: "ql3",
             fieldApi: "ql3",
             label: "Territoire",
             api: "/",
-            type: "date",
+            type: "string",
             layers: ["layerOA", "layerSA"]
         }
     ];
@@ -30,8 +30,11 @@ export default function Tabou2ProgActiviteAccord({ keyVal, layer }) {
                         <Col xs={12}>
                             <FormGroup key={`key-formgp-${field.name}`}>
                                 {
+                                    field.type !== "boolean" ? <ControlLabel>{field.label}</ControlLabel> : null
+                                }
+                                {
                                     field.type === "boolean" ?
-                                        (<Checkbox inline key={`key-chbox-${field.name}`} className="col-xs-3">{field.label}</Checkbox>) : null
+                                        (<Checkbox inline key={`key-chbox-${field.name}`} className="col-xs-3"><ControlLabel>{field.label}</ControlLabel></Checkbox>) : null
 
                                 }
                                 {
