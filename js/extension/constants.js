@@ -108,9 +108,9 @@ export const SEARCH_CALENDARS = [{
 }];
 
 export const ACCORDIONS = [
-    {title: 'Identification', id: 'ident', component: 'Tabou2IdentAccord'},
-    { title: 'Descriptif', id: 'describe', component: 'Tabou2DescribeAccord'},
-    { title: 'Gouvernance', id: 'gouvernance', component: 'Tabou2GouvernanceAccord'},
+    {title: 'Identification', id: 'ident'},
+    { title: 'Descriptif', id: 'describe'},
+    { title: 'Gouvernance', id: 'gouvernance'},
     {title: 'Suivi Opérationnel', id: 'suivi'},
     {title: 'Programmation Habitat', id: 'habitat'},
     {title: 'Programmation Activités', id: 'activite', layers: ['layerOA', 'layerSA']},
