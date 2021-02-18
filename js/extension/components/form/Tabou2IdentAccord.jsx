@@ -1,76 +1,116 @@
-import React from 'react';
-import { Checkbox, Col, Row, FormGroup, FormControl, Grid } from 'react-bootstrap';
+import React from "react";
+import { isEmpty } from "lodash";
+import { Checkbox, Col, Row, FormGroup, FormControl, Grid } from "react-bootstrap";
 
 
-export default function Tabou2IdentAccord() {
-    const fields = [
-        {
-            name: 'estoff',
-            fieldApi: 'diffusionRestreinte',
-            label: 'Est off',
-            api: '',
-            type: 'boolean',
-            layers: []
-        }, {
-            name: 'ID_Tabou',
-            api: '',
-            type: 'number',
-            label: 'ID Tabou',
-            fieldApi: 'id',
-            layers: []
-        }, {
-            name: 'code',
-            api: '',
-            label: 'Code',
-            type: 'text',
-            fieldApi: 'code',
-            layers: []
-        }, {
-            name: 'commune',
-            fieldApi: '',
-            api: '',
-            label: 'Commune',
-            type: 'string',
-            layers: []
-        }, {
-            name: 'nature',
-            api: '',
-            label: 'Nature',
-            fieldApi: 'libelle',
-            type: 'string',
-            layers: []
-        }, {
-            name: 'nom',
-            fieldApi: 'nom',
-            label: 'Nom',
-            api: '',
-            type: 'string',
-            layers: []
-        }, {
-            name: 'numads',
-            label: 'Num ADS',
-            fieldApi: 'numAds',
-            api: '',
-            type: 'string',
-            layers: []
-        }
-    ];
+export default function Tabou2IdentAccord({keyVal, layer}) {
+    const fields = [{
+        name: "ID_Tabou",
+        api: "/operations",
+        type: "text",
+        label: "ID Tabou",
+        fieldApi: "id",
+        layers: ["layerOA", "layerSA"],
+        write: false
+    }, {
+        name: "code",
+        api: "/operations",
+        label: "Code",
+        type: "text",
+        fieldApi: "code",
+        layers: ["layerOA", "layerSA"]
+    }, {
+        name: "code",
+        api: "/programmes",
+        label: "Code",
+        type: "text",
+        fieldApi: "code",
+        layers: ["layerPA"]
+    }, {
+        name: "commune",
+        fieldApi: "",
+        api: "/operations",
+        label: "Commune",
+        type: "string",
+        layers: [],
+        write: false
+    }, {
+        name: "nature",
+        api: "/operations",
+        label: "Nature",
+        fieldApi: "libelle",
+        type: "string",
+        layers: [],
+        write: false
+    }, {
+        name: "nom",
+        fieldApi: "nom",
+        label: "Nom",
+        api: "/operations",
+        type: "string",
+        layers: ["layerOA", "layerSA"]
+    }, {
+        name: "nomoa",
+        fieldApi: "nom",
+        label: "Nom OA Parent",
+        api: "/operations",
+        type: "string",
+        layers: ["layerPA"]
+    }, {
+        name: "nompa",
+        fieldApi: "nom",
+        label: "Nom PA Parent",
+        api: "/programmes",
+        type: "string",
+        layers: ["layerPA"]
+    }, {
+        name: "estoff",
+        fieldApi: "diffusionRestreinte",
+        label: "Est off",
+        api: "/programmes",
+        type: "boolean",
+        layers: ["layerPA"],
+        write: true
+    }, {
+        name: "numads",
+        label: "Num ADS",
+        fieldApi: "numAds",
+        api: "/programmes",
+        type: "string",
+        layers: ["layerPA"]
+    }, {
+        name: "estoff",
+        fieldApi: "diffusionRestreinte",
+        label: "Est off",
+        api: "/operations",
+        type: "boolean",
+        layers: ["layerOA", "layerSA"],
+        write: true
+    },
+    {
+        name: "numads",
+        label: "Num ADS",
+        fieldApi: "numAds",
+        api: "/operations",
+        type: "string",
+        layers: ["layerOA", "layerSA"]
+    }];
 
-    const marginTop = '10px';
+    const marginTop = "10px";
     return (
-        <Grid style={{ width: '100%' }} className={""} key={'grid-ident-form'}>
+        <Grid style={{ width: "100%" }} className={""} key={keyVal}>
             {
-                fields.map(field => (
+                fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(field => (
                     <Row style={{ marginTop: marginTop }} key={`key-formrow-${field.name}`}>
                         <Col xs={12}>
                             <FormGroup key={`key-formgp-${field.name}`}>
                                 {
-                                    field.type === 'boolean' ?
+                                    field.type === "boolean" ?
                                         (<Checkbox inline key={`key-chbox-${field.name}`} className="col-xs-3">{field.label}</Checkbox>) : null
 
                                 }
                                 {
-                                    field.type !== 'boolean' ?
+                                    field.type !== "boolean" ?
                                         (<FormControl
                                             type="text"
                                             key={`key-ctrl-${field.name}`}
