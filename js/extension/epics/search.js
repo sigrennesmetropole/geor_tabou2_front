@@ -4,6 +4,7 @@ import { RESET_SEARCH_FILTERS, UPDATE_LAYER_PARAMS } from '../actions/tabou2';
 import { layersSelector } from '@mapstore/selectors/layers';
 import { currentTabouFilters, getLayerFilterObj } from '../selectors/tabou2';
 import { changeLayerProperties, updateNode } from "@mapstore/actions/layers";
+import { search } from '@mapstore/actions/queryform';
 
 
 /**
@@ -46,7 +47,7 @@ export function tabouResetFilter(action$, store) {
         const layersId = tocLayers.filter(layer => layers.indexOf(layer.name) > -1).map(layer => layer.id);
 
         return Rx.Observable.from((layersId)).mergeMap(id => {
-            return Rx.Observable.of(changeLayerProperties(id, { layerFilter: {} }));
+            return Rx.Observable.of(changeLayerProperties(id, { layerFilter: undefined }));
         });
     });
 }
