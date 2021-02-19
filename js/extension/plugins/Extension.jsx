@@ -11,7 +11,7 @@ import { syncLayers, selectLayers } from "@mapstore/selectors/layerinfo";
 import { layersSelector } from '@mapstore/selectors/layers';
 import { selectedLayerIdSelector } from '@mapstore/selectors/featuregrid';
 
-import Tabou2MainPanel from '@ext/components/tabou2panel/Tabou2MainPanel';
+import Tabou2MainPanel from '@ext/components/tabou2Panel/Tabou2MainPanel';
 
 import tabou2 from '@ext/reducers/tabou2';
 
