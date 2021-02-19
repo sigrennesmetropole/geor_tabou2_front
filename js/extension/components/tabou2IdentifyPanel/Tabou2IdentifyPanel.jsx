@@ -3,7 +3,6 @@ import { keys, isEqual, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
 import { Row, Grid } from 'react-bootstrap';
 import { DropdownList } from 'react-widgets';
-
 import Tabou2IdentifyToolbar from './Tabou2IdentifyToolbar';
 import Tabou2IdentifyContent from './Tabou2IdentifyContent';
 import { getTabouIndexSelectors, getTabouResponse, currentActiveTabSelector, getTabouResponseLayers } from '@ext/selectors/tabou2';
@@ -63,9 +62,14 @@ function Tabou2IdentifyPanel({
                     </div>
                 </div>
             </Row>
-            <Row className="tabou-idToolbar-row text-center" style={{ display: "flex", margin: "auto", justifyContent: "center" }}>
-                <Tabou2IdentifyToolbar />
-            </Row>
+            {
+                /* !isEmpty(gfiInfos) ? (<Row className="tabou-idToolbar-row text-center" style={{ display: "flex", margin: "auto", justifyContent: "center" }}>
+                    <Tabou2IdentifyToolbar onClick={() => { console.log('click'); return setModalStatus(true);} }/>
+                </Row>) : null*/
+                <Row className="tabou-idToolbar-row text-center" style={{ display: "flex", margin: "auto", justifyContent: "center" }}>
+                    <Tabou2IdentifyToolbar />
+                </Row>
+            }
             {
                 !isEmpty(gfiInfos) ? (<Grid style={{ width: '100%' }}>
                     <Tabou2IdentifyContent response={gfiInfos[selectedLayer]} tabouLayer={configLayer} />
