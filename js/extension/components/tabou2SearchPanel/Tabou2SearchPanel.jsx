@@ -31,6 +31,10 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
     const layersInfos = getTabouLayersInfos(props?.pluginCfg?.layersCfg || {});
     const config = props.pluginCfg.searchCfg;
 
+    const getUniqKey = (t) => {
+        return `${t}-${new Date().getTime()}-${Math.floor(Math.random() * 100000)}`;
+    };
+
     /**
      * Get info from request and set / replace MapStore filters for each tabou2 layers
      * TODO :
@@ -134,7 +138,7 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
         return (
             <Tabou2Combo
                 style={{ marginTop: comboMarginTop }}
-                key={`${combo.name}-${pos}-key`}
+                key={getUniqKey(combo.name + pos)}
                 load={() => getRequestApi(get(combo, "api") || get(combo, "name"))}
                 value={values[combo.name]}
                 placeholder={combo.placeholder}
@@ -148,13 +152,13 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
         );
     };
 
-    const getDate = (item, pos, type) => {
+    const getDate = (item, pos, i, type) => {
         return (
-            <Col xs={6}>
-                <FormGroup>
-                    <ControlLabel inline> {item.label}
-                        <UTCDateTimePicker inline
-                            key={`calendar-st-${pos}`}
+            <Col xs={6} key={getUniqKey()}>
+                <FormGroup key={getUniqKey()}>
+                    <ControlLabel inline="true" key={getUniqKey()}> {item.label}
+                        <UTCDateTimePicker inline="true"
+                            key={`${getUniqKey(pos)}-${i}`}
                             type="date"
                             placeholder="Choisir une date"
                             calendar={get(type, "isCalendar") || true}
@@ -171,28 +175,28 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
     return (
         <>
             <div id="tabou2-tbar-container" style={{ display: "flex", margin: "auto", justifyContent: "center" }} className="text-center">
-                <Tabou2SearchToolbar reset={reset}/>
+                <Tabou2SearchToolbar key={getUniqKey("search-tbar")} reset={reset}/>
             </div>
-            <Grid fluid className={"fluid-container adjust-display"}>
-                <Row style={{ marginTop: marginTop }}>
-                    <Col xs={12}>
-                        <FormGroup>
-                            <Checkbox inline key="search-chbox-isaide" className="col-xs-3">Est aidé</Checkbox>
-                            <Checkbox inline key="search-pbil-isaide" className="col-xs-3">PBIL</Checkbox>
+            <Grid fluid className={"fluid-container adjust-display"} key={getUniqKey()}>
+                <Row style={{ marginTop: marginTop }} key={getUniqKey()}>
+                    <Col xs={12} key={getUniqKey()}>
+                        <FormGroup key={getUniqKey()}>
+                            <Checkbox inline key={getUniqKey("isaide")} className="col-xs-3">Est aidé</Checkbox>
+                            <Checkbox inline key={getUniqKey("pbil")} className="col-xs-3">PBIL</Checkbox>
                         </FormGroup>
                     </Col>
                 </Row>
-                <Row style={{ marginTop: marginTop }}>
-                    <Col xs={6}>
+                <Row style={{ marginTop: marginTop }} key={getUniqKey()}>
+                    <Col xs={6} key={getUniqKey()}>
                         {/* left combo box */}
-                        <FormGroup>
+                        <FormGroup key={getUniqKey()}>
                             {
                                 SEARCH_ITEMS.filter(f => f.group === 1).map((cb, i) => getCombo(cb, i))
                             }
                         </FormGroup>
                     </Col>
-                    <Col xs={6}>
-                        <FormGroup >
+                    <Col xs={6} key={getUniqKey()}>
+                        <FormGroup key={getUniqKey()}>
                             {
                                 SEARCH_ITEMS.filter(f => f.group === 2).map((cb, i) => getCombo(cb, i))
                             }
@@ -200,7 +204,7 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                     </Col>
                 </Row>
                 {
-                    SEARCH_CALENDARS.map((els) => { return (<Row style={{ marginTop: marginTop }}>{els.items.map((el, i) => getDate(el, i))}</Row>); })
+                    SEARCH_CALENDARS.map((els, num) => { return (<Row key={getUniqKey()} style={{ marginTop: marginTop }}>{els.items.map((el, i) => getDate(el, i, num))}</Row>); })
                 }
             </Grid >
         </>

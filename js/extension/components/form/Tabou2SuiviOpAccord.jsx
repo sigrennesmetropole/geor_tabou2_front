@@ -55,7 +55,7 @@ export default function Tabou2SuiviOpAccord({keyVal, layer}) {
                                 }
                                 {
                                     field.type === "boolean" ?
-                                        (<Checkbox inline key={`key-chbox-${field.name}`} className="col-xs-3">{field.label}</Checkbox>) : null
+                                        (<Checkbox inline="true" key={`key-chbox-${field.name}`} className="col-xs-3">{field.label}</Checkbox>) : null
 
                                 }
                                 {
