@@ -4,8 +4,6 @@ import { RESET_SEARCH_FILTERS, UPDATE_LAYER_PARAMS } from '../actions/tabou2';
 import { layersSelector } from '@mapstore/selectors/layers';
 import { currentTabouFilters, getLayerFilterObj } from '../selectors/tabou2';
 import { changeLayerProperties, updateNode } from "@mapstore/actions/layers";
-import { search } from '@mapstore/actions/queryform';
-
 
 /**
  * From Tabou2 search panel, apply filter for each Tabou layers.

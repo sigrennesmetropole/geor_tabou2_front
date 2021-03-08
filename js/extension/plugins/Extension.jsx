@@ -26,20 +26,16 @@ import { CONTROL_NAME } from '@ext/constants';
 class Tabou2Panel extends React.Component {
     static propTypes = {
         id: PropTypes.string,
-        active: PropTypes.bool,
         filterObj: PropTypes.object,
         toggleControl: PropTypes.func,
-        tabs: PropTypes.object,
         activeTab: PropTypes.string,
         size: PropTypes.number
     };
 
     static defaultProps = {
         id: "mapstore-tabou-panel",
-        active: false,
         filterObj: {},
         toggleControl: () => { },
-        activeTab: 'search',
         tabs: [],
         size: 500
     };
