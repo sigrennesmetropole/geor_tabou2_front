@@ -3,9 +3,11 @@
     "url": "proxy/?url=",
     "useCORS": [
       "https://gis.jdev.fr",
+      "https://portail-test.sig.rennesmetropole.fr",
+      "https://jdev.stoplight.io/",
+      "http://localhost:3000",
       "https://public.sig.rennesmetropole.fr",
-      "https://localhost:8380",
-      "https://jdev.stoplight.io",
+      "https://604732d49e5ab30017394597.mockapi.io/",
       "http://demo.geo-solutions.it/geoserver",
       "https://demo.geo-solutions.it:443/geoserver",
       "https://demo.geo-solutions.it/geoserver",
@@ -458,7 +460,9 @@
             }
           },
           "apiCfg": {
-            "apiURL": "https://jdev.stoplight.io/mocks/jdev/tabou_api_swagger/4964747"
+            "apiURL": "/tabou2",
+            "extApiURL": "/tabou2",
+            "authent": "**:**"
           }
         }
       },

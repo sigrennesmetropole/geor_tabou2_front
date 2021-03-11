@@ -31,7 +31,23 @@ module.exports = {
         headers: {
             host: "192.168.1.254"
         }
-    }/*,
+    },
+    '/tabou2': {
+        target: "https://portail-test.sig.rennesmetropole.fr",
+        secure: false,
+        headers: {
+            host: "portail-test.sig.rennesmetropole.fr"
+        }
+    },
+    '/stoplight': {
+        target: "https://jdev.stoplight.io",
+        secure: false,
+        headers: {
+            host: "jdev.stoplight.io"
+        }
+    }
+
+    /* ,
     '/docs': {
         target: "http://localhost:8081",
         pathRewrite: {'/docs': '/mapstore/docs'}
@@ -41,6 +57,6 @@ module.exports = {
         pathRewrite: {'/pluievolution': '/'},
         headers: {
             host: "localhost"
-        }   
+        }
     }*/
 };

@@ -1,20 +1,20 @@
 export const TABS = [{
     id: 'search',
-    tooltip: 'search',
+    tooltip: 'tabou2.tabs.search',
     glyph: 'search'
 }, {
     id: 'add',
-    tooltip: 'add',
+    tooltip: 'tabou2.tabs.add',
     glyph: 'plus'
 }, {
     id: 'identify',
-    tooltip: 'identify',
+    tooltip: 'tabou2.tabs.identify',
     glyph: 'map-marker'
 }];
 
 export const CONTROL_NAME = 'tabou2';
 
-export const API_BASE_URL = 'https://jdev.stoplight.io/mocks/jdev/tabou_api_swagger/4964747';
+export const API_BASE_URL = 'http://localhost:3000';
 
 export const GEOSERVER_WFS_URL = 'https://public.sig.rennesmetropole.fr/geoserver';
 
@@ -93,7 +93,7 @@ export const SEARCH_CALENDARS = [{
     }]
 }, {
     items: [{
-        label: "Date DOC du :"
+        label: "Date DAACT du :"
     },
     {
         label: "A la date du :"
