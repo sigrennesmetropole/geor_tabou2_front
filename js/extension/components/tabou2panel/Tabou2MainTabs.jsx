@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Glyphicon, Nav, NavItem } from 'react-bootstrap';
-
+import Message from "@mapstore/components/I18N/Message";
 import tooltip from '@mapstore/components/misc/enhancers/tooltip';
 
 import { setMainActiveTab } from '../../actions/tabou2';
@@ -20,7 +20,7 @@ function SelectionTab({ currentTab, onClick = () => { } }) {
                 TABS.map(tab =>
                     <NavItemT
                         key={'ms-tab-settings-' + tab.id}
-                        tooltip={tab.tooltip}
+                        tooltip={<Message msgId={tab.tooltip} />}
                         eventKey={tab.id}
                         onClick={() => onClick(tab.id) }>
                         <Glyphicon glyph={tab.glyph} />

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { PanelGroup, Panel } from 'react-bootstrap';
 import { CSS } from './tabou2Identify-css';
-
 import Tabou2IdentAccord from '@ext/components/form/Tabou2IdentAccord';
 import Tabou2DescribeAccord from '@ext/components/form/Tabou2DescribeAccord';
 import Tabou2GouvernanceAccord from '@ext/components/form/Tabou2GouvernanceAccord';

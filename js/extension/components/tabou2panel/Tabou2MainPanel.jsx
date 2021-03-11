@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Row, Col } from 'react-bootstrap';
-
+import Message from "@mapstore/components/I18N/Message";
 import DockablePanel from '@mapstore/components/misc/panels/DockablePanel';
 import { toggleControl } from "@mapstore/actions/controls";
 
@@ -23,7 +23,7 @@ function Tabou2MainPanel({
                 open={true}
                 glyph="th"
                 bsStyle="primary"
-                title="Tabou2"
+                title={<Message msgId="tabou2.windowTitle"/>}
                 className={''}
                 draggable={false}
                 onClose={onClose}

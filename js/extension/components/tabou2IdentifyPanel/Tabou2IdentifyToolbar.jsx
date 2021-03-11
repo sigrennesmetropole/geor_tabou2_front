@@ -3,7 +3,6 @@ import Toolbar from '@mapstore/components/misc/toolbar/Toolbar';
 import Tabou2TiersModal from './modals/Tabou2TiersModal';
 import Tabou2DocsModal from './modals/Tabou2DocsModal';
 import Tabou2LogsModal from './modals/Tabou2LogsModal';
-
 export default function Tabou2IdentifyToolbar() {
 
     const [isOpenTiers, setIsOpenTiers] = useState(false);

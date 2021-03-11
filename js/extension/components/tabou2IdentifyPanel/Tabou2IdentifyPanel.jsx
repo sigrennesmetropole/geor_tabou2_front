@@ -8,7 +8,7 @@ import Tabou2IdentifyContent from './Tabou2IdentifyContent';
 import { getTabouIndexSelectors, getTabouResponse, currentActiveTabSelector, getTabouResponseLayers } from '@ext/selectors/tabou2';
 import { setSelectorIndex } from '@ext/actions/tabou2';
 import { ID_SELECTOR } from '@ext/constants';
-
+import Message from "@mapstore/components/I18N/Message";
 import { createOptions } from '@ext/utils/identify';
 
 function Tabou2IdentifyPanel({
@@ -58,7 +58,7 @@ function Tabou2IdentifyPanel({
                             valueField={'value'}
                             textField={'label'}
                             onChange={(i) => changeIndex(i, getAllIndex)}
-                            placeholder={'Aucune données...'} />
+                            placeholder={<Message msgId="tabou2.identify.noData"/>} />
                     </div>
                 </div>
             </Row>

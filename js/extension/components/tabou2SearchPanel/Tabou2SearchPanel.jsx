@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { keys, get } from 'lodash';
 import { connect } from 'react-redux';
 import axios from '@mapstore/libs/ajax';
-
 import { Checkbox, Col, Row, ControlLabel, FormGroup, Grid } from 'react-bootstrap';
 import { DateTimePicker } from 'react-widgets';
 import { currentActiveTabSelector, currentTabouFilters, getLayerFilterObj } from '../../selectors/tabou2';
@@ -139,7 +138,7 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
             <Tabou2Combo
                 style={{ marginTop: comboMarginTop }}
                 key={getUniqKey(combo.name + pos)}
-                load={() => getRequestApi(get(combo, "api") || get(combo, "name"))}
+                load={() => getRequestApi(get(combo, "api") || get(combo, "name"), props.pluginCfg.apiCfg)}
                 value={values[combo.name]}
                 placeholder={combo.placeholder}
                 filter="contains"
