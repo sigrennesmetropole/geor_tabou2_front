@@ -1,0 +1,47 @@
+{
+  "locale": "fr-FR",
+  "messages": {
+    "tabou2": {
+      "dropdown": "Afficher / fermer la liste",
+      "btnTooltip": "Accéder à Tabou2",
+      "windowTitle": "Tabou2",
+      "tabs": {
+        "search": "Chercher une entité",
+        "add": "Ajouter une entité",
+        "identify": "Fiches entités"
+      },
+      "search": {
+        "apply": "Appliquer les filtres",
+        "restore": "Supprimer tous les filtres",
+        "ishelp": "Est aidé",
+        "pbil": "PBIL",
+        "allCity": "Toutes communes",
+        "allDistrict": "Tous quartiers",
+        "allNatures": "Toutes les natures",
+        "allIris": "Tous iris",
+        "allPlui": "Tous zonage PLUI",
+        "allFinancement": "Tous financement",
+        "allSpeu": "Tous secteurs SPEU",
+        "allSAM": "Tous secteurs SAM",
+        "allSDS": "Tous secteurs SDS",
+        "allFoncier": "Tous secteurs Foncier",
+        "allEtapesOa": "Toutes étapes OA",
+        "allEtapesPa": "Toutes étapes PA",
+        "dateDocFrom": "Date DOC du :",
+        "dateDaactFrom": "Date DAACT du :",
+        "dateLivFrom": "Date de livraison du :",
+        "dateTo": "A la date du :",
+        "selectDate": "Sélectionner une date"
+      },
+      "identify": {
+        "noData": "Aucune données...",
+        "documents": "Documents",
+        "logs": "Journal de bord",
+        "tiers": {
+          "title": "Tiers associés",
+          "tooltip": "Tiers"
+        }
+      }
+    }
+  }
+}
