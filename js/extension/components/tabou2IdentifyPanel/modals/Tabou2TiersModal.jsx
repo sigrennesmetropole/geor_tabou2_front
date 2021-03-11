@@ -2,11 +2,12 @@ import React, {useState, useEffect} from 'react';
 import ResizableModal from '@mapstore/components/misc/ResizableModal';
 import { Grid, FormGroup, Checkbox, Col, Button, Table, Glyphicon, FormControl, Row, ControlLabel } from 'react-bootstrap';
 import { has, keys, get } from 'lodash';
-
+import { makeId } from '@js/extension/utils/common';
 export default function Tabou2TiersModal({
     visible,
     onClick = () => {}
 }) {
+    const [countTiers, setCountTiers] = useState(0);
     const [tiers, setTiers] = useState([]);
     // will be replace by header CAS control
     const [editable, setEditable] = useState(false);
@@ -24,19 +25,41 @@ export default function Tabou2TiersModal({
     useEffect(() => {
         setTiers([{
             nom: "Astm",
-            estPrive: true
+            estPrive: true,
+            id: makeId()
         }, {
             nom: "Rennes Métropole",
-            estPrive: false
+            estPrive: false,
+            id: makeId()
         }]);
     }, []);
+
+    useEffect(() => {
+        return;
+    }, [countTiers]);
 
     const addTiers = () => {
         tiers.push({
             nom: "",
-            estPrive: ""
+            estPrive: "",
+            id: makeId()
         });
         setTiers(tiers);
+        setCountTiers(tiers.length);
+    };
+
+    const deleteTiers = (id) => {
+        let newTiers = tiers.filter(t => t.id !== id);
+        setTiers(newTiers);
+        setCountTiers(newTiers.length);
+    };
+
+    const changeProps = (id, field, val) => {
+        let upTiers = tiers.map(m => {
+            m[field] = m.id === id ? val : m[field];
+            return m;
+        });
+        setTiers(upTiers);
     };
 
     return (
@@ -66,7 +89,7 @@ export default function Tabou2TiersModal({
                             <Table>
                                 <thead>
                                     <tr>
-                                        <th>Sélection</th>
+                                        {editable ? (<th>Sélection</th>) : null}
                                         <th>Type</th>
                                         <th>Nom</th>
                                         {editable ? (<th>Actions</th>) : null}
@@ -93,7 +116,7 @@ export default function Tabou2TiersModal({
                                                     readOnly={!editable}
                                                     style={{borderRadius: "4px"}}
                                                     key={`tier-type-field-${i}-${tier.estPrive}`}
-                                                    defaultValue={tier.estPrive}
+                                                    value={tier.estPrive ? "Privé" : "public"}
                                                     placeholder="Saisir un type..." />
                                                 </td>
                                                 <td><FormControl
@@ -103,15 +126,19 @@ export default function Tabou2TiersModal({
                                                     required
                                                     key={`tier-nom-field-${i}-${tier.nom}`}
                                                     defaultValue={tier.nom}
+                                                    onChange={(evt) => {
+                                                        // don't change tiers object to do not refresh state and keep input focus
+                                                        tier.nom = evt.target.value;
+                                                    }}
+                                                    onBlur={(evt) => {
+                                                        changeProps(tier.id, 'nom', evt.target.value);
+                                                    }}
                                                     placeholder="Saisir un nom..." />
                                                 </td>
                                                 {editable ? (
                                                     <td>
                                                         <FormGroup>
-                                                            <Button style={{borderColor: "rgba(0,0,0,0)"}}>
-                                                                <Glyphicon glyph="pencil"/> Editer
-                                                            </Button>
-                                                            <Button style={{borderColor: "rgba(0,0,0,0)"}}>
+                                                            <Button style={{borderColor: "rgba(0,0,0,0)"}} onClick={() => deleteTiers(tier.id)}>
                                                                 <span style={{color: "rgb(229,0,0)"}}><Glyphicon glyph="trash"/> Supprimer</span>
                                                             </Button>
                                                         </FormGroup>
@@ -129,11 +156,11 @@ export default function Tabou2TiersModal({
                         (<Row>
                             <Col xs={12}>
                                 <FormGroup>
-                                    <Button bsSize="lg" style={{color: "white", backgroundColor: "rgb(255,193,7)", marginRight: "10px", borderRadius: "4px", borderColor: "rgb(255,193,7)"}}>
+                                    <Button bsSize="md" style={{color: "white", backgroundColor: "rgb(255,193,7)", marginRight: "10px", borderRadius: "4px", borderColor: "rgb(255,193,7)"}}>
                                         <Glyphicon glyph="trash"/> Supprimer ( <strong>{countValue} </strong>)
                                     </Button>
                                     <Button
-                                        bsSize="lg"
+                                        bsSize="md"
                                         style={{color: "white", backgroundColor: "rgb(40,167,69)", marginRight: "10px",
                                             borderRadius: "4px", borderColor: "rgb(40,167,69)"}}
                                         onClick={() => addTiers()}
