@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Glyphicon } from 'react-bootstrap';
 import { connect } from "react-redux";
-import Message from "@mapstore/components/I18N/Message";
 import { toggleControl } from "@mapstore/actions/controls";
 import { changeLayerProperties, changeLayerParams } from "@mapstore/actions/layers";
 import { search } from "@mapstore/actions/queryform";
@@ -88,7 +87,7 @@ export default {
             alwaysVisible: true,
             action: toggleControl.bind(null, CONTROL_NAME, null),
             priority: 1,
-            tooltip: <Message msgId="tabou2.btnTooltip" />
+            tooltip: "tabou2.btnTooltip"
         }
     }
 };

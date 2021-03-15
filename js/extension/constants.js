@@ -41,12 +41,12 @@ export const SEARCH_ITEMS = [{
     disabled: true,
     placeholder: 'Tous zonage PLUI',
     group: 1
-}, {
-    name: 'type-financement',
+}, /* {
+    name: 'types-financements',
     disabled: true,
     placeholder: 'Tous Financement',
     group: 1
-}, {
+}, */{
     name: "natures",
     placeholder: "Toutes natures",
     group: 2
@@ -63,6 +63,7 @@ export const SEARCH_ITEMS = [{
 }, {
     name: "secteurs-sds",
     placeholder: 'Tous secteurs SDS',
+    api: "secteurs-dds",
     type: 'string',
     group: 2
 }, {
@@ -71,16 +72,16 @@ export const SEARCH_ITEMS = [{
     type: 'string',
     group: 2
 }, {
-    name: "etapeoa",
+    name: "etapesoa",
     placeholder: "Toutes Etapes OA",
-    api: "etapes-oa-mock",
-    disabled: true,
+    api: "/operations/etapes",
+    disabled: false,
     group: 2
 }, {
-    name: "etapepa",
+    name: "etapespa",
+    api: "/programmes/etapes",
     placeholder: "Toutes Etapes PA",
-    api: "etapes-pa-mock",
-    disabled: true,
+    disabled: false,
     group: 2
 }];
 
@@ -137,7 +138,7 @@ export const ACC_ATTRIBUTE_IDENT = [{
     type: 'string',
     layers: []
 }, {
-    name: 'nature',
+    name: 'natures',
     api: '',
     fieldApi: 'libelle',
     type: 'string',
