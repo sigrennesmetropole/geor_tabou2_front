@@ -137,7 +137,6 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
         return (
             <Tabou2Combo
                 style={{ marginTop: comboMarginTop }}
-                key={getUniqKey(combo.name + pos)}
                 load={() => getRequestApi(get(combo, "api") || get(combo, "name"), props.pluginCfg.apiCfg)}
                 value={values[combo.name]}
                 placeholder={combo.placeholder}
@@ -153,11 +152,10 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
 
     const getDate = (item, pos, i, type) => {
         return (
-            <Col xs={6} key={getUniqKey()}>
-                <FormGroup key={getUniqKey()}>
-                    <ControlLabel inline="true" key={getUniqKey()}> {item.label}
+            <Col xs={6}>
+                <FormGroup>
+                    <ControlLabel inline="true"> {item.label}
                         <UTCDateTimePicker inline="true"
-                            key={`${getUniqKey(pos)}-${i}`}
                             type="date"
                             placeholder="Choisir une date"
                             calendar={get(type, "isCalendar") || true}
@@ -174,28 +172,28 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
     return (
         <>
             <div id="tabou2-tbar-container" style={{ display: "flex", margin: "auto", justifyContent: "center" }} className="text-center">
-                <Tabou2SearchToolbar key={getUniqKey("search-tbar")} reset={reset}/>
+                <Tabou2SearchToolbar reset={reset}/>
             </div>
-            <Grid fluid className={"fluid-container adjust-display"} key={getUniqKey()}>
-                <Row style={{ marginTop: marginTop }} key={getUniqKey()}>
-                    <Col xs={12} key={getUniqKey()}>
-                        <FormGroup key={getUniqKey()}>
-                            <Checkbox inline key={getUniqKey("isaide")} className="col-xs-3">Est aidé</Checkbox>
-                            <Checkbox inline key={getUniqKey("pbil")} className="col-xs-3">PBIL</Checkbox>
+            <Grid fluid className={"fluid-container adjust-display"}>
+                <Row style={{ marginTop: marginTop }}>
+                    <Col xs={12}>
+                        <FormGroup>
+                            <Checkbox inline className="col-xs-3">Est aidé</Checkbox>
+                            <Checkbox inline className="col-xs-3">PBIL</Checkbox>
                         </FormGroup>
                     </Col>
                 </Row>
-                <Row style={{ marginTop: marginTop }} key={getUniqKey()}>
-                    <Col xs={6} key={getUniqKey()}>
+                <Row style={{ marginTop: marginTop }} >
+                    <Col xs={6} >
                         {/* left combo box */}
-                        <FormGroup key={getUniqKey()}>
+                        <FormGroup >
                             {
                                 SEARCH_ITEMS.filter(f => f.group === 1).map((cb, i) => getCombo(cb, i))
                             }
                         </FormGroup>
                     </Col>
-                    <Col xs={6} key={getUniqKey()}>
-                        <FormGroup key={getUniqKey()}>
+                    <Col xs={6} >
+                        <FormGroup >
                             {
                                 SEARCH_ITEMS.filter(f => f.group === 2).map((cb, i) => getCombo(cb, i))
                             }
@@ -203,7 +201,7 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                     </Col>
                 </Row>
                 {
-                    SEARCH_CALENDARS.map((els, num) => { return (<Row key={getUniqKey()} style={{ marginTop: marginTop }}>{els.items.map((el, i) => getDate(el, i, num))}</Row>); })
+                    SEARCH_CALENDARS.map((els, num) => { return (<Row  style={{ marginTop: marginTop }}>{els.items.map((el, i) => getDate(el, i, num))}</Row>); })
                 }
             </Grid >
         </>
