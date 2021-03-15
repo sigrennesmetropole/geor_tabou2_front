@@ -30,10 +30,6 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
     const layersInfos = getTabouLayersInfos(props?.pluginCfg?.layersCfg || {});
     const config = props.pluginCfg.searchCfg;
 
-    const getUniqKey = (t) => {
-        return `${t}-${new Date().getTime()}-${Math.floor(Math.random() * 100000)}`;
-    };
-
     /**
      * Get info from request and set / replace MapStore filters for each tabou2 layers
      * TODO :
@@ -133,7 +129,7 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
         setValues(values);
     };
 
-    const getCombo = (combo, pos) => {
+    const getCombo = (combo) => {
         return (
             <Tabou2Combo
                 style={{ marginTop: comboMarginTop }}
