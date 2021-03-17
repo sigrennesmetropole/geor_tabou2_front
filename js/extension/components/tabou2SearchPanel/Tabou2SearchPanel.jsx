@@ -190,6 +190,10 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                 reloadValue={reload || ''}
                 onSelect={(t) => changeState(get(combo, 'type'), combo, t)}
                 onChange={(t) => !t ? changeState(get(combo, 'type'), combo, t) : null}
+                messages={{
+                    emptyList: 'La liste est vide.',
+                    openCombobox: 'Ouvrir la liste'
+                }}
             />
         );
     };

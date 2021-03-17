@@ -51,6 +51,7 @@ function Tabou2Combo({
         textField={textField}
         data={data}
         defaultValue={props.defaultValue}
+        suggest
         placeholder={placeholder}
         disabled={disabled}
         onSelect={onSelect}
