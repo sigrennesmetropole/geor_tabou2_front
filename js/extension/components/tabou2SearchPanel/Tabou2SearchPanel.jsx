@@ -148,7 +148,9 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
     };
 
     /**
-     * TODO : FIX reload on combobox input text
+     * Create tabou2 search combobox loadable from api
+     * @param {object} combo
+     * @returns combobox component
      */
     const getCombo = (combo) => {
         let urlParams = '';
@@ -198,7 +200,13 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
         );
     };
 
-    const getDate = (item, pos, i, type) => {
+    /**
+     * Create date form component with nativ mapstore2 UTCDateTimePicker component
+     * @param {object} item
+     * @param {string} type
+     * @returns
+     */
+    const getDate = (item, type) => {
         return (
             <Col xs={6}>
                 <FormGroup>
@@ -249,7 +257,7 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                     </Col>
                 </Row>
                 {
-                    SEARCH_CALENDARS.map((els, num) => { return (<Row  style={{ marginTop: marginTop }}>{els.items.map((el, i) => getDate(el, i, num))}</Row>); })
+                    SEARCH_CALENDARS.map(els => { return (<Row  style={{ marginTop: marginTop }}>{els.items.map(el => getDate(el))}</Row>); })
                 }
             </Grid >
         </>
