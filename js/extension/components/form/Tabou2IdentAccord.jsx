@@ -2,7 +2,6 @@ import React from "react";
 import { isEmpty } from "lodash";
 import { Checkbox, Col, Row, FormGroup, FormControl, Grid, ControlLabel } from "react-bootstrap";
 
-
 export default function Tabou2IdentAccord({keyVal, layer}) {
     const fields = [{
         name: "estoff",
@@ -124,7 +123,6 @@ export default function Tabou2IdentAccord({keyVal, layer}) {
                     </Row>
                 ))
             }
-
         </Grid>
     );
 }

@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { keys, isEqual, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
-import { Row, Grid } from 'react-bootstrap';
+import { Row } from 'react-bootstrap';
 import { DropdownList } from 'react-widgets';
-import Tabou2IdentifyToolbar from './Tabou2IdentifyToolbar';
+
 import Tabou2IdentifyContent from './Tabou2IdentifyContent';
 import { getTabouIndexSelectors, getTabouResponse, currentActiveTabSelector, getTabouResponseLayers } from '@ext/selectors/tabou2';
 import { setSelectorIndex } from '@ext/actions/tabou2';
 import { ID_SELECTOR } from '@ext/constants';
 import Message from "@mapstore/components/I18N/Message";
-import { createOptions } from '@ext/utils/identify';
+import { createOptions, getFeaturesOptions } from '@ext/utils/identify';
 
 function Tabou2IdentifyPanel({
     currentTab,
@@ -27,12 +27,15 @@ function Tabou2IdentifyPanel({
     const [gfiLayers, setGfiLayers] = useState([]);
     const [selectedLayer, setSelectedLayer] = useState('');
     const [configLayer, setConfigLayer] = useState('');
+    const [selectedFeatures, setSelectedFeatures] = useState([]);
+    const [selectedFeaturesIdx, setSelectedFeaturesIdx] = useState(0);
 
     useEffect(() => {
         if (!isEqual(gfiLayers, responseLayers)) {
             setGfiLayers(responseLayers);
             setGfinfos(responseGFI);
-            setSelectedLayer(responseLayers[0]);
+            setSelectedLayer(responseLayers.length ? responseLayers[0] : {});
+            setSelectedFeatures(responseLayers.length ? responseGFI[responseLayers[0]]?.data?.features : []);
             setConfigLayer(keys(props.layersCfg).filter(k => responseLayers[0] === props.layersCfg[k].nom)[0]);
         }
     }, [responseLayers]);
@@ -44,6 +47,8 @@ function Tabou2IdentifyPanel({
         setSelectedLayer(clicked?.name);
     };
 
+    // TODO : set on change index for features list.
+
     return (
         <>
             <Row className="layer-tabouselect-row" style={{ margin: '10px' }}>
@@ -53,7 +58,6 @@ function Tabou2IdentifyPanel({
                         <DropdownList
                             defaultValue={defaultIndex}
                             disabled={false}
-                            key={'ddown-layer-selector'}
                             data={createOptions(keys(gfiInfos).map(e => gfiInfos[e]))}
                             valueField={'value'}
                             textField={'label'}
@@ -62,18 +66,25 @@ function Tabou2IdentifyPanel({
                     </div>
                 </div>
             </Row>
+            <Row className="layer-featureSelect-row" style={{ margin: '10px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', padding: '8px 8px 0', zIndex: '10' }}>
+                    <span className="identify-icon glyphicon glyphicon-list" />
+                    <div id="ddSelectorIdent" style={{ flex: "1 1 0%", padding: "0px 4px" }}>
+                        <DropdownList
+                            defaultValue={defaultIndex}
+                            disabled={false}
+                            data={!isEmpty(gfiInfos) ? getFeaturesOptions(selectedFeatures, selectedLayer) : []}
+                            valueField={'value'}
+                            textField={'label'}
+                            onChange={(i) => console.log(i)}
+                            placeholder={<Message msgId="tabou2.identify.noData" />} />
+                    </div>
+                </div>
+            </Row>
             {
-                /* !isEmpty(gfiInfos) ? (<Row className="tabou-idToolbar-row text-center" style={{ display: "flex", margin: "auto", justifyContent: "center" }}>
-                    <Tabou2IdentifyToolbar onClick={() => { console.log('click'); return setModalStatus(true);} }/>
-                </Row>) : null*/
-                <Row className="tabou-idToolbar-row text-center" style={{ display: "flex", margin: "auto", justifyContent: "center" }}>
-                    <Tabou2IdentifyToolbar />
-                </Row>
-            }
-            {
-                !isEmpty(gfiInfos) ? (<Grid style={{ width: '100%' }}>
-                    <Tabou2IdentifyContent response={gfiInfos[selectedLayer]} tabouLayer={configLayer} />
-                </Grid>) : null
+                !isEmpty(gfiInfos) ?
+                    (<Tabou2IdentifyContent response={gfiInfos[selectedLayer]} tabouLayer={configLayer} />)
+                    : null
             }
         </>
     );

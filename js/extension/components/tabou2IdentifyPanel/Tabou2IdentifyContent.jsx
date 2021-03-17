@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { PanelGroup, Panel } from 'react-bootstrap';
+import { PanelGroup, Panel, Row, Grid } from 'react-bootstrap';
 import { CSS } from './tabou2Identify-css';
 import Tabou2IdentAccord from '@ext/components/form/Tabou2IdentAccord';
 import Tabou2DescribeAccord from '@ext/components/form/Tabou2DescribeAccord';
@@ -9,11 +9,13 @@ import Tabou2ProgHabitAccord from '@ext/components/form/Tabou2ProgHabitAccord';
 import Tabou2SuiviOpAccord from '@ext/components/form/Tabou2SuiviOpAccord';
 import Tabou2DdsAccord from '@ext/components/form/Tabou2DdsAccord';
 import Tabou2SecProgLiesAccord from '@ext/components/form/Tabou2SecProgLiesAccord';
-
+import Tabou2IdentifyToolbar from './Tabou2IdentifyToolbar';
 import { ACCORDIONS } from '@ext/constants';
 
 export default function Tabou2IdentifyContent({
-    tabouLayer
+    response,
+    tabouLayer,
+    feature
 }) {
     const [cssLoaded, setCss] = useState(false);
     const [accordions, setAccordions] = useState([]);
@@ -80,29 +82,34 @@ export default function Tabou2IdentifyContent({
 
     return (
         <>
-            {
-                accordions.map((item, index) => (
-                    <PanelGroup
-                        defaultActiveKey={openedAccordions[index] ? index.toString() : null}
-                        onSelect={() => toggleAccordion(index)}
-                        key={'panelgp-' + index} accordion>
-                        <Panel
-                            className="idContentHeader"
-                            header={(
-                                <span onClick={() => toggleAccordion(index)}>
-                                    <label>
-                                        {item.title}
-                                    </label>
-                                </span>
-                            )}
-                            eventKey={index.toString()}>
+            <Row className="tabou-idToolbar-row text-center" style={{ display: "flex", margin: "auto", justifyContent: "center" }}>
+                <Tabou2IdentifyToolbar response={response}/>
+            </Row>
+            <Grid style={{ width: '100%' }}>
+                {
+                    accordions.map((item, index) => (
+                        <PanelGroup
+                            defaultActiveKey={openedAccordions[index] ? index.toString() : null}
+                            onSelect={() => toggleAccordion(index)}
+                            key={'panelgp-' + index} accordion>
+                            <Panel
+                                className="idContentHeader"
+                                header={(
+                                    <span onClick={() => toggleAccordion(index)}>
+                                        <label>
+                                            {item.title}
+                                        </label>
+                                    </span>
+                                )}
+                                eventKey={index.toString()}>
 
-                            <FormFields accordion={item} layer={tabouLayer} />
+                                <FormFields accordion={item} layer={tabouLayer} />
 
-                        </Panel>
-                    </PanelGroup>
-                ))
-            }
+                            </Panel>
+                        </PanelGroup>
+                    ))
+                }
+            </Grid>
         </>
     );
 }
