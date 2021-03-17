@@ -11,8 +11,11 @@ export function getRequestApi(name, apiCfg, params) {
         params: params || {}
     };
     if (apiCfg?.authent) {
-        requestParams.Authorization = `Basic ${btoa(apiCfg.authent)}`;
+        requestParams.headers = {
+            Authorization: `Basic ${btoa(apiCfg.authent)}`
+        };
     }
+
 
     return axios.get(`${url}/${name}`, requestParams).then(({ data }) => data);
 }
