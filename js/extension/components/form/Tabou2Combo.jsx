@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Combobox } from 'react-widgets';
+import { uniqBy } from 'lodash';
 
 function Tabou2Combo({
     style = {},
     placeholder = '',
     load = () => { },
-    valueField,
+    valueField = null,
     textField,
     firstItem,
+    disabled,
+    reloadValue = '',
     onLoad = () => { },
+    onSelect = () => { },
     ...props
 }) {
 
@@ -16,30 +20,41 @@ function Tabou2Combo({
     const [busy, setBusy] = useState(false); // boolean
     const [data, setData] = useState([]); // array
 
-    useEffect(() => {
-        setBusy(true);
+    const loadData = (r) => {
+        setBusy(!r ? false : true);
         load().then(result => {
             let response;
             if (onLoad) {
                 response = onLoad(result);
             }
             if (firstItem) response.unshift(firstItem);
+            response = uniqBy(response, textField);
             setData(response);
             setBusy(false);
         });
-    }, []); // pass array to stop inifity loop
+        // trigger select without value to clean filters if parent cbox value is empty
+        if (!r) {
+            onSelect('');
+        }
+    };
 
-    return (
-        <Combobox
-            busy={busy}
-            style={style}
-            valueField={valueField}
-            textField={textField}
-            data={data}
-            defaultValue={props.defaultValue}
-            placeholder={placeholder}
-            {...props} />
-    );
+    useEffect(() => {
+        if (!disabled) {
+            loadData(reloadValue);
+        }
+    }, [reloadValue, disabled]); // pass array to stop inifity loop
+
+    return (<Combobox
+        busy={busy}
+        style={style}
+        valueField={valueField}
+        textField={textField}
+        data={data}
+        defaultValue={props.defaultValue}
+        placeholder={placeholder}
+        disabled={disabled}
+        onSelect={onSelect}
+        {...props} />);
 }
 
 export default Tabou2Combo;

@@ -30,12 +30,14 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
     const layersInfos = getTabouLayersInfos(props?.pluginCfg?.layersCfg || {});
     const config = props.pluginCfg.searchCfg;
 
+    const [parents, setParents] = useState({});
+    const [values, setValues] = useState({});
+
     /**
      * Get info from request and set / replace MapStore filters for each tabou2 layers
      * TODO :
-     *  1 - End change / select and autocompletion event
-     *  2 - Externalize this function outside by action, epic or util
-     *  3 - Short code to generate combo with only one function or component
+     *  1 - Externalize this function outside by action, epic or util
+     *  2 - Short code to generate combo with only one function or component
      * @param {*} layer
      * @param {*} value
      */
@@ -55,7 +57,6 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                 currentFilters[lyr][filter] = `${cql}`;
             }
             changeFilters(currentFilters);
-
 
             // get WFS features from CQL
             let allFilters = currentFilters[lyr];
@@ -109,11 +110,28 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
         });
     };
 
-    const [values, setValues] = useState({});
-    const changeState = (type, name, value) => {
+    /**
+     * Update combo values and cql filters
+     * @param {string} type
+     * @param {object} combo
+     * @param {string} value
+     */
+    const changeState = (type, combo, value) => {
+        let name = combo.name;
         values[name] = value;
         setValues(values);
         changeCqlFilter(type, name, value[get(config, `${name}.apiField`)], config[name]);
+    };
+
+    /**
+     * get disabled value according to disabled value and take parent value into account
+     * @param {Object} cb
+     * @param {string} p
+     * @returns
+     */
+    const isDisabled = (cb, p) => {
+        if (get(cb, 'disabled') || (cb.parent && !p)) return true;
+        return false;
     };
 
     /**
@@ -129,19 +147,49 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
         setValues(values);
     };
 
+    /**
+     * TODO : FIX reload on combobox input text
+     */
     const getCombo = (combo) => {
+        let urlParams = '';
+        let reload = '';
+        if (combo.parent && values[combo.parent]) {
+            // if combo.parent : "communes" and combo.parentField : "codeInsee"
+            // will return URL params ?codeInsee=35238
+            reload = get(values[combo.parent], combo.parentField);
+            urlParams = JSON.parse(`{"${combo.cascadeField}":${reload}}`);
+
+            // use to store childs and clean filters when parent is clear
+            if (!parents[combo.parent]) parents[combo.parent] = [];
+            if (!parents[combo.parent].includes(combo.name)) {
+                parents[combo.parent].push(combo.name);
+                setParents(parents);
+            }
+        }
+        // avoid conflict and allow to clean combo properly
+        if (isDisabled(combo, urlParams)) {
+            return (
+                <Tabou2Combo
+                    style={{ marginTop: comboMarginTop }}
+                    placeholder={combo.placeholder}
+                    value={''}
+                    disabled
+                />
+            );
+        }
         return (
             <Tabou2Combo
                 style={{ marginTop: comboMarginTop }}
-                load={() => getRequestApi(get(combo, "api") || get(combo, "name"), props.pluginCfg.apiCfg)}
-                value={values[combo.name]}
+                load={() => getRequestApi(get(combo, "api") || get(combo, "name"), props.pluginCfg.apiCfg, urlParams)}
+                valueField={get(config, `${combo.name}.apiField`)}
                 placeholder={combo.placeholder}
                 filter="contains"
                 textField={get(config, `${combo.name}.apiLabel`)}
                 onLoad={(r) => r?.elements}
-                disabled={get(combo, "disabled")}
-                onSelect={(t) => changeState(get(combo, 'type'), combo.name, t)}
-                onChange={(t) => changeState(get(combo, 'type'), combo.name, t)}
+                disabled={isDisabled(combo, urlParams)}
+                reloadValue={reload || ''}
+                onSelect={(t) => changeState(get(combo, 'type'), combo, t)}
+                onChange={(t) => !t ? changeState(get(combo, 'type'), combo, t) : null}
             />
         );
     };

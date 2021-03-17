@@ -31,11 +31,17 @@ export const SEARCH_ITEMS = [{
 }, {
     name: 'quartiers',
     placeholder: 'Tous quartiers',
-    group: 1
+    group: 1,
+    parent: 'communes',
+    cascadeField: 'codeInsee',
+    parentField: 'codeInsee'
 }, {
     name: 'iris',
     placeholder: 'Tous iris',
-    group: 1
+    group: 1,
+    parent: 'communes',
+    cascadeField: 'ccom',
+    parentField: 'codeInsee'
 }, {
     name: 'plui',
     disabled: true,
