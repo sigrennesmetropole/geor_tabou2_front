@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Row } from 'react-bootstrap';
 import { DropdownList } from 'react-widgets';
 import Message from "@mapstore/components/I18N/Message";

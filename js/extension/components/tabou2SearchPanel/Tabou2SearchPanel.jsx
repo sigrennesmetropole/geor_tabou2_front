@@ -174,7 +174,7 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                 <Tabou2Combo
                     style={{ marginTop: comboMarginTop }}
                     placeholder={combo.placeholder}
-                    value={''}
+                    defaultValue={''}
                     disabled
                 />
             );
@@ -187,11 +187,12 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                 placeholder={combo.placeholder}
                 filter="contains"
                 textField={get(config, `${combo.name}.apiLabel`)}
-                onLoad={(r) => r?.elements}
+                onLoad={(r) => r?.elements || r}
                 disabled={isDisabled(combo, urlParams)}
                 reloadValue={reload || ''}
                 onSelect={(t) => changeState(get(combo, 'type'), combo, t)}
                 onChange={(t) => !t ? changeState(get(combo, 'type'), combo, t) : null}
+                name={combo.name}
                 messages={{
                     emptyList: 'La liste est vide.',
                     openCombobox: 'Ouvrir la liste'
