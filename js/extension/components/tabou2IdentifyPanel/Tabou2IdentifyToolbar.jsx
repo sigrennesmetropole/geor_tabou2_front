@@ -4,8 +4,6 @@ import Tabou2TiersModal from './modals/Tabou2TiersModal';
 import Tabou2DocsModal from './modals/Tabou2DocsModal';
 import Tabou2LogsModal from './modals/Tabou2LogsModal';
 export default function Tabou2IdentifyToolbar({ response, idFeature }) {
-
-
     const [isOpenTiers, setIsOpenTiers] = useState(false);
     const [isOpenDocs, setIsOpenDocs] = useState(false);
     const [isOpenLogs, setIsOpenLogs] = useState(false);

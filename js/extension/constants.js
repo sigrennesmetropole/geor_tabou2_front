@@ -116,13 +116,31 @@ export const SEARCH_CALENDARS = [{
 
 export const ACCORDIONS = [
     {title: 'Identification', id: 'ident'},
-    { title: 'Descriptif', id: 'describe'},
-    { title: 'Gouvernance', id: 'gouvernance'},
+    {title: 'Descriptif', id: 'describe'},
+    {title: 'Gouvernance', id: 'gouvernance'},
     {title: 'Suivi Opérationnel', id: 'suivi'},
     {title: 'Programmation Habitat', id: 'habitat'},
     {title: 'Programmation Activités', id: 'activite', layers: ['layerOA', 'layerSA']},
     {title: 'Instruction Droit des Sols', id: 'dds', layers: ['layerPA']},
     {title: 'Secteurs et programmes liés', id: 'secteursprog', layers: ['layerOA', 'layerSA']}
+];
+
+export const LAYER_FIELD_OPTION = [
+    {
+        name: "tabou2:v_oa_programme",
+        field: "properties.nom",
+        id: "properties.objectid"
+    },
+    {
+        name: "tabou2:oa_secteur",
+        field: "properties.secteur",
+        id: "properties.objectid"
+    },
+    {
+        name: "tabou2:zac",
+        field: "properties.nomzac",
+        id: "properties.id_zac"
+    }
 ];
 
 export const ACC_ATTRIBUTE_IDENT = [{
