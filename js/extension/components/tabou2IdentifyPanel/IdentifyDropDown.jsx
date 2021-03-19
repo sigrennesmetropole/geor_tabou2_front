@@ -8,8 +8,14 @@ export default function IdentifyDropDown({
     reloadValue,
     ...props
 }) {
+    let visible = props.visible ? {
+        margin: '10px'
+    } : {
+        margin: '10px',
+        display: 'none'
+    };
     return (
-        <Row style={{ margin: '10px' }}>
+        <Row style={visible}>
             <div style={{ display: 'flex', alignItems: 'center', padding: '8px 8px 0', zIndex: '10' }}>
                 <span className={`identify-icon glyphicon ${icon}`} />
                 <div style={{ flex: "1 1 0%", padding: "0px 4px" }}>

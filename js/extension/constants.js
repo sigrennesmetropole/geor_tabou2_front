@@ -24,6 +24,12 @@ export const ID_SELECTOR = 'layerTabouId-selector';
 
 export const PANEL_SIZE = 500;
 
+export const URL_TIERS = {
+    "tabou2": "/",
+    "tabou2:v_oa_programme": "/programmes/",
+    "tabou2:oa_secteur": "/operations/"
+};
+
 export const SEARCH_ITEMS = [{
     name: 'communes',
     placeholder: 'Toutes communes',
@@ -220,4 +226,61 @@ export const ACC_ATTRIBUTE_DESCRIBE = [{
     api: '',
     type: 'string',
     layers: ['layerOA', 'layerSA']
+}];
+
+
+export const TIERS_FORMS = [{
+    field: "adresseCp",
+    label: "Code postal",
+    type: "text",
+    required: true,
+    pattern: "^[0-9]*$"
+}, {
+    field: "adresseNum",
+    label: "Numéro",
+    type: "text",
+    required: false,
+    pattern: "^[0-9]*$"
+}, {
+    field: "adresseRue",
+    label: "Rue",
+    type: "text",
+    required: true,
+    pattern: ""
+}, {
+    field: "adresseVille",
+    label: "Ville",
+    type: "text",
+    required: true,
+    pattern: ""
+}, {
+    name: "contact",
+    label: "Contact",
+    type: "text",
+    required: true,
+    pattern: ""
+}, {
+    field: "email",
+    label: "Email",
+    type: "email",
+    required: true,
+    pattern: ""
+}, {
+    field: "siteWeb",
+    label: "Site web",
+    type: "string",
+    required: false,
+    pattern: ""
+}, {
+    field: "telecopie",
+    label: "Fax",
+    type: "text",
+    required: false,
+    pattern: "^[0-9]*$"
+}, {
+    field: "telephone",
+    label: "Téléphone",
+    type: "text",
+    required: true,
+    pattern: "^[0-9]*$"
 }];

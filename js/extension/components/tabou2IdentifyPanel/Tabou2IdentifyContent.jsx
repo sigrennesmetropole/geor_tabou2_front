@@ -15,7 +15,8 @@ import { ACCORDIONS } from '@ext/constants';
 export default function Tabou2IdentifyContent({
     response,
     tabouLayer,
-    feature
+    featureId,
+    ...props
 }) {
     const [cssLoaded, setCss] = useState(false);
     const [accordions, setAccordions] = useState([]);
@@ -39,39 +40,44 @@ export default function Tabou2IdentifyContent({
     }, []);
 
     useEffect(() => {
+        console.log(featureId);
         if (tabouLayer) {
             // get accordions according to layer
             setAccordions(ACCORDIONS.filter(acc => !acc.layers || acc?.layers.indexOf(tabouLayer) > -1));
         }
-    }, [tabouLayer]);
+    }, [tabouLayer, featureId]);
 
-    const FormFields = ({ accordion, layer }) => {
-        let keyVal = `${accordion.id}-form-acc`;
+
+    const FormFields = ({ accordion, layer, feature }) => {
         let fields;
+        const accordProps = {
+            layer: layer,
+            feature: feature
+        };
         switch (accordion.id) {
         case 'ident':
-            fields = (<Tabou2IdentAccord key={keyVal} layer={layer} />);
+            fields = (<Tabou2IdentAccord {...accordProps}/>);
             break;
         case 'describe':
-            fields = (<Tabou2DescribeAccord key={keyVal} layer={layer} />);
+            fields = (<Tabou2DescribeAccord {...accordProps} />);
             break;
         case 'gouvernance':
-            fields = (<Tabou2GouvernanceAccord key={keyVal} layer={layer} />);
+            fields = (<Tabou2GouvernanceAccord {...accordProps} />);
             break;
         case 'suivi':
-            fields = (<Tabou2SuiviOpAccord key={keyVal} layer={layer} />);
+            fields = (<Tabou2SuiviOpAccord {...accordProps} />);
             break;
         case 'habitat':
-            fields = (<Tabou2ProgHabitAccord key={keyVal} layer={layer} />);
+            fields = (<Tabou2ProgHabitAccord {...accordProps} />);
             break;
         case 'activite':
-            fields = (<Tabou2ProgActiviteAccord key={keyVal} layer={layer} />);
+            fields = (<Tabou2ProgActiviteAccord {...accordProps} />);
             break;
         case 'dds':
-            fields = (<Tabou2DdsAccord key={keyVal} layer={layer} />);
+            fields = (<Tabou2DdsAccord {...accordProps} />);
             break;
         case 'secteursprog':
-            fields = (<Tabou2SecProgLiesAccord key={keyVal} layer={layer}/>);
+            fields = (<Tabou2SecProgLiesAccord {...accordProps}/>);
             break;
         default:
             fields = null;
@@ -83,7 +89,7 @@ export default function Tabou2IdentifyContent({
     return (
         <>
             <Row className="tabou-idToolbar-row text-center" style={{ display: "flex", margin: "auto", justifyContent: "center" }}>
-                <Tabou2IdentifyToolbar response={response}/>
+                <Tabou2IdentifyToolbar response={response} featureId={featureId} {...props} />
             </Row>
             <Grid style={{ width: '100%' }}>
                 {
@@ -103,7 +109,7 @@ export default function Tabou2IdentifyContent({
                                 )}
                                 eventKey={index.toString()}>
 
-                                <FormFields accordion={item} layer={tabouLayer} />
+                                <FormFields accordion={item} layer={tabouLayer} featureId={featureId} />
 
                             </Panel>
                         </PanelGroup>
