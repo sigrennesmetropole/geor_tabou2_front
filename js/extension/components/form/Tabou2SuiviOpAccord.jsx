@@ -2,7 +2,7 @@ import React from "react";
 import { Checkbox, Col, Row, FormGroup, FormControl, Grid, ControlLabel } from "react-bootstrap";
 import { isEmpty } from "lodash";
 
-export default function Tabou2SuiviOpAccord({keyVal, layer}) {
+export default function Tabou2SuiviOpAccord({ layer, feature }) {
     const fields = [
         {
             name: "etape",
@@ -44,7 +44,7 @@ export default function Tabou2SuiviOpAccord({keyVal, layer}) {
 
     const marginTop = "10px";
     return (
-        <Grid style={{ width: "100%" }} className={""} key={keyVal}>
+        <Grid style={{ width: "100%" }} className={""}>
             {
                 fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(field => (
                     <Row style={{ marginTop: marginTop }} key={`key-formrow-${field.name}`}>

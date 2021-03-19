@@ -2,7 +2,7 @@ import React from "react";
 import { Checkbox, Col, Row, FormGroup, FormControl, Grid, ControlLabel } from "react-bootstrap";
 import { isEmpty } from "lodash";
 
-export default function Tabou2ddsAccord({ keyVal, layer }) {
+export default function Tabou2ddsAccord({ layer, feature }) {
     const fields = [
         {
             name: "adsDate",
@@ -30,7 +30,7 @@ export default function Tabou2ddsAccord({ keyVal, layer }) {
 
     const marginTop = "10px";
     return (
-        <Grid style={{ width: "100%" }} className={""} key={keyVal}>
+        <Grid style={{ width: "100%" }} className={""}>
             {
                 fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(field => (
                     <Row style={{ marginTop: marginTop }} key={`key-formrow-${field.name}`}>
