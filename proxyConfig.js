@@ -46,17 +46,4 @@ module.exports = {
             host: "jdev.stoplight.io"
         }
     }
-
-    /* ,
-    '/docs': {
-        target: "http://localhost:8081",
-        pathRewrite: {'/docs': '/mapstore/docs'}
-    },
-    '/pluievolution': {
-        target: "http://localhost:8082",
-        pathRewrite: {'/pluievolution': '/'},
-        headers: {
-            host: "localhost"
-        }
-    }*/
 };

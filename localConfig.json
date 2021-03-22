@@ -371,54 +371,54 @@
               "layer": "tabou2:commune_emprise",
               "geom": "the_geom",
               "placeholder": "Communes",
-              "filterField": "code_insee",
-              "apiField": "code_insee",
+              "filterField": "codeInsee",
+              "apiField": "codeInsee",
               "apiLabel": "nom"
             },
             "quartiers": {
               "layer": "tabou2:quartier",
               "geom": "the_geom",
               "placeholder": "Quartiers",
-              "filterField": "nuquart",
-              "apiField": "nuquart",
+              "filterField": "nuQuart",
+              "apiField": "nuQuart",
               "apiLabel": "nom"
             },
             "iris": {
               "layer": "tabou2:iris",
               "geom": "the_geom",
               "placeholder": "Iris",
-              "filterField": "code_iris",
-              "apiField": "code_iris",
+              "filterField": "codeIris",
+              "apiField": "codeIris",
               "apiLabel": "nmiris"
             },
-            "etapes-oa-mock": {
+            "etapesoa": {
               "geom": "the_geom",
               "filterField": "code",
               "placeholder": "Etapes OA",
-              "apiField": "id_etape_operation",
+              "apiField": "code",
               "apiLabel": "libelle"
             },
-            "etapes-pa-mock": {
+            "etapespa": {
               "geom": "the_geom",
               "filterField": "code",
               "apiLabel": "libelle",
-              "apiField": "id_etape_operation",
+              "apiField": "code",
               "placeholder": "Etapes PA"
             },
             "secteurs-sam": {
               "layer": "tabou2:v_chargedoperation_secteur",
               "geom": "the_geom",
               "filterField": "nom_secteu",
-              "apiLabel": "nom_secteur",
-              "apiField": "nom_secteur",
+              "apiLabel": "nomSecteur",
+              "apiField": "nomSecteur",
               "placeholder": "Sec. SAM"
             },
             "secteurs-speu": {
               "layer": "tabou2:v_referent_urbaniste_secteur",
               "geom": "the_geom",
               "filterField": "nom_secteu",
-              "apiLabel": "nom_secteur",
-              "apiField": "nom_secteur",
+              "apiLabel": "nomSecteur",
+              "apiField": "nomSecteur",
               "placeholder": "Sec. SPEU"
             },
             "secteurs-sds": {
@@ -432,10 +432,9 @@
             "secteurs-foncier": {
               "layer": "tabou2:v_negociateurfoncier_secteur",
               "geom": "the_geom",
-              "filterField": "nom",
-              "apiField": "nom_secteur",
-              "apiLabel": "nom_secteur",
-              "apiId": "id",
+              "filterField": "negociateu",
+              "apiField": "negociateur",
+              "apiLabel": "negociateur",
               "placeholder": "Sec. Foncier"
             },
             "natures": {
@@ -446,12 +445,7 @@
             },
             "amenageurOA": {},
             "promoteurOA": {},
-            "type-financement": {
-              "filterField": "code",
-              "apiField": "code",
-              "apiLabel": "libelle",
-              "placeholder": "Type. Financement"
-            },
+            "types-financements": {},
             "plui": {
               "filterField": "libelle",
               "apiField": "libelle",
@@ -462,7 +456,7 @@
           "apiCfg": {
             "apiURL": "/tabou2",
             "extApiURL": "/tabou2",
-            "authent": "**:**"
+            "authent": ""
           }
         }
       },
