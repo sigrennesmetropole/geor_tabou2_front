@@ -4,17 +4,18 @@ import { PANEL_SIZE } from '../constants';
 
 export const setTbarPosition = (action$, store) =>
     action$.ofType(UPDATE_MAP_LAYOUT)
+        .filter(() => isTabou2Activate(store.getState()))
         .filter(({ source }) => {
             return source !== 'tabou2';
         })
         .map(({ layout }) => {
-            const size = isTabou2Activate(store.getState()) ? PANEL_SIZE : 0;
+            console.log("TABOU2 IS LOADED");
             const action = updateMapLayout({
                 layout,
-                right: size,
+                right: PANEL_SIZE,
                 boundingMapRect: {
                     ...(layout.boundingMapRect || {}),
-                    right: size
+                    right: PANEL_SIZE
                 }
             });
             return { ...action, source: 'tabou2' }; // add an argument to avoid infinite loop.
