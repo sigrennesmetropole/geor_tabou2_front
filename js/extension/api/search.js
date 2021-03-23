@@ -31,13 +31,13 @@ export function putRequestApi(name, apiCfg, body) {
 }
 
 /**
- * API - create DELETE request
+ * API - create POST request
  */
-export function deleteRequestApi(name, apiCfg, body) {
+ export function postRequestApi(name, apiCfg, body) {
     let url = apiCfg?.apiURL || API_BASE_URL;
     let headers = {};
     if (apiCfg?.authent) {
         headers.Authorization = `Basic ${btoa(apiCfg.authent)}`;
     }
-    return axios.put(`${url}/${name}`, body, { headers: headers }).then(({ data }) => data);
+    return axios.post(`${url}/${name}`, body, {headers: headers}).then(({ data }) => data);
 }
