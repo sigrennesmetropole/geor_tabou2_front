@@ -231,7 +231,7 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
             <div id="tabou2-tbar-container" style={{ display: "flex", margin: "auto", justifyContent: "center" }} className="text-center">
                 <Tabou2SearchToolbar reset={reset}/>
             </div>
-            <Grid fluid className={"fluid-container adjust-display"}>
+            <Grid className={"col-xs-12"}>
                 <Row style={{ marginTop: marginTop }}>
                     <Col xs={12}>
                         <FormGroup>
@@ -258,7 +258,7 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                     </Col>
                 </Row>
                 {
-                    SEARCH_CALENDARS.map(els => { return (<Row  style={{ marginTop: marginTop }}>{els.items.map(el => getDate(el))}</Row>); })
+                    SEARCH_CALENDARS.map(els => { return (<Row  style={{ marginTop: "5px" }}>{els.items.map(el => getDate(el))}</Row>); })
                 }
             </Grid >
         </>
