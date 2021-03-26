@@ -178,7 +178,7 @@ export default function Tabou2TiersModal({
             show={visible}
             buttons={editable ? buttons : []}
             showClose
-            onClose={close}
+            onClose={onClick}
             size="lg">
             <div>
                 <Grid fluid Style={{overflow: "auto"}}>
