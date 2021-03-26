@@ -1,27 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { Combobox } from 'react-widgets';
-import { uniqBy } from 'lodash';
+import { uniqBy, get } from 'lodash';
 
 function Tabou2Combo({
     style = {},
     placeholder = '',
     load = () => { },
-    valueField = null,
+    valueField,
     textField,
+    value,
     firstItem,
     disabled,
-    reloadValue = '',
+    parentValue = '',
     onLoad = () => { },
-    onSelect = () => { },
     ...props
 }) {
 
     // set default state according to param type
-    const [busy, setBusy] = useState(false); // boolean
     const [data, setData] = useState([]); // array
+    const [text, setText] = useState("");
 
-    const loadData = (r) => {
-        setBusy(!r ? false : true);
+    const loadData = () => {
         load().then(result => {
             let response;
             if (onLoad) {
@@ -30,32 +29,43 @@ function Tabou2Combo({
             if (firstItem) response.unshift(firstItem);
             response = uniqBy(response, textField);
             setData(response);
-            setBusy(false);
         });
-        // trigger select without value to clean filters if parent cbox value is empty
-        if (!r) {
-            onSelect('');
-        }
     };
 
     useEffect(() => {
-        if (!disabled) {
-            loadData(reloadValue);
+        loadData();
+    }, [parentValue, disabled]); // pass array to stop inifity loop
+
+    useEffect(() => {
+        if (text !== value) {
+            setText(value);
         }
-    }, [reloadValue, disabled]); // pass array to stop inifity loop
+    }, [value]); // pass array to stop inifity loop
+
+    const changeText = (v, fn) => {
+        if (textField) {
+            setText(get(v, textField));
+        }
+
+        if (fn) {
+            fn(v);
+        }
+    };
 
     return (<Combobox
-        busy={busy}
-        style={style}
-        valueField={valueField}
+        value={text}
         textField={textField}
+        valueField={valueField}
+        style={style}
         data={data}
         defaultValue={props.defaultValue}
-        suggest
+        filter="contains"
         placeholder={placeholder}
         disabled={disabled}
-        onSelect={onSelect}
-        {...props} />);
+        onSelect={v => changeText(v, props.onSelect)}
+        onChange={v => changeText(v, props.onChange)}
+        messages={props.messages}
+    />);
 }
 
 export default Tabou2Combo;

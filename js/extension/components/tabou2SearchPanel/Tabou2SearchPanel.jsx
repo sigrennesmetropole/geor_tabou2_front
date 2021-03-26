@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { keys, get } from 'lodash';
 import { connect } from 'react-redux';
 import axios from '@mapstore/libs/ajax';
@@ -30,8 +30,38 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
     const layersInfos = getTabouLayersInfos(props?.pluginCfg?.layersCfg || {});
     const config = props.pluginCfg.searchCfg;
 
+
+    const [comboValues, setComboValues] = useState({});
     const [parents, setParents] = useState({});
-    const [values, setValues] = useState({});
+    const [val, setVal] = useState("");
+    const [reloadVal, setReloadVal] = useState("");
+
+    useEffect(() => {
+        if (val !== reloadVal) {
+            setReloadVal(val);
+        }
+    }, [val]);
+
+    /**
+     * Reset all filters value
+     */
+    const reset = () => {
+        props.resetFiltersObj();
+        props.resetFiltersCql();
+        setComboValues({});
+        setVal("");
+    };
+
+    /**
+     * get disabled value according to disabled value and take parent value into account
+     * @param {Object} cb
+     * @param {string} p
+     * @returns
+     */
+    const isDisabled = (cb, p) => {
+        if (get(cb, 'disabled') || (cb.parent && !p)) return true;
+        return false;
+    };
 
     /**
      * Get info from request and set / replace MapStore filters for each tabou2 layers
@@ -57,6 +87,7 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                 currentFilters[lyr][filter] = `${cql}`;
             }
             changeFilters(currentFilters);
+            console.log(currentFilters);
 
             // get WFS features from CQL
             let allFilters = currentFilters[lyr];
@@ -110,41 +141,11 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
         });
     };
 
-    /**
-     * Update combo values and cql filters
-     * @param {string} type
-     * @param {object} combo
-     * @param {string} value
-     */
-    const changeState = (type, combo, value) => {
-        let name = combo.name;
-        values[name] = value;
-        setValues(values);
-        changeCqlFilter(type, name, value[get(config, `${name}.apiField`)], config[name]);
-    };
-
-    /**
-     * get disabled value according to disabled value and take parent value into account
-     * @param {Object} cb
-     * @param {string} p
-     * @returns
-     */
-    const isDisabled = (cb, p) => {
-        if (get(cb, 'disabled') || (cb.parent && !p)) return true;
-        return false;
-    };
-
-    /**
-     * Reset all filters value
-     */
-    const reset = () => {
-        props.resetFiltersObj();
-        props.resetFiltersCql();
-        keys(values).forEach(k => {
-            // null value allow to force value to element find with null valueField value
-            values[k] = null;
-        });
-        setValues(values);
+    const changeFilter = (combo, value) => {
+        comboValues[combo.name] = value;
+        setVal(value[get(config, `${combo.name}.apiField`)]);
+        setComboValues(comboValues);
+        changeCqlFilter(get(combo, "type"), combo.name, value[get(config, `${combo.name}.apiField`)], config[combo.name]);
     };
 
     /**
@@ -153,13 +154,13 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
      * @returns combobox component
      */
     const getCombo = (combo) => {
-        let urlParams = '';
-        let reload = '';
-        if (combo.parent && values[combo.parent]) {
+        let urlParams = "";
+        let parentValue = "";
+        if (combo.parent && comboValues[combo.parent]) {
             // if combo.parent : "communes" and combo.parentField : "codeInsee"
             // will return URL params ?codeInsee=35238
-            reload = get(values[combo.parent], combo.parentField);
-            urlParams = JSON.parse(`{"${combo.cascadeField}":${reload}}`);
+            parentValue = get(comboValues[combo.parent], combo.parentField);
+            urlParams = JSON.parse(`{"${combo.cascadeField}":${parentValue}}`);
 
             // use to store childs and clean filters when parent is clear
             if (!parents[combo.parent]) parents[combo.parent] = [];
@@ -168,31 +169,21 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                 setParents(parents);
             }
         }
-        // avoid conflict and allow to clean combo properly
-        if (isDisabled(combo, urlParams)) {
-            return (
-                <Tabou2Combo
-                    style={{ marginTop: comboMarginTop }}
-                    placeholder={combo.placeholder}
-                    defaultValue={''}
-                    disabled
-                />
-            );
-        }
         return (
             <Tabou2Combo
                 style={{ marginTop: comboMarginTop }}
                 load={() => getRequestApi(get(combo, "api") || get(combo, "name"), props.pluginCfg.apiCfg, urlParams)}
-                valueField={get(config, `${combo.name}.apiField`)}
+                disabled={isDisabled(combo, urlParams)}
                 placeholder={combo.placeholder}
+                parentValue={parentValue}
                 filter="contains"
                 textField={get(config, `${combo.name}.apiLabel`)}
+                valueField={get(config, `${combo.name}.apiField`)}
                 onLoad={(r) => r?.elements || r}
-                disabled={isDisabled(combo, urlParams)}
-                reloadValue={reload || ''}
-                onSelect={(t) => changeState(get(combo, 'type'), combo, t)}
-                onChange={(t) => !t ? changeState(get(combo, 'type'), combo, t) : null}
                 name={combo.name}
+                value={comboValues[combo.name]}
+                onSelect={v => changeFilter(combo, v)}
+                onChange={(v) => !v ? changeFilter(combo, v) : null}
                 messages={{
                     emptyList: 'La liste est vide.',
                     openCombobox: 'Ouvrir la liste'
