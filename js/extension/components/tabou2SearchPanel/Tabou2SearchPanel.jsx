@@ -30,7 +30,6 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
     const layersInfos = getTabouLayersInfos(props?.pluginCfg?.layersCfg || {});
     const config = props.pluginCfg.searchCfg;
 
-
     const [comboValues, setComboValues] = useState({});
     const [parents, setParents] = useState({});
     const [val, setVal] = useState("");
@@ -87,7 +86,6 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                 currentFilters[lyr][filter] = `${cql}`;
             }
             changeFilters(currentFilters);
-            console.log(currentFilters);
 
             // get WFS features from CQL
             let allFilters = currentFilters[lyr];
