@@ -227,3 +227,121 @@ export const ACC_ATTRIBUTE_DESCRIBE = [{
     type: 'string',
     layers: ['layerOA', 'layerSA']
 }];
+
+
+export const ADD_OA_FORM = [{
+    label: "Secteur",
+    name: "secteur",
+    apiField: "",
+    // parent: (infos) => infos.emprise, // to activate secteur only if emprise name formControl is selected
+    required: true,
+    type: "checkbox"
+}, {
+    label: " Commencez par choisir la nature",
+    group: 1,
+    type: "alert",
+    name: "msgOaCondition",
+    icon: "info-sign",
+    variant: "info"
+}, {
+    label: "Nature",
+    api: "natures",
+    name: "natures",
+    group: 1,
+    apiField: "libelle",
+    parent: null,
+    placeholder: "Selectionner une nature",
+    type: "combo"
+}, {
+    label: "Emprise",
+    name: "emprise",
+    group: 1,
+    api: "operations/emprises",
+    apiField: "",
+    placeholder: "Selectionner une emprise",
+    parent: (i) => i?.natures,
+    type: "combo"
+}, {
+    label: "Nom",
+    apiField: "",
+    name: "nom",
+    placeholder: "Saisir un nom",
+    // parent: () => emprise, // to activate nom only if emprise name formControl is selected
+    required: true,
+    type: "text"
+}, {
+    label: "Code",
+    apiField: "",
+    name: "code",
+    placeholder: "Saisir un code",
+    // parent: (infos) => infos.emprise, // to activate code only if emprise name formControl is selected
+    required: true,
+    type: "text"
+}, {
+    label: "Etape",
+    apiField: "",
+    name: "etape",
+    // parent: (infos) => infos.emprise, // to activate etape only if emprise name formControl is selected
+    placeholder: "Sélectionner une étape",
+    required: true,
+    type: "combo"
+}];
+
+export const ADD_PA_FORM = [ {
+    label: "Limiter les emprises selon l'opération",
+    apiField: "",
+    name: "limitPa",
+    required: false,
+    type: "checkbox",
+    group: 1
+}, {
+    label: " Commencez par choisir l'opération parente",
+    group: 1,
+    type: "alert",
+    name: "msgPaCondition",
+    parent: (i) => i?.limitPa,
+    icon: "info-sign",
+    variant: "info"
+}, {
+    label: "Sélectionner l'opération parente :",
+    api: "operations",
+    name: "parentoa",
+    apiField: "libelle",
+    parent: null,
+    placeholder: "Selectionner une opération",
+    group: 1,
+    type: "combo"
+}, {
+    label: "Emprise",
+    api: "programmes/emprises",
+    group: 1,
+    parent: (i) => i?.limitPa ? i.limitPa && !i.parentoa : false,
+    name: "emprisepa",
+    apiField: "",
+    placeholder: "Selectionner une emprise",
+    type: "combo"
+}, {
+    label: "Nom",
+    apiField: "",
+    name: "nom",
+    placeholder: "Saisir un nom",
+    // parent: () => emprise, // to activate nom only if emprise name formControl is selected
+    required: true,
+    type: "text"
+}, {
+    label: "Code",
+    apiField: "",
+    name: "code",
+    placeholder: "Saisir un code",
+    // parent: (infos) => infos.emprise, // to activate code only if emprise name formControl is selected
+    required: true,
+    type: "text"
+}, {
+    label: "Etape",
+    apiField: "",
+    name: "etape",
+    // parent: (infos) => infos.emprise, // to activate etape only if emprise name formControl is selected
+    placeholder: "Sélectionner une étape",
+    required: true,
+    type: "combo"
+}];

@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { PanelGroup, Panel, Row, Grid } from 'react-bootstrap';
 import { CSS } from './tabou2Identify-css';
-import Tabou2IdentAccord from '@ext/components/form/Tabou2IdentAccord';
-import Tabou2DescribeAccord from '@ext/components/form/Tabou2DescribeAccord';
-import Tabou2GouvernanceAccord from '@ext/components/form/Tabou2GouvernanceAccord';
-import Tabou2ProgActiviteAccord from '@ext/components/form/Tabou2ProgActiviteAccord';
-import Tabou2ProgHabitAccord from '@ext/components/form/Tabou2ProgHabitAccord';
-import Tabou2SuiviOpAccord from '@ext/components/form/Tabou2SuiviOpAccord';
-import Tabou2DdsAccord from '@ext/components/form/Tabou2DdsAccord';
-import Tabou2SecProgLiesAccord from '@ext/components/form/Tabou2SecProgLiesAccord';
+import Tabou2IdentAccord from '@ext/components/form/identify/Tabou2IdentAccord';
+import Tabou2DescribeAccord from '@ext/components/form/identify/Tabou2DescribeAccord';
+import Tabou2GouvernanceAccord from '@ext/components/form/identify/Tabou2GouvernanceAccord';
+import Tabou2ProgActiviteAccord from '@ext/components/form/identify/Tabou2ProgActiviteAccord';
+import Tabou2ProgHabitAccord from '@ext/components/form/identify/Tabou2ProgHabitAccord';
+import Tabou2SuiviOpAccord from '@ext/components/form/identify/Tabou2SuiviOpAccord';
+import Tabou2DdsAccord from '@ext/components/form/identify/Tabou2DdsAccord';
+import Tabou2SecProgLiesAccord from '@ext/components/form/identify/Tabou2SecProgLiesAccord';
 import Tabou2IdentifyToolbar from './Tabou2IdentifyToolbar';
 import { ACCORDIONS } from '@ext/constants';
 
