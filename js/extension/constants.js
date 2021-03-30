@@ -259,7 +259,7 @@ export const ADD_OA_FORM = [{
     api: "operations/emprises",
     apiField: "",
     placeholder: "Selectionner une emprise",
-    parent: (i) => i?.natures,
+    parent: (i) => !i.natures ? true : i.natures,
     type: "combo"
 }, {
     label: "Nom",
@@ -306,7 +306,7 @@ export const ADD_PA_FORM = [ {
     label: "Sélectionner l'opération parente :",
     api: "operations",
     name: "parentoa",
-    apiField: "libelle",
+    apiField: "nom",
     parent: null,
     placeholder: "Selectionner une opération",
     group: 1,

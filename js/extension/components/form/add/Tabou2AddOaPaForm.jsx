@@ -26,17 +26,14 @@ export default function Tabou2AddOaPaForm({layer, childs = [], pluginCfg = {}}) 
         if (!value) { // this is a checkbox
             checkBox[combo.name] = !infos[combo.name];
         } else {
-            infos[combo.name] = value;
+            infos[combo.name] = value[combo.apiField];
         }
         setInfos({...infos, ...checkBox});
         setInfoChange(combo.name);
     };
 
     const getActivate = (v) => {
-        if(v.label === "Emprise") {
-            console.log(v.parent(infos) || false);
-        }
-        return v.parent(infos) || false;
+        return v.parent(infos) === true;
     };
 
     useEffect(() => {return}, [infoChange]);
@@ -94,7 +91,7 @@ export default function Tabou2AddOaPaForm({layer, childs = [], pluginCfg = {}}) 
                                             filter="contains"
                                             textField={item.apiField}
                                             onLoad={(r) => r?.elements || r}
-                                            disabled={item.parent ? !getActivate(item) : false}
+                                            disabled={item.parent ? getActivate(item) : false}
                                             reloadValue={item.parent ? item.parent(infos) : ""}
                                             onSelect={(t) => changeState(item, t)}
                                             onChange={(t) => !t ? changeState(item, t) : null}
