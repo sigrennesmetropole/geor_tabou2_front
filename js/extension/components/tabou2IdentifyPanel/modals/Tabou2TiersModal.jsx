@@ -64,7 +64,7 @@ export default function Tabou2TiersModal({
         });*/
 
         getRequestApi(`${get(URL_TIERS, "tabou2")}/tiers`, props.apiCfg).then(r => {
-            let displayTiers = r?.elements.filter(t => !t.dateInactif).filter(t => !deleteTiers.includes(t.id));
+            let displayTiers = r?.elements.filter(t => !deleteTiers.includes(t.id));
             setTiers(displayTiers);
         });
     };
@@ -114,6 +114,11 @@ export default function Tabou2TiersModal({
             deleted.push(id);
         });
         setDeleteTiers([...new Set(deleted)]);
+        refreshTiers();
+    };
+
+    const inactivateTier = (id) => {
+        putRequestApi(`/tiers/${id}/inactivate`, props.apiCfg);
         refreshTiers();
     };
 
@@ -203,6 +208,7 @@ export default function Tabou2TiersModal({
                                 <thead>
                                     <tr>
                                         {editable ? (<th> {countValue ? `Sélection (${countValue})` : 'Sélection'}</th>) : null}
+                                        <th>Actif</th>
                                         <th>Privé</th>
                                         <th>Nom</th>
                                         {editable ? (<th>Actions</th>) : null}
@@ -223,6 +229,14 @@ export default function Tabou2TiersModal({
                                                                 className="col-xs-3" />
                                                         </td>) : null
                                                     }
+                                                    <td>
+                                                        <Checkbox
+                                                            checked={tier.dateInactif || false}
+                                                            disabled
+                                                            inline
+                                                            className="col-xs-3"
+                                                        />
+                                                    </td>
                                                     <td>
                                                         <Checkbox
                                                             checked={tier.estPrive}
@@ -263,11 +277,21 @@ export default function Tabou2TiersModal({
                                                                             <Button style={{ borderColor: "rgba(0,0,0,0)", display: collapse !== tier.id ? "bloc" : "none" }}
                                                                                 onClick={() => {
                                                                                     setCollapse(collapse === tier.id ? -1 : tier.id);
-                                                                                }}>
+                                                                                }}
+                                                                            >
                                                                                 <span style={{ color: "rgb(137,178,211)" }}>
-                                                                                    <Glyphicon glyph="pencil" /> Editer
+                                                                                    <Glyphicon glyph={tier.dateInactif ? "eye-open" : "pencil"} />
+                                                                                    {tier.dateInactif ? " Consulter" : " Modifier"}
                                                                                 </span>
                                                                             </Button>
+                                                                            {
+                                                                                tier.dateInactif ? null : (
+                                                                                    <Button
+                                                                                        style={{ borderColor: "rgba(0,0,0,0)", display: collapse !== tier.id ? "bloc" : "none" }}
+                                                                                        onClick={() => inactivateTier([tier.id])}>
+                                                                                        <span style={{color: "#797979"}}><Glyphicon glyph="off"/> Inactif</span>
+                                                                                    </Button>)
+                                                                            }
                                                                         </>
                                                                     ) : null
                                                                 }
