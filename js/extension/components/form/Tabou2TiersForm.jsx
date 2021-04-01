@@ -1,17 +1,20 @@
 import React, {useState, useEffect} from "react";
 import { Col, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
-import { get, keys } from "lodash";
+import { get, keys, isEqual } from "lodash";
 
-export default function Tabou2TiersForm({ visibleForm, tier, change = () => {}}) {
+export default function Tabou2TiersForm({ readOnly = false, visible, tier, change = () => {}}) {
     const marginTop = "10px";
 
     const [thisTier, setThisTier] = useState({});
 
     useEffect(() => {
         setThisTier(tier);
-    }, [visibleForm]);
+    }, [visible]);
 
     const changeProps = (field, val) => {
+        let newProp = {};
+        newProp[field] = val;
+        setThisTier({...thisTier, ...newProp});
         change(thisTier.id, field, val);
     };
 
@@ -80,8 +83,9 @@ export default function Tabou2TiersForm({ visibleForm, tier, change = () => {}})
                         <FormControl
                             type={f.type}
                             required={f.required}
-                            defaultValue={get(tier, f.apiField)}
+                            value={get(thisTier, f.apiField)}
                             placeholder={f.label}
+                            readOnly={readOnly || false}
                             onChange={(t) => changeProps(f.apiField, t.target.value)}
                         />
                     </Col>
