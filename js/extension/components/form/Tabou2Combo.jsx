@@ -33,6 +33,7 @@ function Tabou2Combo({
     };
 
     useEffect(() => {
+        setText("");
         loadData();
     }, [parentValue, disabled]); // pass array to stop inifity loop
 
