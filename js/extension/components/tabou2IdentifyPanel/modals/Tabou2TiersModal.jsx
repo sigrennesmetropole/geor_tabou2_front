@@ -2,12 +2,9 @@ import React, {useState, useEffect} from 'react';
 import ResizableModal from '@mapstore/components/misc/ResizableModal';
 import { Grid, FormGroup, Checkbox, Col, Button, Table, Glyphicon, FormControl, Row, ControlLabel } from 'react-bootstrap';
 import { get, isEqual } from 'lodash';
-import { DropdownList } from 'react-widgets';
-import { makeId } from '@js/extension/utils/common';
 import { getRequestApi, putRequestApi, postRequestApi } from "@ext/api/search";
 import Tabou2TiersForm from '@ext/components/form/Tabou2TiersForm';
 import { URL_TIERS, TIERS_SCHEMA } from '@ext/constants';
-import { refresh } from '@mapstore/epics/layers';
 import Tabou2Combo from '@ext/components/form/Tabou2Combo';
 
 export default function Tabou2TiersModal({
