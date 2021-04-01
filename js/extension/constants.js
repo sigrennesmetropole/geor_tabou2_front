@@ -30,6 +30,22 @@ export const URL_TIERS = {
     "tabou2:oa_secteur": "/operations/"
 };
 
+export const TIERS_SCHEMA = {
+    "id": 0,
+    "nom": "",
+    "adresseNum": "",
+    "adresseRue": "",
+    "adresseCp": "",
+    "adresseVille": "",
+    "telephone": "",
+    "telecopie": "",
+    "email": "",
+    "siteWeb": "",
+    "contact": "",
+    "estPrive": false,
+    "dateInactif": null
+};
+
 export const SEARCH_ITEMS = [{
     name: 'communes',
     placeholder: 'Toutes communes',
