@@ -1,11 +1,15 @@
 import React, {useState, useEffect} from 'react';
 import ResizableModal from '@mapstore/components/misc/ResizableModal';
 import { Grid, FormGroup, Checkbox, Col, Button, Table, Glyphicon, FormControl, Row, ControlLabel } from 'react-bootstrap';
-import { get } from 'lodash';
+import { get, isEqual } from 'lodash';
+import { DropdownList } from 'react-widgets';
 import { makeId } from '@js/extension/utils/common';
 import { getRequestApi, putRequestApi, postRequestApi } from "@ext/api/search";
 import Tabou2TiersForm from '@ext/components/form/Tabou2TiersForm';
-import { URL_TIERS } from '@ext/constants';
+import { URL_TIERS, TIERS_SCHEMA } from '@ext/constants';
+import { refresh } from '@mapstore/epics/layers';
+import Tabou2Combo from '@ext/components/form/Tabou2Combo';
+
 export default function Tabou2TiersModal({
     visible,
     layer,
@@ -13,48 +17,14 @@ export default function Tabou2TiersModal({
     featureId,
     ...props
 }) {
-    const [countTiers, setCountTiers] = useState(0);
 
     const [tiers, setTiers] = useState([]);
-    // will be replace by header CAS control
     const [editable, setEditable] = useState(false);
-    // get selected count
-    const [countValue, setCountValue] = useState(0);
     const [toDelete, setToDelete] = useState([]);
-    const [deleteTiers, setDeleteTiers] = useState([]);
+    const [collapse, setCollapse] = useState(-1);
+    const [inChangeTier, setInChangeTier] = useState([]);
 
-    // collapsed edit forms
-    const [collapse, setCollapse] = useState(0);
-
-    const [changedTiers, setChangedTiers] = useState([]);
-
-    const changeCounter = (id) => {
-        let distinct = toDelete;
-        if (distinct.includes(id)) {
-            distinct = distinct.filter(t => t !== id);
-        } else {
-            distinct.push(id);
-        }
-        setToDelete(distinct);
-        setCountValue(distinct.length);
-    };
-
-    const close = () => {
-        setChangedTiers([]);
-    };
-
-    const saveTier = (id) => {
-        let getChangedTier = changedTiers.filter(f => f.id === id);
-        getChangedTier = getChangedTier.length ? getChangedTier[0] : null;
-        if (getChangedTier && !getChangedTier.created) {
-            putRequestApi(`${get(URL_TIERS, "tabou2")}/tiers`, props.apiCfg, getChangedTier);
-        } else if (getChangedTier) {
-            postRequestApi(`${get(URL_TIERS, "tabou2")}/tiers`, props.apiCfg, getChangedTier);
-        }
-
-    };
-
-    const refreshTiers = (fId, lyr) => {
+    const refreshTiers = () => {
         /**
          * /!\ - API Unavailable !
          * Uncomment to get real api according to layer
@@ -64,86 +34,81 @@ export default function Tabou2TiersModal({
         });*/
 
         getRequestApi(`${get(URL_TIERS, "tabou2")}/tiers`, props.apiCfg).then(r => {
-            let displayTiers = r?.elements.filter(t => !deleteTiers.includes(t.id));
-            setTiers(displayTiers);
+            // setTiers(r?.elements || {});
+            setTiers(r?.elements.filter(t => t.name !== "create1715") || {});
         });
     };
 
     useEffect(() => {
-        refreshTiers(featureId, layer);
-    }, [featureId, layer]);
-
-    useEffect(() => {
-        return;
-    }, [countTiers, collapse]);
-
-    const TIER_SCHEMA = {
-        "id": 0,
-        "nom": "",
-        "adresseNum": "",
-        "adresseRue": "",
-        "adresseCp": "",
-        "adresseVille": "",
-        "telephone": "",
-        "telecopie": "",
-        "email": "",
-        "siteWeb": "",
-        "contact": "",
-        "estPrive": false,
-        "dateInactif": null,
-        "created": true
-    };
-
-    const addTiers = () => {
-        let createNewTier = {...TIER_SCHEMA, id: Date.now()};
-        setCountTiers(tiers.length + 1);
-        setTiers([...tiers, createNewTier]);
-    };
-
-    /**
-     * Delete tiers
-     * @param {array} id
-     */
-    const removeTiers = (ids) => {
-        let displayTiers = tiers.filter(t => !ids.includes(t));
-        setTiers(displayTiers);
-        setCountTiers(displayTiers.length);
-        let deleted = deleteTiers;
-        ids.forEach(id => {
-            // deleteRequestApi(`${get(URL_TIERS, layer)}/${featureId}/tiers/${id}`, props.apiCfg);
-            deleted.push(id);
-        });
-        setDeleteTiers([...new Set(deleted)]);
         refreshTiers();
-    };
+        setCollapse(-1);
+    }, [featureId, layer, editable]);
 
+    const changeCounter = (id) => {
+        let distinct = toDelete;
+        if (distinct.includes(id)) {
+            distinct = distinct.filter(t => t !== id);
+        } else {
+            distinct.push(id);
+        }
+        setToDelete(distinct);
+    };
     const inactivateTier = (id) => {
         putRequestApi(`/tiers/${id}/inactivate`, props.apiCfg);
         refreshTiers();
     };
 
     const cancel = (tier) => {
-        // get data by default
-        putRequestApi(`${get(URL_TIERS, "tabou2")}/tiers/${tier.id}`, props.apiCfg).then( defaultTier => {
-            let othersChanged = changedTiers.filter(n => n.id !== tier.id);
-            let othersTiers = tiers.filter(n => n.id !== tier.id);
-            setChangedTiers([...othersChanged, defaultTier]);
-            setTiers([...othersTiers, defaultTier]);
-            setCollapse(collapse === tier.id ? -1 : tier.id);
-        });
+        setInChangeTier([...inChangeTier.filter(f => f.id !== tier.id)]);
+        setCollapse(-1);
     };
 
     const changeProps = (id, field, val) => {
-        let upTiers = tiers.map(m => {
-            // checkbox pass no value
-            m[field] = m.id === id ? val || !m[field] : m[field];
-            return m;
-        });
-        setChangedTiers(upTiers);
+        let newVal = {};
+        newVal[field] = val;
+        let tierToChange = tiers.filter(t => t.id === id)[0] || inChangeTier.filter(t => t.id === id)[0];
+        setInChangeTier([...inChangeTier.filter(f => f.id !== id), {...tierToChange, ...newVal}]);
+    };
+
+    const setAssociation = (id, tier) => {
+        /**
+         * TODO : manage doublon or manage state when user select / unselect combo association's tier value
+         * API need to work to do.
+         */
+        setInChangeTier([...inChangeTier.filter(f => f.id !== id), {...tier, id: id}]);
+    };
+
+    const saveTier = (id) => {
+        let tierToSave = inChangeTier.filter(t => t.id === id)[0];
+        let needChange = !tiers.filter(t => isEqual(t, tierToSave)).length;
+        let isNew = !tiers.filter(t => t.id === id).length;
+        if (tierToSave && needChange && !isNew) {
+            putRequestApi(`${get(URL_TIERS, "tabou2")}/tiers`, props.apiCfg, tierToSave);
+        } else if (isNew) {
+            postRequestApi(`${get(URL_TIERS, "tabou2")}/tiers`, props.apiCfg, tierToSave);
+        }
+        setInChangeTier([...inChangeTier.filter(f => f.id !== id)]);
+        setCollapse(-1);
+        refreshTiers();
+    };
+
+    const createTier = (tier) => {
+        let tierToSend = {};
+        if (tier && !tiers.filter(t => t.id === tier.id).length) {
+            // will be used when tiers will be retrieve from : /operations/{operationId}/tiers or /programmes/{programmeId}/tiers
+            tierToSend = tier;
+        } else if (!tier) {
+            tierToSend = {...TIERS_SCHEMA, id: Date.now(), created: true};
+        }
+        setInChangeTier([...inChangeTier, tierToSend]);
+    };
+
+    const associateTier = () => {
+        setInChangeTier([...inChangeTier, {...TIERS_SCHEMA, id: Date.now(), isNew: true}]);
     };
 
     const buttons = [{
-        text: ` (${countValue})`,
+        text: ` (${toDelete.length})`,
         bsStyle: "warning",
         bsSize: "lg",
         glyph: "ban-circle",
@@ -152,7 +117,7 @@ export default function Tabou2TiersModal({
             borderColor: "rgb(255,193,7)"
         },
         tooltip: "Dissocier la sélection",
-        onClick: () => removeTiers(toDelete)
+        onClick: () => null
     }, {
         text: "",
         bsSize: "lg",
@@ -162,7 +127,7 @@ export default function Tabou2TiersModal({
             marginRight: "10px"
         },
         tooltip: "Associer un tier",
-        onClick: () => addTiers()
+        onClick: () => associateTier()
     }, {
         text: "",
         bsSize: "lg",
@@ -173,7 +138,7 @@ export default function Tabou2TiersModal({
             color: "white", backgroundColor: "rgb(40,167,69)",
             borderColor: "rgb(40,167,69)"
         },
-        onClick: () => addTiers()
+        onClick: () => createTier()
     }];
 
     return (
@@ -197,7 +162,7 @@ export default function Tabou2TiersModal({
                                 className="col-xs-3">
                                 <ControlLabel> Mode édition</ControlLabel>
                             </Checkbox>
-                            <Button style={{ borderColor: "rgba(0,0,0,0)" }} onClick={() => refreshTiers(featureId, layer)}>
+                            <Button style={{ borderColor: "rgba(0,0,0,0)" }} onClick={() => refreshTiers()}>
                                 <span style={{ color: "rgb(26,114,178)" }}><Glyphicon glyph="repeat" /> Recharger</span>
                             </Button>
                         </Col>
@@ -207,16 +172,16 @@ export default function Tabou2TiersModal({
                             <Table>
                                 <thead>
                                     <tr>
-                                        {editable ? (<th> {countValue ? `Sélection (${countValue})` : 'Sélection'}</th>) : null}
-                                        <th>Actif</th>
-                                        <th>Privé</th>
-                                        <th>Nom</th>
+                                        {editable ? (<th className="col-xs-1"> {toDelete.length ? `Sélection (${toDelete.length})` : 'Sélection'}</th>) : null}
+                                        <th className="col-xs-1">Actif</th>
+                                        <th className="col-xs-1">Privé</th>
+                                        <th className="col-xs-4">Nom</th>
                                         {editable ? (<th>Actions</th>) : null}
                                     </tr>
                                 </thead>
                                 <tbody style={{overflow: "auto"}}>
                                     {
-                                        tiers.map((tier, i) => (
+                                        [...inChangeTier.filter(t => !tiers.map(x => x.id).includes(t.id)), ...tiers].map((tier, i) => (
                                             <>
                                                 <tr>
                                                     { editable ?
@@ -247,45 +212,76 @@ export default function Tabou2TiersModal({
                                                             className="col-xs-3"
                                                         />
                                                     </td>
-                                                    <td><FormControl
-                                                        type="text"
-                                                        readOnly={!editable}
-                                                        style={{borderRadius: "4px"}}
-                                                        required
-                                                        key={`tier-nom-field-${i}-${tier.nom}`}
-                                                        defaultValue={tier.nom}
-                                                        onChange={(evt) => {
-                                                        // don't change tiers object to do not refresh state and keep input focus
-                                                            tier.nom = evt.target.value;
-                                                        }}
-                                                        onBlur={(evt) => {
-                                                            changeProps(tier.id, 'nom', evt.target.value);
-                                                        }}
-                                                        placeholder="Saisir un nom..." />
+                                                    <td>
+                                                        {
+                                                            !tier.isNew ? (
+                                                                <FormControl
+                                                                    type="text"
+                                                                    readOnly={!editable}
+                                                                    style={{borderRadius: "4px"}}
+                                                                    required
+                                                                    key={`tier-nom-field-${i}-${tier.nom}`}
+                                                                    defaultValue={tier.nom}
+                                                                    onChange={(evt) => {
+                                                                    // don't change tiers object to do not refresh state and keep input focus
+                                                                        tier.nom = evt.target.value;
+                                                                    }}
+                                                                    onBlur={(evt) => {
+                                                                        changeProps(tier.id, 'nom', evt.target.value);
+                                                                    }}
+                                                                    placeholder="Saisir un nom..." />
+                                                            ) : (
+                                                                <Tabou2Combo
+                                                                    load={() => getRequestApi("tiers", props.pluginCfg.apiCfg, {})}
+                                                                    valueField={"id"}
+                                                                    placeholder={"Sélectionner un tier..."}
+                                                                    filter="contains"
+                                                                    textField={"nom"}
+                                                                    onLoad={(r) => r?.elements || r}
+                                                                    disabled={false}
+                                                                    onSelect={(t) => {
+                                                                        setAssociation(tier.id, t);
+                                                                    }}
+                                                                    onChange={(t) => !t ? setAssociation(tier.id, tier) : null}
+                                                                    messages={{
+                                                                        emptyList: 'La liste est vide.',
+                                                                        openCombobox: 'Ouvrir la liste'
+                                                                    }}
+                                                                />
+
+                                                            )
+                                                        }
                                                     </td>
                                                     {editable ? (
                                                         <td>
                                                             <FormGroup>
                                                                 {
-                                                                    editable && collapse !== tier.id ? (
+                                                                    collapse !== tier.id ? (
                                                                         <>
-                                                                            <Button
-                                                                                style={{ borderColor: "rgba(0,0,0,0)", display: collapse !== tier.id ? "bloc" : "none" }}
-                                                                                onClick={() => removeTiers([tier.id])}>
-                                                                                <span style={{color: "rgb(229,0,0)"}}><Glyphicon glyph="ban-circle"/> Dissocier</span>
-                                                                            </Button>
-                                                                            <Button style={{ borderColor: "rgba(0,0,0,0)", display: collapse !== tier.id ? "bloc" : "none" }}
-                                                                                onClick={() => {
-                                                                                    setCollapse(collapse === tier.id ? -1 : tier.id);
-                                                                                }}
-                                                                            >
-                                                                                <span style={{ color: "rgb(137,178,211)" }}>
-                                                                                    <Glyphicon glyph={tier.dateInactif ? "eye-open" : "pencil"} />
-                                                                                    {tier.dateInactif ? " Consulter" : " Modifier"}
-                                                                                </span>
-                                                                            </Button>
                                                                             {
-                                                                                tier.dateInactif ? null : (
+                                                                                tier.created || tier.isNew ? null : (
+                                                                                    <Button style={{ borderColor: "rgba(0,0,0,0)", display: collapse !== tier.id ? "bloc" : "none" }}
+                                                                                        onClick={() => null }>
+                                                                                        <span style={{color: "rgb(229,0,0)"}}><Glyphicon glyph="ban-circle"/> Dissocier</span>
+                                                                                    </Button>
+                                                                                )
+                                                                            }
+                                                                            {
+                                                                                tier.isNew ? null : (
+                                                                                    <Button style={{ borderColor: "rgba(0,0,0,0)", display: collapse !== tier.id ? "bloc" : "none" }}
+                                                                                        onClick={() => {
+                                                                                            setCollapse(collapse === tier.id ? -1 : tier.id);
+                                                                                        }}
+                                                                                    >
+                                                                                        <span style={{ color: "rgb(137,178,211)" }}>
+                                                                                            <Glyphicon glyph={tier.dateInactif ? "eye-open" : "pencil"} />
+                                                                                            {tier.dateInactif ? " Consulter" : " Modifier"}
+                                                                                        </span>
+                                                                                    </Button>
+                                                                                )
+                                                                            }
+                                                                            {
+                                                                                tier.dateInactif || !tier.created || !tier.isNew ? null : (
                                                                                     <Button
                                                                                         style={{ borderColor: "rgba(0,0,0,0)", display: collapse !== tier.id ? "bloc" : "none" }}
                                                                                         onClick={() => inactivateTier([tier.id])}>
@@ -296,15 +292,15 @@ export default function Tabou2TiersModal({
                                                                     ) : null
                                                                 }
                                                                 {
-                                                                    editable && collapse === tier.id ? (
+                                                                    collapse === tier.id || tier.isNew ? (
                                                                         <>
-                                                                            <Button style={{ borderColor: "rgba(0,0,0,0)", display: collapse === tier.id ? "bloc" : "none" }}
+                                                                            <Button style={{ borderColor: "rgba(0,0,0,0)", display: !tier.dateInactif && tier.nom ? "bloc" : "none" }}
                                                                                 onClick={() => saveTier(tier.id)}>
                                                                                 <span style={{ color: "rgb(40, 167, 69)" }}>
-                                                                                    <Glyphicon glyph="ok"/> Enregistrer
+                                                                                    <Glyphicon glyph="ok"/> {tier.isNew ? " Associer" : " Enregistrer"}
                                                                                 </span>
                                                                             </Button>
-                                                                            <Button style={{ borderColor: "rgba(0,0,0,0)", display: collapse === tier.id ? "bloc" : "none" }}
+                                                                            <Button style={{ borderColor: "rgba(0,0,0,0)" }}
                                                                                 onClick={() => {
                                                                                     cancel(tier);
                                                                                 }}>
@@ -321,13 +317,14 @@ export default function Tabou2TiersModal({
                                                     }
                                                 </tr>
                                                 <tr>
-                                                    <th colSpan={4} style={{border: "none", padding: "0"}}>
+                                                    <th colSpan={5} style={{border: "none", padding: "0"}}>
                                                         <div className={collapse === tier.id ? "collapse in" : "collapse"}>
                                                             <Row style={{ marginBottom: "15px" }} >
                                                                 <Col xs={12} >
                                                                     <Tabou2TiersForm
                                                                         tier={tier}
-                                                                        collapse={collapse}
+                                                                        visible={collapse === tier.id}
+                                                                        readOnly={tier.dateInactif ? true : false}
                                                                         change={(id, field, val) => {
                                                                             changeProps(id, field, val);
                                                                         }}
