@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from "react";
 import { Col, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
-import { get, keys, isEqual } from "lodash";
+import { get, keys } from "lodash";
 
 export default function Tabou2TiersForm({ readOnly = false, visible, tier, change = () => {}}) {
     const marginTop = "10px";
