@@ -66,18 +66,18 @@ export const SEARCH_ITEMS = [{
     parentField: 'codeInsee'
 }, {
     name: 'plui',
-    disabled: true,
+    disabled: false,
     placeholder: 'Tous zonage PLUI',
     group: 1
-}, /* {
+}, {
     name: 'types-financements',
-    disabled: true,
+    disabled: false,
     placeholder: 'Tous Financement',
-    group: 1
-}, */{
+    group: 4
+}, {
     name: "natures",
     placeholder: "Toutes natures",
-    group: 2
+    group: 3
 }, {
     name: "secteurs-sam",
     placeholder: 'Tous secteurs SAM',
@@ -104,13 +104,13 @@ export const SEARCH_ITEMS = [{
     placeholder: "Toutes Etapes OA",
     api: "/operations/etapes",
     disabled: false,
-    group: 2
+    group: 3
 }, {
     name: "etapespa",
     api: "/programmes/etapes",
     placeholder: "Toutes Etapes PA",
     disabled: false,
-    group: 2
+    group: 4
 }];
 
 export const SEARCH_CALENDARS = [{

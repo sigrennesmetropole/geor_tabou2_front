@@ -66,6 +66,7 @@ function Tabou2Combo({
         onSelect={v => changeText(v, props.onSelect)}
         onChange={v => changeText(v, props.onChange)}
         messages={props.messages}
+        className={props.className}
     />);
 }
 

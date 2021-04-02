@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { keys, get } from 'lodash';
 import { connect } from 'react-redux';
 import axios from '@mapstore/libs/ajax';
-import { Checkbox, Col, Row, ControlLabel, FormGroup, Grid } from 'react-bootstrap';
+import { Checkbox, Col, Row, ControlLabel, FormGroup, Grid, Panel } from 'react-bootstrap';
 import { DateTimePicker } from 'react-widgets';
 import { currentActiveTabSelector, currentTabouFilters, getLayerFilterObj } from '../../selectors/tabou2';
 import Tabou2SearchToolbar from './Tabou2SearchToolbar';
@@ -168,25 +168,29 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
             }
         }
         return (
-            <Tabou2Combo
-                style={{ marginTop: comboMarginTop }}
-                load={() => getRequestApi(get(combo, "api") || get(combo, "name"), props.pluginCfg.apiCfg, urlParams)}
-                disabled={isDisabled(combo, urlParams)}
-                placeholder={combo.placeholder}
-                parentValue={parentValue}
-                filter="contains"
-                textField={get(config, `${combo.name}.apiLabel`)}
-                valueField={get(config, `${combo.name}.apiField`)}
-                onLoad={(r) => r?.elements || r}
-                name={combo.name}
-                value={comboValues[combo.name]}
-                onSelect={v => changeFilter(combo, v)}
-                onChange={(v) => !v ? changeFilter(combo, v) : null}
-                messages={{
-                    emptyList: 'La liste est vide.',
-                    openCombobox: 'Ouvrir la liste'
-                }}
-            />
+            <Col xs={6}>
+                <FormGroup>
+                    <Tabou2Combo
+                        style={{ marginTop: comboMarginTop }}
+                        load={() => getRequestApi(get(combo, "api") || get(combo, "name"), props.pluginCfg.apiCfg, urlParams)}
+                        disabled={isDisabled(combo, urlParams)}
+                        placeholder={combo.placeholder}
+                        parentValue={parentValue}
+                        filter="contains"
+                        textField={get(config, `${combo.name}.apiLabel`)}
+                        valueField={get(config, `${combo.name}.apiField`)}
+                        onLoad={(r) => r?.elements || r}
+                        name={combo.name}
+                        value={comboValues[combo.name]}
+                        onSelect={v => changeFilter(combo, v)}
+                        onChange={(v) => !v ? changeFilter(combo, v) : null}
+                        messages={{
+                            emptyList: 'La liste est vide.',
+                            openCombobox: 'Ouvrir la liste'
+                        }}
+                    />
+                </FormGroup>
+            </Col>
         );
     };
 
@@ -203,6 +207,7 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                     <ControlLabel inline="true"> {item.label}
                         <UTCDateTimePicker inline="true"
                             type="date"
+                            dropUp
                             placeholder="Choisir une date"
                             calendar={get(type, "isCalendar") || true}
                             time={get(type, "isTime") || false}
@@ -217,39 +222,68 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
 
     return (
         <>
-            <div id="tabou2-tbar-container" style={{ display: "flex", margin: "auto", justifyContent: "center" }} className="text-center">
-                <Tabou2SearchToolbar reset={reset}/>
-            </div>
             <Grid className={"col-xs-12"}>
-                <Row style={{ marginTop: marginTop }}>
-                    <Col xs={12}>
-                        <FormGroup>
-                            <Checkbox inline className="col-xs-3">Est aidé</Checkbox>
-                            <Checkbox inline className="col-xs-3">PBIL</Checkbox>
-                        </FormGroup>
-                    </Col>
+                <div id="tabou2-tbar-container" className="text-center">
+                    <Tabou2SearchToolbar reset={reset}/>
+                </div>
+                <Row>
+                    <Panel
+                        header={(
+                            <label>1 - Définir les éléments du référentiel cartographique</label>
+                        )}
+                    >
+                        <Checkbox inline>PBIL</Checkbox>
+                        <Row>
+                            { SEARCH_ITEMS.filter(f => f.group === 1).map((cb, i) => getCombo(cb, i, 2)) }
+                        </Row>
+                    </Panel>
                 </Row>
-                <Row style={{ marginTop: marginTop }} >
-                    <Col xs={6} >
-                        {/* left combo box */}
-                        <FormGroup >
-                            {
-                                SEARCH_ITEMS.filter(f => f.group === 1).map((cb, i) => getCombo(cb, i))
-                            }
-                        </FormGroup>
-                    </Col>
-                    <Col xs={6} >
-                        <FormGroup >
-                            {
-                                SEARCH_ITEMS.filter(f => f.group === 2).map((cb, i) => getCombo(cb, i))
-                            }
-                        </FormGroup>
-                    </Col>
+                <Row>
+                    <Panel
+                        header={(
+                            <label>2 - Définir les critères liés aux secteurs</label>
+                        )}
+                    >
+                        { SEARCH_ITEMS.filter(f => f.group === 2).map((cb, i) => getCombo(cb, i, 2)) }
+                    </Panel>
                 </Row>
-                {
-                    SEARCH_CALENDARS.map(els => { return (<Row  style={{ marginTop: "5px" }}>{els.items.map(el => getDate(el))}</Row>); })
-                }
-            </Grid >
+                <Row>
+                    <Panel
+                        header={(
+                            <label>3 - Définir les critères liés aux opérations</label>
+                        )}
+                    >
+                        { SEARCH_ITEMS.filter(f => f.group === 3).map((cb, i) => getCombo(cb, i, 1)) }
+                    </Panel>
+                </Row>
+                <Row>
+                    <Panel
+                        header={(
+                            <label>4 - Définir les critères liés aux programmes</label>
+                        )}
+                    >
+                        <Checkbox inline>Est aidé</Checkbox>
+                        <Row>
+                            {
+                                SEARCH_ITEMS.filter(f => f.group === 4).map((el, i) =>  i < 1 ? getCombo(el, i) : null)
+                            }
+                            {
+                                SEARCH_ITEMS.filter(f => f.group === 4).map((el, i) =>  i > 0 ? getCombo(el, i) : null)
+                            }
+                        </Row>
+                        {
+                            SEARCH_CALENDARS.filter((el, i) => i < 4 ).map(els => (
+                                <Row  style={{ marginTop: "5px" }}>{els.items.map(el => getDate(el))}</Row>
+                            ))
+                        }
+                        {
+                            SEARCH_CALENDARS.filter((el, i) => i > 3 ).map(els => (
+                                <Row  style={{ marginTop: "5px" }}>{els.items.map(el => getDate(el))}</Row>
+                            ))
+                        }
+                    </Panel>
+                </Row>
+            </Grid>
         </>
     );
 }

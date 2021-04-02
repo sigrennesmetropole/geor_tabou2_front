@@ -371,7 +371,7 @@
               "layer": "tabou2:commune_emprise",
               "geom": "the_geom",
               "placeholder": "Communes",
-              "filterField": "codeInsee",
+              "filterField": "code_insee",
               "apiField": "codeInsee",
               "apiLabel": "nom"
             },
@@ -379,7 +379,7 @@
               "layer": "tabou2:quartier",
               "geom": "the_geom",
               "placeholder": "Quartiers",
-              "filterField": "nuQuart",
+              "filterField": "nuquart",
               "apiField": "nuQuart",
               "apiLabel": "nom"
             },
@@ -387,7 +387,7 @@
               "layer": "tabou2:iris",
               "geom": "the_geom",
               "placeholder": "Iris",
-              "filterField": "codeIris",
+              "filterField": "code_iris",
               "apiField": "codeIris",
               "apiLabel": "nmiris"
             },
@@ -445,7 +445,12 @@
             },
             "amenageurOA": {},
             "promoteurOA": {},
-            "types-financements": {},
+            "types-financements": {
+              "filterField": "code",
+              "apiField": "code",
+              "apiLabel": "libelle",
+              "placeholder": "Type de financement"
+            },
             "plui": {
               "filterField": "libelle",
               "apiField": "libelle",

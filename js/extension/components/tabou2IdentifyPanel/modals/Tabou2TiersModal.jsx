@@ -193,7 +193,7 @@ export default function Tabou2TiersModal({
                                                     }
                                                     <td>
                                                         <Checkbox
-                                                            checked={tier.dateInactif || false}
+                                                            checked={!tier.dateInactif}
                                                             disabled
                                                             inline
                                                             className="col-xs-3"
@@ -234,7 +234,7 @@ export default function Tabou2TiersModal({
                                                                     placeholder={"Sélectionner un tier..."}
                                                                     filter="contains"
                                                                     textField={"nom"}
-                                                                    onLoad={(r) => r?.elements || r}
+                                                                    onLoad={(r) => (r?.elements || r).filter(t => !t.dateInactif)}
                                                                     disabled={false}
                                                                     onSelect={(t) => {
                                                                         setAssociation(tier.id, t);
