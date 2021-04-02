@@ -106,9 +106,9 @@ export function getNewCqlFilter(props) {
 export function getCQL(type, geomA, layer, geomB, field, value) {
     let cqlVal = value;
     if (type === 'string') {
-        cqlVal = `''${value}''`;
+        cqlVal = `''${value.replace(/'/g, "''''")}''`;
     }
-    return `(INTERSECTS(${geomA},collectGeometries(queryCollection('${layer}', '${geomB}','${field} = ${cqlVal}'))))`;
+    return `(INTERSECTS(${geomA},collectGeometries(queryCollection('${layer}', '${geomB}','("${field}" = ${cqlVal})'))))`;
 }
 
 /**
