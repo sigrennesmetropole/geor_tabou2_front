@@ -100,8 +100,18 @@ export default function Tabou2TiersModal({
     const buttons = [{
         text: "",
         bsSize: "lg",
+        bsStyle: 'light',
+        style: {
+            marginRight: "10px"
+        },
+        tooltip: "Raffraîchir la liste",
+        glyph: "repeat",
+        onClick: () => refreshTiers()
+    }, {
+        text: "",
+        bsSize: "lg",
         bsStyle: 'primary',
-        glyph: "tag",
+        glyph: "1-user-add",
         style: {
             marginRight: "10px"
         },
@@ -111,7 +121,7 @@ export default function Tabou2TiersModal({
         text: "",
         bsSize: "lg",
         bsStyle: 'primary',
-        glyph: "plus",
+        glyph: "pencil-add",
         tooltip: "Créer un tier",
         style: {
             color: "white", backgroundColor: "rgb(40,167,69)",
@@ -141,9 +151,6 @@ export default function Tabou2TiersModal({
                                 className="col-xs-3">
                                 <ControlLabel> Mode édition</ControlLabel>
                             </Checkbox>
-                            <Button style={{ borderColor: "rgba(0,0,0,0)" }} onClick={() => refreshTiers()}>
-                                <span style={{ color: "rgb(26,114,178)" }}><Glyphicon glyph="repeat" /> Recharger</span>
-                            </Button>
                         </Col>
                     </Row>
                     <Row>
