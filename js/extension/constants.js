@@ -149,7 +149,7 @@ export const ACCORDIONS = [
 
 export const LAYER_FIELD_OPTION = [
     {
-        name: "tabou2:v_oa_programme",
+        name: "tabou2:v_oa_programmePolygon",
         field: "properties.nom",
         id: "properties.objectid"
     },
@@ -159,7 +159,7 @@ export const LAYER_FIELD_OPTION = [
         id: "properties.objectid"
     },
     {
-        name: "tabou2:zac",
+        name: "tabou2:zacPolygon",
         field: "properties.nomzac",
         id: "properties.id_zac"
     }

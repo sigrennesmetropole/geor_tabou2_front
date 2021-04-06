@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { keys, isEqual, isEmpty } from 'lodash';
+import { keys, isEqual, isEmpty, get } from 'lodash';
 import { connect } from 'react-redux';
 
 import Tabou2IdentifyContent from './Tabou2IdentifyContent';
 import { getTabouIndexSelectors, getTabouResponse, currentActiveTabSelector, getTabouResponseLayers } from '@ext/selectors/tabou2';
 import { setSelectorIndex } from '@ext/actions/tabou2';
-import { ID_SELECTOR } from '@ext/constants';
+import { ID_SELECTOR, LAYER_FIELD_OPTION } from '@ext/constants';
 import { createOptions, getFeaturesOptions } from '@ext/utils/identify';
 import IdentifyDropDown from "./IdentifyDropDown";
 
@@ -30,16 +30,22 @@ function Tabou2IdentifyPanel({
     const [feature, setFeature] = useState("");
 
     useEffect(() => {
+
         if (!isEqual(gfiLayers, responseLayers)) {
+            let features = responseLayers.length ? responseGFI[responseLayers[0]]?.data?.features : [];
             setGfiLayers(responseLayers);
             setGfinfos(responseGFI);
             setSelectedLayer(responseLayers.length ? responseLayers[0] : {});
-            setSelectedFeatures(responseLayers.length ? responseGFI[responseLayers[0]]?.data?.features : []);
+            setSelectedFeatures(responseLayers.length ? features : []);
             setConfigLayer(keys(props.layersCfg).filter(k => responseLayers[0] === props.layersCfg[k].nom)[0]);
             responseLayers.forEach(r => { featureIdx[r] = featureIdx[r] || 0; });
-            setFeature(selectedFeatures[0]?.properties?.objectid);
+            setFeature(get(features[0], get(LAYER_FIELD_OPTION.filter(f => f.name === responseLayers[0]), "id")));
         }
     }, [responseLayers]);
+
+    useEffect(() => {
+
+    }, []);
 
     const changeIndex = (clicked, allIndex) => {
         allIndex[ID_SELECTOR] = clicked?.name;
