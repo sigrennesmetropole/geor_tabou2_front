@@ -1,30 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, Row, Col, FormGroup, Checkbox, FormControl, ControlLabel } from 'react-bootstrap';
+import { Grid, Row, Col, FormGroup, Button } from 'react-bootstrap';
 import { DropdownList} from 'react-widgets';
-import Tabou2Combo from '@ext/components/form/Tabou2Combo';
 import Toolbar from '@mapstore/components/misc/toolbar/Toolbar';
-import { get, keys } from 'lodash';
-import { getRequestApi } from '@ext/api/search';
+import { keys, find, pickBy } from 'lodash';
 import Tabou2AddOaPaForm from '@ext/components/form/add/Tabou2AddOaPaForm';
-import { ADD_OA_FORM, ADD_PA_FORM } from '@ext/constants';
+import { ADD_OA_FORM, ADD_PA_FORM, URL_ADD } from '@ext/constants';
+import { postRequestApi } from '@ext/api/search';
 
-export default function Tabou2AddPanel({layer, ...props}) {
-    let types = [{
-        value: "layerOA",
-        label: "Opération"
-    }, {
-        value: "layerPA",
-        label: "Programme"
-    }];
+export default function Tabou2AddPanel({queryData, responseLayers, ...props}) {
+
+
     const [type, setType] = useState("layerOA");
-    const [operation, setOperation] = useState({});
-    const [nature, setNature] = useState("");
-    const [emprise, setEmprise] = useState({});
+    const [types, setTypes] = useState([]);
     const [infos, setInfos] = useState({
         code: "",
         nom: "",
-        secteur: false,
-        etape: ""
+        etape: "",
+        emprise: "",
+        nature: "",
+        secteur: false
     });
 
     /**
@@ -34,15 +28,35 @@ export default function Tabou2AddPanel({layer, ...props}) {
         return;
     }, [type]);
 
+    useEffect(() => {
+        let ddOptions = keys(props.pluginCfg.layersCfg).filter(f => f !== "layerSA").map(x => {
+            let layerName = props.pluginCfg.layersCfg[x].nom;
+            return {
+                value: x,
+                name: layerName,
+                label: props.tocLayers.filter(p => p.name === layerName)[0]?.title
+            };
+        });
+        setTypes(ddOptions);
+        setType(find(ddOptions, ["name", responseLayers[0]])?.value || "");
+    }, [responseLayers]);
+
     const comboMarginTop = "10px";
 
-    const valid = () => {
-        return false;
+    const handleSubmit = () => {
+        let attributes = type === "layerOA" ? ADD_OA_FORM.map(n => n.name) : ADD_PA_FORM.map(n => n.name);
+        /* postRequestApi(`${get(URL_ADD, type)}`, props.apiCfg, pickBy(infos, (value, key) => attributes.includes(key)));*/
     };
 
-    const changeState = (combo, value) => {
-        infos[combo.name] = value;
-        setInfos(infos);
+    const updateInfos = (i) => {
+        // get empty infos
+
+        // save infos to send when button will be clickable
+        setInfos(i);
+    };
+
+    const isInvalid = () => {
+        return keys(infos).filter(name => name !== "secteur").filter(name => !infos[name]).length > 0;
     };
 
     return (
@@ -53,9 +67,9 @@ export default function Tabou2AddPanel({layer, ...props}) {
                         <DropdownList
                             style={{ marginTop: comboMarginTop }}
                             data = {types}
-                            valueField = {"value"}
+                            valueField={"value"}
                             textField = {"label"}
-                            defaultValue = {layer || "layerOA"}
+                            defaultValue = {type}
                             onChange={(value) => {
                                 setType(value.value);
                             }}
@@ -63,11 +77,12 @@ export default function Tabou2AddPanel({layer, ...props}) {
                     </FormGroup>
                 </Col>
             </Row>
+
             {
                 type === "layerOA" || !type ? (
-                    <Tabou2AddOaPaForm layer={type} childs={ADD_OA_FORM} pluginCfg={props.pluginCfg} />
+                    <Tabou2AddOaPaForm layer={type} onChange={(i) => updateInfos(i)} childs={ADD_OA_FORM} pluginCfg={props.pluginCfg} />
                 ) : (
-                    <Tabou2AddOaPaForm layer={type} childs={ADD_PA_FORM} pluginCfg={props.pluginCfg} />
+                    <Tabou2AddOaPaForm layer={type} onChange={(i) => updateInfos(i)} childs={ADD_PA_FORM} pluginCfg={props.pluginCfg} />
                 )
             }
             <Row className="tabou-idToolbar-row text-center" style={{ display: "flex", margin: "auto", justifyContent: "center" }}>
@@ -83,9 +98,10 @@ export default function Tabou2AddPanel({layer, ...props}) {
                     }}
                     buttons={[{
                         glyph: "ok",
-                        tooltip: "Enregistrer",
+                        tooltip: isInvalid() ? "Veuillez compléter tous les champs !" :  "Sauvegarder",
                         id: "saveNewEmprise",
-                        onClick: () => valid()
+                        disabled: isInvalid(),
+                        onClick: () => handleSubmit()
                     }]}
                 />
             </Row>

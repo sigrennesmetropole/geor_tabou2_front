@@ -24,6 +24,11 @@ export const ID_SELECTOR = 'layerTabouId-selector';
 
 export const PANEL_SIZE = 500;
 
+export const URL_ADD = {
+    "layerPA": "/programmes/",
+    "layerOA": "/operations/"
+};
+
 export const URL_TIERS = {
     "tabou2": "/",
     "tabou2:v_oa_programme": "/programmes/",
@@ -246,25 +251,27 @@ export const ACC_ATTRIBUTE_DESCRIBE = [{
 
 
 export const ADD_OA_FORM = [{
-    label: "Secteur",
-    name: "secteur",
-    apiField: "",
-    // parent: (infos) => infos.emprise, // to activate secteur only if emprise name formControl is selected
-    required: true,
-    type: "checkbox"
-}, {
-    label: " Commencez par choisir la nature",
+    label: " Commencez par choisir le type et la nature de l'emprise à sélectionner",
     group: 1,
     type: "alert",
     name: "msgOaCondition",
     icon: "info-sign",
     variant: "info"
 }, {
+    label: "Secteur",
+    name: "secteur",
+    apiField: "",
+    // parent: (infos) => infos.emprise, // to activate secteur only if emprise name formControl is selected
+    required: true,
+    group: 1,
+    type: "checkbox"
+}, {
     label: "Nature",
     api: "natures",
-    name: "natures",
+    name: "nature",
     group: 1,
-    apiField: "libelle",
+    apiField: "id",
+    apiLabel: "libelle",
     parent: null,
     placeholder: "Selectionner une nature",
     type: "combo"
@@ -273,9 +280,10 @@ export const ADD_OA_FORM = [{
     name: "emprise",
     group: 1,
     api: "operations/emprises",
-    apiField: "",
+    apiField: "id",
+    apiLabel: "nom",
     placeholder: "Selectionner une emprise",
-    parent: (i) => !i.natures ? true : i.natures,
+    parent: (i) => !i.nature ? true : {nature: i.nature, secteur: i.secteur},
     type: "combo"
 }, {
     label: "Nom",
@@ -295,7 +303,9 @@ export const ADD_OA_FORM = [{
     type: "text"
 }, {
     label: "Etape",
-    apiField: "",
+    apiField: "code",
+    apiLabel: "libelle",
+    api: "operations/etapes",
     name: "etape",
     // parent: (infos) => infos.emprise, // to activate etape only if emprise name formControl is selected
     placeholder: "Sélectionner une étape",

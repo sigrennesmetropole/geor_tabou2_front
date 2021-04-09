@@ -33,7 +33,7 @@ export function putRequestApi(name, apiCfg, body) {
 /**
  * API - create POST request
  */
- export function postRequestApi(name, apiCfg, body) {
+export function postRequestApi(name, apiCfg, body) {
     let url = apiCfg?.apiURL || API_BASE_URL;
     let headers = {};
     if (apiCfg?.authent) {

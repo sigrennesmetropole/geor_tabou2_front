@@ -1,42 +1,56 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Row, Col, FormGroup, Checkbox, FormControl, Panel, Alert, Glyphicon } from 'react-bootstrap';
 import Tabou2Combo from '@ext/components/form/Tabou2Combo';
-import { get, keys } from 'lodash';
+import { get, has, isEmpty, keys } from 'lodash';
 import { getRequestApi } from '@ext/api/search';
+import ControlledPopover from '@mapstore/components/widgets/widget/ControlledPopover';
 
-export default function Tabou2AddOaPaForm({layer, childs = [], pluginCfg = {}}) {
-    const [selectedLayer, setSelectedLayer] = useState("");
-    const [operation, setOperation] = useState({});
-    const [nature, setNature] = useState("");
-    const [emprise, setEmprise] = useState({});
+export default function Tabou2AddOaPaForm({layer, childs = [], pluginCfg = {}, onChange = () => {}}) {
     const [infos, setInfos] = useState({
         code: "",
         nom: "",
         etape: "",
         emprise: "",
-        natures: ""
+        nature: "",
+        secteur: false
     });
-    const [infoChange, setInfoChange] = useState("");
+    const [invalides, setInvalides] = useState([]);
 
     const comboMarginTop = "10px";
     const marginTop = "15px";
 
     const changeState = (combo, value) => {
-        let checkBox = {};
-        if (!value) { // this is a checkbox
-            checkBox[combo.name] = !infos[combo.name];
+        let formElement = {};
+        if (combo.type === "checkbox") {
+            formElement[combo.name] = !infos[combo.name];
         } else {
-            infos[combo.name] = value[combo.apiField];
+            // temporary fix for https://github.com/sigrennesmetropole/geor_tabou2_front/issues/82
+            formElement[combo.name] = value === "En diffus" ? "EN_DIFFUS" : value;
         }
-        setInfos({...infos, ...checkBox});
-        setInfoChange(combo.name);
+        let newInfos = {...infos, ...formElement};
+        setInfos(newInfos);
+        onChange(newInfos);
+        setInvalides(keys(infos).filter(name => name !== "secteur").filter(name => !infos[name]));
+
     };
 
     const getActivate = (v) => {
         return v.parent(infos) === true;
     };
 
-    useEffect(() => {return}, [infoChange]);
+    const isInvalid = (name) => {
+        return invalides.includes(name) ? "red !important" : "";
+    };
+
+    const getParams = () => {
+        // get programme/emprises need only nature param
+        let params = infos.nature && layer ? {nature: encodeURI(infos.nature)} : {};
+        if (layer === "layerOA") {
+            // need nature and secteur to request API get operation/emprises
+            params =  has(infos, "secteur") && infos.nature ? {...params, estSecteur: infos.secteur} : {};
+        }
+        return params;
+    };
 
     const constructForm = (items) => {
         return (
@@ -51,7 +65,7 @@ export default function Tabou2AddOaPaForm({layer, childs = [], pluginCfg = {}}) 
                                 case "checkbox":
                                     el = (
                                         <Checkbox
-                                            checked={infos[item.name]}
+                                            checked={infos[item.name] || false}
                                             disabled={item.parent ? item.parent(infos) : false}
                                             onChange={() => changeState(item)}
                                             inline
@@ -71,37 +85,36 @@ export default function Tabou2AddOaPaForm({layer, childs = [], pluginCfg = {}}) 
                                 case "text":
                                     el = (
                                         <FormControl
-                                            style={{ marginTop: comboMarginTop }}
+                                            style={{ marginTop: comboMarginTop, borderColor: isInvalid(item.name) }}
                                             readOnly={item.parent ? getActivate(item) : false}
                                             type={item.type}
-                                            required={item.required}
+                                            required={item?.required}
                                             placeholder={item?.placeholder}
-                                            onChange={(t) => changeState(item, t)}
+                                            onChange={(t) => changeState(item, t.target.value)}
                                         />
                                     );
                                     break;
                                 case "combo":
-                                    // TODO : get request param from parent selected
                                     el = (
                                         <Tabou2Combo
-                                            style={{ marginTop: comboMarginTop }}
-                                            load={() => getRequestApi(get(item, "api"), pluginCfg.apiCfg, {})}
-                                            valueField={item.apiField}
+                                            style={{ marginTop: comboMarginTop, borderColor: isInvalid(item.name) }}
+                                            load={() => getRequestApi(get(item, "api"), pluginCfg.apiCfg, getParams())}
+                                            disabled={item.parent ? isEmpty(item.parent(infos)) : item?.disabled || false}
                                             placeholder={item.placeholder}
+                                            parentValue={item.parent ? new URLSearchParams(item.parent(infos))?.toString() : ""}
                                             filter="contains"
-                                            textField={item.apiField}
+                                            textField={item.apiLabel}
+                                            valueField={item.apiField}
                                             onLoad={(r) => r?.elements || r}
-                                            disabled={item.parent ? getActivate(item) : false}
-                                            reloadValue={item.parent ? item.parent(infos) : ""}
-                                            onSelect={(t) => changeState(item, t)}
-                                            onChange={(t) => !t ? changeState(item, t) : null}
                                             name={item.label}
+                                            value={get(infos, item.name)}
+                                            onSelect={(t) => changeState(item, t[item?.apiLabel] || t[item?.apiField])}
+                                            onChange={(t) => !t ? changeState(item, t[item?.apiLabel] || t[item?.apiField]) : null}
                                             messages={{
                                                 emptyList: 'La liste est vide.',
                                                 openCombobox: 'Ouvrir la liste'
                                             }}
                                         />
-
                                     );
                                     break;
                                 default:
@@ -120,14 +133,20 @@ export default function Tabou2AddOaPaForm({layer, childs = [], pluginCfg = {}}) 
         <>
             <Panel
                 header={(
-                    <label>1 - Choisir l'emprise géographique</label>
+                    <>
+                        <label style={{marginRight: "2px"}}>1 - Choisir l'emprise géographique </label>
+                        <ControlledPopover text="Tous les champs sont obligatoires" />
+                    </>
                 )}
             >
                 { constructForm(childs.filter(f => f.group === 1)) }
             </Panel>
             <Panel
                 header={(
-                    <label>2 - Saisir les informations</label>
+                    <>
+                        <label style={{marginRight: "2px"}}>2 - Saisir les informations</label>
+                        <ControlledPopover text="Tous les champs sont obligatoires" />
+                    </>
                 )}
             >
                 { constructForm(childs.filter(f => !f.group)) }
