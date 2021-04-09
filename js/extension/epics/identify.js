@@ -1,5 +1,4 @@
 import * as Rx from 'rxjs';
-import { keys } from 'lodash';
 import { CONTROL_NAME } from '../constants';
 
 import { generalInfoFormatSelector } from '@mapstore/selectors/mapInfo';
@@ -15,36 +14,9 @@ import {
 
 import { TOGGLE_CONTROL } from '@mapstore/actions/controls';
 
-import { isTabou2Activate, defaultInfoFormat, getTabouResponse, getPluginCfg } from '../selectors/tabou2';
+import { isTabou2Activate, defaultInfoFormat, getTabouResponse } from '../selectors/tabou2';
 
 import { loadTabouFeatureInfo, setDefaultInfoFormat } from '../actions/tabou2';
-
-/**
- * Catch GFI response on identify load event and close identify if Tabou2 identify tabs is selected
- * TODO: set pluginCfg
- * @param {*} action$
- * @param {*} store
- */
-export function tabouLoadIdentifyContentOld(action$, store) {
-    return action$.ofType(LOAD_FEATURE_INFO)
-        .filter(() => isTabou2Activate(store.getState()))
-        .switchMap((action) => {
-            if (action.layer && action.layer.id) {
-                const cfg = getPluginCfg(store.getState());
-                let resp = getTabouResponse(store.getState());
-                resp[action.layer.id] = action;
-                resp = keys(resp).forEach(r => {
-                    if (!resp[r].data?.features.length) {
-                        delete resp[r];
-                    }
-                });
-                return Rx.Observable.of(loadTabouFeatureInfo(resp)).concat(
-                    cfg.showIdentify ?  Rx.Observable.empty() : Rx.Observable.of(closeIdentify())
-                );
-            }
-            return Rx.Observable.empty();
-        });
-}
 
 /**
  * Catch GFI response on identify load event and close identify if Tabou2 identify tabs is selected
