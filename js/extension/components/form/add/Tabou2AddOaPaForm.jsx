@@ -4,41 +4,63 @@ import Tabou2Combo from '@ext/components/form/Tabou2Combo';
 import { get, has, isEmpty, keys } from 'lodash';
 import { getRequestApi } from '@ext/api/search';
 import ControlledPopover from '@mapstore/components/widgets/widget/ControlledPopover';
+import Toolbar from '@mapstore/components/misc/toolbar/Toolbar';
+import { OA_SCHEMA, PA_SCHEMA, URL_ADD } from '@ext/constants';
 
-export default function Tabou2AddOaPaForm({layer, childs = [], pluginCfg = {}, onChange = () => {}}) {
+export default function Tabou2AddOaPaForm({layer, childs = [], pluginCfg = {}}) {
     const [infos, setInfos] = useState({
         code: "",
         nom: "",
         etape: "",
-        emprise: "",
+        idEmprise: "",
         nature: "",
         secteur: false
     });
+
+    const [newFeature, setNewFeature] = useState(layer === "layerOA" ? OA_SCHEMA : PA_SCHEMA);
     const [invalides, setInvalides] = useState([]);
 
     const comboMarginTop = "10px";
     const marginTop = "15px";
 
-    const changeState = (combo, value) => {
+    const changeState = (combo, selection) => {
         let formElement = {};
+        let apiElement = {};
+        let value;
         if (combo.type === "checkbox") {
             formElement[combo.name] = !infos[combo.name];
         } else {
             // temporary fix for https://github.com/sigrennesmetropole/geor_tabou2_front/issues/82
+            value = !selection ? selection : selection[combo?.apiLabel] || selection[combo?.apiField] || selection;
             formElement[combo.name] = value === "En diffus" ? "EN_DIFFUS" : value;
+            
+            //combo.name = combo.name === "emprise" ? "idEmprise" : combo.name;
+            apiElement[combo.name] = ["etape", "nature"].includes(combo.name) ? {
+                id: selection?.id
+            } : selection?.id;
+
+            
         }
         let newInfos = {...infos, ...formElement};
-        setInfos(newInfos);
-        onChange(newInfos);
-        setInvalides(keys(infos).filter(name => name !== "secteur").filter(name => !infos[name]));
+        let newFeatureObj = {...newFeature, ...apiElement};
+        if(combo.name === "idEmprise") {
+            newFeatureObj = {...newFeatureObj, nom: value};
+            newInfos = {...newInfos, nom: value}
+        }
 
+        setInfos(newInfos);
+        setInvalides(keys(infos).filter(name => name !== "secteur").filter(name => !infos[name]));
+        setNewFeature(newFeatureObj);
+
+        console.log(newInfos);
+        console.log(newFeatureObj);
     };
 
     const getActivate = (v) => {
         return v.parent(infos) === true;
     };
 
-    const isInvalid = (name) => {
+    const isInvalidStyle = (name) => {
         return invalides.includes(name) ? "red !important" : "";
     };
 
@@ -51,6 +73,27 @@ export default function Tabou2AddOaPaForm({layer, childs = [], pluginCfg = {}, o
         }
         return params;
     };
+    
+    const isInvalid = () => {
+        return keys(infos).filter(name => name !== "secteur").filter(name => !infos[name]).length > 0;
+    };
+
+    const handleSubmit = () => {
+        let newFeature = {                
+            code: infos.code,
+            etape: infos.etape,
+            nom: infos.nom,
+            idEmprise: infos.idEmprise
+        };
+        if (layer === "layerPA") {
+            newFeature = {...PA_SCHEMA, ...newFeature};
+        } else {
+            newFeature = {...OA_SCHEMA, ...newFeature, secteur: infos.secteur};
+        }
+        console.log(newFeature);
+        /* postRequestApi(`${get(URL_ADD, type)}`, props.apiCfg, pickBy(infos, (value, key) => attributes.includes(key)));*/
+    };
+
 
     const constructForm = (items) => {
         return (
@@ -85,19 +128,20 @@ export default function Tabou2AddOaPaForm({layer, childs = [], pluginCfg = {}, o
                                 case "text":
                                     el = (
                                         <FormControl
-                                            style={{ marginTop: comboMarginTop, borderColor: isInvalid(item.name) }}
+                                            style={{ marginTop: comboMarginTop, borderColor: isInvalidStyle(item.name) }}
                                             readOnly={item.parent ? getActivate(item) : false}
                                             type={item.type}
+                                            value={get(infos, item.name)}
                                             required={item?.required}
                                             placeholder={item?.placeholder}
-                                            onChange={(t) => changeState(item, t.target.value)}
+                                            onChange={(t) => changeState(item, t.target.value.toLowerCase())}
                                         />
                                     );
                                     break;
                                 case "combo":
                                     el = (
                                         <Tabou2Combo
-                                            style={{ marginTop: comboMarginTop, borderColor: isInvalid(item.name) }}
+                                            style={{ marginTop: comboMarginTop, borderColor: isInvalidStyle(item.name) }}
                                             load={() => getRequestApi(get(item, "api"), pluginCfg.apiCfg, getParams())}
                                             disabled={item.parent ? isEmpty(item.parent(infos)) : item?.disabled || false}
                                             placeholder={item.placeholder}
@@ -108,8 +152,8 @@ export default function Tabou2AddOaPaForm({layer, childs = [], pluginCfg = {}, o
                                             onLoad={(r) => r?.elements || r}
                                             name={item.label}
                                             value={get(infos, item.name)}
-                                            onSelect={(t) => changeState(item, t[item?.apiLabel] || t[item?.apiField])}
-                                            onChange={(t) => !t ? changeState(item, t[item?.apiLabel] || t[item?.apiField]) : null}
+                                            onSelect={(t) => changeState(item, t)}
+                                            onChange={(t) => !t ? changeState(item, t) : null}
                                             messages={{
                                                 emptyList: 'La liste est vide.',
                                                 openCombobox: 'Ouvrir la liste'
@@ -151,6 +195,26 @@ export default function Tabou2AddOaPaForm({layer, childs = [], pluginCfg = {}, o
             >
                 { constructForm(childs.filter(f => !f.group)) }
             </Panel>
+            <Row className="tabou-idToolbar-row text-center" style={{ display: "flex", margin: "auto", justifyContent: "center" }}>
+                <Toolbar
+                    btnDefaultProps={{
+                        className: "square-button-md",
+                        bsStyle: "primary"
+                    }}
+                    btnGroupProps={{
+                        style: {
+                            margin: 10
+                        }
+                    }}
+                    buttons={[{
+                        glyph: "ok",
+                        tooltip: isInvalid() ? "Veuillez compléter tous les champs !" :  "Sauvegarder",
+                        id: "saveNewEmprise",
+                        disabled: isInvalid() > 0,
+                        onClick: () => handleSubmit()
+                    }]}
+                />
+            </Row>
         </>
     );
 }

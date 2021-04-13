@@ -277,7 +277,7 @@ export const ADD_OA_FORM = [{
     type: "combo"
 }, {
     label: "Emprise",
-    name: "emprise",
+    name: "idEmprise",
     group: 1,
     api: "operations/emprises",
     apiField: "id",
@@ -342,7 +342,7 @@ export const ADD_PA_FORM = [ {
     api: "programmes/emprises",
     group: 1,
     parent: (i) => i?.limitPa ? i.limitPa && !i.parentoa : false,
-    name: "emprisepa",
+    name: "idEmprise",
     apiField: "",
     placeholder: "Selectionner une emprise",
     type: "combo"
@@ -371,3 +371,92 @@ export const ADD_PA_FORM = [ {
     required: true,
     type: "combo"
 }];
+
+
+export const OA_SCHEMA = {
+    "autorisationDate": "2021-02-24T15:15:36.426Z",
+    "clotureDate": "2021-02-24T15:15:36.426Z",
+    "code": "op1",
+    "nom": "op1",
+    "consommationEspace": {    
+      "id": 1
+    },
+    "createDate": "2021-02-24T15:15:36.426Z",
+    "createUser": "string",
+    "decision": {    
+      "id": 1
+    },
+    "description": "string",
+    "diffusionRestreinte": false,
+    "etape": {   
+      "id": 1
+    },
+    "id": 0,
+    "idEmprise": false,
+    "maitriseOuvrage": {   
+      "id": 1
+    },
+    "modeAmenagement": {  
+      "id": 1
+    },
+    "modifDate": "2021-02-24T15:15:36.426Z",
+    "modifUser": "string",
+    "nature": { 
+      "id": 1
+    },
+    "nbEntreprise": 0,
+    "nbLogementsPrevu": 0,
+    "nbSalarie": 0,
+    "numAds": "string",
+    "operation": "string",
+    "operationnelDate": "2021-02-24T15:15:36.426Z",
+    "plhLogementsLivres": 0,
+    "plhLogementsPrevus": 0,
+    "ql1": "string",
+    "ql2": false,
+    "ql3": "string",
+    "secteur": false,
+    "surfaceTotale": 0,
+    "vocation": {  
+      "id": 1
+    }
+  };
+
+  export const PA_SCHEMA = {
+    "adsDate": "2021-02-24T15:15:22.381Z",
+    "adsDatePrevu": "2021-02-24T15:15:22.381Z",
+    "attributionDate": "2021-02-24T15:15:22.381Z",
+    "attributionFonciereAnnee": 0,
+    "clotureDate": "2021-02-24T15:15:22.381Z",
+    "commercialisationDate": "2021-02-24T15:15:22.381Z",
+    "createDate": "2021-02-24T15:15:22.381Z",
+    "createUser": "string",
+    "datDate": "2021-02-24T15:15:22.381Z",
+    "datDatePrevu": "2021-02-24T15:15:22.381Z",
+    "description": "string",
+    "diffusionRestreinte": false,
+    "docDate": "2021-02-24T15:15:22.381Z",
+    "docDatePrevu": "2021-02-24T15:15:22.381Z",
+    "etape": {    
+      "id": 1  
+    },
+    "logementsAccessAide": 0,
+    "logementsAccessAidePrevu": 0,
+    "logementsAccessLibrePrevu": 0,
+    "logementsAccessMaitrise": 0,
+    "logementsAccessMaitrisePrevu": 0,
+    "logementsLocatifAide": 0,
+    "logementsLocatifAidePrevu": 0,
+    "logementsLocatifReguleHLM": 0,
+    "logementsLocatifReguleHlmPrevu": 0,
+    "logementsLocatifRegulePrive": 0,
+    "logementsLocatifRegulePrivePrevu": 0,
+    "logementsTotal": 0,
+    "modifDate": "2021-02-24T15:15:22.382Z",
+    "modifUser": "string",
+    "numAds": "string",
+    "operationId": 7,
+    "nom": "prog2",
+    "programme": "prog2",
+    "code": "prog2"
+  };
