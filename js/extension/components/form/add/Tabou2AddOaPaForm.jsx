@@ -6,6 +6,7 @@ import { getRequestApi } from '@ext/api/search';
 import ControlledPopover from '@mapstore/components/widgets/widget/ControlledPopover';
 import Toolbar from '@mapstore/components/misc/toolbar/Toolbar';
 import { OA_SCHEMA, PA_SCHEMA, URL_ADD } from '@ext/constants';
+import { postRequestApi } from '@ext/api/search';
 
 export default function Tabou2AddOaPaForm({layer, childs = [], pluginCfg = {}}) {
     const [infos, setInfos] = useState({
@@ -31,13 +32,12 @@ export default function Tabou2AddOaPaForm({layer, childs = [], pluginCfg = {}}) 
             formElement[combo.name] = !infos[combo.name];
         } else {
             // temporary fix for https://github.com/sigrennesmetropole/geor_tabou2_front/issues/82
+            
             value = !selection ? selection : selection[combo?.apiLabel] || selection[combo?.apiField] || selection;
             formElement[combo.name] = value === "En diffus" ? "EN_DIFFUS" : value;
-            
-            //combo.name = combo.name === "emprise" ? "idEmprise" : combo.name;
             apiElement[combo.name] = ["etape", "nature"].includes(combo.name) ? {
                 id: selection?.id
-            } : selection?.id;
+            } : selection?.id || selection;
 
             
         }
@@ -47,13 +47,9 @@ export default function Tabou2AddOaPaForm({layer, childs = [], pluginCfg = {}}) 
             newFeatureObj = {...newFeatureObj, nom: value};
             newInfos = {...newInfos, nom: value}
         }
-
         setInfos(newInfos);
         setInvalides(keys(infos).filter(name => name !== "secteur").filter(name => !infos[name]));
         setNewFeature(newFeatureObj);
-
-        console.log(newInfos);
-        console.log(newFeatureObj);
     };
 
     const getActivate = (v) => {
@@ -79,21 +75,15 @@ export default function Tabou2AddOaPaForm({layer, childs = [], pluginCfg = {}}) 
     };
 
     const handleSubmit = () => {
-        let newFeature = {                
-            code: infos.code,
-            etape: infos.etape,
-            nom: infos.nom,
-            idEmprise: infos.idEmprise
-        };
+        let params = {};
         if (layer === "layerPA") {
-            newFeature = {...PA_SCHEMA, ...newFeature};
+            params = {...PA_SCHEMA, ...newFeature, code: infos.code};
         } else {
-            newFeature = {...OA_SCHEMA, ...newFeature, secteur: infos.secteur};
+            //newFeature = {...OA_SCHEMA, ...newFeature, secteur: infos.secteur};
+            params = {...OA_SCHEMA, ...newFeature, code: infos.code}
         }
-        console.log(newFeature);
-        /* postRequestApi(`${get(URL_ADD, type)}`, props.apiCfg, pickBy(infos, (value, key) => attributes.includes(key)));*/
+        postRequestApi(`${get(URL_ADD, layer)}`, pluginCfg.apiCfg, params);
     };
-
 
     const constructForm = (items) => {
         return (

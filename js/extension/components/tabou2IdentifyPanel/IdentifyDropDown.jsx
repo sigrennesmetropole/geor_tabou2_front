@@ -5,7 +5,6 @@ import Message from "@mapstore/components/I18N/Message";
 
 export default function IdentifyDropDown({
     icon,
-    reloadValue,
     ...props
 }) {
     let visible = props.visible ? {

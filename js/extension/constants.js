@@ -25,8 +25,8 @@ export const ID_SELECTOR = 'layerTabouId-selector';
 export const PANEL_SIZE = 500;
 
 export const URL_ADD = {
-    "layerPA": "/programmes/",
-    "layerOA": "/operations/"
+    "layerPA": "programmes",
+    "layerOA": "operations"
 };
 
 export const URL_TIERS = {

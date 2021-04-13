@@ -15,6 +15,7 @@ import { ACCORDIONS } from '@ext/constants';
 export default function Tabou2IdentifyContent({
     response,
     tabouLayer,
+    feature,
     featureId,
     ...props
 }) {
@@ -41,6 +42,7 @@ export default function Tabou2IdentifyContent({
 
     useEffect(() => {
         console.log(featureId);
+        console.log(feature);
         if (tabouLayer) {
             // get accordions according to layer
             setAccordions(ACCORDIONS.filter(acc => !acc.layers || acc?.layers.indexOf(tabouLayer) > -1));

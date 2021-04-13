@@ -1,38 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { Grid, Row, Col, FormGroup } from 'react-bootstrap';
 import { DropdownList} from 'react-widgets';
-import { keys, find, pickBy } from 'lodash';
+import { keys, find, isEqual } from 'lodash';
 import Tabou2AddOaPaForm from '@ext/components/form/add/Tabou2AddOaPaForm';
 import { ADD_OA_FORM, ADD_PA_FORM, URL_ADD } from '@ext/constants';
-import { postRequestApi } from '@ext/api/search';
 
-export default function Tabou2AddPanel({queryData, responseLayers, ...props}) {
-
+export default function Tabou2AddPanel({queryData, ...props}) {
 
     const [type, setType] = useState("layerOA");
-    const [types, setTypes] = useState([]);
 
-    /**
-     * TODO : event on combobox layerOA / layerPA change to display correct form panel
-     */
-    useEffect(() => {
-        return;
-    }, [type]);
-
-    useEffect(() => {
-        let ddOptions = keys(props.pluginCfg.layersCfg).filter(f => f !== "layerSA").map(x => {
-            let layerName = props.pluginCfg.layersCfg[x].nom;
-            return {
-                value: x,
-                name: layerName,
-                label: props.tocLayers.filter(p => p.name === layerName)[0]?.title
-            };
-        });
-        setTypes(ddOptions);
-        setType(find(ddOptions, ["name", responseLayers[0]])?.value || "");
-    }, [responseLayers]);
-
-    const comboMarginTop = "10px";
+    const ddOptions = keys(props.pluginCfg.layersCfg).filter(f => f !== "layerSA").map(x => {
+        let layerName = props.pluginCfg.layersCfg[x].nom;
+        return {
+            value: x,
+            name: layerName,
+            label: props.tocLayers.filter(p => p.name === layerName)[0]?.title
+        };
+    });
 
     return (
         <Grid className={"col-xs-12"}>
@@ -40,12 +24,12 @@ export default function Tabou2AddPanel({queryData, responseLayers, ...props}) {
                 <Col xs={12}>
                     <FormGroup >
                         <DropdownList
-                            style={{ marginTop: comboMarginTop }}
-                            data = {types}
+                            style={{ marginTop: "10px" }}
+                            data = {ddOptions}
                             valueField={"value"}
                             textField = {"label"}
-                            defaultValue = {type}
-                            onChange={(value) => {
+                            defaultValue = {"layerOA"}
+                            onSelect={(value) => {
                                 setType(value.value);
                             }}
                         />

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { keys, isEqual, isEmpty, get } from 'lodash';
+import { keys, isEqual, isEmpty, get, find } from 'lodash';
 import { connect } from 'react-redux';
 
 import Tabou2IdentifyContent from './Tabou2IdentifyContent';
@@ -9,50 +9,41 @@ import { ID_SELECTOR, LAYER_FIELD_OPTION } from '@ext/constants';
 import { createOptions, getFeaturesOptions } from '@ext/utils/identify';
 import IdentifyDropDown from "./IdentifyDropDown";
 
-function Tabou2IdentifyPanel({
-    currentTab,
-    setIndex = () => { },
-    responseGFI,
-    getAllIndex,
-    responseLayers,
+export default function Tabou2IdentifyPanel({
+    queryData,
     ...props
 }) {
-    if (currentTab !== 'identify') return null;
     const defaultIndex = 0;
-
     // use state to rerender if change.
-    const [gfiInfos, setGfinfos] = useState({});
-    const [gfiLayers, setGfiLayers] = useState([]);
     const [selectedLayer, setSelectedLayer] = useState("");
     const [configLayer, setConfigLayer] = useState("");
     const [selectedFeatures, setSelectedFeatures] = useState([]);
-    const [featureIdx, setFeatureIdx] = useState({});
     const [feature, setFeature] = useState("");
+    const [response, setResponse] = useState({});
 
     useEffect(() => {
-
-        if (!isEqual(gfiLayers, responseLayers)) {
-            let features = responseLayers.length ? responseGFI[responseLayers[0]]?.data?.features : [];
-            setGfiLayers(responseLayers);
-            setGfinfos(responseGFI);
-            setSelectedLayer(responseLayers.length ? responseLayers[0] : {});
-            setSelectedFeatures(responseLayers.length ? features : []);
+        if (queryData !== response) {
+            
+            let responseLayers = keys(queryData);
+            let features = queryData[responseLayers[0]]?.data?.features || [];
+            setSelectedLayer(responseLayers[0]);
+            setResponse(queryData);        
+            setSelectedFeatures(features);
             setConfigLayer(keys(props.layersCfg).filter(k => responseLayers[0] === props.layersCfg[k].nom)[0]);
-            responseLayers.forEach(r => { featureIdx[r] = featureIdx[r] || 0; });
-            setFeature(get(features[0], get(LAYER_FIELD_OPTION.filter(f => f.name === responseLayers[0]), "id")));
+            //setFeature(get(features[0], get(LAYER_FIELD_OPTION.filter(f => f.name === responseLayers[0])[0], "id")));
+            setFeature(features[0]);
         }
-    }, [responseLayers]);
+    }, [queryData]);
 
-    useEffect(() => {
-
-    }, []);
-
-    const changeIndex = (clicked, allIndex) => {
-        allIndex[ID_SELECTOR] = clicked?.name;
-        setIndex(allIndex);
+    /**
+     * Event to trigger when user click on dropdown option
+     * @param {Object} clicked 
+     */
+    const changeLayer = (clicked) => {
+        props.allIndex[ID_SELECTOR] = clicked?.name;
         setConfigLayer(keys(props.layersCfg).filter(k => clicked?.name === props.layersCfg[k].nom)[0]);
         setSelectedLayer(clicked?.name);
-        setSelectedFeatures(gfiInfos[clicked?.name]?.data?.features || []);
+        setSelectedFeatures(queryData[clicked?.name]?.data?.features || []);
     };
 
     return (
@@ -60,51 +51,41 @@ function Tabou2IdentifyPanel({
             <IdentifyDropDown
                 defaultValue={defaultIndex}
                 disabled={false}
-                data={createOptions(keys(gfiInfos).map(e => gfiInfos[e]))}
+                data={createOptions(keys(response).map(e => response[e]))}
                 valueField={'value'}
                 textField={'label'}
                 visible={true}
                 icon="glyphicon-1-layer"
-                onChange={(i) => changeIndex(i, getAllIndex)}
+                onChange={(i) => changeLayer(i)}
             />
             {
-                isEmpty(gfiInfos) ? null :
-                    keys(gfiInfos).map(l => (
+                isEmpty(response) ? null :
+                    keys(response).map(l => (
                         <IdentifyDropDown
                             disabled={false}
-                            data={getFeaturesOptions(gfiInfos[l].data.features, l)}
-                            defaultValue={0}
+                            data={getFeaturesOptions(response[l].data.features, l)}
+                            defaultValue={defaultIndex}
                             textField={"label"}
                             valueField={"idx"}
                             icon="glyphicon-list"
                             visible={l === selectedLayer}
                             onChange={(i) => {
-                                featureIdx[selectedLayer] = i.idx;
-                                setFeatureIdx(featureIdx);
-                                setFeature(selectedFeatures[i.idx]?.properties?.objectid);
+                                setFeature(selectedFeatures[i.idx]);
                             }}
                         />
                     ))
             }
 
             {
-                !isEmpty(gfiInfos) ?
+                !isEmpty(response) ?
                     (<Tabou2IdentifyContent
-                        featureId={feature}
-                        response={gfiInfos[selectedLayer]}
+                        feature={feature}
+                        featureId={get(feature, find(LAYER_FIELD_OPTION, ["name", selectedLayer]).id)}
+                        response={response[selectedLayer]}
                         tabouLayer={configLayer}
                         {...props}/>)
                     : null
             }
         </>
     );
-}
-
-export default connect((state) => ({
-    currentTab: currentActiveTabSelector(state),
-    getAllIndex: getTabouIndexSelectors(state),
-    responseGFI: getTabouResponse(state),
-    responseLayers: getTabouResponseLayers(state)
-}), {
-    setIndex: setSelectorIndex
-})(Tabou2IdentifyPanel);
+};
