@@ -5,11 +5,26 @@ import { keys, find, isEqual } from 'lodash';
 import Tabou2AddOaPaForm from '@ext/components/form/add/Tabou2AddOaPaForm';
 import { ADD_OA_FORM, ADD_PA_FORM, URL_ADD } from '@ext/constants';
 
-export default function Tabou2AddPanel({queryData, ...props}) {
-
+export default function Tabou2AddPanel({feature, featureId, layer, ...props}) {
+    
     const [type, setType] = useState("layerOA");
+    const [selectedFeature, setSelectedFeature] = useState({});
 
-    const ddOptions = keys(props.pluginCfg.layersCfg).filter(f => f !== "layerSA").map(x => {
+    useEffect(() => {
+        if (!isEqual(selectedFeature, feature)) {
+            setSelectedFeature(feature);
+        }
+    }, [feature]);
+
+    useEffect(() => {
+        console.log(layer);
+        if (layer !== type) {
+            console.log(layer);
+            setType(layer);
+        }
+    }, [layer]);
+
+    const ddOptions = keys(props.pluginCfg.layersCfg).filter(n => n !== "layerSA").map(x => {
         let layerName = props.pluginCfg.layersCfg[x].nom;
         return {
             value: x,
@@ -28,7 +43,7 @@ export default function Tabou2AddPanel({queryData, ...props}) {
                             data = {ddOptions}
                             valueField={"value"}
                             textField = {"label"}
-                            defaultValue = {"layerOA"}
+                            value = {type === "layerSA" ? "layerOA" : type}
                             onSelect={(value) => {
                                 setType(value.value);
                             }}
@@ -38,10 +53,10 @@ export default function Tabou2AddPanel({queryData, ...props}) {
             </Row>
 
             {
-                type === "layerOA" || !type ? (
-                    <Tabou2AddOaPaForm layer={type} childs={ADD_OA_FORM} pluginCfg={props.pluginCfg} />
+                ["layerOA", "layerSA"].includes(type) || !type ? (
+                    <Tabou2AddOaPaForm layer={type} feature={feature} {...props} childs={ADD_OA_FORM} pluginCfg={props.pluginCfg} />
                 ) : (
-                    <Tabou2AddOaPaForm layer={type} childs={ADD_PA_FORM} pluginCfg={props.pluginCfg} />
+                    <Tabou2AddOaPaForm layer={type} feature={feature} {...props} childs={ADD_PA_FORM} pluginCfg={props.pluginCfg} />
                 )
             }
 

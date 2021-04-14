@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Row, Col, FormGroup, Checkbox, FormControl, Panel, Alert, Glyphicon } from 'react-bootstrap';
 import Tabou2Combo from '@ext/components/form/Tabou2Combo';
-import { get, has, isEmpty, keys } from 'lodash';
+import { get, has, isEmpty, keys, isEqual } from 'lodash';
 import { getRequestApi } from '@ext/api/search';
 import ControlledPopover from '@mapstore/components/widgets/widget/ControlledPopover';
 import Toolbar from '@mapstore/components/misc/toolbar/Toolbar';
-import { OA_SCHEMA, PA_SCHEMA, URL_ADD } from '@ext/constants';
+import { OA_SCHEMA, PA_SCHEMA, URL_ADD, ADD_FIELDS } from '@ext/constants';
 import { postRequestApi } from '@ext/api/search';
 
-export default function Tabou2AddOaPaForm({layer, childs = [], pluginCfg = {}}) {
+export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCfg = {}}) {
     const [infos, setInfos] = useState({
         code: "",
         nom: "",
@@ -18,7 +18,7 @@ export default function Tabou2AddOaPaForm({layer, childs = [], pluginCfg = {}}) 
         secteur: false
     });
 
-    const [newFeature, setNewFeature] = useState(layer === "layerOA" ? OA_SCHEMA : PA_SCHEMA);
+    const [newFeature, setNewFeature] = useState(["layerOA", "layerSA"].includes(layer) ? OA_SCHEMA : PA_SCHEMA);
     const [invalides, setInvalides] = useState([]);
 
     const comboMarginTop = "10px";
@@ -37,9 +37,7 @@ export default function Tabou2AddOaPaForm({layer, childs = [], pluginCfg = {}}) 
             formElement[combo.name] = value === "En diffus" ? "EN_DIFFUS" : value;
             apiElement[combo.name] = ["etape", "nature"].includes(combo.name) ? {
                 id: selection?.id
-            } : selection?.id || selection;
-
-            
+            } : selection?.id || selection;            
         }
         let newInfos = {...infos, ...formElement};
         let newFeatureObj = {...newFeature, ...apiElement};
@@ -63,7 +61,7 @@ export default function Tabou2AddOaPaForm({layer, childs = [], pluginCfg = {}}) 
     const getParams = () => {
         // get programme/emprises need only nature param
         let params = infos.nature && layer ? {nature: encodeURI(infos.nature)} : {};
-        if (layer === "layerOA") {
+        if (["layerOA", "layerSA"].includes(layer)) {
             // need nature and secteur to request API get operation/emprises
             params =  has(infos, "secteur") && infos.nature ? {...params, estSecteur: infos.secteur} : {};
         }
@@ -85,6 +83,23 @@ export default function Tabou2AddOaPaForm({layer, childs = [], pluginCfg = {}}) 
         postRequestApi(`${get(URL_ADD, layer)}`, pluginCfg.apiCfg, params);
     };
 
+    useEffect(() => {
+        let fProp = feature?.properties;
+        let newInfos = {
+            etape : get(fProp, ADD_FIELDS.etape[layer]) || infos.etape,
+            idEmprise : get(fProp, ADD_FIELDS.nom[layer]) || infos.idEmprise,
+            nature : get(fProp, ADD_FIELDS.nature[layer]) || infos.nature,
+            secteur : get(fProp, ADD_FIELDS.secteur[layer]) || infos.secteur,
+            nom : get(fProp, ADD_FIELDS.nom[layer]) || infos.nom
+        };
+        let newObject = {...newInfos, idEmprise : get(fProp, ADD_FIELDS.idEmprise[layer])}
+        if (!isEqual(newInfos,infos)) {
+            setInfos({...infos, ...newInfos});
+            setNewFeature({...newFeature, ...newObject});
+        }
+
+    }, [feature])
+
     const constructForm = (items) => {
         return (
             <Row style={{ marginTop: marginTop }} >
@@ -98,8 +113,8 @@ export default function Tabou2AddOaPaForm({layer, childs = [], pluginCfg = {}}) 
                                 case "checkbox":
                                     el = (
                                         <Checkbox
-                                            checked={infos[item.name] || false}
-                                            disabled={item.parent ? item.parent(infos) : false}
+                                            checked={layer === "layerSA" ? true :  infos[item.name] || false}
+                                            disabled={feature && ["layerOA", "layerSA"].includes(layer) ? true : item.parent ? item.parent(infos) : false}
                                             onChange={() => changeState(item)}
                                             inline
                                             id={item.name + "-pa-id"}>

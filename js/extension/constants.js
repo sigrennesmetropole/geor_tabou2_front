@@ -249,7 +249,33 @@ export const ACC_ATTRIBUTE_DESCRIBE = [{
     layers: ['layerOA', 'layerSA']
 }];
 
-
+export const ADD_FIELDS = {
+    secteur: {
+        layerOA : "secteur",
+        layerPA : "secteur",
+        layerSA : "secteur"
+    },
+    idEmprise: {
+        layerOA : "id_zac",
+        layerPA : "",
+        layerSA : ""
+    },
+    nom: {
+        layerOA : "nomzac",
+        layerPA : "",
+        layerSA : ""
+    },
+    etape: {
+        layerOA : "etape",
+        layerPA : "",
+        layerSA : ""
+    },
+    nature: {
+        layerOA : "nature",
+        layerPA : "",
+        layerSA : ""
+    }
+}
 export const ADD_OA_FORM = [{
     label: " Commencez par choisir le type et la nature de l'emprise à sélectionner",
     group: 1,
@@ -281,6 +307,7 @@ export const ADD_OA_FORM = [{
     group: 1,
     api: "operations/emprises",
     apiField: "id",
+    featueField: "id_zac",
     apiLabel: "nom",
     placeholder: "Selectionner une emprise",
     parent: (i) => !i.nature ? true : {nature: i.nature, secteur: i.secteur},
