@@ -13,6 +13,7 @@ export default function Tabou2Information(props) {
                 }}/>
             <h3 style={{ marginLeft: "0px", marginTop: "20px" }}>{props.title}</h3>
             <h4 style={{ marginLeft: "0px", marginTop: "20px" }}>{props.message}</h4>
+            { props.content }
         </div>
     );
 }
