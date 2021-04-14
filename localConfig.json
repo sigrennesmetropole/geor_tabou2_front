@@ -348,21 +348,21 @@
           "showIdentify": false,
           "layersCfg": {
             "layerPA": {
-              "nom": "tabou2:v_oa_programme",
+              "nom": "tabou2:v_oa_programmePolygon",
               "geomField": "the_geom",
               "idField": "objectid",
               "idType": "number"
             },
             "layerOA": {
-              "nom": "tabou2:oa_secteur",
+              "nom": "tabou2:zacPolygon",
               "geomField": "the_geom",
-              "idField": "objectid",
+              "idField": "id_zac",
               "idType": "number"
             },
             "layerSA": {
-              "nom": "tabou2:zac",
+              "nom": "tabou2:oa_secteur",
               "geomField": "the_geom",
-              "idField": "id_zac",
+              "idField": "objectid",
               "idType": "number"
             }
           },
