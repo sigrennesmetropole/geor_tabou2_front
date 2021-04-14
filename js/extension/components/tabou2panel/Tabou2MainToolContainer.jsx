@@ -10,8 +10,10 @@ import {
 import Tabou2SearchPanel from '../tabou2SearchPanel/Tabou2SearchPanel';
 import Tabou2AddPanel from '../tabou2AddPanel/Tabou2AddPanel';
 import Tabou2IdentifyPanel from '../tabou2IdentifyPanel/Tabou2IdentifyPanel';
+import Tabou2Information from '@ext/components/common/Tabou2Information';
 
 function toolContainer({data, ...props }) {
+    console.log(isEmpty(data));
     return (
         <>
             {
@@ -21,7 +23,8 @@ function toolContainer({data, ...props }) {
                 props.currentTab === "add" ? (<Tabou2AddPanel currentTab={props.currentTab} allIndex={props.allIndex} queryData={data} {...props} />) : null
             }
             {
-                props.currentTab === "identify" && !isEmpty(data) && keys(data).length ? (<Tabou2IdentifyPanel queryData={data} {...props} />) : null
+                props.currentTab === "identify" && !isEmpty(data) && keys(data).length ? (<Tabou2IdentifyPanel queryData={data} {...props} />) : 
+                <Tabou2Information isVisible={isEmpty(data)} glyph="info-sign" message="Cliquer sur une emprise, programme, opération ou secteur visible sur la carte pour commencer" title="Identifier"/>
             }
         </>
     );
