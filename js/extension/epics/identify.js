@@ -4,6 +4,7 @@ import { CONTROL_NAME } from '../constants';
 import { generalInfoFormatSelector } from '@mapstore/selectors/mapInfo';
 
 import { updateUserPlugin } from '@mapstore/actions/context';
+import { setMainActiveTab } from "@ext/actions/tabou2";
 
 import {
     LOAD_FEATURE_INFO,
@@ -38,8 +39,10 @@ export function tabouLoadIdentifyContent(action$, store) {
                     resp[action.layer.name] = action;
                 }
 
-                return Rx.Observable.of(loadTabouFeatureInfo(resp)).concat(
-                    Rx.Observable.of(closeIdentify())
+                return Rx.Observable.of(setMainActiveTab("identify")).concat(
+                    Rx.Observable.of(loadTabouFeatureInfo(resp)).concat(
+                        Rx.Observable.of(closeIdentify())
+                    )
                 );
             }
             return Rx.Observable.empty();
@@ -53,7 +56,9 @@ export function tabouLoadIdentifyContent(action$, store) {
  * @param {*} store
  */
 export function tabouSetGFIFormat(action$, store) {
-    return action$.ofType(TOGGLE_CONTROL).switchMap((action) => {
+    return action$.ofType(TOGGLE_CONTROL)
+        .filter(() => isTabou2Activate(store.getState()))
+        .switchMap((action) => {
         if (action.control !== CONTROL_NAME) return Rx.Observable.empty();
         if (store.getState().controls[CONTROL_NAME].enabled) {
             // to save default info format from config or default MS2 config
@@ -77,7 +82,8 @@ export function tabouSetGFIFormat(action$, store) {
  * @param {any} store
  */
 export function purgeTabou(action$) {
-    return action$.ofType(FEATURE_INFO_CLICK).switchMap(() => {
+    return action$.ofType(FEATURE_INFO_CLICK)
+    .switchMap(() => {
         return Rx.Observable.of(loadTabouFeatureInfo({}));
     });
 }

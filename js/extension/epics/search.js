@@ -12,8 +12,9 @@ import { changeLayerProperties, updateNode } from "@mapstore/actions/layers";
  * @param {*} store
  */
 export function tabouApplyFilter(action$, store) {
-    return action$.ofType(UPDATE_LAYER_PARAMS).switchMap((action) => {
-
+    return action$.ofType(UPDATE_LAYER_PARAMS)
+    .filter(() => isTabou2Activate(store.getState()))
+    .switchMap((action) => {
         let filterObj = getLayerFilterObj(store.getState()) ?? {};
         const tocLayers = layersSelector(store.getState()) ?? [];
         let layer = tocLayers.filter(lyr => lyr.name === action.layerToFilter);
@@ -39,7 +40,9 @@ export function tabouApplyFilter(action$, store) {
  * @param {*} store
  */
 export function tabouResetFilter(action$, store) {
-    return action$.ofType(RESET_SEARCH_FILTERS).switchMap(() => {
+    return action$.ofType(RESET_SEARCH_FILTERS)
+    .filter(() => isTabou2Activate(store.getState()))
+    .switchMap(() => {
         const layers = keys(currentTabouFilters(store.getState()));
         const tocLayers = layersSelector(store.getState()) ?? [];
         const layersId = tocLayers.filter(layer => layers.indexOf(layer.name) > -1).map(layer => layer.id);
