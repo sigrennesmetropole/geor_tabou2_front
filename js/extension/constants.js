@@ -20,8 +20,6 @@ export const API_BASE_URL = 'http://localhost:3000';
 
 export const GEOSERVER_WFS_URL = 'https://public.sig.rennesmetropole.fr/geoserver';
 
-export const COMMUNE_LAYER_ID = 'ladm_terri:commune_emprise';
-
 export const ID_SELECTOR = 'layerTabouId-selector';
 
 export const PANEL_SIZE = 500;
@@ -156,17 +154,18 @@ export const ACCORDIONS = [
 
 export const LAYER_FIELD_OPTION = [
     {
-        name: "tabou2:v_oa_programmePolygon",
+        //name: "urba_proj:v_oa_programme",
+        name: "layerPA",
         field: "properties.nom",
         id: "properties.objectid"
     },
     {
-        name: "tabou2:oa_secteur",
+        name: "layerSA",
         field: "properties.secteur",
         id: "properties.objectid"
     },
     {
-        name: "tabou2:zacPolygon",
+        name: "layerOA",
         field: "properties.nomzac",
         id: "properties.id_zac"
     }

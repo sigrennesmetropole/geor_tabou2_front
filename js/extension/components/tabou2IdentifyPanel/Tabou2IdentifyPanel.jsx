@@ -30,12 +30,13 @@ export default function Tabou2IdentifyPanel({
         let selectedLayer = option.name;
         let selectedFeatures = queryData[selectedLayer]?.data?.features || [];
         let selectedFeature = selectedFeatures[0];
-
-        setConfigLayer(keys(props.layersCfg).filter(k => selectedLayer === props.layersCfg[k].nom)[0]);
+        let configName = keys(props.layersCfg).filter(k => selectedLayer === props.layersCfg[k].nom)[0];
+        
+        setConfigLayer(configName);
         setSelectedLayer(selectedLayer);
         setSelectedFeatures(selectedFeatures);
         setFeature(selectedFeature);
-        onSelect(selectedFeature, get(selectedFeature, find(LAYER_FIELD_OPTION, ["name", selectedLayer]).id), selectedLayer);
+        onSelect(selectedFeature, get(selectedFeature, find(LAYER_FIELD_OPTION, ["name", configName]).id), selectedLayer);
 
     };
 
@@ -65,7 +66,7 @@ export default function Tabou2IdentifyPanel({
                     keys(response).map(l => (
                         <IdentifyDropDown
                             disabled={false}
-                            data={getFeaturesOptions(response[l].data.features, l)}
+                            data={getFeaturesOptions(response[l].data.features, keys(props.layersCfg).filter(k => l === props.layersCfg[k].nom)[0])}
                             defaultValue={defaultIndex}
                             textField={"label"}
                             valueField={"idx"}
@@ -74,7 +75,7 @@ export default function Tabou2IdentifyPanel({
                             onChange={(i) => {
                                 let featureSelected = selectedFeatures[i.idx];
                                 setFeature(featureSelected);
-                                onSelect(featureSelected, get(featureSelected, find(LAYER_FIELD_OPTION, ["name", selectedLayer]).id), selectedLayer);
+                                onSelect(featureSelected, get(featureSelected, find(LAYER_FIELD_OPTION, ["name", configLayer]).id), selectedLayer);
                             }}
                         />
                     ))
@@ -84,7 +85,7 @@ export default function Tabou2IdentifyPanel({
                     (<Row className="tabou-idToolbar-row text-center" style={{ display: "flex", margin: "auto", justifyContent: "center" }}>
                         <Tabou2IdentifyToolbar 
                             response={response[selectedLayer]}
-                            featureId={get(feature, find(LAYER_FIELD_OPTION, ["name", selectedLayer]).id)} 
+                            featureId={get(feature, find(LAYER_FIELD_OPTION, ["name", configLayer]).id)} 
                             {...props}
                         />
                     </Row>)
@@ -96,7 +97,7 @@ export default function Tabou2IdentifyPanel({
                         <>
                             <Tabou2IdentifyContent
                                 feature={feature}
-                                featureId={get(feature, find(LAYER_FIELD_OPTION, ["name", selectedLayer]).id)}
+                                featureId={get(feature, find(LAYER_FIELD_OPTION, ["name", configLayer]).id)}
                                 response={response[selectedLayer]}
                                 tabouLayer={configLayer}
                                 {...props}
