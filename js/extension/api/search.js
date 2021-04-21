@@ -1,12 +1,13 @@
 import axios from '@mapstore/libs/ajax';
 import { API_BASE_URL } from '../constants';
 
+let baseURL = "/tabou2";
 
 /**
  * API - create GET request
  */
 export function getRequestApi(name, apiCfg, params) {
-    let url = apiCfg?.apiURL || API_BASE_URL;
+    let url = apiCfg?.apiURL || baseURL;
     let requestParams = {
         params: params || {}
     };
@@ -40,4 +41,30 @@ export function postRequestApi(name, apiCfg, body) {
         headers.Authorization = `Basic ${btoa(apiCfg.authent)}`;
     }
     return axios.post(`${url}/${name}`, body, {headers: headers}).then(({ data }) => data);
+}
+
+
+export function getFeatureEvents(type, id) {
+    //return getRequestApi(`${type}/${id}/evenements`).then(({ data }) => data);
+    return axios.get(`${baseURL}/${type}/${id}/evenements`, null, {})
+}
+
+export function addFeatureEvent(id, event) {
+    return axios.post(`${baseURL}/operations/${id}/evenements`, event, {}).then(({ data }) => data);
+}
+
+export function getTypesEvents() {
+    return getRequestApi(`types-evenements?asc=true`).then(({ data }) => data);
+}
+
+export function getFeatureTiers(type, id) {
+    return getRequestApi(`${type}/${id}/tiers?asc=true`).then(({ data }) => data);
+}
+
+export function getTiers() {
+    return getRequestApi(`tiers?asc=true`).then(({ data }) => data);
+}
+
+export function getTypesTiers() {
+    return getRequestApi(`/types-tiers?asc=true`).then(({ data }) => data);
 }

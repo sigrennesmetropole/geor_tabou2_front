@@ -10,10 +10,18 @@ export const SET_SELECTOR_INDEX = "TABOU2:SET_SELECTOR_INDEX";
 export const SET_TABOU_FILTEROBJ = "TABOU2:SET_TABOU_FILTEROBJ";
 export const UPDATE_LAYER_PARAMS = "TABOU2:UPDATE_LAYER_PARAMS";
 export const RESET_CQL_FILTERS = "TABOU2:RESET_CQL_FILTERS";
+export const SELECT_FEATURE = "SELECT_FEATURE";
+export const SELECT_LAYER = "SELECT_LAYER";
+export const LOAD_EVENTS = "LOAD_EVENTS";
+export const ADD_EVENT = "ADD_EVENT";
+export const DELETE_EVENTS = "DELETE_EVENTS";
+export const CHANGE_EVENTS = "CHANGE_EVENTS";
+export const SET_TABOU_CONFIG = "SET_TABOU_CONFIG";
 
 
-export const setUp = () => ({
-    type: SETUP
+export const setUp = (pluginCfg) => ({
+    type: SETUP,
+    pluginCfg
 });
 /**
  * Triggered when plugin is close
@@ -50,10 +58,11 @@ export const setDefaultInfoFormat = (infoFormat) => ({
 });
 
 
-export const loadTabouFeatureInfo = (response) => ({
+export const loadTabouFeatureInfo = (response) => {
+    return ({
     type: LOAD_TABOU_FEATURE_INFO,
     response
-});
+})};
 
 export const setSelectorIndex = (selectorsIndex) => ({
     type: SET_SELECTOR_INDEX,
@@ -65,7 +74,44 @@ export const setTabouFilterObj = (layerFilterObj) => ({
     layerFilterObj
 });
 
-export const applyFilterObj = (layerToFilter) => ({
-    type: UPDATE_LAYER_PARAMS,
-    layerToFilter
+export const applyFilterObj = (layerToFilter) => {
+    console.log(layerToFilter);
+    return ({
+        type: UPDATE_LAYER_PARAMS,
+        layerToFilter
+})};
+
+export const setSelectedFeature = (selectedFeature) => ({
+    type: SELECT_FEATURE,
+    selectedFeature
+});
+
+export const setSelectedLayer = (selectedLayer) => ({
+    type: SELECT_LAYER,
+    selectedLayer
+});
+
+export const loadEvents = (events) => ({
+    type: LOAD_EVENTS,
+    events
+});
+
+export const addFeatureEvent = (event) => ({
+    type: ADD_FEATURE_EVENT,
+    event
+});
+
+export const deleteFeatureEvent = (event) => ({
+    type: DELETE_FEATURE_EVENT,
+    event
+});
+
+export const changeFeatureEvent = (event) => ({
+    type: CHANGE_FEATURE_EVENT,
+    event
+});
+
+export const setTabouConfig = (config) => ({
+    type: SET_TABOU_CONFIG,
+    config
 });

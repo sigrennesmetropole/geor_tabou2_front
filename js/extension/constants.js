@@ -12,6 +12,8 @@ export const TABS = [{
     glyph: 'map-marker'
 }];
 
+export const ID_TABOU = "id_tabou";
+
 export const CONTROL_NAME = 'tabou2';
 
 export const API_BASE_URL = 'http://localhost:3000';

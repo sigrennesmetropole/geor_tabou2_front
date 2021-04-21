@@ -35,3 +35,14 @@ export function getLayerFilterObj(state) {
 export function getPluginCfg(state) {
     return state?.tabou2.pluginCfg;
 }
+
+export function getSelection(state) {
+    return state?.tabou2?.selectedFeature;
+}
+export function getLayer(state) {
+    return state?.tabou2?.selectedLayer;
+}
+
+export function getEvents(state) {
+    return state?.tabou2?.events;
+}

@@ -1,4 +1,4 @@
-import { set } from '@mapstore/utils/ImmutableUtils';
+import { set, compose } from '@mapstore/utils/ImmutableUtils';
 import {
     SETUP,
     SET_MAIN_ACTIVE_TAB,
@@ -9,7 +9,11 @@ import {
     SET_TABOU_FILTEROBJ,
     UPDATE_LAYER_PARAMS,
     RESET_SEARCH_FILTERS,
-    RESET_CQL_FILTERS
+    RESET_CQL_FILTERS,
+    SELECT_FEATURE,
+    SELECT_LAYER,
+    LOAD_EVENTS,
+    ADD_EVENT
 } from '@ext/actions/tabou2';
 
 const initialState = {
@@ -20,7 +24,10 @@ const initialState = {
     filterObj: {},
     layerFilterObj: {},
     layerToFilter: '',
-    pluginCfg: {}
+    pluginCfg: {},
+    selectedFeature: {},
+    selectedLayer: "",
+    events: []
 };
 
 export default function tabou2(state = initialState, action) {
@@ -53,6 +60,18 @@ export default function tabou2(state = initialState, action) {
     case UPDATE_LAYER_PARAMS:
         const { layerToFilter } = action;
         return set('layerToFilter', layerToFilter, state);
+    case SELECT_FEATURE:
+        const { selectedFeature } = action;
+        return set('selectedFeature', selectedFeature, state);
+    case SELECT_LAYER:
+        const { selectedLayer } = action;
+        return set('selectedLayer', selectedLayer, state);
+    case LOAD_EVENTS:
+        const { events } = action;
+        return set('events', events, state);
+    case ADD_EVENT:
+        const { event } = action;
+        return set('event', event, state);
     default:
         return state;
     }
