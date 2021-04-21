@@ -4,7 +4,6 @@ import { CONTROL_NAME } from '../constants';
 import { generalInfoFormatSelector } from '@mapstore/selectors/mapInfo';
 
 import { updateUserPlugin } from '@mapstore/actions/context';
-import { setMainActiveTab } from "@ext/actions/tabou2";
 
 import {
     LOAD_FEATURE_INFO,
@@ -12,12 +11,9 @@ import {
     closeIdentify,
     changeMapInfoFormat
 } from "@mapstore/actions/mapInfo";
-
 import { TOGGLE_CONTROL } from '@mapstore/actions/controls';
-
-import { isTabou2Activate, defaultInfoFormat, getTabouResponse } from '../selectors/tabou2';
-
-import { loadTabouFeatureInfo, setDefaultInfoFormat } from '../actions/tabou2';
+import { isTabou2Activate, defaultInfoFormat, getTabouResponse } from '@ext/selectors/tabou2';
+import { loadTabouFeatureInfo, setDefaultInfoFormat, setMainActiveTab } from '@ext/actions/tabou2';
 
 /**
  * Catch GFI response on identify load event and close identify if Tabou2 identify tabs is selected
