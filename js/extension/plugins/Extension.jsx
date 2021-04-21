@@ -15,12 +15,16 @@ import Tabou2MainPanel from '@ext/components/tabou2Panel/Tabou2MainPanel';
 import tabou2 from '@ext/reducers/tabou2';
 
 import { setUp } from '@ext/actions/tabou2';
+import init from '@ext/utils/init';
 
 import { tabouApplyFilter, tabouResetFilter } from '@ext/epics/search';
 import { tabouLoadIdentifyContent, tabouSetGFIFormat, purgeTabou } from '@ext/epics/identify';
-import { setTbarPosition } from '@ext/epics/setup';
+import { getTabou2Logs } from '@ext/epics/featureEvents';
+import { setTbarPosition, tabouSetup } from '@ext/epics/setup';
 
 import { CONTROL_NAME } from '@ext/constants';
+
+const compose = (...functions) => args => functions.reduceRight((arg, fn) => fn(arg), args);
 
 class Tabou2Panel extends React.Component {
     static propTypes = {
@@ -46,25 +50,29 @@ class Tabou2Panel extends React.Component {
     }
 }
 
-/**
- *
- * TABOU 2 PLUGIN
- *
- */
-const Tabou2Plugin = connect((state) => ({
-    active: () => (state.controls && state.controls[CONTROL_NAME] && state.controls[CONTROL_NAME].enabled) || (state[CONTROL_NAME] && state[CONTROL_NAME].closing) || false,
-    tocLayers: layersSelector(state),
-    selectedLayerId: selectedLayerIdSelector(state)
-}), {
-    onClose: toggleControl.bind(null, CONTROL_NAME, null),
-    changeLayerParams: changeLayerParams,
-    changeLayerProperties: changeLayerProperties,
-    onSyncLayers: syncLayers,
-    onSelectLayers: selectLayers,
-    onQuery: search,
-    setCfg: setUp,
-    getState: state => state
-})(Tabou2Panel);
+const Tabou2Plugin = compose(
+    connect((state) => ({
+        active: () => (state.controls && state.controls[CONTROL_NAME] && state.controls[CONTROL_NAME].enabled) || (state[CONTROL_NAME] && state[CONTROL_NAME].closing) || false,
+        tocLayers: layersSelector(state),
+        selectedLayerId: selectedLayerIdSelector(state)
+    }), {
+        onClose: toggleControl.bind(null, CONTROL_NAME, null),
+        changeLayerParams: changeLayerParams,
+        changeLayerProperties: changeLayerProperties,
+        onSyncLayers: syncLayers,
+        onSelectLayers: selectLayers,
+        onQuery: search,
+        setCfg: setUp,
+        getState: state => state
+    }),
+    // setup and teardown due to open/close
+    compose(
+        connect( () => ({}), {
+            setUp
+        }),
+        init()
+    )
+)(Tabou2Panel);
 
 export default {
     name: "Tabou2",
@@ -76,7 +84,9 @@ export default {
         tabouSetGFIFormat: tabouSetGFIFormat,
         purgeTabou: purgeTabou,
         tabouResetFilter: tabouResetFilter,
-        setTbarPosition: setTbarPosition
+        setTbarPosition: setTbarPosition,
+        getTabou2Logs: getTabou2Logs,
+        tabouSetup: tabouSetup
     },
     containers: {
         Toolbar: {
