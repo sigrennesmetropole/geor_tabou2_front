@@ -2,7 +2,7 @@ import * as Rx from 'rxjs';
 import { keys } from 'lodash';
 import { RESET_SEARCH_FILTERS, UPDATE_LAYER_PARAMS } from '../actions/tabou2';
 import { layersSelector } from '@mapstore/selectors/layers';
-import { currentTabouFilters, getLayerFilterObj } from '../selectors/tabou2';
+import { currentTabouFilters, getLayerFilterObj, isTabou2Activate } from '../selectors/tabou2';
 import { changeLayerProperties, updateNode } from "@mapstore/actions/layers";
 
 /**
