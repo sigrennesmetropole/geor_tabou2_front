@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { keys, isEqual, isEmpty, get, find } from 'lodash';
 
 import Tabou2IdentifyContent from './Tabou2IdentifyContent';
-import { ID_SELECTOR, LAYER_FIELD_OPTION } from '@ext/constants';
+import { LAYER_FIELD_OPTION } from '@ext/constants';
 import { createOptions, getFeaturesOptions } from '@ext/utils/identify';
 import IdentifyDropDown from "./IdentifyDropDown";
-import { Button, Glyphicon } from 'react-bootstrap';
+import { Button, Glyphicon, Row } from 'react-bootstrap';
 import Tabou2Information from "@ext/components/common/Tabou2Information";
+import Tabou2IdentifyToolbar from './Tabou2IdentifyToolbar';
 
 export default function Tabou2IdentifyPanel({
     queryData,
@@ -20,7 +21,6 @@ export default function Tabou2IdentifyPanel({
     const [selectedFeatures, setSelectedFeatures] = useState([]);
     const [feature, setFeature] = useState("");
     const [response, setResponse] = useState({});
-
 
     /**
      * Event to trigger when user click on dropdown option
@@ -79,15 +79,30 @@ export default function Tabou2IdentifyPanel({
                         />
                     ))
             }
-
+            { 
+                !isEmpty(response) && feature ? 
+                    (<Row className="tabou-idToolbar-row text-center" style={{ display: "flex", margin: "auto", justifyContent: "center" }}>
+                        <Tabou2IdentifyToolbar 
+                            response={response[selectedLayer]}
+                            featureId={get(feature, find(LAYER_FIELD_OPTION, ["name", selectedLayer]).id)} 
+                            {...props}
+                        />
+                    </Row>)
+                    : null
+            }
             {
                 !isEmpty(response) && feature && feature.properties.id_tabou ?
-                    (<Tabou2IdentifyContent
-                        feature={feature}
-                        featureId={get(feature, find(LAYER_FIELD_OPTION, ["name", selectedLayer]).id)}
-                        response={response[selectedLayer]}
-                        tabouLayer={configLayer}
-                        {...props}/>)
+                    (
+                        <>
+                            <Tabou2IdentifyContent
+                                feature={feature}
+                                featureId={get(feature, find(LAYER_FIELD_OPTION, ["name", selectedLayer]).id)}
+                                response={response[selectedLayer]}
+                                tabouLayer={configLayer}
+                                {...props}
+                            />
+                        </>
+                    )
                     : null
             }
             <Tabou2Information 

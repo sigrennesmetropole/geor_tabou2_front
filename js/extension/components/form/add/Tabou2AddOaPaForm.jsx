@@ -86,7 +86,6 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
     useEffect(() => {
         let fProp = feature?.properties;
         let newInfos = {
-            etape : get(fProp, ADD_FIELDS.etape[layer]) || infos.etape,
             idEmprise : get(fProp, ADD_FIELDS.nom[layer]) || infos.idEmprise,
             nature : get(fProp, ADD_FIELDS.nature[layer]) || infos.nature,
             secteur : get(fProp, ADD_FIELDS.secteur[layer]) || infos.secteur,
@@ -134,7 +133,7 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
                                     el = (
                                         <FormControl
                                             style={{ marginTop: comboMarginTop, borderColor: isInvalidStyle(item.name) }}
-                                            readOnly={item.parent ? getActivate(item) : false}
+                                            readOnly={feature && infos[item.name] && item.name !== "code" ? true : item.parent ? getActivate(item) : false}
                                             type={item.type}
                                             value={get(infos, item.name)}
                                             required={item?.required}

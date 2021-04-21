@@ -3,7 +3,7 @@ import { Grid, Row, Col, FormGroup } from 'react-bootstrap';
 import { DropdownList} from 'react-widgets';
 import { keys, find, isEqual } from 'lodash';
 import Tabou2AddOaPaForm from '@ext/components/form/add/Tabou2AddOaPaForm';
-import { ADD_OA_FORM, ADD_PA_FORM, URL_ADD } from '@ext/constants';
+import { ADD_OA_FORM, ADD_PA_FORM } from '@ext/constants';
 
 export default function Tabou2AddPanel({feature, featureId, layer, ...props}) {
     
