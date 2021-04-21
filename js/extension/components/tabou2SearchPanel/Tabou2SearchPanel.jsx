@@ -10,7 +10,7 @@ import Tabou2Combo from '../form/Tabou2Combo';
 import utcDateWrapper from '@mapstore/components/misc/enhancers/utcDateWrapper';
 import { getRequestApi } from '../../api/search';
 
-import { setTabouFilterObj, setTabouFilters, resetSearchFilters, resetCqlFilters } from '../../actions/tabou2';
+import { setTabouFilterObj, setTabouFilters, resetSearchFilters, resetCqlFilters, applyFilterObj } from '../../actions/tabou2';
 
 import { getNewFilter, getNewCqlFilter, getGeoServerUrl, getCQL, getTabouLayersInfos } from '../../utils/search';
 
@@ -131,6 +131,7 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                 newFilter.crossLayerFilter = geomFilter;
                 // update filter obj before change layer
                 filtersObj[lyr] = newFilter;
+                console.log(filtersObj);
                 changeFiltersObj(filtersObj);
             })
                 // eslint-disable-next-line no-console
@@ -223,7 +224,7 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
         <>
             <Grid className={"col-xs-12"}>
                 <div id="tabou2-tbar-container" className="text-center">
-                    <Tabou2SearchToolbar reset={reset}/>
+                    <Tabou2SearchToolbar filters={getFiltersObj} apply={props.applyFilterObj} reset={reset}/>
                 </div>
                 <Row>
                     <Panel
