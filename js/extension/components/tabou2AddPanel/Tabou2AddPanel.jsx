@@ -17,10 +17,8 @@ export default function Tabou2AddPanel({feature, featureId, layer, ...props}) {
     }, [feature]);
 
     useEffect(() => {
-        console.log(layer);
         if (layer !== type) {
-            console.log(layer);
-            setType(layer);
+            setType(layer || "layerOA");
         }
     }, [layer]);
 
