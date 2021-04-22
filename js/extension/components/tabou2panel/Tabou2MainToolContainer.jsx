@@ -16,7 +16,7 @@ import Tabou2SearchPanel from '../tabou2SearchPanel/Tabou2SearchPanel';
 import Tabou2AddPanel from '../tabou2AddPanel/Tabou2AddPanel';
 import Tabou2IdentifyPanel from '../tabou2IdentifyPanel/Tabou2IdentifyPanel';
 import Tabou2Information from '@ext/components/common/Tabou2Information';
-import { setMainActiveTab, setSelectedFeature, setSelectedLayer, addFeatureEvent, deleteFeatureEvent, applyFilterObj } from "@ext/actions/tabou2";
+import { setMainActiveTab, setSelectedFeature, setSelectedLayer, addFeatureEvent, deleteFeatureEvent, changeFeatureEvent, applyFilterObj } from "@ext/actions/tabou2";
 
 function toolContainer({data, ...props }) {
     const [selection, setSelection] = useState({feature: {}, id: null, layer:""});
@@ -79,8 +79,9 @@ export default connect(
         setTab: setMainActiveTab,
         setFeature: setSelectedFeature,
         setLayer: setSelectedLayer,
-        addEvent: addFeatureEvent,
         applyFilterObj: applyFilterObj,
-        deleteEvent: deleteFeatureEvent
+        addEvent: addFeatureEvent,
+        deleteEvent: deleteFeatureEvent,
+        changeEvent: changeFeatureEvent 
     }
 )(toolContainer);

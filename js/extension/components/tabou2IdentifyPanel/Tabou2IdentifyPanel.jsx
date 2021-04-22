@@ -57,7 +57,6 @@ export default function Tabou2IdentifyPanel({
                 data={createOptions(keys(response).map(e => response[e]))}
                 valueField={'value'}
                 textField={'label'}
-                visible={true}
                 icon="glyphicon-1-layer"
                 onChange={(i) => changeLayer(i)}
             />
@@ -71,7 +70,6 @@ export default function Tabou2IdentifyPanel({
                             textField={"label"}
                             valueField={"idx"}
                             icon="glyphicon-list"
-                            visible={l === selectedLayer}
                             onChange={(i) => {
                                 let featureSelected = selectedFeatures[i.idx];
                                 setFeature(featureSelected);

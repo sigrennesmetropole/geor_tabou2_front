@@ -1,12 +1,13 @@
 import React, {useState, useEffect} from 'react';
 import ResizableModal from '@mapstore/components/misc/ResizableModal';
 import { Grid, FormGroup, Checkbox, Col, Button, Table, Glyphicon, Row, ControlLabel } from 'react-bootstrap';
-import { get, isEqual, find } from 'lodash';
+import { get, isEqual, find, keys } from 'lodash';
 import { getRequestApi, putRequestApi, postRequestApi } from "@ext/api/search";
 import Tabou2TiersForm from '@ext/components/form/Tabou2TiersForm';
 import { URL_TIERS, TIERS_SCHEMA } from '@ext/constants';
 import Tabou2Combo from '@ext/components/form/Tabou2Combo';
 import Tabou2TextForm from '@ext/components/form/Tabou2TextForm';
+import { URL_ADD } from '@js/extension/constants';
 
 export default function Tabou2TiersModal({
     visible,
@@ -21,12 +22,15 @@ export default function Tabou2TiersModal({
     const [collapse, setCollapse] = useState(-1);
     const [inChangeTier, setInChangeTier] = useState([]);
 
+    const layerConfigName = keys(props?.pluginCfg?.layersCfg).filter(k => props?.selectionLayer === props?.layersCfg[k]?.nom)[0];
+    const layerUrl = get(URL_ADD, layerConfigName);
+
     const refreshTiers = () => {
         /**
          * /!\ - API Unavailable !
          * Uncomment to get real api according to layer
         */
-        /* getRequestApi(`${get(URL_TIERS, lyr)}/${fId}/tiers`).then(r => {
+        /* getRequestApi(`${get(URL_TIERS, layerUrl)}/${fId}/tiers`).then(r => {
             setTiers(r);
         });*/
 
@@ -41,6 +45,7 @@ export default function Tabou2TiersModal({
     }, [featureId, layer, editable]);
 
     const inactivateTier = (id) => {
+        // TODO : change by real api service not all tiers
         putRequestApi(`/tiers/${id}/inactivate`, props.apiCfg).then(() => refreshTiers());
     };
 
@@ -70,8 +75,10 @@ export default function Tabou2TiersModal({
         let needChange = !tiers.filter(t => isEqual(t, tierToSave)).length;
         let isNew = !tiers.filter(t => t.id === id).length;
         if (tierToSave && needChange && !isNew) {
+            // TODO : change by real api service not all tiers
             putRequestApi(`${get(URL_TIERS, "tabou2")}/tiers`, props.apiCfg, tierToSave).then(() => refreshTiers());
         } else if (isNew) {
+            // TODO : change by real api service not all tiers
             postRequestApi(`${get(URL_TIERS, "tabou2")}/tiers`, props.apiCfg, tierToSave).then(() => {
                 setInChangeTier([...inChangeTier.filter(f => f.id !== id)]);
                 refreshTiers();
