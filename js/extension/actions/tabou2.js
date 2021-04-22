@@ -74,12 +74,10 @@ export const setTabouFilterObj = (layerFilterObj) => ({
     layerFilterObj
 });
 
-export const applyFilterObj = (layerToFilter) => {
-    console.log(layerToFilter);
-    return ({
-        type: UPDATE_LAYER_PARAMS,
-        layerToFilter
-})};
+export const applyFilterObj = (layerToFilter) => ({
+    type: UPDATE_LAYER_PARAMS,
+    layerToFilter
+});
 
 export const setSelectedFeature = (selectedFeature) => ({
     type: SELECT_FEATURE,

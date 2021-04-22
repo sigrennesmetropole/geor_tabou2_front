@@ -34,7 +34,6 @@ export function updateTabou2Logs(action$, store) {
         .switchMap((action) => {
             //const idTabou = action?.selectedFeature?.properties.id_zac || action?.selectedFeature?.properties.objectid;
             // selected feature and selected layer
-            console.log('GO');
             const feature = getSelection(store.getState());
             const layer = getLayer(store.getState());
             // get plugin config
