@@ -12,8 +12,7 @@ import {
     RESET_CQL_FILTERS,
     SELECT_FEATURE,
     SELECT_LAYER,
-    LOAD_EVENTS,
-    ADD_EVENT
+    LOAD_EVENTS
 } from '@ext/actions/tabou2';
 
 const initialState = {
@@ -69,9 +68,6 @@ export default function tabou2(state = initialState, action) {
     case LOAD_EVENTS:
         const { events } = action;
         return set('events', events, state);
-    case ADD_EVENT:
-        const { event } = action;
-        return set('event', event, state);
     default:
         return state;
     }

@@ -19,8 +19,8 @@ import init from '@ext/utils/init';
 
 import { tabouApplyFilter, tabouResetFilter } from '@ext/epics/search';
 import { tabouLoadIdentifyContent, tabouSetGFIFormat, purgeTabou } from '@ext/epics/identify';
-import { getTabou2Logs } from '@ext/epics/featureEvents';
-import { setTbarPosition, tabouSetup } from '@ext/epics/setup';
+import { getTabou2Logs, updateTabou2Logs } from '@ext/epics/featureEvents';
+import { setTbarPosition } from '@ext/epics/setup';
 
 import { CONTROL_NAME } from '@ext/constants';
 
@@ -86,7 +86,7 @@ export default {
         tabouResetFilter: tabouResetFilter,
         setTbarPosition: setTbarPosition,
         getTabou2Logs: getTabou2Logs,
-        tabouSetup: tabouSetup
+        updateTabou2Logs: updateTabou2Logs
     },
     containers: {
         Toolbar: {

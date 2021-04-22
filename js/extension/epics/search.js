@@ -32,7 +32,6 @@ export function tabouApplyFilter(action$, store) {
     });
 }
 
-
 /**
  * Reset filters for each layers.
  * This affect layer filter and reset TOC filter panel.
