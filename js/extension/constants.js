@@ -26,7 +26,8 @@ export const PANEL_SIZE = 500;
 
 export const URL_ADD = {
     "layerPA": "programmes",
-    "layerOA": "operations"
+    "layerOA": "operations",
+    "layerSA": "operations"
 };
 
 export const URL_TIERS = {
@@ -107,12 +108,12 @@ export const SEARCH_ITEMS = [{
 }, {
     name: "etapesoa",
     placeholder: "Toutes Etapes OA",
-    api: "/operations/etapes",
+    api: "operations/etapes",
     disabled: false,
     group: 3
 }, {
     name: "etapespa",
-    api: "/programmes/etapes",
+    api: "programmes/etapes",
     placeholder: "Toutes Etapes PA",
     disabled: false,
     group: 4
@@ -277,6 +278,7 @@ export const ADD_FIELDS = {
         layerSA : ""
     }
 }
+
 export const ADD_OA_FORM = [{
     label: " Commencez par choisir le type et la nature de l'emprise à sélectionner",
     group: 1,
@@ -400,7 +402,6 @@ export const ADD_PA_FORM = [ {
     type: "combo"
 }];
 
-
 export const OA_SCHEMA = {
     "autorisationDate": "2021-02-24T15:15:36.426Z",
     "clotureDate": "2021-02-24T15:15:36.426Z",
@@ -488,3 +489,11 @@ export const OA_SCHEMA = {
     "programme": "prog2",
     "code": "prog2"
   };
+
+  export const LOG_SCHEMA = {
+    description: "",
+    eventDate: "2021-04-21T14:39:54.176Z",
+    id: 0,
+    idType: 3,
+    new: true
+}

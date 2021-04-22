@@ -49,12 +49,27 @@ export function getFeatureEvents(type, id) {
     return axios.get(`${baseURL}/${type}/${id}/evenements`, null, {})
 }
 
-export function addFeatureEvent(id, event) {
-    return axios.post(`${baseURL}/operations/${id}/evenements`, event, {}).then(({ data }) => data);
+export function addFeatureEvent(type, id, event) {
+    return axios.post(`${baseURL}/${type}/${id}/evenements`, event);
 }
 
+export function changeFeatureEvent(type, id, event) {
+    return axios.post(`${baseURL}/${type}/${id}/evenements`, event);
+}
+
+export function deleteFeatureEvent(type, id, eventId) {
+    return axios.delete(`${baseURL}/${type}/${id}/evenements/${eventId}`);
+}
+
+
+
+
+
+
+
+
 export function getTypesEvents() {
-    return getRequestApi(`types-evenements?asc=true`).then(({ data }) => data);
+    return getRequestApi(`types-evenements?asc=true`);
 }
 
 export function getFeatureTiers(type, id) {
