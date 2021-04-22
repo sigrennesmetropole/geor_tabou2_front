@@ -131,7 +131,6 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                 newFilter.crossLayerFilter = geomFilter;
                 // update filter obj before change layer
                 filtersObj[lyr] = newFilter;
-                console.log(filtersObj);
                 changeFiltersObj(filtersObj);
             })
                 // eslint-disable-next-line no-console

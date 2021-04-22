@@ -29,21 +29,19 @@ function Tabou2Combo({
             if (firstItem) response.unshift(firstItem);
             response = uniqBy(response, textField);
             setData(response);
-            return response;
         });
     };
 
     useEffect(() => {
         setText("");
         if (!disabled) {
-            return loadData();
+            loadData();
         }
     }, [parentValue, disabled]); // pass array to stop inifity loop
 
     useEffect(() => {
         if (text !== value) {
             setText(value);
-            return value;
         }
     }, [value]); // pass array to stop inifity loop
 
@@ -56,8 +54,6 @@ function Tabou2Combo({
             fn(v);
         }
     };
-
-    console.log(props);
 
     return (<Combobox
         value={text}

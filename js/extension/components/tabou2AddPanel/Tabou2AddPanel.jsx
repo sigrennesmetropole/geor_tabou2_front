@@ -45,6 +45,7 @@ export default function Tabou2AddPanel({feature, featureId, layer, ...props}) {
                             onSelect={(value) => {
                                 setType(value.value);
                             }}
+                            onChange={(value) => setType(value.value)}
                         />
                     </FormGroup>
                 </Col>
