@@ -74,7 +74,7 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
         let filtersObj = getFiltersObj;
         const geoserverURL = getGeoServerUrl(props);
         layers.forEach(lyr => {
-            const cql = getCQL(type, filterConf.geom, filterConf.layer, filterConf.geom,  filterConf.filterField, value);
+            const cql = getCQL(type, layersInfos[lyr].geom, filterConf.layer, filterConf.geom,  filterConf.filterField, value);
             const idField = layersInfos[lyr].id;
             const idType = layersInfos[lyr].type;
             if (!currentFilters[lyr]) {
