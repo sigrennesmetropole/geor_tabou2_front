@@ -16,6 +16,11 @@ export const LOAD_EVENTS = "LOAD_EVENTS";
 export const ADD_FEATURE_EVENT = "ADD_FEATURE_EVENT";
 export const DELETE_FEATURE_EVENT = "DELETE_FEATURE_EVENT";
 export const CHANGE_FEATURE_EVENT = "CHANGE_FEATURE_EVENT";
+export const LOAD_TIERS = "LOAD_TIERS";
+export const ADD_FEATURE_TIER = "ADD_FEATURE_TIER";
+export const DELETE_FEATURE_TIER = "DELETE_FEATURE_TIER";
+export const CHANGE_FEATURE_TIER = "CHANGE_FEATURE_TIER";
+export const INACTIVATE_TIER = "INACTIVATE_TIER";
 export const SET_TABOU_CONFIG = "SET_TABOU_CONFIG";
 
 
@@ -107,6 +112,31 @@ export const deleteFeatureEvent = (event) => ({
 export const changeFeatureEvent = (event) => ({
     type: CHANGE_FEATURE_EVENT,
     event
+});
+
+export const loadTiers = (tiers) => ({
+    type: LOAD_TIERS,
+    tiers
+});
+
+export const addFeatureTier = (tier) => ({
+    type: ADD_FEATURE_TIER,
+    tier
+});
+
+export const deleteFeatureTier = (tier) => ({
+    type: DELETE_FEATURE_TIER,
+    tier
+});
+
+export const changeFeatureTier = (tier) => ({
+    type: CHANGE_FEATURE_TIER,
+    tier
+});
+
+export const inactivateTier = (tier) => ({
+    type: INACTIVATE_TIER,
+    tier
 });
 
 export const setTabouConfig = (config) => ({

@@ -1,4 +1,4 @@
-import { set, compose } from '@mapstore/utils/ImmutableUtils';
+import { set } from '@mapstore/utils/ImmutableUtils';
 import {
     SETUP,
     SET_MAIN_ACTIVE_TAB,
@@ -12,7 +12,8 @@ import {
     RESET_CQL_FILTERS,
     SELECT_FEATURE,
     SELECT_LAYER,
-    LOAD_EVENTS
+    LOAD_EVENTS,
+    LOAD_TIERS
 } from '@ext/actions/tabou2';
 
 const initialState = {
@@ -26,7 +27,8 @@ const initialState = {
     pluginCfg: {},
     selectedFeature: {},
     selectedLayer: "",
-    events: []
+    events: [],
+    tiers: []
 };
 
 export default function tabou2(state = initialState, action) {
@@ -68,6 +70,9 @@ export default function tabou2(state = initialState, action) {
     case LOAD_EVENTS:
         const { events } = action;
         return set('events', events, state);
+    case LOAD_TIERS:
+        const { tiers } = action;
+        return set('tiers', tiers, state);
     default:
         return state;
     }

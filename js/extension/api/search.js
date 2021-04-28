@@ -44,9 +44,12 @@ export function postRequestApi(name, apiCfg, body) {
 }
 
 
+/**
+ * EVENTS
+ */
 export function getFeatureEvents(type, id) {
     //return getRequestApi(`${type}/${id}/evenements`).then(({ data }) => data);
-    return axios.get(`${baseURL}/${type}/${id}/evenements`, null, {})
+    return axios.get(`${baseURL}/${type}/${id}/evenements`, null, {});
 }
 
 export function addFeatureEvent(type, id, event) {
@@ -61,25 +64,45 @@ export function deleteFeatureEvent(type, id, eventId) {
     return axios.delete(`${baseURL}/${type}/${id}/evenements/${eventId}`);
 }
 
-
-
-
-
-
-
-
 export function getTypesEvents() {
     return getRequestApi(`types-evenements?asc=true`);
 }
 
-export function getFeatureTiers(type, id) {
-    return getRequestApi(`${type}/${id}/tiers?asc=true`).then(({ data }) => data);
-}
+
+/**
+ * TIERS
+ */
 
 export function getTiers() {
-    return getRequestApi(`tiers?asc=true`).then(({ data }) => data);
+    return axios.get(`${baseURL}/tiers`, null, {});
+}
+
+export function getFeatureTiers(type, id) {
+    return axios.get(`${baseURL}/${type}/${id}/tiers?asc=true`, null, {})
 }
 
 export function getTypesTiers() {
     return getRequestApi(`/types-tiers?asc=true`).then(({ data }) => data);
+}
+
+// associate tier
+export function addFeatureTier(type, id, tier) {
+    return axios.post(`${baseURL}/${type}/${id}/tiers`, tier);
+}
+
+// add tier to general tiers list
+export function createTier(tier) {
+    return axios.post(`${baseURL}/tiers`, tier);
+}
+
+export function changeFeatureTier(type, id, tier) {
+    return axios.post(`${baseURL}/${type}/${id}/tiers/${tier.id}`, tier);
+}
+
+export function deleteFeatureTier(type, id, tierId) {
+    return axios.delete(`${baseURL}/${type}/${id}/tiers/${tierId}`);
+}
+
+export function inactivateTier(tierId) {
+    return axios.put(`${baseURL}/tiers/${tierId}/inactivate`, tier);
 }

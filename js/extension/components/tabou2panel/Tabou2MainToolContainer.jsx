@@ -1,22 +1,35 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
-
 import { keys, isEmpty } from 'lodash';
-
 import {
     currentActiveTabSelector,
     getTabouResponse,
     getTabouIndexSelectors,
     getEvents,
+    getTiers,
     getSelection,
-    getLayer
+    getLayer,
+    getAuthInfos
 } from '@ext/selectors/tabou2';
 
 import Tabou2SearchPanel from '../tabou2SearchPanel/Tabou2SearchPanel';
 import Tabou2AddPanel from '../tabou2AddPanel/Tabou2AddPanel';
 import Tabou2IdentifyPanel from '../tabou2IdentifyPanel/Tabou2IdentifyPanel';
 import Tabou2Information from '@ext/components/common/Tabou2Information';
-import { setMainActiveTab, setSelectedFeature, setSelectedLayer, addFeatureEvent, deleteFeatureEvent, changeFeatureEvent, applyFilterObj } from "@ext/actions/tabou2";
+import { 
+    setMainActiveTab,
+    setSelectedFeature,
+    setSelectedLayer,
+    addFeatureEvent,
+    deleteFeatureEvent,
+    changeFeatureEvent,
+    addFeatureTier,
+    deleteFeatureTier,
+    changeFeatureTier,
+    associateFeatureTier,
+    inactivateTier,
+    applyFilterObj 
+} from "@ext/actions/tabou2";
 
 function toolContainer({data, ...props }) {
     const [selection, setSelection] = useState({feature: {}, id: null, layer:""});
@@ -39,7 +52,7 @@ function toolContainer({data, ...props }) {
             }
             {
                 // display add panel
-                props.currentTab === "add" ? (
+                props.currentTab === "add" && !getAuthInfos().isConsult ? (
                     <Tabou2AddPanel 
                         feature={selection.feature}
                         featureId={selection.featureId}
@@ -49,9 +62,18 @@ function toolContainer({data, ...props }) {
                 : null
             }
             {
+                props.currentTab === "add" && getAuthInfos().isConsult ? (
+                    <Tabou2Information 
+                        isVisible={true} 
+                        glyph="alert" 
+                        message="Vous ne disposez pas des droits suffisants pour utiliser cette fonctionnalité." 
+                        title="Fonctionnalité non disponible"/>
+                ) : null
+            }
+            {
                 // Identify panel
                 props.currentTab === "identify" && !isEmpty(data) && keys(data).length ? 
-                (<Tabou2IdentifyPanel queryData={data} {...props} onSelect={handleSelect}/>) : null
+                (<Tabou2IdentifyPanel authent={getAuthInfos()} queryData={data} {...props} onSelect={handleSelect}/>) : null
             }
             {
                 // Identify info message if no results or no clicked realized
@@ -73,6 +95,7 @@ export default connect(
         data: getTabouResponse(state),
         allIndex: getTabouIndexSelectors(state),
         events: getEvents(state),
+        tiers: getTiers(state),
         selection: getSelection(state),
         selectionLayer: getLayer(state)
     }), {
@@ -82,6 +105,11 @@ export default connect(
         applyFilterObj: applyFilterObj,
         addEvent: addFeatureEvent,
         deleteEvent: deleteFeatureEvent,
-        changeEvent: changeFeatureEvent 
+        changeEvent: changeFeatureEvent,
+        createTier: addFeatureTier,
+        dissociateTier: deleteFeatureTier,
+        inactivateTier: inactivateTier,
+        changeTier: changeFeatureTier,
+        associateTier: associateFeatureTier,
     }
 )(toolContainer);
