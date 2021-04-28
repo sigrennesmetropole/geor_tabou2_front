@@ -1,535 +1,532 @@
 {
-  "version": 2,
-  "map": {
-      "center": {
-          "x": -1.685943737657433,
-          "y": 48.11800009255054,
-          "crs": "EPSG:4326"
-      },
-      "maxExtent": [-20037508.34, -20037508.34, 20037508.34, 20037508.34],
-      "projection": "EPSG:3857",
-      "units": "m",
-      "zoom": 12,
-      "mapOptions": {},
-      "layers": [{
-          "id": "mapnik__0",
-          "group": "background",
-          "source": "osm",
-          "name": "mapnik",
-          "title": "OpenStreetMap",
-          "type": "osm",
-          "visibility": true,
-          "singleTile": false,
-          "dimensions": [],
-          "hideLoading": false,
-          "handleClickOnLayer": false,
-          "useForElevation": false,
-          "hidden": false
-      }, {
-          "id": "undefined__1",
-          "group": "background",
-          "source": "ol",
-          "title": "Empty Background",
-          "type": "empty",
-          "singleTile": false,
-          "dimensions": [],
-          "hideLoading": false,
-          "handleClickOnLayer": false,
-          "useForElevation": false,
-          "hidden": false
-      }, {
-          "id": "tabou2:plui_plan_zonage_simplifie__9",
-          "format": "image/png",
-          "group": "ede3ffe1-93b8-11eb-af9e-736fd03f7526",
-          "search": {
-              "url": "https://gis.jdev.fr/geoserver/wfs",
-              "type": "wfs"
-          },
-          "name": "tabou2:plui_plan_zonage_simplifie",
-          "description": "plui_plan_zonage_simplifie",
-          "title": "plui_plan_zonage_simplifie",
-          "type": "wms",
-          "url": "https://gis.jdev.fr/geoserver/wms",
-          "bbox": {
-              "crs": "EPSG:4326",
-              "bounds": {
-                  "minx": "-1.9847676697276686",
-                  "miny": "47.923523583203874",
-                  "maxx": "-1.4500795551082348",
-                  "maxy": "48.32403569745553"
-              }
-          },
-          "visibility": false,
-          "singleTile": false,
-          "allowedSRS": {
-              "EPSG:3857": true,
-              "EPSG:4326": true
-          },
-          "dimensions": [],
-          "hideLoading": false,
-          "handleClickOnLayer": false,
-          "catalogURL": null,
-          "useForElevation": false,
-          "hidden": false,
-          "version": "1.3.0",
-          "params": {}
-      }, {
-          "id": "tabou2:v_negociateurfoncier_secteur__8",
-          "format": "image/png",
-          "group": "bbec6771-93b8-11eb-af9e-736fd03f7526",
-          "search": {
-              "url": "https://gis.jdev.fr/geoserver/wfs",
-              "type": "wfs"
-          },
-          "name": "tabou2:v_negociateurfoncier_secteur",
-          "opacity": 1,
-          "description": "v_negociateurfoncier_secteur",
-          "title": "SF",
-          "type": "wms",
-          "url": "https://gis.jdev.fr/geoserver/wms",
-          "bbox": {
-              "crs": "EPSG:4326",
-              "bounds": {
-                  "minx": "-1.9847676697277261",
-                  "miny": "47.92352358319283",
-                  "maxx": "-1.4500795551081822",
-                  "maxy": "48.32403569744557"
-              }
-          },
-          "visibility": false,
-          "singleTile": false,
-          "allowedSRS": {
-              "EPSG:3857": true,
-              "EPSG:4326": true
-          },
-          "dimensions": [],
-          "hideLoading": false,
-          "handleClickOnLayer": false,
-          "catalogURL": null,
-          "useForElevation": false,
-          "hidden": false,
-          "version": "1.3.0",
-          "params": {}
-      }, {
-          "id": "tabou2:v_instructeur_secteur__7",
-          "format": "image/png",
-          "group": "bbec6771-93b8-11eb-af9e-736fd03f7526",
-          "search": {
-              "url": "https://gis.jdev.fr/geoserver/wfs",
-              "type": "wfs"
-          },
-          "name": "tabou2:v_instructeur_secteur",
-          "opacity": 1,
-          "description": "v_instructeur_secteur",
-          "title": "SDS",
-          "type": "wms",
-          "url": "https://gis.jdev.fr/geoserver/wms",
-          "bbox": {
-              "crs": "EPSG:4326",
-              "bounds": {
-                  "minx": "-1.9847676697277261",
-                  "miny": "47.92352358319283",
-                  "maxx": "-1.4500795551081822",
-                  "maxy": "48.32403569744557"
-              }
-          },
-          "visibility": false,
-          "singleTile": false,
-          "allowedSRS": {
-              "EPSG:3857": true,
-              "EPSG:4326": true
-          },
-          "dimensions": [],
-          "hideLoading": false,
-          "handleClickOnLayer": false,
-          "catalogURL": null,
-          "useForElevation": false,
-          "hidden": false,
-          "version": "1.3.0",
-          "params": {}
-      }, {
-          "id": "tabou2:v_referent_urbaniste_secteur__9",
-          "format": "image/png",
-          "group": "bbec6771-93b8-11eb-af9e-736fd03f7526",
-          "search": {
-              "url": "https://gis.jdev.fr/geoserver/wfs",
-              "type": "wfs"
-          },
-          "name": "tabou2:v_referent_urbaniste_secteur",
-          "opacity": 1,
-          "description": "v_referent_urbaniste_secteur",
-          "title": "SPEU",
-          "type": "wms",
-          "url": "https://gis.jdev.fr/geoserver/wms",
-          "bbox": {
-              "crs": "EPSG:4326",
-              "bounds": {
-                  "minx": "-1.9847676697277261",
-                  "miny": "47.92352358319283",
-                  "maxx": "-1.4500795551081822",
-                  "maxy": "48.32403569744557"
-              }
-          },
-          "visibility": false,
-          "singleTile": false,
-          "allowedSRS": {
-              "EPSG:3857": true,
-              "EPSG:4326": true
-          },
-          "dimensions": [],
-          "hideLoading": false,
-          "handleClickOnLayer": false,
-          "catalogURL": null,
-          "useForElevation": false,
-          "hidden": false,
-          "version": "1.3.0",
-          "params": {}
-      }, {
-          "id": "tabou2:v_chargedoperation_secteur__6",
-          "format": "image/png",
-          "group": "bbec6771-93b8-11eb-af9e-736fd03f7526",
-          "search": {
-              "url": "https://gis.jdev.fr/geoserver/wfs",
-              "type": "wfs"
-          },
-          "name": "tabou2:v_chargedoperation_secteur",
-          "opacity": 1,
-          "description": "v_chargedoperation_secteur",
-          "title": "SAM",
-          "type": "wms",
-          "url": "https://gis.jdev.fr/geoserver/wms",
-          "bbox": {
-              "crs": "EPSG:4326",
-              "bounds": {
-                  "minx": "-1.7583012358813535",
-                  "miny": "48.073630550770716",
-                  "maxx": "-1.6179222009800658",
-                  "maxy": "48.155036260368504"
-              }
-          },
-          "visibility": false,
-          "singleTile": false,
-          "allowedSRS": {
-              "EPSG:3857": true,
-              "EPSG:4326": true
-          },
-          "dimensions": [],
-          "hideLoading": false,
-          "handleClickOnLayer": false,
-          "catalogURL": null,
-          "useForElevation": false,
-          "hidden": false,
-          "version": "1.3.0",
-          "params": {}
-      }, {
-          "id": "tabou2:commune_emprise__4",
-          "format": "image/png",
-          "group": "cbd372f1-93b8-11eb-af9e-736fd03f7526",
-          "search": {
-              "url": "https://gis.jdev.fr/geoserver/wfs",
-              "type": "wfs"
-          },
-          "name": "tabou2:commune_emprise",
-          "opacity": 1,
-          "description": "commune_emprise",
-          "title": "Communes",
-          "type": "wms",
-          "url": "https://gis.jdev.fr/geoserver/wms",
-          "bbox": {
-              "crs": "EPSG:4326",
-              "bounds": {
-                  "minx": "-2.1558216466429627",
-                  "miny": "47.75002103014184",
-                  "maxx": "-1.2915283106272903",
-                  "maxy": "48.41801147801722"
-              }
-          },
-          "visibility": false,
-          "singleTile": false,
-          "allowedSRS": {
-              "EPSG:3857": true,
-              "EPSG:4326": true
-          },
-          "dimensions": [],
-          "hideLoading": false,
-          "handleClickOnLayer": false,
-          "catalogURL": null,
-          "useForElevation": false,
-          "hidden": false,
-          "version": "1.3.0",
-          "params": {}
-      }, {
-          "id": "tabou2:quartier__5",
-          "format": "image/png",
-          "group": "cbd372f1-93b8-11eb-af9e-736fd03f7526",
-          "search": {
-              "url": "https://gis.jdev.fr/geoserver/wfs",
-              "type": "wfs"
-          },
-          "name": "tabou2:quartier",
-          "description": "quartier",
-          "title": "quartier",
-          "type": "wms",
-          "url": "https://gis.jdev.fr/geoserver/wms",
-          "bbox": {
-              "crs": "EPSG:4326",
-              "bounds": {
-                  "minx": "-1.7525875978757495",
-                  "miny": "48.0769155548973",
-                  "maxx": "-1.624404538267329",
-                  "maxy": "48.15497058231772"
-              }
-          },
-          "visibility": false,
-          "singleTile": false,
-          "allowedSRS": {
-              "EPSG:3857": true,
-              "EPSG:4326": true
-          },
-          "dimensions": [],
-          "hideLoading": false,
-          "handleClickOnLayer": false,
-          "catalogURL": null,
-          "useForElevation": false,
-          "hidden": false,
-          "version": "1.3.0",
-          "params": {}
-      }, {
-          "id": "tabou2:iris__3",
-          "format": "image/png",
-          "group": "cbd372f1-93b8-11eb-af9e-736fd03f7526",
-          "search": {
-              "url": "https://gis.jdev.fr/geoserver/wfs",
-              "type": "wfs"
-          },
-          "name": "tabou2:iris",
-          "description": "iris",
-          "title": "iris",
-          "type": "wms",
-          "url": "https://gis.jdev.fr/geoserver/wms",
-          "bbox": {
-              "crs": "EPSG:4326",
-              "bounds": {
-                  "minx": "-1.9616822611321376",
-                  "miny": "47.934158494731946",
-                  "maxx": "-1.4672368506408349",
-                  "maxy": "48.30608939012441"
-              }
-          },
-          "visibility": false,
-          "singleTile": false,
-          "allowedSRS": {
-              "EPSG:3857": true,
-              "EPSG:4326": true
-          },
-          "dimensions": [],
-          "hideLoading": false,
-          "handleClickOnLayer": false,
-          "catalogURL": null,
-          "useForElevation": false,
-          "hidden": false,
-          "version": "1.3.0",
-          "params": {}
-      }, {
-          "id": "tabou2:zacPolygon__11",
-          "format": "image/png",
-          "group": "Default",
-          "search": {
-              "url": "https://gis.jdev.fr/geoserver/wfs",
-              "type": "wfs"
-          },
-          "name": "tabou2:zacPolygon",
-          "opacity": 1,
-          "description": "zacPolygon",
-          "title": "Opérations",
-          "type": "wms",
-          "url": "https://gis.jdev.fr/geoserver/wms",
-          "bbox": {
-              "crs": "EPSG:4326",
-              "bounds": {
-                  "minx": "-1.9576860318970557",
-                  "miny": "47.9694000287947",
-                  "maxx": "-1.4627893701958794",
-                  "maxy": "48.290235327044336"
-              }
-          },
-          "visibility": true,
-          "singleTile": false,
-          "allowedSRS": {
-              "EPSG:3857": true,
-              "EPSG:4326": true
-          },
-          "dimensions": [],
-          "hideLoading": false,
-          "handleClickOnLayer": false,
-          "catalogURL": null,
-          "useForElevation": false,
-          "hidden": false,
-          "version": "1.3.0",
-          "params": {}
-      }, {
-          "id": "tabou2:oa_secteur__10",
-          "format": "image/png",
-          "group": "Default",
-          "search": {
-              "url": "https://gis.jdev.fr/geoserver/wfs",
-              "type": "wfs"
-          },
-          "name": "tabou2:oa_secteur",
-          "opacity": 1,
-          "description": "oa_secteur",
-          "title": "Secteurs",
-          "type": "wms",
-          "url": "https://gis.jdev.fr/geoserver/wms",
-          "bbox": {
-              "crs": "EPSG:4326",
-              "bounds": {
-                  "minx": "-1.9484651671206465",
-                  "miny": "47.98319237773576",
-                  "maxx": "-1.613681731288668",
-                  "maxy": "48.18814844261347"
-              }
-          },
-          "visibility": true,
-          "singleTile": false,
-          "allowedSRS": {
-              "EPSG:3857": true,
-              "EPSG:4326": true
-          },
-          "dimensions": [],
-          "hideLoading": false,
-          "handleClickOnLayer": false,
-          "catalogURL": null,
-          "useForElevation": false,
-          "hidden": false,
-          "version": "1.3.0",
-          "params": {}
-      }, {
-          "id": "tabou2:v_oa_programmePolygon__12",
-          "format": "image/png",
-          "group": "Default",
-          "search": {
-              "url": "https://gis.jdev.fr/geoserver/wfs",
-              "type": "wfs"
-          },
-          "name": "tabou2:v_oa_programmePolygon",
-          "opacity": 1,
-          "description": "v_oa_programmePolygon",
-          "title": "Programmes",
-          "type": "wms",
-          "url": "https://gis.jdev.fr/geoserver/wms",
-          "bbox": {
-              "crs": "EPSG:4326",
-              "bounds": {
-                  "minx": "-1.9485148986891958",
-                  "miny": "47.96951986062948",
-                  "maxx": "-1.4375635187374132",
-                  "maxy": "48.19657788035085"
-              }
-          },
-          "visibility": true,
-          "singleTile": false,
-          "allowedSRS": {
-              "EPSG:3857": true,
-              "EPSG:4326": true
-          },
-          "dimensions": [],
-          "hideLoading": false,
-          "handleClickOnLayer": false,
-          "catalogURL": null,
-          "useForElevation": false,
-          "hidden": false,
-          "version": "1.3.0",
-          "params": {}
-      }],
-      "groups": [{
-          "id": "Default",
-          "title": "Aménagement",
-          "expanded": true
-      }, {
-          "id": "cbd372f1-93b8-11eb-af9e-736fd03f7526",
-          "title": "Limites administratives",
-          "expanded": false
-      }, {
-          "id": "bbec6771-93b8-11eb-af9e-736fd03f7526",
-          "title": "Secteurs",
-          "expanded": false
-      }, {
-          "id": "ede3ffe1-93b8-11eb-af9e-736fd03f7526",
-          "title": "PLUi",
-          "expanded": false
-      }],
-      "backgrounds": [],
-      "bookmark_search_config": {}
-  },
-  "catalogServices": {
-      "services": {
-          "local": {
-              "url": "/geonetwork/srv/fre/csw",
-              "type": "csw",
-              "title": "le catalogue local",
-              "autoload": true
-          },
-          "localgs": {
-              "url": "/geoserver/ows",
-              "type": "wms",
-              "title": "le geoserver local",
-              "autoload": true
-          },
-          "geobretagne": {
-              "url": "https://geobretagne.fr/geonetwork/srv/fre/csw",
-              "type": "csw",
-              "title": "le catalogue GeoBretagne",
-              "autoload": true
-          },
-          "PIGMA": {
-              "url": "https://www.pigma.org/geonetwork/srv/fre/csw",
-              "type": "csw",
-              "title": "le catalogue PIGMA",
-              "autoload": true
-          },
-          "sadre": {
-              "url": "http://www.sandre.eaufrance.fr/atlas/srv/fre/csw",
-              "type": "csw",
-              "title": "le catalogue du Sandre",
-              "autoload": true
-          },
-          "webservice_energy": {
-              "url": "http://geocatalog.webservice-energy.org/geonetwork/srv/fre/csw",
-              "type": "csw",
-              "title": "le catalogue de webservice-energy",
-              "autoload": true
-          },
-          "ifremer": {
-              "NOTE": "NOT WORKING, requires login. This is configured on the current viewer but do not provide any response",
-              "url": "http://www.ifremer.fr/geonetwork/srv/fre/csw",
-              "type": "csw",
-              "title": "le catalogue de l'Ifremer",
-              "autoload": true
-          },
-          "geograndest": {
-              "url": "https://www.geograndest.fr/geonetwork/srv/fre/csw",
-              "type": "csw",
-              "title": "le catalogue de GéoGrandEst",
-              "autoload": true
-          },
-          "jdev56133189-33c5-4875-8ff0-184a3cace3a5": {
-              "url": "https://gis.jdev.fr/geoserver/wms",
-              "type": "wms",
-              "title": "jdev",
-              "autoload": false,
-              "showAdvancedSettings": false,
-              "showTemplate": false,
-              "hideThumbnail": false,
-              "metadataTemplate": "<p>${description}</p>"
-          }
-      },
-      "selectedService": "jdev56133189-33c5-4875-8ff0-184a3cace3a5"
-  },
-  "widgetsConfig": {},
-  "mapInfoConfiguration": {
-      "infoFormat": "text/plain"
-  },
-  "dimensionData": {},
-  "timelineData": {}
+    "version": 2,
+    "map": {
+        "center": {
+            "x": -1.5945140665195165,
+            "y": 48.11729431771647,
+            "crs": "EPSG:4326"
+        },
+        "maxExtent": [-20037508.34, -20037508.34, 20037508.34, 20037508.34],
+        "projection": "EPSG:3857",
+        "units": "m",
+        "zoom": 11,
+        "mapOptions": {},
+        "layers": [{
+            "id": "mapnik__0",
+            "group": "background",
+            "source": "osm",
+            "name": "mapnik",
+            "title": "OpenStreetMap",
+            "type": "osm",
+            "visibility": true,
+            "singleTile": false,
+            "dimensions": [],
+            "hideLoading": false,
+            "handleClickOnLayer": false,
+            "useForElevation": false,
+            "hidden": false
+        }, {
+            "id": "undefined__1",
+            "group": "background",
+            "source": "ol",
+            "title": "Empty Background",
+            "type": "empty",
+            "singleTile": false,
+            "dimensions": [],
+            "hideLoading": false,
+            "handleClickOnLayer": false,
+            "useForElevation": false,
+            "hidden": false
+        }, {
+            "id": "tabou2:plui_plan_zonage_simplifie__9",
+            "format": "image/png",
+            "group": "ede3ffe1-93b8-11eb-af9e-736fd03f7526",
+            "search": {
+                "url": "https://gis.jdev.fr/geoserver/wfs",
+                "type": "wfs"
+            },
+            "name": "tabou2:plui_plan_zonage_simplifie",
+            "description": "plui_plan_zonage_simplifie",
+            "title": "plui_plan_zonage_simplifie",
+            "type": "wms",
+            "url": "https://gis.jdev.fr/geoserver/wms",
+            "bbox": {
+                "crs": "EPSG:4326",
+                "bounds": {
+                    "minx": "-1.9847676697276686",
+                    "miny": "47.923523583203874",
+                    "maxx": "-1.4500795551082348",
+                    "maxy": "48.32403569745553"
+                }
+            },
+            "visibility": false,
+            "singleTile": false,
+            "allowedSRS": {
+                "EPSG:3857": true,
+                "EPSG:4326": true
+            },
+            "dimensions": [],
+            "hideLoading": false,
+            "handleClickOnLayer": false,
+            "catalogURL": null,
+            "useForElevation": false,
+            "hidden": false,
+            "version": "1.3.0",
+            "params": {}
+        }, {
+            "id": "tabou2:v_negociateurfoncier_secteur0__10",
+            "format": "image/png",
+            "group": "bbec6771-93b8-11eb-af9e-736fd03f7526",
+            "search": {
+                "url": "https://gis.jdev.fr/geoserver/wfs",
+                "type": "wfs"
+            },
+            "name": "tabou2:v_negociateurfoncier_secteur0",
+            "opacity": 1,
+            "description": "v_negociateurfoncier_secteur",
+            "title": "SDF",
+            "type": "wms",
+            "url": "https://gis.jdev.fr/geoserver/wms",
+            "bbox": {
+                "crs": "EPSG:4326",
+                "bounds": {
+                    "minx": "-1.9847676697277261",
+                    "miny": "47.92352358319283",
+                    "maxx": "-1.4500795551081822",
+                    "maxy": "48.32403569744557"
+                }
+            },
+            "visibility": false,
+            "singleTile": false,
+            "allowedSRS": {
+                "EPSG:3857": true,
+                "EPSG:4326": true
+            },
+            "dimensions": [],
+            "hideLoading": false,
+            "handleClickOnLayer": false,
+            "catalogURL": null,
+            "useForElevation": false,
+            "hidden": false,
+            "version": "1.3.0",
+            "params": {}
+        }, {
+            "id": "tabou2:v_referent_urbaniste_secteur0__12",
+            "format": "image/png",
+            "group": "bbec6771-93b8-11eb-af9e-736fd03f7526",
+            "search": {
+                "url": "https://gis.jdev.fr/geoserver/wfs",
+                "type": "wfs"
+            },
+            "name": "tabou2:v_referent_urbaniste_secteur0",
+            "opacity": 1,
+            "description": "v_referent_urbaniste_secteur",
+            "title": "SPEU",
+            "type": "wms",
+            "url": "https://gis.jdev.fr/geoserver/wms",
+            "bbox": {
+                "crs": "EPSG:4326",
+                "bounds": {
+                    "minx": "-1.9847676697277261",
+                    "miny": "47.92352358319283",
+                    "maxx": "-1.4500795551081822",
+                    "maxy": "48.32403569744557"
+                }
+            },
+            "visibility": false,
+            "singleTile": false,
+            "allowedSRS": {
+                "EPSG:3857": true,
+                "EPSG:4326": true
+            },
+            "dimensions": [],
+            "hideLoading": false,
+            "handleClickOnLayer": false,
+            "catalogURL": null,
+            "useForElevation": false,
+            "hidden": false,
+            "version": "1.3.0",
+            "params": {}
+        }, {
+            "id": "tabou2:v_instructeur_secteur0__11",
+            "format": "image/png",
+            "group": "bbec6771-93b8-11eb-af9e-736fd03f7526",
+            "search": {
+                "url": "https://gis.jdev.fr/geoserver/wfs",
+                "type": "wfs"
+            },
+            "name": "tabou2:v_instructeur_secteur0",
+            "opacity": 1,
+            "description": "v_instructeur_secteur",
+            "title": "SDS",
+            "type": "wms",
+            "url": "https://gis.jdev.fr/geoserver/wms",
+            "bbox": {
+                "crs": "EPSG:4326",
+                "bounds": {
+                    "minx": "-1.9847676697277261",
+                    "miny": "47.92352358319283",
+                    "maxx": "-1.4500795551081822",
+                    "maxy": "48.32403569744557"
+                }
+            },
+            "visibility": false,
+            "singleTile": false,
+            "allowedSRS": {
+                "EPSG:3857": true,
+                "EPSG:4326": true
+            },
+            "dimensions": [],
+            "hideLoading": false,
+            "handleClickOnLayer": false,
+            "catalogURL": null,
+            "useForElevation": false,
+            "hidden": false,
+            "version": "1.3.0",
+            "params": {}
+        }, {
+            "id": "tabou2:v_chargedoperation_secteur0__9",
+            "format": "image/png",
+            "group": "bbec6771-93b8-11eb-af9e-736fd03f7526",
+            "search": {
+                "url": "https://gis.jdev.fr/geoserver/wfs",
+                "type": "wfs"
+            },
+            "name": "tabou2:v_chargedoperation_secteur0",
+            "opacity": 1,
+            "description": "v_chargedoperation_secteur",
+            "title": "SAM",
+            "type": "wms",
+            "url": "https://gis.jdev.fr/geoserver/wms",
+            "bbox": {
+                "crs": "EPSG:4326",
+                "bounds": {
+                    "minx": "-1.7583012358813535",
+                    "miny": "48.073630550770716",
+                    "maxx": "-1.6179222009800658",
+                    "maxy": "48.155036260368504"
+                }
+            },
+            "visibility": false,
+            "singleTile": false,
+            "allowedSRS": {
+                "EPSG:3857": true,
+                "EPSG:4326": true
+            },
+            "dimensions": [],
+            "hideLoading": false,
+            "handleClickOnLayer": false,
+            "catalogURL": null,
+            "useForElevation": false,
+            "hidden": false,
+            "version": "1.3.0",
+            "params": {}
+        }, {
+            "id": "tabou2:commune_emprise__4",
+            "format": "image/png",
+            "group": "cbd372f1-93b8-11eb-af9e-736fd03f7526",
+            "search": {
+                "url": "https://gis.jdev.fr/geoserver/wfs",
+                "type": "wfs"
+            },
+            "name": "tabou2:commune_emprise",
+            "opacity": 1,
+            "description": "commune_emprise",
+            "title": "Communes",
+            "type": "wms",
+            "url": "https://gis.jdev.fr/geoserver/wms",
+            "bbox": {
+                "crs": "EPSG:4326",
+                "bounds": {
+                    "minx": "-2.1558216466429627",
+                    "miny": "47.75002103014184",
+                    "maxx": "-1.2915283106272903",
+                    "maxy": "48.41801147801722"
+                }
+            },
+            "visibility": false,
+            "singleTile": false,
+            "allowedSRS": {
+                "EPSG:3857": true,
+                "EPSG:4326": true
+            },
+            "dimensions": [],
+            "hideLoading": false,
+            "handleClickOnLayer": false,
+            "catalogURL": null,
+            "useForElevation": false,
+            "hidden": false,
+            "version": "1.3.0",
+            "params": {}
+        }, {
+            "id": "tabou2:quartier__5",
+            "format": "image/png",
+            "group": "cbd372f1-93b8-11eb-af9e-736fd03f7526",
+            "search": {
+                "url": "https://gis.jdev.fr/geoserver/wfs",
+                "type": "wfs"
+            },
+            "name": "tabou2:quartier",
+            "description": "quartier",
+            "title": "quartier",
+            "type": "wms",
+            "url": "https://gis.jdev.fr/geoserver/wms",
+            "bbox": {
+                "crs": "EPSG:4326",
+                "bounds": {
+                    "minx": "-1.7525875978757495",
+                    "miny": "48.0769155548973",
+                    "maxx": "-1.624404538267329",
+                    "maxy": "48.15497058231772"
+                }
+            },
+            "visibility": false,
+            "singleTile": false,
+            "allowedSRS": {
+                "EPSG:3857": true,
+                "EPSG:4326": true
+            },
+            "dimensions": [],
+            "hideLoading": false,
+            "handleClickOnLayer": false,
+            "catalogURL": null,
+            "useForElevation": false,
+            "hidden": false,
+            "version": "1.3.0",
+            "params": {}
+        }, {
+            "id": "tabou2:iris__3",
+            "format": "image/png",
+            "group": "cbd372f1-93b8-11eb-af9e-736fd03f7526",
+            "search": {
+                "url": "https://gis.jdev.fr/geoserver/wfs",
+                "type": "wfs"
+            },
+            "name": "tabou2:iris",
+            "description": "iris",
+            "title": "iris",
+            "type": "wms",
+            "url": "https://gis.jdev.fr/geoserver/wms",
+            "bbox": {
+                "crs": "EPSG:4326",
+                "bounds": {
+                    "minx": "-1.9616822611321376",
+                    "miny": "47.934158494731946",
+                    "maxx": "-1.4672368506408349",
+                    "maxy": "48.30608939012441"
+                }
+            },
+            "visibility": false,
+            "singleTile": false,
+            "allowedSRS": {
+                "EPSG:3857": true,
+                "EPSG:4326": true
+            },
+            "dimensions": [],
+            "hideLoading": false,
+            "handleClickOnLayer": false,
+            "catalogURL": null,
+            "useForElevation": false,
+            "hidden": false,
+            "version": "1.3.0",
+            "params": {}
+        }, {
+            "id": "tabou2:tabou_v_oa_operation__13",
+            "format": "image/png",
+            "search": {
+                "url": "https://gis.jdev.fr/geoserver/wfs",
+                "type": "wfs"
+            },
+            "name": "tabou2:tabou_v_oa_operation",
+            "opacity": 1,
+            "description": "tabou_v_oa_operation",
+            "title": "Operations",
+            "type": "wms",
+            "url": "https://gis.jdev.fr/geoserver/wms",
+            "bbox": {
+                "crs": "EPSG:4326",
+                "bounds": {
+                    "minx": "-1.9631464192995594",
+                    "miny": "47.94719669636915",
+                    "maxx": "-1.4608830453501245",
+                    "maxy": "48.31798312474181"
+                }
+            },
+            "visibility": true,
+            "singleTile": false,
+            "allowedSRS": {
+                "EPSG:3857": true,
+                "EPSG:4326": true
+            },
+            "dimensions": [],
+            "hideLoading": false,
+            "handleClickOnLayer": false,
+            "catalogURL": null,
+            "useForElevation": false,
+            "hidden": false,
+            "version": "1.3.0",
+            "params": {}
+        }, {
+            "id": "tabou2:tabou_v_oa_secteur__15",
+            "format": "image/png",
+            "search": {
+                "url": "https://gis.jdev.fr/geoserver/wfs",
+                "type": "wfs"
+            },
+            "name": "tabou2:tabou_v_oa_secteur",
+            "opacity": 1,
+            "description": "tabou_v_oa_secteur",
+            "title": "Secteurs",
+            "type": "wms",
+            "url": "https://gis.jdev.fr/geoserver/wms",
+            "bbox": {
+                "crs": "EPSG:4326",
+                "bounds": {
+                    "minx": "-1.9484651671206465",
+                    "miny": "47.98319237773576",
+                    "maxx": "-1.613681731288668",
+                    "maxy": "48.18814844261347"
+                }
+            },
+            "visibility": true,
+            "singleTile": false,
+            "allowedSRS": {
+                "EPSG:3857": true,
+                "EPSG:4326": true
+            },
+            "dimensions": [],
+            "hideLoading": false,
+            "handleClickOnLayer": false,
+            "catalogURL": null,
+            "useForElevation": false,
+            "hidden": false,
+            "version": "1.3.0",
+            "params": {}
+        }, {
+            "id": "tabou2:tabou_v_oa_programme__14",
+            "format": "image/png",
+            "search": {
+                "url": "https://gis.jdev.fr/geoserver/wfs",
+                "type": "wfs"
+            },
+            "name": "tabou2:tabou_v_oa_programme",
+            "opacity": 1,
+            "description": "tabou_v_oa_programme",
+            "title": "Programmes",
+            "type": "wms",
+            "url": "https://gis.jdev.fr/geoserver/wms",
+            "bbox": {
+                "crs": "EPSG:4326",
+                "bounds": {
+                    "minx": "-1.9485148986891958",
+                    "miny": "47.96951986062948",
+                    "maxx": "-1.4632076516232544",
+                    "maxy": "48.19557910911931"
+                }
+            },
+            "visibility": true,
+            "singleTile": false,
+            "allowedSRS": {
+                "EPSG:3857": true,
+                "EPSG:4326": true
+            },
+            "dimensions": [],
+            "hideLoading": false,
+            "handleClickOnLayer": false,
+            "catalogURL": null,
+            "useForElevation": false,
+            "hidden": false,
+            "version": "1.3.0",
+            "params": {}
+        }],
+        "groups": [{
+            "id": "Default",
+            "title": "Aménagement",
+            "expanded": true
+        }, {
+            "id": "cbd372f1-93b8-11eb-af9e-736fd03f7526",
+            "title": "Limites administratives",
+            "expanded": false
+        }, {
+            "id": "bbec6771-93b8-11eb-af9e-736fd03f7526",
+            "title": "Secteurs",
+            "expanded": true
+        }, {
+            "id": "ede3ffe1-93b8-11eb-af9e-736fd03f7526",
+            "title": "PLUi",
+            "expanded": false
+        }],
+        "backgrounds": [],
+        "bookmark_search_config": {}
+    },
+    "catalogServices": {
+        "services": {
+            "local": {
+                "url": "/geonetwork/srv/fre/csw",
+                "type": "csw",
+                "title": "le catalogue local",
+                "autoload": true
+            },
+            "localgs": {
+                "url": "/geoserver/ows",
+                "type": "wms",
+                "title": "le geoserver local",
+                "autoload": true
+            },
+            "geobretagne": {
+                "url": "https://geobretagne.fr/geonetwork/srv/fre/csw",
+                "type": "csw",
+                "title": "le catalogue GeoBretagne",
+                "autoload": true
+            },
+            "PIGMA": {
+                "url": "https://www.pigma.org/geonetwork/srv/fre/csw",
+                "type": "csw",
+                "title": "le catalogue PIGMA",
+                "autoload": true
+            },
+            "sadre": {
+                "url": "http://www.sandre.eaufrance.fr/atlas/srv/fre/csw",
+                "type": "csw",
+                "title": "le catalogue du Sandre",
+                "autoload": true
+            },
+            "webservice_energy": {
+                "url": "http://geocatalog.webservice-energy.org/geonetwork/srv/fre/csw",
+                "type": "csw",
+                "title": "le catalogue de webservice-energy",
+                "autoload": true
+            },
+            "ifremer": {
+                "NOTE": "NOT WORKING, requires login. This is configured on the current viewer but do not provide any response",
+                "url": "http://www.ifremer.fr/geonetwork/srv/fre/csw",
+                "type": "csw",
+                "title": "le catalogue de l'Ifremer",
+                "autoload": true
+            },
+            "geograndest": {
+                "url": "https://www.geograndest.fr/geonetwork/srv/fre/csw",
+                "type": "csw",
+                "title": "le catalogue de GéoGrandEst",
+                "autoload": true
+            },
+            "jdev56133189-33c5-4875-8ff0-184a3cace3a5": {
+                "url": "https://gis.jdev.fr/geoserver/wms",
+                "type": "wms",
+                "title": "jdev",
+                "autoload": false,
+                "showAdvancedSettings": false,
+                "showTemplate": false,
+                "hideThumbnail": false,
+                "metadataTemplate": "<p>${description}</p>"
+            }
+        },
+        "selectedService": "jdev56133189-33c5-4875-8ff0-184a3cace3a5"
+    },
+    "widgetsConfig": {},
+    "mapInfoConfiguration": {
+        "infoFormat": "application/json"
+    },
+    "dimensionData": {},
+    "timelineData": {}
 }

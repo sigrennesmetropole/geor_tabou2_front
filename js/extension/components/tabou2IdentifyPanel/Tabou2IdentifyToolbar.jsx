@@ -43,7 +43,7 @@ export default function Tabou2IdentifyToolbar({ response, featureId, ...props })
                 }}
                 buttons={modalBtns}
             />
-            <Tabou2TiersModal visible={isOpenTiers} onClick={() => setIsOpenTiers(false)} featureId={featureId} {...props} />
+            <Tabou2TiersModal visible={isOpenTiers} onClick={() => setIsOpenTiers(false)} featureId={featureId} {...props}/>
             <Tabou2DocsModal visible={isOpenDocs} onClick={() => setIsOpenDocs(false)} featureId={featureId} {...props} />
             <Tabou2LogsModal visible={isOpenLogs} onClick={() => setIsOpenLogs(false)} featureId={featureId} {...props}/>
         </>

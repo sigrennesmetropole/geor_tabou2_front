@@ -348,19 +348,19 @@
           "showIdentify": false,
           "layersCfg": {
             "layerPA": {
-              "nom": "tabou2:v_oa_programmePolygon",
+              "nom": "tabou2:tabou_v_oa_programme",
               "geomField": "the_geom",
               "idField": "objectid",
               "idType": "number"
             },
             "layerOA": {
-              "nom": "tabou2:zacPolygon",
+              "nom": "tabou2:tabou_v_oa_secteur",
               "geomField": "the_geom",
-              "idField": "id_zac",
+              "idField": "objectid",
               "idType": "number"
             },
             "layerSA": {
-              "nom": "tabou2:oa_secteur",
+              "nom": "tabou2:tabou_v_oa_operation",
               "geomField": "the_geom",
               "idField": "objectid",
               "idType": "number"
@@ -406,7 +406,7 @@
               "placeholder": "Etapes PA"
             },
             "secteurs-sam": {
-              "layer": "tabou2:v_chargedoperation_secteur",
+              "layer": "tabou2:v_chargedoperation_secteur0",
               "geom": "the_geom",
               "filterField": "nom_secteu",
               "apiLabel": "nomSecteur",
@@ -414,7 +414,7 @@
               "placeholder": "Sec. SAM"
             },
             "secteurs-speu": {
-              "layer": "tabou2:v_referent_urbaniste_secteur",
+              "layer": "tabou2:v_referent_urbaniste_secteur0",
               "geom": "the_geom",
               "filterField": "nom_secteu",
               "apiLabel": "nomSecteur",
@@ -422,7 +422,7 @@
               "placeholder": "Sec. SPEU"
             },
             "secteurs-sds": {
-              "layer": "tabou2:v_instructeur_secteur",
+              "layer": "tabou2:v_instructeur_secteur0",
               "geom": "the_geom",
               "filterField": "secteur",
               "apiField": "secteur",
@@ -430,7 +430,7 @@
               "placeholder": "Sec. SDS"
             },
             "secteurs-foncier": {
-              "layer": "tabou2:v_negociateurfoncier_secteur",
+              "layer": "tabou2:v_negociateurfoncier_secteur0",
               "geom": "the_geom",
               "filterField": "negociateu",
               "apiField": "negociateur",

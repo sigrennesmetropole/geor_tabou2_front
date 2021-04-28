@@ -109,16 +109,6 @@ export default function Tabou2LogsModal({
     const buttons = [{
         text: "",
         bsSize: "lg",
-        bsStyle: 'default',
-        style: {
-            marginRight: "10px"
-        },
-        tooltip: "Raffraîchir la liste",
-        glyph: "repeat",
-        onClick: () => refreshLogs({eventDate: new Date().toISOString()})
-    }, {
-        text: "",
-        bsSize: "lg",
         bsStyle: 'primary',
         glyph: "plus",
         style: {
@@ -129,14 +119,16 @@ export default function Tabou2LogsModal({
         tooltip: "Créer un événement",
         onClick: () => insertNewLog({id:0})
     }];
-    const editable = true;
+
+    const readOnly = props?.authent?.isReferent || props?.authent?.isContrib ? false : true;
+
     return (
         <ResizableModal
             title={"Journal des événements"}
             bodyClassName="ms-flex"
             show={visible}
             showClose
-            buttons={editable ? buttons : []}
+            buttons={readOnly ? [] : buttons}
             onClose={onClick}
             size="lg">
                 <Grid fluid style={{overflow: "auto", height:"100%"}}>
@@ -150,18 +142,21 @@ export default function Tabou2LogsModal({
                                                 getSortIcon("eventDate")
                                             }
                                         </th>
-                                        <th className="col-xs-3" style={getStyle("modifUser")}>Utilisateur
+                                        <th className="col-xs-2" style={getStyle("modifUser")}>Auteur
                                             {
                                                 getSortIcon("modifUser")
                                             }                        
                                         </th>
-                                        <th className="col-xs-3" style={getStyle("idType")}>Type
+                                        <th className="col-xs-2" style={getStyle("idType")}>Type
                                             {
                                                 getSortIcon("idType")
                                             }                        
                                         </th>
+                                        <th>Modification</th>
                                         <th>Note</th>
-                                        <th>Actions</th>
+                                        {
+                                            readOnly ? null : (<th>Actions</th>)
+                                        }
                                     </tr>
                                 </thead>
                                 <tbody style={{overflow: "auto"}}>
@@ -176,7 +171,7 @@ export default function Tabou2LogsModal({
                                                 </td>
                                                 <td>
                                                     {
-                                                        !log.new ? log.modifUser : null
+                                                        !log.new ? log.createUser : null
                                                     }
                                                 </td>    
                                                 <td>
@@ -206,6 +201,11 @@ export default function Tabou2LogsModal({
                                                 </td>
                                                 <td>
                                                     {
+                                                        !log.new ? log.modifUser : null
+                                                    }
+                                                </td>
+                                                <td>
+                                                    {
                                                         log.new || log.edit ? (
                                                             <Tabou2TextForm
                                                                 type="text"
@@ -216,55 +216,58 @@ export default function Tabou2LogsModal({
                                                             ) : log.description
                                                     }
                                                 </td>
-                                                <td>
-                                                    {log.new || log.edit ? (
-                                                        <Button
-                                                            tooltip="Enregistrer"
-                                                            disabled={!log.idType || !log.description}
-                                                            style={{ borderColor: "rgba(0,0,0,0)"}}
-                                                            onClick={() => saveEvent(log)}>
-                                                            <span style={{ color: "rgb(40, 167, 69)" }}>
-                                                                <Glyphicon glyph="ok"/>
-                                                            </span>
-                                                        </Button>) : null
-                                                    }
-                                                    {
-                                                        log.edit && !log.new ? (
-                                                            <Button 
-                                                                tooltip="Annuler"
+                                                {
+                                                    readOnly ? null :
+                                                    (<td>
+                                                        {log.new || log.edit ? (
+                                                            <Button
+                                                                tooltip="Enregistrer"
+                                                                disabled={!log.idType || !log.description}
                                                                 style={{ borderColor: "rgba(0,0,0,0)"}}
-                                                                onClick={() => cancelChange(log) }>
-                                                                <span style={{color: "rgb(229,0,0)"}}>
-                                                                    <Glyphicon glyph="remove"/>
+                                                                onClick={() => saveEvent(log)}>
+                                                                <span style={{ color: "rgb(40, 167, 69)" }}>
+                                                                    <Glyphicon glyph="ok"/>
+                                                                </span>
+                                                            </Button>) : null
+                                                        }
+                                                        {
+                                                            log.edit && !log.new ? (
+                                                                <Button 
+                                                                    tooltip="Annuler"
+                                                                    style={{ borderColor: "rgba(0,0,0,0)"}}
+                                                                    onClick={() => cancelChange(log) }>
+                                                                    <span style={{color: "rgb(229,0,0)"}}>
+                                                                        <Glyphicon glyph="remove"/>
+                                                                    </span>
+                                                                </Button>
+                                                            ) : null
+                                                        }
+                                                        {
+                                                            !log.new && !log.edit && !editionActivate.current ? (
+                                                                <Button
+                                                                tooltip="Modifier"
+                                                                style={{ borderColor: "rgba(0,0,0,0)"}}
+                                                                onClick={() => changeLog({...log, edit: true}) }>
+                                                                <span style={{color: "rgb(137,178,211)"}}>
+                                                                    <Glyphicon glyph="pencil"/>
                                                                 </span>
                                                             </Button>
-                                                        ) : null
-                                                    }
-                                                    {
-                                                        !log.new && !log.edit && !editionActivate.current ? (
-                                                            <Button
-                                                            tooltip="Modifier"
-                                                            style={{ borderColor: "rgba(0,0,0,0)"}}
-                                                            onClick={() => changeLog({...log, edit: true}) }>
-                                                            <span style={{color: "rgb(137,178,211)"}}>
-                                                                <Glyphicon glyph="pencil"/>
-                                                            </span>
-                                                        </Button>
-                                                        ) : null
-                                                    }
-                                                    {
-                                                        log.new || !editionActivate.current ? (
-                                                            <Button
-                                                                tooltip="Supprimer"
-                                                                style={{ borderColor: "rgba(0,0,0,0)"}}
-                                                                onClick={() => deleteLog(log) }>
-                                                                <span style={{color: "rgb(229,0,0)"}}>
-                                                                    <Glyphicon glyph="trash"/>
-                                                                </span>
-                                                            </Button>
-                                                        ) : null
-                                                    }
-                                                </td>
+                                                            ) : null
+                                                        }
+                                                        {
+                                                            log.new || !editionActivate.current ? (
+                                                                <Button
+                                                                    tooltip="Supprimer"
+                                                                    style={{ borderColor: "rgba(0,0,0,0)"}}
+                                                                    onClick={() => deleteLog(log) }>
+                                                                    <span style={{color: "rgb(229,0,0)"}}>
+                                                                        <Glyphicon glyph="trash"/>
+                                                                    </span>
+                                                                </Button>
+                                                            ) : null
+                                                        }
+                                                    </td>)
+                                                }
                                             </tr>
                                             </>
                                         ))

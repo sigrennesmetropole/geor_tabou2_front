@@ -25,17 +25,19 @@ export const ID_SELECTOR = 'layerTabouId-selector';
 export const PANEL_SIZE = 500;
 
 export const URL_ADD = {
+    "tabou2": "",
     "layerPA": "programmes",
     "layerOA": "operations",
     "layerSA": "operations"
 };
 
 export const URL_TIERS = {
-    "tabou2": "/",
-    "tabou2:v_oa_programme": "/programmes/",
-    "tabou2:oa_secteur": "/operations/"
+    "tabou2": "",
+    "tabou2:v_oa_programme": "programmes",
+    "tabou2:oa_secteur": "operations"
 };
 
+export const REQUIRED_TIER = ["adresseRue", "nom","adresseCp","adresseVille", "email"];
 export const TIERS_SCHEMA = {
     "id": 0,
     "nom": "",
@@ -168,7 +170,7 @@ export const LAYER_FIELD_OPTION = [
     {
         name: "layerOA",
         field: "properties.nomzac",
-        id: "properties.id_zac"
+        id: "properties.objectid"
     }
 ];
 
@@ -258,7 +260,7 @@ export const ADD_FIELDS = {
         layerSA : "secteur"
     },
     idEmprise: {
-        layerOA : "id_zac",
+        layerOA : "objectid",
         layerPA : "",
         layerSA : ""
     },
@@ -310,7 +312,6 @@ export const ADD_OA_FORM = [{
     group: 1,
     api: "operations/emprises",
     apiField: "id",
-    featueField: "id_zac",
     apiLabel: "nom",
     placeholder: "Selectionner une emprise",
     parent: (i) => !i.nature ? true : {nature: i.nature, secteur: i.secteur},
