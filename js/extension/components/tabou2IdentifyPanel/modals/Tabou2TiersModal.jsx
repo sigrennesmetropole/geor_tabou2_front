@@ -103,7 +103,6 @@ export default function Tabou2TiersModal({
     };
 
     const openCloseForm = (tier) => {
-        if (tier.dateInactif) console.log(tier);
         let id = tier.id;
         if (id === collapse) {
             editionActivate.current = false;
@@ -268,7 +267,6 @@ export default function Tabou2TiersModal({
                                                                         visible={collapse === tier.id}
                                                                         readOnly={tier.dateInactif ? true : false}
                                                                         change={(id, field, val) => {
-                                                                            console.log(id, field, val)
                                                                             let newProps = {};
                                                                             newProps[field] = val;
                                                                             changeTier({...tier, ...newProps});
