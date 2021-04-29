@@ -12,5 +12,5 @@ export function createOptions(response) {
 
 export function getFeaturesOptions(features, layer) {
     let layerFromConst = LAYER_FIELD_OPTION.filter(f => f.name === layer);
-    return features.map((f, i) => { return { label: get(f, layerFromConst[0]?.field), id: get(f, layerFromConst[0]?.id), idx: i }; });
+    return features.map((f, i) => { return { label: get(f, layerFromConst[0]?.field) + ' (' + get(f, "properties.nature")+')', id: get(f, layerFromConst[0]?.id), idx: i }; });
 }

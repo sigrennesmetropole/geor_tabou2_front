@@ -164,12 +164,12 @@ export const LAYER_FIELD_OPTION = [
     },
     {
         name: "layerSA",
-        field: "properties.secteur",
+        field: "properties.nom",
         id: "properties.objectid"
     },
     {
         name: "layerOA",
-        field: "properties.nomzac",
+        field: "properties.nom",
         id: "properties.objectid"
     }
 ];
@@ -260,24 +260,24 @@ export const ADD_FIELDS = {
         layerSA : "secteur"
     },
     idEmprise: {
-        layerOA : "objectid",
-        layerPA : "",
-        layerSA : ""
+        layerOA : "nom",
+        layerPA : "nom",
+        layerSA : "nom"
     },
     nom: {
-        layerOA : "nomzac",
-        layerPA : "",
-        layerSA : ""
+        layerOA : "nom",
+        layerPA : "nom",
+        layerSA : "nom"
     },
     etape: {
         layerOA : "etape",
-        layerPA : "",
-        layerSA : ""
+        layerPA : "etape",
+        layerSA : "etape"
     },
     nature: {
         layerOA : "nature",
-        layerPA : "",
-        layerSA : ""
+        layerPA : "nature",
+        layerSA : "nature"
     }
 }
 
@@ -363,6 +363,7 @@ export const ADD_PA_FORM = [ {
     label: "Sélectionner l'opération parente :",
     api: "operations",
     name: "parentoa",
+    apiLabel: "nom",
     apiField: "nom",
     parent: null,
     placeholder: "Selectionner une opération",
@@ -374,7 +375,8 @@ export const ADD_PA_FORM = [ {
     group: 1,
     parent: (i) => i?.limitPa ? i.limitPa && !i.parentoa : false,
     name: "idEmprise",
-    apiField: "",
+    apiLabel: "nom",
+    apiField: "id",
     placeholder: "Selectionner une emprise",
     type: "combo"
 }, {
@@ -395,7 +397,9 @@ export const ADD_PA_FORM = [ {
     type: "text"
 }, {
     label: "Etape",
-    apiField: "",
+    apiField: "code",
+    apiLabel: "libelle",
+    api: "operations/etapes",
     name: "etape",
     // parent: (infos) => infos.emprise, // to activate etape only if emprise name formControl is selected
     placeholder: "Sélectionner une étape",
@@ -404,50 +408,34 @@ export const ADD_PA_FORM = [ {
 }];
 
 export const OA_SCHEMA = {
-    "autorisationDate": "2021-02-24T15:15:36.426Z",
-    "clotureDate": "2021-02-24T15:15:36.426Z",
-    "code": "op1",
-    "nom": "op1",
-    "consommationEspace": {    
-      "id": 1
-    },
-    "createDate": "2021-02-24T15:15:36.426Z",
-    "createUser": "string",
-    "decision": {    
-      "id": 1
-    },
-    "description": "string",
     "diffusionRestreinte": false,
-    "etape": {   
+    "nature": {
       "id": 1
     },
-    "id": 0,
-    "idEmprise": false,
-    "maitriseOuvrage": {   
-      "id": 1
-    },
-    "modeAmenagement": {  
-      "id": 1
-    },
-    "modifDate": "2021-02-24T15:15:36.426Z",
-    "modifUser": "string",
-    "nature": { 
-      "id": 1
-    },
-    "nbEntreprise": 0,
+    "idEmprise": 0,
+    "code": "",
+    "nom": "",
+    "operation": "",
+    "description": "",
     "nbLogementsPrevu": 0,
-    "nbSalarie": 0,
-    "numAds": "string",
-    "operation": "string",
-    "operationnelDate": "2021-02-24T15:15:36.426Z",
-    "plhLogementsLivres": 0,
-    "plhLogementsPrevus": 0,
-    "ql1": "string",
-    "ql2": false,
-    "ql3": "string",
     "secteur": false,
     "surfaceTotale": 0,
-    "vocation": {  
+    "consommationEspace": {  
+      "id": 1
+    },
+    "decision": {  
+      "id": 1
+    },
+    "etape": {  
+      "id": 1
+    },
+    "maitriseOuvrage": {  
+      "id": 1
+    },
+    "modeAmenagement": {
+      "id": 1
+    },
+    "vocation": {
       "id": 1
     }
   };

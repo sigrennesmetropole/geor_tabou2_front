@@ -96,7 +96,6 @@ export function addCreateTabou2Tier(action$, store) {
             //const idTabou = action?.selectedFeature?.properties.objectid || action?.selectedFeature?.properties.objectid;
             // selected feature and selected layer
             let {featureId, layerUrl} = getInfos(store.getState());
-            console.log(action);
             // create tier first
             return Rx.Observable.empty();
             return Rx.Observable.defer(() => createTier(layerUrl, featureId, action.tier))
@@ -119,7 +118,6 @@ export function updateTabou2Tier(action$, store) {
             //const idTabou = action?.selectedFeature?.properties.objectid || action?.selectedFeature?.properties.objectid;
             // selected feature and selected layer
             let {featureId, layerUrl} = getInfos(store.getState());
-            console.log("CHANGE, DELETE");
             return Rx.Observable.empty();
             return Rx.Observable.defer(() => toDoOnUpdate(layerUrl, featureId, action.tier))
             .switchMap( tiers => {

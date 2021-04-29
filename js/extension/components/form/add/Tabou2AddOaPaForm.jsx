@@ -46,7 +46,7 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
             newInfos = {...newInfos, nom: value}
         }
         setInfos(newInfos);
-        setInvalides(keys(infos).filter(name => name !== "secteur").filter(name => !infos[name]));
+        setInvalides(keys(newInfos).filter(name => name !== "secteur").filter(name => !newInfos[name]));
         setNewFeature(newFeatureObj);
     };
 
@@ -86,18 +86,18 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
     useEffect(() => {
         let fProp = feature?.properties;
         let newInfos = {
-            idEmprise : get(fProp, ADD_FIELDS.nom[layer]) || infos.idEmprise,
+            idEmprise : get(fProp, ADD_FIELDS.idEmprise[layer]) || infos.idEmprise,
             nature : get(fProp, ADD_FIELDS.nature[layer]) || infos.nature,
             secteur : get(fProp, ADD_FIELDS.secteur[layer]) || infos.secteur,
             nom : get(fProp, ADD_FIELDS.nom[layer]) || infos.nom
         };
-        let newObject = {...newInfos, idEmprise : get(fProp, ADD_FIELDS.idEmprise[layer])}
+        let newObject = {...newInfos, idEmprise : get(fProp, "id_emprise") || _.get(fProp, "objectid")}
         if (!isEqual(newInfos,infos)) {
             setInfos({...infos, ...newInfos});
             setNewFeature({...newFeature, ...newObject});
         }
 
-    }, [feature])
+    }, [feature, layer])
 
     const constructForm = (items) => {
         return (
@@ -113,10 +113,10 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
                                     el = (
                                         <Checkbox
                                             checked={layer === "layerSA" ? true :  infos[item.name] || false}
-                                            disabled={feature && ["layerOA", "layerSA"].includes(layer) ? true : item.parent ? item.parent(infos) : false}
+                                            disabled={!isEmpty(feature) && ["layerOA", "layerSA"].includes(layer) ? true : false}
                                             onChange={() => changeState(item)}
                                             inline
-                                            id={item.name + "-pa-id"}>
+                                            id={item.name + new Date().getTime()}>
                                             {item.label}
                                         </Checkbox>
                                     );
@@ -149,6 +149,7 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
                                             load={() => getRequestApi(get(item, "api"), pluginCfg.apiCfg, getParams())}
                                             disabled={item.parent ? isEmpty(item.parent(infos)) : item?.disabled || false}
                                             placeholder={item.placeholder}
+                                            searchByValueField={true}
                                             parentValue={item.parent ? new URLSearchParams(item.parent(infos))?.toString() : ""}
                                             filter="contains"
                                             textField={item.apiLabel}

@@ -5,7 +5,7 @@ import Tabou2IdentifyContent from './Tabou2IdentifyContent';
 import { LAYER_FIELD_OPTION } from '@ext/constants';
 import { createOptions, getFeaturesOptions } from '@ext/utils/identify';
 import IdentifyDropDown from "./IdentifyDropDown";
-import { Button, Glyphicon, Row } from 'react-bootstrap';
+import { Button, Glyphicon, Row, Alert } from 'react-bootstrap';
 import Tabou2Information from "@ext/components/common/Tabou2Information";
 import Tabou2IdentifyToolbar from './Tabou2IdentifyToolbar';
 
@@ -54,6 +54,7 @@ export default function Tabou2IdentifyPanel({
             <IdentifyDropDown
                 defaultValue={defaultIndex}
                 disabled={false}
+                visible
                 data={createOptions(keys(response).map(e => response[e]))}
                 valueField={'value'}
                 textField={'label'}
@@ -65,6 +66,7 @@ export default function Tabou2IdentifyPanel({
                     keys(response).map(l => (
                         <IdentifyDropDown
                             disabled={false}
+                            visible={response[l].data.features.length > 1 && selectedLayer === l}
                             data={getFeaturesOptions(response[l].data.features, keys(props.layersCfg).filter(k => l === props.layersCfg[k].nom)[0])}
                             defaultValue={defaultIndex}
                             textField={"label"}
