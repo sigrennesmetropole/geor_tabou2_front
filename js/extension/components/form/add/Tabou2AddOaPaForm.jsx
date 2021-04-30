@@ -204,7 +204,7 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
             <Panel
                 header={(
                     <>
-                        <label style={{marginRight: "2px"}}>1 - Choisir l'emprise géographique </label>
+                        <label style={{marginRight: "2px"}}>2 - Choisir l'emprise géographique </label>
                         <ControlledPopover text="Tous les champs sont obligatoires" />
                     </>
                 )}
@@ -214,7 +214,7 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
             <Panel
                 header={(
                     <>
-                        <label style={{marginRight: "2px"}}>2 - Saisir les informations</label>
+                        <label style={{marginRight: "2px"}}>3 - Saisir les informations</label>
                         <ControlledPopover text="Tous les champs sont obligatoires" />
                     </>
                 )}

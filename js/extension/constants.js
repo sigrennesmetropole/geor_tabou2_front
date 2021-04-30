@@ -287,7 +287,7 @@ export const ADD_FIELDS = {
 }
 
 export const ADD_OA_FORM = [{
-    label: " Commencez par choisir le type et la nature de l'emprise à sélectionner",
+    label: " Choisissez si c'est un secteur, puis sélectionnez la nature et l'emprise",
     group: 1,
     type: "alert",
     name: "msgOaCondition",
