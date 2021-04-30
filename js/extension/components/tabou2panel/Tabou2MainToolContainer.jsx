@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { connect } from 'react-redux';
 import { keys, isEmpty } from 'lodash';
 import {
@@ -33,6 +33,7 @@ import {
 
 function toolContainer({data, ...props }) {
     const [selection, setSelection] = useState({feature: {}, id: null, layer:""});
+    const isTaboufeature = useRef(false);
 
     const handleSelect = (feature, id, selectedLayer) => {
         props.setFeature(feature);
@@ -43,6 +44,8 @@ function toolContainer({data, ...props }) {
             id: id,
             layer: keys(props.pluginCfg.layersCfg).filter(k => props.pluginCfg.layersCfg[k].nom === selectedLayer)[0] || ""
         });
+        
+        isTaboufeature.current = feature.properties.id_tabou ? true : false;
     }
 
     return (
@@ -52,7 +55,7 @@ function toolContainer({data, ...props }) {
             }
             {
                 // display add panel
-                props.currentTab === "add" && !getAuthInfos().isConsult ? (
+                props.currentTab === "add" && !getAuthInfos().isConsult && !isTaboufeature.current ? (
                     <Tabou2AddPanel 
                         feature={selection.feature}
                         featureId={selection.featureId}
@@ -62,12 +65,21 @@ function toolContainer({data, ...props }) {
                 : null
             }
             {
-                props.currentTab === "add" && getAuthInfos().isConsult ? (
+                props.currentTab === "add" && getAuthInfos().isConsult && !isTaboufeature.current ? (
                     <Tabou2Information 
                         isVisible={true} 
                         glyph="alert" 
                         message="Vous ne disposez pas des droits suffisants pour utiliser cette fonctionnalité." 
                         title="Fonctionnalité non disponible"/>
+                ) : null
+            }
+            {
+                props.currentTab === "add" && isTaboufeature.current && !getAuthInfos().isConsult ? (
+                    <Tabou2Information 
+                        isVisible={true} 
+                        glyph="minus-sign" 
+                        message="Vous pouvez accéder aux informations de la fiche de cette emprise va l'onglet : Identifier une entité."
+                        title="Emprise déjà saisie"/>
                 ) : null
             }
             {

@@ -96,7 +96,6 @@ export function createTier(tier) {
 }
 
 export function changeFeatureTier(type, id, tier) {
-    console.log(id);
     return axios.put(`${baseURL}/${type}/${id}/tiers/${tier.id}`, tier);
 }
 

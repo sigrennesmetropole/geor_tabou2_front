@@ -278,6 +278,11 @@ export const ADD_FIELDS = {
         layerOA : "nature",
         layerPA : "nature",
         layerSA : "nature"
+    },
+    code: {
+        layerOA : "code",
+        layerPA : "code",
+        layerSA : "code"
     }
 }
 

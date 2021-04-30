@@ -30,7 +30,8 @@ const getInfos = (state) => {
     let layerUrl = get(URL_ADD, configName);
     return {
         featureId: featureId,
-        layerUrl: layerUrl
+        layerUrl: layerUrl,
+        layer: layer
     }
 }
 
@@ -42,16 +43,23 @@ const getInfos = (state) => {
 export function getTabou2Logs(action$, store) {
     return action$.ofType(SELECT_FEATURE)
         .switchMap((action) => {
+            let {featureId, layerUrl, layer} = getInfos(store.getState());
             //const idTabou = action?.selectedFeature?.properties.objectid || action?.selectedFeature?.properties.objectid;
             const idTabou = 3;
+            layerUrl = "operations";
+
             // get events from API
-            return Rx.Observable.defer(() => getFeatureEvents("operations", idTabou))
+            /**
+             * TODO
+             * - dynamic type layer
+             * - dynamic idTabou
+             */
+            return Rx.Observable.defer(() => getFeatureEvents(layerUrl, idTabou))
                 .switchMap( response => {
                     return Rx.Observable.of(loadEvents(response?.data || []))
                 })
                 .concat(
-                    // Rx.Observable.defer(() => getFeatureTiers("operations", idTabou))
-                    Rx.Observable.defer(() => getTiers("operations", idTabou))
+                    Rx.Observable.defer(() => getTiers(layerUrl, idTabou))
                     .switchMap( r => {
                         return Rx.Observable.of(loadTiers(r?.data?.elements || []))
                     })
@@ -63,18 +71,7 @@ export function updateTabou2Logs(action$, store) {
     return action$.ofType(ADD_FEATURE_EVENT, DELETE_FEATURE_EVENT, CHANGE_FEATURE_EVENT)
         .switchMap((action) => {
             //const idTabou = action?.selectedFeature?.properties.objectid || action?.selectedFeature?.properties.objectid;
-            // selected feature and selected layer
-            const feature = getSelection(store.getState());
-            const layer = getLayer(store.getState());
-            // get plugin config
-            const layersCfg = getPluginCfg(store.getState()).layersCfg;
-            // layerOA, layerPa, layerSA
-            const configName = keys(layersCfg).filter(k => layer === layersCfg[k].nom)[0];
-            // return correct name field id according to layer
-            let featureId = get(feature, find(LAYER_FIELD_OPTION, ["name", configName]).id);
-            // find correct api name
-            let layerUrl = get(URL_ADD, configName);
-
+            let {featureId, layerUrl} = getInfos(store.getState());
             featureId = 3;
             layerUrl = "operations";
             let toDoOnUpdate = get(actionOnUpdate, action.type);
