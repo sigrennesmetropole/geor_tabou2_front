@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Row, Col, FormGroup, Checkbox, FormControl, Panel, Alert, Glyphicon } from 'react-bootstrap';
 import Tabou2Combo from '@ext/components/form/Tabou2Combo';
-import { get, has, isEmpty, keys, isEqual } from 'lodash';
+import { get, has, isEmpty, keys, isEqual, find } from 'lodash';
 import { getRequestApi } from '@ext/api/search';
 import ControlledPopover from '@mapstore/components/widgets/widget/ControlledPopover';
 import Toolbar from '@mapstore/components/misc/toolbar/Toolbar';
@@ -20,6 +20,7 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
 
     const [newFeature, setNewFeature] = useState(["layerOA", "layerSA"].includes(layer) ? OA_SCHEMA : PA_SCHEMA);
     const [invalides, setInvalides] = useState([]);
+    const naturesInfos = useRef([]);
 
     const comboMarginTop = "10px";
     const marginTop = "15px";
@@ -37,7 +38,7 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
             formElement[combo.name] = value === "En diffus" ? "EN_DIFFUS" : value;
             apiElement[combo.name] = ["etape", "nature"].includes(combo.name) ? {
                 id: selection?.id
-            } : selection?.id || selection;            
+            } : selection?.id || selection;       
         }
         let newInfos = {...infos, ...formElement};
         let newFeatureObj = {...newFeature, ...apiElement};
@@ -45,6 +46,7 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
             newFeatureObj = {...newFeatureObj, nom: value};
             newInfos = {...newInfos, nom: value}
         }
+        console.log(newFeatureObj);
         setInfos(newInfos);
         setInvalides(keys(newInfos).filter(name => name !== "secteur").filter(name => !newInfos[name]));
         setNewFeature(newFeatureObj);
@@ -78,8 +80,16 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
             params = {...PA_SCHEMA, ...newFeature, code: infos.code};
         } else {
             //newFeature = {...OA_SCHEMA, ...newFeature, secteur: infos.secteur};
-            params = {...OA_SCHEMA, ...newFeature, code: infos.code}
+            params = {
+                ...OA_SCHEMA,
+                ...newFeature,
+                code: infos.code,
+                nature: { 
+                    id: find(naturesInfos.current, ['libelle', newFeature.nature]).id
+                }
+            }
         }
+        console.log(params);
         postRequestApi(`${get(URL_ADD, layer)}`, pluginCfg.apiCfg, params);
     };
 
@@ -92,6 +102,8 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
             nom : get(fProp, ADD_FIELDS.nom[layer]) || infos.nom
         };
         let newObject = {...newInfos, idEmprise : get(fProp, "id_emprise") || _.get(fProp, "objectid")}
+        console.log(newObject);
+        // FIX : need nature id !
         if (!isEqual(newInfos,infos)) {
             setInfos({...infos, ...newInfos});
             setNewFeature({...newFeature, ...newObject});
@@ -154,7 +166,13 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
                                             filter="contains"
                                             textField={item.apiLabel}
                                             valueField={item.apiField}
-                                            onLoad={(r) => r?.elements || r}
+                                            onLoad={(r) => {
+                                                let dataItem = r?.elements || r;
+                                                // used to keep info and send  nature id to the api instead of name return by layer 
+                                                // (need id not return by default)
+                                                if(item.name === "nature") naturesInfos.current = dataItem;
+                                                return dataItem;
+                                            }}
                                             name={item.label}
                                             value={get(infos, item.name)}
                                             onSelect={(t) => changeState(item, t)}

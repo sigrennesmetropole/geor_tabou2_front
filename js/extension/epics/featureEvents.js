@@ -3,7 +3,7 @@ import { get, keys } from 'lodash';
 import { loadEvents, loadTiers, SELECT_FEATURE, ADD_FEATURE_EVENT, DELETE_FEATURE_EVENT, CHANGE_FEATURE_EVENT,
     ADD_FEATURE_TIER, DELETE_FEATURE_TIER, CHANGE_FEATURE_TIER, INACTIVATE_TIER
  } from '@ext/actions/tabou2';
-import { getFeatureEvents, addFeatureEvent, deleteFeatureEvent, changeFeatureEvent, getFeatureTiers, getTiers, createTier, inactivateTier } from '@ext/api/search';
+import { getFeatureEvents, addFeatureEvent, deleteFeatureEvent, changeFeatureEvent, getFeatureTiers, addFeatureTier, changeFeatureTier, getTiers, createTier, inactivateTier } from '@ext/api/search';
 import { getSelection, getLayer, getPluginCfg } from '@ext/selectors/tabou2';
 import { LAYER_FIELD_OPTION, URL_ADD } from '@ext/constants';
 
@@ -11,6 +11,7 @@ const actionOnUpdate = {
     "ADD_FEATURE_EVENT": (layer, idFeature, event) => addFeatureEvent(layer, idFeature, event),
     "DELETE_FEATURE_EVENT": (layer, idFeature, event) => deleteFeatureEvent(layer, idFeature, event.id),
     "CHANGE_FEATURE_EVENT": (layer, idFeature, event) => changeFeatureEvent(layer, idFeature, event),
+    "ADD_FEATURE_TIER": (layer, idFeature, tier) => addFeatureTier(layer, idFeature, tier),
     "DELETE_FEATURE_TIER": (layer, idFeature, tier) => deleteFeatureTier(layer, idFeature, tier.id),
     "CHANGE_FEATURE_TIER": (layer, idFeature, tier) => changeFeatureTier(layer, idFeature, tier),
     "INACTIVATE_TIER": (layer, idFeature, tier) => inactivateTier(layer, idFeature, tier.id),
@@ -97,7 +98,6 @@ export function addCreateTabou2Tier(action$, store) {
             // selected feature and selected layer
             let {featureId, layerUrl} = getInfos(store.getState());
             // create tier first
-            return Rx.Observable.empty();
             return Rx.Observable.defer(() => createTier(layerUrl, featureId, action.tier))
                 .switchMap(() => {
                     // Now we associate this tier to element
@@ -117,10 +117,10 @@ export function updateTabou2Tier(action$, store) {
         .switchMap((action) => {
             //const idTabou = action?.selectedFeature?.properties.objectid || action?.selectedFeature?.properties.objectid;
             // selected feature and selected layer
+            let toDoOnUpdate = get(actionOnUpdate, action.type);
             let {featureId, layerUrl} = getInfos(store.getState());
-            return Rx.Observable.empty();
             return Rx.Observable.defer(() => toDoOnUpdate(layerUrl, featureId, action.tier))
-            .switchMap( tiers => {
+            .switchMap( () => {
                     return Rx.Observable.defer(() => getFeatureTiers(layerUrl, featureId)).switchMap( tiers => {
                         return Rx.Observable.of(loadTiers(tiers?.data || []))
                         }

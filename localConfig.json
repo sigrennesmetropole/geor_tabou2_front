@@ -354,13 +354,13 @@
               "idType": "number"
             },
             "layerOA": {
-              "nom": "tabou2:tabou_v_oa_secteur",
+              "nom": "tabou2:tabou_v_oa_operation1",
               "geomField": "the_geom",
               "idField": "objectid",
               "idType": "number"
             },
             "layerSA": {
-              "nom": "tabou2:tabou_v_oa_operation",
+              "nom": "tabou2:tabou_v_oa_secteur",
               "geomField": "the_geom",
               "idField": "objectid",
               "idType": "number"

@@ -192,7 +192,7 @@
                 "url": "https://gis.jdev.fr/geoserver/wfs",
                 "type": "wfs"
             },
-            "name": "tabou2:v_chargedoperation_secteur0",
+            "name": "tabou2:v_chargedoperation_secteur",
             "opacity": 1,
             "description": "v_chargedoperation_secteur",
             "title": "SAM",
@@ -337,7 +337,7 @@
                 "url": "https://gis.jdev.fr/geoserver/wfs",
                 "type": "wfs"
             },
-            "name": "tabou2:tabou_v_oa_operation",
+            "name": "tabou2:tabou_v_oa_operation1",
             "opacity": 1,
             "description": "tabou_v_oa_operation",
             "title": "Operations",
@@ -403,18 +403,18 @@
             "version": "1.3.0",
             "params": {}
         }, {
-            "id": "tabou2:tabou_v_oa_programme__14",
+            "id": "tabou:tabou_v_oa_programme__14",
             "format": "image/png",
             "search": {
-                "url": "https://gis.jdev.fr/geoserver/wfs",
+                "url": "https://portail-test.sig.rennesmetropole.fr/geoserver/ows",
                 "type": "wfs"
             },
-            "name": "tabou2:tabou_v_oa_programme0",
+            "name": "tabou2:tabou_v_oa_programme",
             "opacity": 1,
-            "description": "tabou_v_oa_programme",
+            "description": "tabou2:tabou_v_oa_programme",
             "title": "Programmes",
             "type": "wms",
-            "url": "https://gis.jdev.fr/geoserver/wms",
+            "url": "https://portail-test.sig.rennesmetropole.fr/geoserver/wms",
             "bbox": {
                 "crs": "EPSG:4326",
                 "bounds": {

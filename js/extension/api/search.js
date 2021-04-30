@@ -96,7 +96,8 @@ export function createTier(tier) {
 }
 
 export function changeFeatureTier(type, id, tier) {
-    return axios.post(`${baseURL}/${type}/${id}/tiers/${tier.id}`, tier);
+    console.log(id);
+    return axios.put(`${baseURL}/${type}/${id}/tiers/${tier.id}`, tier);
 }
 
 export function deleteFeatureTier(type, id, tierId) {
