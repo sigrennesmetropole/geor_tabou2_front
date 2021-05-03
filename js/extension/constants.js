@@ -85,6 +85,7 @@ export const SEARCH_ITEMS = [{
 }, {
     name: "natures",
     placeholder: "Toutes natures",
+    type: 'string',
     group: 3
 }, {
     name: "secteurs-sam",
@@ -111,6 +112,7 @@ export const SEARCH_ITEMS = [{
     name: "etapesoa",
     placeholder: "Toutes Etapes OA",
     api: "operations/etapes",
+    type: 'string',
     disabled: false,
     group: 3
 }, {
@@ -118,6 +120,7 @@ export const SEARCH_ITEMS = [{
     api: "programmes/etapes",
     placeholder: "Toutes Etapes PA",
     disabled: false,
+    type: 'string',
     group: 4
 }];
 
@@ -445,46 +448,20 @@ export const OA_SCHEMA = {
     }
   };
 
-  export const PA_SCHEMA = {
-    "adsDate": "2021-02-24T15:15:22.381Z",
-    "adsDatePrevu": "2021-02-24T15:15:22.381Z",
-    "attributionDate": "2021-02-24T15:15:22.381Z",
-    "attributionFonciereAnnee": 0,
-    "clotureDate": "2021-02-24T15:15:22.381Z",
-    "commercialisationDate": "2021-02-24T15:15:22.381Z",
-    "createDate": "2021-02-24T15:15:22.381Z",
-    "createUser": "string",
-    "datDate": "2021-02-24T15:15:22.381Z",
-    "datDatePrevu": "2021-02-24T15:15:22.381Z",
-    "description": "string",
+export const PA_SCHEMA = {
+    "operationId": 0,
+    "idEmprise": 0,
     "diffusionRestreinte": false,
-    "docDate": "2021-02-24T15:15:22.381Z",
-    "docDatePrevu": "2021-02-24T15:15:22.381Z",
-    "etape": {    
-      "id": 1  
-    },
-    "logementsAccessAide": 0,
-    "logementsAccessAidePrevu": 0,
-    "logementsAccessLibrePrevu": 0,
-    "logementsAccessMaitrise": 0,
-    "logementsAccessMaitrisePrevu": 0,
-    "logementsLocatifAide": 0,
-    "logementsLocatifAidePrevu": 0,
-    "logementsLocatifReguleHLM": 0,
-    "logementsLocatifReguleHlmPrevu": 0,
-    "logementsLocatifRegulePrive": 0,
-    "logementsLocatifRegulePrivePrevu": 0,
-    "logementsTotal": 0,
-    "modifDate": "2021-02-24T15:15:22.382Z",
-    "modifUser": "string",
-    "numAds": "string",
-    "operationId": 7,
-    "nom": "prog2",
-    "programme": "prog2",
-    "code": "prog2"
-  };
+    "code": "",
+    "nom": "",
+    "description": "",
+    "programme": "",
+    "etape": {
+      "id": 0  
+    }
+};
 
-  export const LOG_SCHEMA = {
+export const LOG_SCHEMA = {
     description: "",
     eventDate: "2021-04-21T14:39:54.176Z",
     id: 0,
