@@ -15,7 +15,8 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
         etape: "",
         idEmprise: "",
         nature: "",
-        secteur: false
+        secteur: false,
+        parentoa: 0
     };
     const [infos, setInfos] = useState(emptyInfos);
 
@@ -51,8 +52,16 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
             newFeatureObj = {...newFeatureObj, nom: value};
             newInfos = {...newInfos, nom: value}
         }
+        if(combo.name === "parentoa") {
+            newFeatureObj = {...newFeatureObj, operationId: selection.idEmprise, };
+            newInfos = {...newInfos, operationId: selection.idEmprise, }
+        }
         setInfos(newInfos);
-        setInvalides(keys(newInfos).filter(name => name !== "secteur").filter(name => !newInfos[name]));
+        if (layer === "layerPA") {
+            setInvalides(keys(newInfos).filter(name => name !== "secteur" && name !== "nature").filter(name => !newInfos[name]));
+        } else {
+            setInvalides(keys(newInfos).filter(name => name !== "secteur").filter(name => !newInfos[name]));
+        }
         setNewFeature(newFeatureObj);
     };
 
@@ -75,7 +84,11 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
     };
     
     const isInvalid = () => {
-        return keys(infos).filter(name => name !== "secteur").filter(name => !infos[name]).length > 0;
+        if ( layer === "layerPA") {
+            return keys(infos).filter(name => name !== "secteur" && name !== "nature").filter(name => !infos[name]).length > 0;
+        } else {
+            return keys(infos).filter(name => name !== "secteur").filter(name => !infos[name]).length > 0;
+        }
     };
 
     const handleSubmit = () => {
@@ -239,9 +252,9 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
                         onClick: () => reset()                        
                     }, {
                         glyph: "ok",
-                        tooltip: isInvalid() ? "Veuillez compléter tous les champs !" :  "Sauvegarder",
+                        tooltip: invalides.length ? "Veuillez compléter tous les champs !" :  "Sauvegarder",
                         id: "saveNewEmprise",
-                        disabled: isInvalid() > 0 || feature.properties.id_tabou,
+                        disabled: invalides.length,
                         onClick: () => handleSubmit()
                     }]}
                 />
