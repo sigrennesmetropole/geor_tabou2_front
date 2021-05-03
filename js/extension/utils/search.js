@@ -1,5 +1,14 @@
 import { keys, get } from 'lodash';
 
+const fixStringCql = (type, value) => {
+    let cqlVal = value;
+    if (type === 'string' && value) {
+        cqlVal = `''${value.replace(/'/g, "''''")}''`;
+    }
+    return cqlVal;
+};
+
+
 /**
  * Control if an object have null attribute value.
  *
@@ -93,6 +102,19 @@ export function getNewCqlFilter(props) {
     };
 }
 
+export function getIdsToCql(ids, field) {
+    return ids.map(id => {
+        return {
+            attribute: field,
+            groupId: 1,
+            operator: "=",
+            rowId: new Date().getTime(),
+            type: "number",
+            value: id
+        }
+    })
+};
+
 /**
  * Create standard CQL Cross Layer filter expression
  * @param {string} type
@@ -103,12 +125,12 @@ export function getNewCqlFilter(props) {
  * @param {any} value
  * @returns {string} as CQL expression value
  */
-export function getCQL(type, geomA, layer, geomB, field, value) {
-    let cqlVal = value;
-    if (type === 'string') {
-        cqlVal = `''${value.replace(/'/g, "''''")}''`;
-    }
-    return `(INTERSECTS(${geomA},collectGeometries(queryCollection('${layer}', '${geomB}','("${field}" = ${cqlVal})'))))`;
+export function getSpatialCQL(type, geomA, layer, geomB, field, value, onlyTabou) {
+    return `(INTERSECTS(${geomA},collectGeometries(queryCollection('${layer}', '${geomB}','(${onlyTabou ? "id_tabou IS NOT NULL AND " : ""}"${field}" = ${fixStringCql(type, value)})'))))`;
+}
+
+export function getCQL(type, field, value) {
+    return `${field}='${value}'`;
 }
 
 /**
