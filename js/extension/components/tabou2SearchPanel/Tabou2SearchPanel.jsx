@@ -10,12 +10,11 @@ import Tabou2Combo from '../form/Tabou2Combo';
 import utcDateWrapper from '@mapstore/components/misc/enhancers/utcDateWrapper';
 import { getRequestApi } from '../../api/search';
 
-import { setTabouFilterObj, setTabouFilters, resetSearchFilters, resetCqlFilters, applyFilterObj } from '../../actions/tabou2';
+import { setTabouFilterObj, setTabouFilters, resetSearchFilters, resetCqlFilters } from '../../actions/tabou2';
 
-import { getNewFilter, getNewCqlFilter, getGeoServerUrl, getCQL, getTabouLayersInfos } from '../../utils/search';
+import { getNewFilter, getGeoServerUrl, getSpatialCQL, getCQL, getTabouLayersInfos, getIdsToCql } from '../../utils/search';
 
 import { SEARCH_ITEMS, SEARCH_CALENDARS } from '@ext/constants';
-
 
 const UTCDateTimePicker = utcDateWrapper({
     dateProp: "value",
@@ -74,7 +73,12 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
         let filtersObj = getFiltersObj;
         const geoserverURL = getGeoServerUrl(props);
         layers.forEach(lyr => {
-            const cql = getCQL(type, layersInfos[lyr].geom, filterConf.layer, filterConf.geom,  filterConf.filterField, value);
+            let cql = "";
+            if (lyr === filterConf.layer) {
+                cql = getCQL(type, filterConf.filterField, value);
+            } else {
+                cql = getSpatialCQL(type, layersInfos[lyr].geom, filterConf.layer, filterConf.geom,  filterConf.filterField, value, layers.includes(filterConf.layer));
+            }
             const idField = layersInfos[lyr].id;
             const idType = layersInfos[lyr].type;
             if (!currentFilters[lyr]) {
@@ -96,6 +100,7 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                 // stock MapStore layer filter object
                 return changeFiltersObj(filtersObj);
             }
+            CQLStr.push('id_tabou IS NOT NULL');
             // create WFS request
             const requestParams = {
                 CQL_FILTER: CQLStr.join(' AND '),
@@ -112,7 +117,7 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'}
             }).then(response => {
                 // read features id to filter toc layer
-                let ids = [];
+                let ids = [0];
                 let idsCql = '';
                 if (response.data && response.data.totalFeatures) {
                     ids = response.data.features.map(feature => feature?.properties[idField] || '');
@@ -120,15 +125,8 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                     idsCql = idType === 'string' ? ids.map(i => `'${i}'`) : (ids.length ? ids : [0]);
                     idsCql = idsCql.join(',');
                 }
-                let geomFilter = getNewCqlFilter({
-                    mapLayerGeom: layersInfos[lyr].geom,
-                    crossGeom: layersInfos[lyr].geom,
-                    crossName: lyr,
-                    cqlFilter: `${idField} IN (${idsCql})`
-                });
                 // replace current layer filter
-                let newFilter = getNewFilter(lyr, null, [], null);
-                newFilter.crossLayerFilter = geomFilter;
+                let newFilter = getNewFilter(lyr, null, getIdsToCql(ids, idField), null);
                 // update filter obj before change layer
                 filtersObj[lyr] = newFilter;
                 changeFiltersObj(filtersObj);
