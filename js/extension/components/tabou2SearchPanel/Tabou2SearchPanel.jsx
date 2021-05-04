@@ -71,7 +71,7 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
     const changeCqlFilter = (type, filter, value, filterConf) => {
         const layers = keys(layersInfos);
         let filtersObj = getFiltersObj;
-        const geoserverURL = getGeoServerUrl(props);
+        let filters = [];
         layers.forEach(lyr => {
             let cql = "";
             if (lyr === filterConf.layer) {
@@ -79,8 +79,6 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
             } else {
                 cql = getSpatialCQL(type, layersInfos[lyr].geom, filterConf.layer, filterConf.geom,  filterConf.filterField, value, layers.includes(filterConf.layer));
             }
-            const idField = layersInfos[lyr].id;
-            const idType = layersInfos[lyr].type;
             if (!currentFilters[lyr]) {
                 currentFilters[lyr] = {};
             }
@@ -102,38 +100,21 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
             }
             CQLStr.push('id_tabou IS NOT NULL');
             // create WFS request
-            const requestParams = {
-                CQL_FILTER: CQLStr.join(' AND '),
-                SERVICE: 'WFS',
-                REQUEST: 'GetFeature',
-                TYPENAME: lyr, // tabou2:iris
-                OUTPUTFORMAT: 'application/json',
-                VERSION: '1.0.0'
-            };
-
-            let paramsToStr = keys(requestParams).map(k => `${k}=${requestParams[k]}`);
-            return axios.post(`${geoserverURL}/ows`, paramsToStr.join('&'), {
-                timeout: 60000,
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-            }).then(response => {
-                // read features id to filter toc layer
-                let ids = [0];
-                let idsCql = '';
-                if (response.data && response.data.totalFeatures) {
-                    ids = response.data.features.map(feature => feature?.properties[idField] || '');
-                    ids = ids.filter(id => id);
-                    idsCql = idType === 'string' ? ids.map(i => `'${i}'`) : (ids.length ? ids : [0]);
-                    idsCql = idsCql.join(',');
-                }
-                // replace current layer filter
-                let newFilter = getNewFilter(lyr, null, getIdsToCql(ids, idField), null);
-                // update filter obj before change layer
-                filtersObj[lyr] = newFilter;
-                changeFiltersObj(filtersObj);
-            })
-                // eslint-disable-next-line no-console
-                .catch(error => console.log(error));
+            filters.push({
+                layer: lyr,
+                params: {
+                    CQL_FILTER: CQLStr.join(' AND '),
+                    SERVICE: 'WFS',
+                    REQUEST: 'GetFeature',
+                    TYPENAME: lyr, // tabou2:iris
+                    OUTPUTFORMAT: 'application/json',
+                    VERSION: '1.0.0'
+                },
+                idField: layersInfos[lyr].id,
+                idType: layersInfos[lyr].type
+            });
         });
+        props.searchIds(filters);
     };
 
     const changeFilter = (combo, value) => {

@@ -17,7 +17,7 @@ import tabou2 from '@ext/reducers/tabou2';
 import { setUp } from '@ext/actions/tabou2';
 import init from '@ext/utils/init';
 
-import { tabouApplyFilter, tabouResetFilter } from '@ext/epics/search';
+import { tabouApplyFilter, tabouResetFilter, tabouGetSearchIds } from '@ext/epics/search';
 import { tabouLoadIdentifyContent, tabouSetGFIFormat, purgeTabou, printProgramme } from '@ext/epics/identify';
 import { getTabou2Logs, updateTabou2Logs, updateTabou2Tier, addCreateTabou2Tier } from '@ext/epics/featureEvents';
 import { setTbarPosition } from '@ext/epics/setup';
@@ -89,7 +89,8 @@ export default {
         updateTabou2Logs: updateTabou2Logs,
         updateTabou2Tier: updateTabou2Tier,
         addCreateTabou2Tier: addCreateTabou2Tier,
-        printProgramme: printProgramme
+        printProgramme: printProgramme,
+        tabouGetSearchIds: tabouGetSearchIds
     },
     containers: {
         Toolbar: {

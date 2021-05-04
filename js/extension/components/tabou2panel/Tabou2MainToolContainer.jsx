@@ -30,7 +30,8 @@ import {
     associateFeatureTier,
     inactivateTier,
     applyFilterObj,
-    printProgInfos
+    printProgInfos,
+    searchIds
 } from "@ext/actions/tabou2";
 
 function toolContainer({data, ...props }) {
@@ -126,6 +127,7 @@ export default connect(
         inactivateTier: inactivateTier,
         changeTier: changeFeatureTier,
         associateTier: associateFeatureTier,
-        printProgInfos: printProgInfos
+        printProgInfos: printProgInfos,
+        searchIds: searchIds
     }
 )(toolContainer);

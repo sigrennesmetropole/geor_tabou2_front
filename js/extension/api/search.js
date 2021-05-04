@@ -1,7 +1,18 @@
-import axios from '@mapstore/libs/ajax';
-import { API_BASE_URL } from '../constants';
+import axios from "@mapstore/libs/ajax";
+import { API_BASE_URL } from "@ext/constants";
+import { keys } from "lodash";
 
 let baseURL = "/tabou2";
+
+/** SEARCH - get ids from cross layer filter */
+
+export function getIdsFromSearch(params, geoserverURL) {
+    let paramsToStr = keys(params).map(k => `${k}=${params[k]}`);
+    return axios.post(`${geoserverURL}/ows`, paramsToStr.join('&'), {
+        timeout: 60000,
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+    }).then(({ data }) => data);
+}
 
 /**
  * API - create GET request

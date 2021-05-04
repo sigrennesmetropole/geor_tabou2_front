@@ -23,6 +23,12 @@ export const CHANGE_FEATURE_TIER = "CHANGE_FEATURE_TIER";
 export const INACTIVATE_TIER = "INACTIVATE_TIER";
 export const SET_TABOU_CONFIG = "SET_TABOU_CONFIG";
 export const PRINT_PROGRAMME_INFOS = "PRINT_FICHE_PROGRAMME";
+export const SEARCH_IDS = "SEARCH_IDS";
+
+export const searchIds = (params) => ({
+    type: SEARCH_IDS,
+    params
+});
 
 export const setUp = (pluginCfg) => ({
     type: SETUP,
