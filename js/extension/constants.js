@@ -454,11 +454,12 @@ export const PA_SCHEMA = {
     "diffusionRestreinte": false,
     "code": "",
     "nom": "",
-    "description": "",
-    "programme": "",
+    "description": "nc",
+    "programme": "nc",
     "etape": {
       "id": 0  
-    }
+    },
+    "numAds": "nc"
 };
 
 export const LOG_SCHEMA = {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Row, Col, FormGroup, Checkbox, FormControl, Panel, Alert, Glyphicon } from 'react-bootstrap';
 import Tabou2Combo from '@ext/components/form/Tabou2Combo';
-import { get, has, isEmpty, keys, isEqual, isObject } from 'lodash';
+import { get, has, isEmpty, keys, isEqual, isObject, find } from 'lodash';
 import { getRequestApi } from '@ext/api/search';
 import ControlledPopover from '@mapstore/components/widgets/widget/ControlledPopover';
 import Toolbar from '@mapstore/components/misc/toolbar/Toolbar';
@@ -23,6 +23,7 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
     const [newFeature, setNewFeature] = useState(["layerOA", "layerSA"].includes(layer) ? OA_SCHEMA : PA_SCHEMA);
     const [invalides, setInvalides] = useState([]);
     const naturesInfos = useRef([]);
+    const etapesInfos = useRef([]);
 
     const comboMarginTop = "10px";
     const marginTop = "15px";
@@ -53,15 +54,18 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
             newInfos = {...newInfos, nom: value}
         }
         if(combo.name === "parentoa") {
-            newFeatureObj = {...newFeatureObj, operationId: selection.idEmprise, };
-            newInfos = {...newInfos, operationId: selection.idEmprise, }
+            newFeatureObj = {...newFeatureObj, operationId: selection.id, };
+            newInfos = {...newInfos, operationId: selection.id, }
         }
         setInfos(newInfos);
+        getInvalides(newInfos, infos);
+        let keysInfos = [];
         if (layer === "layerPA") {
-            setInvalides(keys(newInfos).filter(name => name !== "secteur" && name !== "nature").filter(name => !newInfos[name]));
+            keysInfos = keys(newInfos).filter(name => name !== "secteur" && name !== "nature");
         } else {
-            setInvalides(keys(newInfos).filter(name => name !== "secteur").filter(name => !newInfos[name]));
+            keysInfos = keys(newInfos).filter(name => name !== "secteur" && name !== "parentoa");
         }
+        setInvalides(keysInfos.filter(name => !get(newInfos, name)));
         setNewFeature(newFeatureObj);
     };
 
@@ -83,21 +87,30 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
         return params;
     };
     
-    const isInvalid = () => {
+    
+    const getInvalides = () => {
+        let keysToFilter = [];
         if ( layer === "layerPA") {
-            return keys(infos).filter(name => name !== "secteur" && name !== "nature").filter(name => !infos[name]).length > 0;
+            keysToFilter = keys(infos).filter(name => name !== "secteur" && name !== "nature");
         } else {
-            return keys(infos).filter(name => name !== "secteur").filter(name => !infos[name]).length > 0;
+            keysToFilter = keys(infos).filter(name => name !== "secteur" && name !=="parentoa");
         }
+        return keysToFilter.filter(n => get(infos, n));
     };
 
     const handleSubmit = () => {
         let params = {};
         if (layer === "layerPA") {
-            params = {...PA_SCHEMA, ...newFeature, code: infos.code};
+            params = {
+                ...PA_SCHEMA,
+                ...newFeature,
+                code: infos.code,
+                numAds: "nc",
+                etape: isObject(newFeature.etape) ? newFeature.etape : find(etapesInfos.current, ['libelle', newFeature.etape])
+            };
         } else {
             //newFeature = {...OA_SCHEMA, ...newFeature, secteur: infos.secteur};
-            let natureId = _.isObject(newFeature.nature) ? newFeature.nature : _.find(naturesInfos.current, ['libelle', newFeature.nature]).id;
+            let natureId = isObject(newFeature.nature) ? newFeature.nature : {id: find(naturesInfos.current, ['libelle', newFeature.nature]).id};
             params = {
                 ...OA_SCHEMA,
                 ...newFeature,
@@ -187,6 +200,7 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
                                                 // used to keep info and send  nature id to the api instead of name return by layer 
                                                 // (need id not return by default)
                                                 if(item.name === "nature") naturesInfos.current = dataItem;
+                                                if(item.name === "etape") etapesInfos.current = dataItem;
                                                 return dataItem;
                                             }}
                                             name={item.label}
