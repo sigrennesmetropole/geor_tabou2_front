@@ -96,7 +96,7 @@ export function printProgramme(action$, store) {
         .switchMap((action) => {
             return Rx.Observable.defer(() => getPDFProgramme("programme", action.id))
             .switchMap( response => {
-                const blob = new Blob([response.data], { type: response.data.type });
+                const blob = new Blob([response.data], { type: response.data.type || 'application/pdf' });
                 const url = window.URL.createObjectURL(blob);
                 const link = document.createElement('a');
                 link.href = url;

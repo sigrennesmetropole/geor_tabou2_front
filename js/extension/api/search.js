@@ -108,5 +108,5 @@ export function inactivateTier(tierId) {
 }
 
 export function getPDFProgramme(type, id) {
-    return axios.get(`${baseURL}/${type}/${id}/fiche-suivi`);
+    return axios.get(`${baseURL}/${type}/${id}/fiche-suivi`, {responseType: 'arraybuffer'});
 }
