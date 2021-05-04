@@ -3,7 +3,7 @@ import Toolbar from '@mapstore/components/misc/toolbar/Toolbar';
 import Tabou2TiersModal from './modals/Tabou2TiersModal';
 import Tabou2DocsModal from './modals/Tabou2DocsModal';
 import Tabou2LogsModal from './modals/Tabou2LogsModal';
-export default function Tabou2IdentifyToolbar({ response, featureId, ...props }) {
+export default function Tabou2IdentifyToolbar({ response, ...props }) {
     const [isOpenTiers, setIsOpenTiers] = useState(false);
     const [isOpenDocs, setIsOpenDocs] = useState(false);
     const [isOpenLogs, setIsOpenLogs] = useState(false);
@@ -28,6 +28,16 @@ export default function Tabou2IdentifyToolbar({ response, featureId, ...props })
             onClick: () => setIsOpenLogs(true)
         }
     ];
+
+    let featureId = props.selection.id;
+    if (props.selectedCfgLayer === "layerPA" && props.selection.properties.id_tabou) {
+        modalBtns.push({
+            glyph: "print",
+            tooltip: "Impression du suivi",
+            id: "print",
+            onClick: () => props.printProgInfos(props.selection.properties.id_tabou)
+        });
+    }
 
     return (
         <>

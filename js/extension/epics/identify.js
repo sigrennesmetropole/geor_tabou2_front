@@ -13,7 +13,8 @@ import {
 } from "@mapstore/actions/mapInfo";
 import { TOGGLE_CONTROL } from '@mapstore/actions/controls';
 import { isTabou2Activate, defaultInfoFormat, getTabouResponse } from '@ext/selectors/tabou2';
-import { loadTabouFeatureInfo, setDefaultInfoFormat, setMainActiveTab } from '@ext/actions/tabou2';
+import { loadTabouFeatureInfo, setDefaultInfoFormat, setMainActiveTab, PRINT_PROGRAMME_INFOS, downloadBlob } from '@ext/actions/tabou2';
+import { getPDFProgramme } from '@ext/api/search';
 
 /**
  * Catch GFI response on identify load event and close identify if Tabou2 identify tabs is selected
@@ -81,5 +82,38 @@ export function purgeTabou(action$) {
     return action$.ofType(FEATURE_INFO_CLICK)
     .switchMap(() => {
         return Rx.Observable.of(loadTabouFeatureInfo({}));
+    });
+}
+
+/**
+ * Get fiche-suivi from tabou2 API as document
+ * @param {*} action$ 
+ * @param {*} store 
+ * @returns 
+ */
+export function printProgramme(action$, store) {
+    return action$.ofType(PRINT_PROGRAMME_INFOS)
+        .switchMap((action) => {
+            return Rx.Observable.defer(() => getPDFProgramme("programme", action.id))
+            .switchMap( response => {
+                const blob = new Blob([response.data], { type: response.data.type });
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                const contentDisposition = response.headers['content-disposition'];
+                let name = `fiche-suivi-${action.id}`;
+                if (contentDisposition) {
+                    const fileNameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+                    if (fileNameMatch.length > 2 && fileNameMatch[1]) {
+                        name = fileNameMatch[1];
+                    }
+                }
+                link.setAttribute('download', name);
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                window.URL.revokeObjectURL(url);
+                return Rx.Observable.empty();
+            });
     });
 }

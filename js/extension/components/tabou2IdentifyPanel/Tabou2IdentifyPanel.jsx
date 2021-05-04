@@ -85,7 +85,6 @@ export default function Tabou2IdentifyPanel({
                     (<Row className="tabou-idToolbar-row text-center" style={{ display: "flex", margin: "auto", justifyContent: "center" }}>
                         <Tabou2IdentifyToolbar 
                             response={response[selectedLayer]}
-                            featureId={get(feature, find(LAYER_FIELD_OPTION, ["name", configLayer]).id)} 
                             {...props}
                         />
                     </Row>)

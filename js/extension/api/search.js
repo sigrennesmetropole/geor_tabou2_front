@@ -106,3 +106,7 @@ export function deleteFeatureTier(type, id, tierId) {
 export function inactivateTier(tierId) {
     return axios.put(`${baseURL}/tiers/${tierId}/inactivate`, tier);
 }
+
+export function getPDFProgramme(type, id) {
+    return axios.get(`${baseURL}/${type}/${id}/fiche-suivi`);
+}

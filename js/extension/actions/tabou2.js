@@ -22,7 +22,7 @@ export const DELETE_FEATURE_TIER = "DELETE_FEATURE_TIER";
 export const CHANGE_FEATURE_TIER = "CHANGE_FEATURE_TIER";
 export const INACTIVATE_TIER = "INACTIVATE_TIER";
 export const SET_TABOU_CONFIG = "SET_TABOU_CONFIG";
-
+export const PRINT_PROGRAMME_INFOS = "PRINT_FICHE_PROGRAMME";
 
 export const setUp = (pluginCfg) => ({
     type: SETUP,
@@ -142,4 +142,9 @@ export const inactivateTier = (tier) => ({
 export const setTabouConfig = (config) => ({
     type: SET_TABOU_CONFIG,
     config
+});
+
+export const printProgInfos = (id) => ({
+    type: PRINT_PROGRAMME_INFOS,
+    id
 });

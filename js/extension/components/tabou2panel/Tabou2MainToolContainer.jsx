@@ -9,7 +9,8 @@ import {
     getTiers,
     getSelection,
     getLayer,
-    getAuthInfos
+    getAuthInfos,
+    getSelectedCfgLayer
 } from '@ext/selectors/tabou2';
 
 import Tabou2SearchPanel from '../tabou2SearchPanel/Tabou2SearchPanel';
@@ -28,7 +29,8 @@ import {
     changeFeatureTier,
     associateFeatureTier,
     inactivateTier,
-    applyFilterObj 
+    applyFilterObj,
+    printProgInfos
 } from "@ext/actions/tabou2";
 
 function toolContainer({data, ...props }) {
@@ -109,7 +111,8 @@ export default connect(
         events: getEvents(state),
         tiers: getTiers(state),
         selection: getSelection(state),
-        selectionLayer: getLayer(state)
+        selectionLayer: getLayer(state),
+        selectedCfgLayer: getSelectedCfgLayer(state)
     }), {
         setTab: setMainActiveTab,
         setFeature: setSelectedFeature,
@@ -123,5 +126,6 @@ export default connect(
         inactivateTier: inactivateTier,
         changeTier: changeFeatureTier,
         associateTier: associateFeatureTier,
+        printProgInfos: printProgInfos
     }
 )(toolContainer);

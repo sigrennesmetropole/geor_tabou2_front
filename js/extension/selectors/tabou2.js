@@ -1,5 +1,5 @@
 import { CONTROL_NAME } from '@ext/constants';
-import { keys } from 'lodash';
+import { keys, pickBy } from 'lodash';
 import { userGroupSecuritySelector } from '@mapstore/selectors/security';
 
 export function currentActiveTabSelector(state) {
@@ -43,6 +43,10 @@ export function getSelection(state) {
 }
 export function getLayer(state) {
     return state?.tabou2?.selectedLayer;
+}
+
+export function getSelectedCfgLayer(state) {
+    return keys(pickBy(getPluginCfg(state).layersCfg, lyr => lyr.nom === getLayer(state)))[0];
 }
 
 export function getEvents(state) {
