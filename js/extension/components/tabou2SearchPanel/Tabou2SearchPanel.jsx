@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { keys, get } from 'lodash';
 import { connect } from 'react-redux';
-import axios from '@mapstore/libs/ajax';
 import { Checkbox, Col, Row, ControlLabel, FormGroup, Grid, Panel } from 'react-bootstrap';
 import { DateTimePicker } from 'react-widgets';
-import { currentActiveTabSelector, currentTabouFilters, getLayerFilterObj } from '../../selectors/tabou2';
+import { currentActiveTabSelector, currentTabouFilters, getLayerFilterObj, searchLoading } from '../../selectors/tabou2';
 import Tabou2SearchToolbar from './Tabou2SearchToolbar';
 import Tabou2Combo from '../form/Tabou2Combo';
 import utcDateWrapper from '@mapstore/components/misc/enhancers/utcDateWrapper';
@@ -12,7 +11,7 @@ import { getRequestApi } from '../../api/search';
 
 import { setTabouFilterObj, setTabouFilters, resetSearchFilters, resetCqlFilters } from '../../actions/tabou2';
 
-import { getNewFilter, getGeoServerUrl, getSpatialCQL, getCQL, getTabouLayersInfos, getIdsToCql } from '../../utils/search';
+import { getNewFilter, getSpatialCQL, getCQL, getTabouLayersInfos } from '../../utils/search';
 
 import { SEARCH_ITEMS, SEARCH_CALENDARS } from '@ext/constants';
 
@@ -202,7 +201,7 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
         <>
             <Grid className={"col-xs-12"}>
                 <div id="tabou2-tbar-container" className="text-center">
-                    <Tabou2SearchToolbar filters={getFiltersObj} apply={props.applyFilterObj} reset={reset}/>
+                    <Tabou2SearchToolbar {...props} filters={getFiltersObj} apply={props.applyFilterObj} reset={reset}/>
                 </div>
                 <Row>
                     <Panel
@@ -270,7 +269,8 @@ export default connect((state) => ({
     // searchFilter: getSearchFilters
     currentTab: currentActiveTabSelector(state),
     currentFilters: currentTabouFilters(state),
-    getFiltersObj: getLayerFilterObj(state)
+    getFiltersObj: getLayerFilterObj(state),
+    searchLoading: searchLoading(state)
 }), {
     /* PASS EVT AND METHODS HERE*/
     changeFilters: setTabouFilters,

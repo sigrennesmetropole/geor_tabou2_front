@@ -1,4 +1,5 @@
 import { set } from '@mapstore/utils/ImmutableUtils';
+import { get } from 'lodash';
 import {
     SETUP,
     SET_MAIN_ACTIVE_TAB,
@@ -13,7 +14,8 @@ import {
     SELECT_FEATURE,
     SELECT_LAYER,
     LOAD_EVENTS,
-    LOAD_TIERS
+    LOAD_TIERS,
+    LOADING
 } from '@ext/actions/tabou2';
 
 const initialState = {
@@ -73,6 +75,19 @@ export default function tabou2(state = initialState, action) {
     case LOAD_TIERS:
         const { tiers } = action;
         return set('tiers', tiers, state);
+    case LOADING: {
+        let newValue = action.value;
+        if (action.mode === 'count') {
+            const oldValue = get(state, `loadFlags.${action.name}`) ?? 0;
+            newValue = isNumber(newValue)
+                ? newValue // set with passed value if number
+                : newValue
+                    ? oldValue + 1 // increment if true
+                    : Math.max(oldValue - 1, 0); // decrement if false
+        }
+        // anyway sets loading to true
+        return set(action.name === "loading" ? "loading" : `loadFlags.${action.name}`, newValue, state);
+    }
     default:
         return state;
     }

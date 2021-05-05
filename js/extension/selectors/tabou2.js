@@ -83,3 +83,8 @@ export function getAuthInfos(state) {
         isConsult: false,
     }
 }
+
+// loading of search
+export function searchLoadingSelector(state) {
+    return state?.cadastrapp?.loadFlags?.search;
+}

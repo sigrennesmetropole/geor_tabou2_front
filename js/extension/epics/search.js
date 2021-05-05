@@ -1,9 +1,11 @@
 import * as Rx from 'rxjs';
 import { keys } from 'lodash';
-import { RESET_SEARCH_FILTERS, UPDATE_LAYER_PARAMS, SEARCH_IDS, setTabouFilterObj } from '../actions/tabou2';
+import { RESET_SEARCH_FILTERS, UPDATE_LAYER_PARAMS, SEARCH_IDS, setTabouFilterObj, loading } from '../actions/tabou2';
 import { layersSelector } from '@mapstore/selectors/layers';
 import { currentTabouFilters, getLayerFilterObj, isTabou2Activate, getPluginCfg } from '../selectors/tabou2';
 import { changeLayerParams } from "@mapstore/actions/layers";
+import { wrapStartStop } from "@mapstore/observables/epics";
+import { error } from "@mapstore/actions/notifications";
 
 import { getIdsFromSearch } from "@ext/api/search";
 
@@ -59,7 +61,9 @@ export function tabouResetFilter(action$, store) {
     return action$.ofType(SEARCH_IDS)
     .filter(() => isTabou2Activate(store.getState()))
     .switchMap((action) => {
-        return Rx.Observable.from((action.params)).mergeMap( filter => {
+        let observable$ = Rx.Observable.empty();
+
+        observable$ = Rx.Observable.from((action.params)).mergeMap( filter => {
             return Rx.Observable.defer(() => getIdsFromSearch(filter.params, getPluginCfg(store.getState()).geoserverURL))
             .switchMap(response => {
                 let filters = getLayerFilterObj(store.getState());
@@ -80,6 +84,22 @@ export function tabouResetFilter(action$, store) {
                 // affect filter
                 return Rx.Observable.of(setTabouFilterObj(filters));
             })
-        })
+        });
+
+        return observable$.let(
+            wrapStartStop(
+                [loading(true, "search")],
+                loading(false, "search"),
+                () => {
+                    return Rx.Observable.of(
+                        error({
+                            title: "Error",
+                            message: "Echec de la création du filtre"
+                        }),
+                        loading(false, "search")
+                    );
+                }
+            )
+        )
     });
 }
