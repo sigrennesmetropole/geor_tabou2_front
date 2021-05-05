@@ -85,6 +85,6 @@ export function getAuthInfos(state) {
 }
 
 // loading of search
-export function searchLoadingSelector(state) {
+export function searchLoading(state) {
     return state?.cadastrapp?.loadFlags?.search;
 }
