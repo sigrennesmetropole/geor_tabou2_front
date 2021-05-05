@@ -73,14 +73,10 @@ export function getAuthInfos(state) {
     const groups = userGroupSecuritySelector(state) ?? roleTest; // [];
     const groupNames = groups.map(({ groupName }) => `${groupName}`);
     return {
-        /*isAdmin: groupNames.includes("MAPSTORE_ADMIN"),
+        isAdmin: groupNames.includes("MAPSTORE_ADMIN"),
         isReferent: groupNames.includes("EL_APPLIS_TABOU_REFERENT"),
         isContrib: groupNames.includes("EL_APPLIS_TABOU_CONTRIB"),
-        isConsult: groupNames.includes("EL_APPLIS_TABOU_CONSULT"),*/
-
-        isReferent: true,
-        isContrib: false,
-        isConsult: false,
+        isConsult: groupNames.includes("EL_APPLIS_TABOU_CONSULT"),
     }
 }
 
