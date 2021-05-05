@@ -78,8 +78,9 @@ export function tabouSetGFIFormat(action$, store) {
  * @param {any} action$
  * @param {any} store
  */
-export function purgeTabou(action$) {
+export function purgeTabou(action$, store) {
     return action$.ofType(FEATURE_INFO_CLICK)
+    .filter(() => isTabou2Activate(store.getState()))
     .switchMap(() => {
         return Rx.Observable.of(loadTabouFeatureInfo({}));
     });
@@ -93,6 +94,7 @@ export function purgeTabou(action$) {
  */
 export function printProgramme(action$, store) {
     return action$.ofType(PRINT_PROGRAMME_INFOS)
+        .filter(() => isTabou2Activate(store.getState()))
         .switchMap((action) => {
             return Rx.Observable.defer(() => getPDFProgramme("programme", action.id))
             .switchMap( response => {
