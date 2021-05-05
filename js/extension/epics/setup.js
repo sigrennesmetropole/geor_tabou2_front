@@ -1,6 +1,7 @@
-import { UPDATE_MAP_LAYOUT, updateMapLayout, SETUP, setTabouConfig } from '@mapstore/actions/maplayout';
+import { UPDATE_MAP_LAYOUT, updateMapLayout } from '@mapstore/actions/maplayout';
 import { isTabou2Activate } from '../selectors/tabou2';
 import { PANEL_SIZE } from '../constants';
+import { userGroupSecuritySelector } from '@mapstore/selectors/security';
 
 export const setTbarPosition = (action$, store) =>
     action$.ofType(UPDATE_MAP_LAYOUT)
@@ -19,8 +20,3 @@ export const setTbarPosition = (action$, store) =>
             });
             return { ...action, source: 'tabou2' }; // add an argument to avoid infinite loop.
         });
-
-export const tabouSetup = (action$, store) =>
-    action$.ofType(SETUP).switchMap(() => {
-        //setTabouConfig(action)
-    })

@@ -20,7 +20,7 @@ export default function IdentifyDropDown({
                 <div style={{ flex: "1 1 0%", padding: "0px 4px" }}>
                     <DropdownList
                         disabled={false}
-                        placeholder={<Message msgId="tabou2.identify.noData" />}
+                        placeholder="Aucune donnée"
                         {...props}
                     />
                 </div>

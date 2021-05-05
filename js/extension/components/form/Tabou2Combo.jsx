@@ -69,6 +69,7 @@ function Tabou2Combo({
         onChange={v => changeText(v, props.onChange)}
         messages={props.messages}
         className={props.className}
+        dropUp={props.dropUp}
     />);
 }
 

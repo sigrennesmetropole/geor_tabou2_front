@@ -20,23 +20,24 @@ export const API_BASE_URL = 'http://localhost:3000';
 
 export const GEOSERVER_WFS_URL = 'https://public.sig.rennesmetropole.fr/geoserver';
 
-export const COMMUNE_LAYER_ID = 'ladm_terri:commune_emprise';
-
 export const ID_SELECTOR = 'layerTabouId-selector';
 
 export const PANEL_SIZE = 500;
 
 export const URL_ADD = {
+    "tabou2": "",
     "layerPA": "programmes",
-    "layerOA": "operations"
+    "layerOA": "operations",
+    "layerSA": "operations"
 };
 
 export const URL_TIERS = {
-    "tabou2": "/",
-    "tabou2:v_oa_programme": "/programmes/",
-    "tabou2:oa_secteur": "/operations/"
+    "tabou2": "",
+    "tabou2:v_oa_programme": "programmes",
+    "tabou2:oa_secteur": "operations"
 };
 
+export const REQUIRED_TIER = ["adresseRue", "nom","adresseCp","adresseVille", "email"];
 export const TIERS_SCHEMA = {
     "id": 0,
     "nom": "",
@@ -84,6 +85,7 @@ export const SEARCH_ITEMS = [{
 }, {
     name: "natures",
     placeholder: "Toutes natures",
+    type: 'string',
     group: 3
 }, {
     name: "secteurs-sam",
@@ -109,14 +111,16 @@ export const SEARCH_ITEMS = [{
 }, {
     name: "etapesoa",
     placeholder: "Toutes Etapes OA",
-    api: "/operations/etapes",
+    api: "operations/etapes",
+    type: 'string',
     disabled: false,
     group: 3
 }, {
     name: "etapespa",
-    api: "/programmes/etapes",
+    api: "programmes/etapes",
     placeholder: "Toutes Etapes PA",
     disabled: false,
+    type: 'string',
     group: 4
 }];
 
@@ -156,19 +160,20 @@ export const ACCORDIONS = [
 
 export const LAYER_FIELD_OPTION = [
     {
-        name: "tabou2:v_oa_programmePolygon",
+        //name: "urba_proj:v_oa_programme",
+        name: "layerPA",
         field: "properties.nom",
         id: "properties.objectid"
     },
     {
-        name: "tabou2:oa_secteur",
-        field: "properties.secteur",
+        name: "layerSA",
+        field: "properties.nom",
         id: "properties.objectid"
     },
     {
-        name: "tabou2:zacPolygon",
-        field: "properties.nomzac",
-        id: "properties.id_zac"
+        name: "layerOA",
+        field: "properties.nom",
+        id: "properties.objectid"
     }
 ];
 
@@ -258,28 +263,34 @@ export const ADD_FIELDS = {
         layerSA : "secteur"
     },
     idEmprise: {
-        layerOA : "id_zac",
-        layerPA : "",
-        layerSA : ""
+        layerOA : "nom",
+        layerPA : "nom",
+        layerSA : "nom"
     },
     nom: {
-        layerOA : "nomzac",
-        layerPA : "",
-        layerSA : ""
+        layerOA : "nom",
+        layerPA : "nom",
+        layerSA : "nom"
     },
     etape: {
         layerOA : "etape",
-        layerPA : "",
-        layerSA : ""
+        layerPA : "etape",
+        layerSA : "etape"
     },
     nature: {
         layerOA : "nature",
-        layerPA : "",
-        layerSA : ""
+        layerPA : "nature",
+        layerSA : "nature"
+    },
+    code: {
+        layerOA : "code",
+        layerPA : "code",
+        layerSA : "code"
     }
 }
+
 export const ADD_OA_FORM = [{
-    label: " Commencez par choisir le type et la nature de l'emprise à sélectionner",
+    label: " Choisissez si c'est un secteur, puis sélectionnez la nature et l'emprise",
     group: 1,
     type: "alert",
     name: "msgOaCondition",
@@ -309,7 +320,6 @@ export const ADD_OA_FORM = [{
     group: 1,
     api: "operations/emprises",
     apiField: "id",
-    featueField: "id_zac",
     apiLabel: "nom",
     placeholder: "Selectionner une emprise",
     parent: (i) => !i.nature ? true : {nature: i.nature, secteur: i.secteur},
@@ -361,6 +371,7 @@ export const ADD_PA_FORM = [ {
     label: "Sélectionner l'opération parente :",
     api: "operations",
     name: "parentoa",
+    apiLabel: "nom",
     apiField: "nom",
     parent: null,
     placeholder: "Selectionner une opération",
@@ -372,7 +383,8 @@ export const ADD_PA_FORM = [ {
     group: 1,
     parent: (i) => i?.limitPa ? i.limitPa && !i.parentoa : false,
     name: "idEmprise",
-    apiField: "",
+    apiLabel: "nom",
+    apiField: "id",
     placeholder: "Selectionner une emprise",
     type: "combo"
 }, {
@@ -393,7 +405,9 @@ export const ADD_PA_FORM = [ {
     type: "text"
 }, {
     label: "Etape",
-    apiField: "",
+    apiField: "code",
+    apiLabel: "libelle",
+    api: "operations/etapes",
     name: "etape",
     // parent: (infos) => infos.emprise, // to activate etape only if emprise name formControl is selected
     placeholder: "Sélectionner une étape",
@@ -401,91 +415,57 @@ export const ADD_PA_FORM = [ {
     type: "combo"
 }];
 
-
 export const OA_SCHEMA = {
-    "autorisationDate": "2021-02-24T15:15:36.426Z",
-    "clotureDate": "2021-02-24T15:15:36.426Z",
-    "code": "op1",
-    "nom": "op1",
-    "consommationEspace": {    
-      "id": 1
-    },
-    "createDate": "2021-02-24T15:15:36.426Z",
-    "createUser": "string",
-    "decision": {    
-      "id": 1
-    },
-    "description": "string",
     "diffusionRestreinte": false,
-    "etape": {   
+    "nature": {
       "id": 1
     },
-    "id": 0,
-    "idEmprise": false,
-    "maitriseOuvrage": {   
-      "id": 1
-    },
-    "modeAmenagement": {  
-      "id": 1
-    },
-    "modifDate": "2021-02-24T15:15:36.426Z",
-    "modifUser": "string",
-    "nature": { 
-      "id": 1
-    },
-    "nbEntreprise": 0,
+    "idEmprise": 0,
+    "code": "",
+    "nom": "",
+    "operation": "",
+    "description": "",
     "nbLogementsPrevu": 0,
-    "nbSalarie": 0,
-    "numAds": "string",
-    "operation": "string",
-    "operationnelDate": "2021-02-24T15:15:36.426Z",
-    "plhLogementsLivres": 0,
-    "plhLogementsPrevus": 0,
-    "ql1": "string",
-    "ql2": false,
-    "ql3": "string",
     "secteur": false,
     "surfaceTotale": 0,
-    "vocation": {  
+    "consommationEspace": {  
+      "id": 1
+    },
+    "decision": {  
+      "id": 1
+    },
+    "etape": {  
+      "id": 1
+    },
+    "maitriseOuvrage": {  
+      "id": 1
+    },
+    "modeAmenagement": {
+      "id": 1
+    },
+    "vocation": {
       "id": 1
     }
   };
 
-  export const PA_SCHEMA = {
-    "adsDate": "2021-02-24T15:15:22.381Z",
-    "adsDatePrevu": "2021-02-24T15:15:22.381Z",
-    "attributionDate": "2021-02-24T15:15:22.381Z",
-    "attributionFonciereAnnee": 0,
-    "clotureDate": "2021-02-24T15:15:22.381Z",
-    "commercialisationDate": "2021-02-24T15:15:22.381Z",
-    "createDate": "2021-02-24T15:15:22.381Z",
-    "createUser": "string",
-    "datDate": "2021-02-24T15:15:22.381Z",
-    "datDatePrevu": "2021-02-24T15:15:22.381Z",
-    "description": "string",
+export const PA_SCHEMA = {
+    "operationId": 0,
+    "idEmprise": 0,
     "diffusionRestreinte": false,
-    "docDate": "2021-02-24T15:15:22.381Z",
-    "docDatePrevu": "2021-02-24T15:15:22.381Z",
-    "etape": {    
-      "id": 1  
+    "code": "",
+    "nom": "",
+    "description": "nc",
+    "programme": "nc",
+    "etape": {
+      "id": 0  
     },
-    "logementsAccessAide": 0,
-    "logementsAccessAidePrevu": 0,
-    "logementsAccessLibrePrevu": 0,
-    "logementsAccessMaitrise": 0,
-    "logementsAccessMaitrisePrevu": 0,
-    "logementsLocatifAide": 0,
-    "logementsLocatifAidePrevu": 0,
-    "logementsLocatifReguleHLM": 0,
-    "logementsLocatifReguleHlmPrevu": 0,
-    "logementsLocatifRegulePrive": 0,
-    "logementsLocatifRegulePrivePrevu": 0,
-    "logementsTotal": 0,
-    "modifDate": "2021-02-24T15:15:22.382Z",
-    "modifUser": "string",
-    "numAds": "string",
-    "operationId": 7,
-    "nom": "prog2",
-    "programme": "prog2",
-    "code": "prog2"
-  };
+    "numAds": "nc"
+};
+
+export const LOG_SCHEMA = {
+    description: "",
+    eventDate: "2021-04-21T14:39:54.176Z",
+    id: 0,
+    idType: 3,
+    new: true
+}

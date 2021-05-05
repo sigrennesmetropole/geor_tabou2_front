@@ -10,14 +10,26 @@ export const SET_SELECTOR_INDEX = "TABOU2:SET_SELECTOR_INDEX";
 export const SET_TABOU_FILTEROBJ = "TABOU2:SET_TABOU_FILTEROBJ";
 export const UPDATE_LAYER_PARAMS = "TABOU2:UPDATE_LAYER_PARAMS";
 export const RESET_CQL_FILTERS = "TABOU2:RESET_CQL_FILTERS";
-export const SELECT_FEATURE = "SELECT_FEATURE";
-export const SELECT_LAYER = "SELECT_LAYER";
-export const LOAD_EVENTS = "LOAD_EVENTS";
-export const ADD_EVENT = "ADD_EVENT";
-export const DELETE_EVENTS = "DELETE_EVENTS";
-export const CHANGE_EVENTS = "CHANGE_EVENTS";
-export const SET_TABOU_CONFIG = "SET_TABOU_CONFIG";
+export const SELECT_FEATURE = "TABOU2:SELECT_FEATURE";
+export const SELECT_LAYER = "TABOU2:SELECT_LAYER";
+export const LOAD_EVENTS = "TABOU2:LOAD_EVENTS";
+export const ADD_FEATURE_EVENT = "TABOU2:ADD_FEATURE_EVENT";
+export const DELETE_FEATURE_EVENT = "TABOU2:DELETE_FEATURE_EVENT";
+export const CHANGE_FEATURE_EVENT = "TABOU2:CHANGE_FEATURE_EVENT";
+export const LOAD_TIERS = "TABOU2:LOAD_TIERS";
+export const ADD_FEATURE_TIER = "TABOU2:ADD_FEATURE_TIER";
+export const DELETE_FEATURE_TIER = "TABOU2:DELETE_FEATURE_TIER";
+export const CHANGE_FEATURE_TIER = "TABOU2:CHANGE_FEATURE_TIER";
+export const INACTIVATE_TIER = "TABOU2:INACTIVATE_TIER";
+export const SET_TABOU_CONFIG = "TABOU2:SET_TABOU_CONFIG";
+export const PRINT_PROGRAMME_INFOS = "TABOU2:PRINT_FICHE_PROGRAMME";
+export const SEARCH_IDS = "TABOU2:SEARCH_IDS";
+export const LOADING = "TABOU2:LOADING";
 
+export const searchIds = (params) => ({
+    type: SEARCH_IDS,
+    params
+});
 
 export const setUp = (pluginCfg) => ({
     type: SETUP,
@@ -74,12 +86,10 @@ export const setTabouFilterObj = (layerFilterObj) => ({
     layerFilterObj
 });
 
-export const applyFilterObj = (layerToFilter) => {
-    console.log(layerToFilter);
-    return ({
-        type: UPDATE_LAYER_PARAMS,
-        layerToFilter
-})};
+export const applyFilterObj = (layerToFilter) => ({
+    type: UPDATE_LAYER_PARAMS,
+    layerToFilter
+});
 
 export const setSelectedFeature = (selectedFeature) => ({
     type: SELECT_FEATURE,
@@ -111,7 +121,44 @@ export const changeFeatureEvent = (event) => ({
     event
 });
 
+export const loadTiers = (tiers) => ({
+    type: LOAD_TIERS,
+    tiers
+});
+
+export const addFeatureTier = (tier) => ({
+    type: ADD_FEATURE_TIER,
+    tier
+});
+
+export const deleteFeatureTier = (tier) => ({
+    type: DELETE_FEATURE_TIER,
+    tier
+});
+
+export const changeFeatureTier = (tier) => ({
+    type: CHANGE_FEATURE_TIER,
+    tier
+});
+
+export const inactivateTier = (tier) => ({
+    type: INACTIVATE_TIER,
+    tier
+});
+
 export const setTabouConfig = (config) => ({
     type: SET_TABOU_CONFIG,
     config
+});
+
+export const printProgInfos = (id) => ({
+    type: PRINT_PROGRAMME_INFOS,
+    id
+});
+
+export const loading = (value, name, mode) => ({
+    type: LOADING,
+    value,
+    name,
+    mode
 });

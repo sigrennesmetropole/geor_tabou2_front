@@ -4,6 +4,7 @@
     "useCORS": [
       "https://gis.jdev.fr",
       "https://portail-test.sig.rennesmetropole.fr",
+      "https://portail-test.sig.rennesmetropole.fr/geoserver",
       "https://jdev.stoplight.io/",
       "http://localhost:3000",
       "https://public.sig.rennesmetropole.fr",
@@ -50,6 +51,11 @@
     },
     {
       "urlPattern": "http(s)?\\:\\/\\/gs-stable\\.geo-solutions\\.it(\\:443|\\:80)?\\/geoserver/.*",
+      "authkeyParamName": "authkey",
+      "method": "authkey"
+    },
+    {
+      "urlPattern": "http(s)?\\:\\/\\/portail-test\\.sig\\.rennesmetropole\\.fr(\\:443|\\:80)?\\/geoserver/.*",
       "authkeyParamName": "authkey",
       "method": "authkey"
     }
@@ -348,19 +354,19 @@
           "showIdentify": false,
           "layersCfg": {
             "layerPA": {
-              "nom": "tabou2:v_oa_programmePolygon",
+              "nom": "tabou2:tabou_v_oa_programme",
               "geomField": "the_geom",
               "idField": "objectid",
               "idType": "number"
             },
             "layerOA": {
-              "nom": "tabou2:zacPolygon",
+              "nom": "tabou2:tabou_v_oa_operation0",
               "geomField": "the_geom",
-              "idField": "id_zac",
+              "idField": "objectid",
               "idType": "number"
             },
             "layerSA": {
-              "nom": "tabou2:oa_secteur",
+              "nom": "tabou2:tabou_v_oa_secteur",
               "geomField": "the_geom",
               "idField": "objectid",
               "idType": "number"
@@ -392,17 +398,20 @@
               "apiLabel": "nmiris"
             },
             "etapesoa": {
+              "layer": "tabou2:tabou_v_oa_operation0",
               "geom": "the_geom",
-              "filterField": "code",
+              "filterField": "etape",
               "placeholder": "Etapes OA",
-              "apiField": "code",
+              "apiField": "libelle",
               "apiLabel": "libelle"
             },
             "etapespa": {
+              "layer": "tabou2:tabou_v_oa_programme",
               "geom": "the_geom",
-              "filterField": "code",
+              "filterField": "etape",
               "apiLabel": "libelle",
-              "apiField": "code",
+              "apiField": "libelle",
+              "type": "string",
               "placeholder": "Etapes PA"
             },
             "secteurs-sam": {
@@ -438,7 +447,12 @@
               "placeholder": "Sec. Foncier"
             },
             "natures": {
-              "filterField": "libelle",
+              "layer": "tabou2:tabou_v_oa_operation0",
+              "geom": "the_geom",
+              "service": "operations?nature",
+              "attribute": "layerOA",
+              "spatial": ["layerPA","layerSA"],
+              "filterField": "nature",
               "apiField": "libelle",
               "apiLabel": "libelle",
               "placeholder": "Natures"
@@ -670,8 +684,8 @@
                 "displayName": "OA-ZAC-${properties.nomzac}",
                 "subTitle": " Opérations d'aménagement",
                 "options": {
-                  "url": "https://public.sig.rennesmetropole.fr/geoserver/wfs",
-                  "typeName": "urba_fonc:zac",
+                  "url": "https://gis.jdev.fr/geoserver/wfs",
+                  "typeName": "tabou2:tabou_v_oa_operation0",
                   "queriableAttributes": [
                     "nomzac"
                   ],
@@ -687,8 +701,8 @@
                 "displayName": "${properties.nomopa}-PA-${properties.programme}",
                 "subTitle": " Programme d'aménagement",
                 "options": {
-                  "url": "https://public.sig.rennesmetropole.fr/geoserver/wfs",
-                  "typeName": "urba_proj:v_oa_programme",
+                  "url": "https://gis.jdev.fr/geoserver/wfs",
+                  "typeName": "tabou2:tabou_v_oa_programme",
                   "queriableAttributes": [
                     "nomopa"
                   ],
@@ -704,8 +718,8 @@
                 "displayName": "SA-${properties.secteur}",
                 "subTitle": " Secteur d'aménagement",
                 "options": {
-                  "url": "https://public.sig.rennesmetropole.fr/geoserver/wfs",
-                  "typeName": "urba_proj:oa_secteur",
+                  "url": "https://gis.jdev.Fr/geoserver/wfs",
+                  "typeName": "tabou2:tabou_v_oa_secteur",
                   "queriableAttributes": [
                     "secteur"
                   ],
@@ -721,8 +735,8 @@
                 "displayName": "${properties.nomopa}-PA-${properties.programme}",
                 "subTitle": " Programme d'aménagement",
                 "options": {
-                  "url": "https://public.sig.rennesmetropole.fr/geoserver/wfs",
-                  "typeName": "urba_proj:v_oa_programme",
+                  "url": "https://gis.jdev.fr/geoserver/wfs",
+                  "typeName": "tabou2:tabou_v_oa_programme",
                   "queriableAttributes": [
                     "programme"
                   ],

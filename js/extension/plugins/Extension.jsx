@@ -17,10 +17,10 @@ import tabou2 from '@ext/reducers/tabou2';
 import { setUp } from '@ext/actions/tabou2';
 import init from '@ext/utils/init';
 
-import { tabouApplyFilter, tabouResetFilter } from '@ext/epics/search';
-import { tabouLoadIdentifyContent, tabouSetGFIFormat, purgeTabou } from '@ext/epics/identify';
-import { getTabou2Logs } from '@ext/epics/featureEvents';
-import { setTbarPosition, tabouSetup } from '@ext/epics/setup';
+import { tabouApplyFilter, tabouResetFilter, tabouGetSearchIds } from '@ext/epics/search';
+import { tabouLoadIdentifyContent, tabouSetGFIFormat, purgeTabou, printProgramme } from '@ext/epics/identify';
+import { getTabou2Logs, updateTabou2Logs, updateTabou2Tier, addCreateTabou2Tier } from '@ext/epics/featureEvents';
+import { setTbarPosition } from '@ext/epics/setup';
 
 import { CONTROL_NAME } from '@ext/constants';
 
@@ -86,7 +86,11 @@ export default {
         tabouResetFilter: tabouResetFilter,
         setTbarPosition: setTbarPosition,
         getTabou2Logs: getTabou2Logs,
-        tabouSetup: tabouSetup
+        updateTabou2Logs: updateTabou2Logs,
+        updateTabou2Tier: updateTabou2Tier,
+        addCreateTabou2Tier: addCreateTabou2Tier,
+        printProgramme: printProgramme,
+        tabouGetSearchIds: tabouGetSearchIds
     },
     containers: {
         Toolbar: {

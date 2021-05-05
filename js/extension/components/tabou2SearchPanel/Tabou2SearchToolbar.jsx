@@ -24,10 +24,13 @@ export default function Tabou2SearchToolbar({ ...props }) {
                 {
                     glyph: 'ok',
                     tooltip: 'Appliquer',
+                    loading: props.searchLoading,
+                    disabled: props.searchLoading,
                     onClick: search
                 },
                 {
                     glyph: 'clear-filter',
+                    disabled: props.searchLoading,
                     tooltip: 'Supprimer les filtrer',
                     onClick: props.reset
                 }

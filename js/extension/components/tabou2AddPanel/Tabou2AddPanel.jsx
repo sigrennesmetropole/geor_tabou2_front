@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, Row, Col, FormGroup } from 'react-bootstrap';
+import { Grid, Row, Col, FormGroup, ControlLabel, Panel } from 'react-bootstrap';
 import { DropdownList} from 'react-widgets';
-import { keys, find, isEqual } from 'lodash';
+import { keys, isEqual } from 'lodash';
 import Tabou2AddOaPaForm from '@ext/components/form/add/Tabou2AddOaPaForm';
+import ControlledPopover from '@mapstore/components/widgets/widget/ControlledPopover';
 import { ADD_OA_FORM, ADD_PA_FORM } from '@ext/constants';
 
 export default function Tabou2AddPanel({feature, featureId, layer, ...props}) {
     
-    const [type, setType] = useState("layerOA");
+    const [type, setType] = useState("");
     const [selectedFeature, setSelectedFeature] = useState({});
 
     useEffect(() => {
@@ -18,7 +19,7 @@ export default function Tabou2AddPanel({feature, featureId, layer, ...props}) {
 
     useEffect(() => {
         if (layer !== type) {
-            setType(layer || "layerOA");
+            setType(layer || "");
         }
     }, [layer]);
 
@@ -33,31 +34,42 @@ export default function Tabou2AddPanel({feature, featureId, layer, ...props}) {
 
     return (
         <Grid className={"col-xs-12"}>
-            <Row>
-                <Col xs={12}>
-                    <FormGroup >
-                        <DropdownList
-                            style={{ marginTop: "10px" }}
-                            data = {ddOptions}
-                            valueField={"value"}
-                            textField = {"label"}
-                            value = {type === "layerSA" ? "layerOA" : type}
-                            onSelect={(value) => {
-                                setType(value.value);
-                            }}
-                        />
-                    </FormGroup>
-                </Col>
-            </Row>
-
+            <Panel
+                header={(
+                    <>
+                        <label style={{marginRight: "2px"}}>1 - Commencez par choisir un type :</label>
+                        <ControlledPopover text="Pour saisir un secteur, cocher la case 'secteur' d'une opération" />
+                    </>
+                )}
+            >
+                <Row>
+                    <Col xs={12}>
+                        <FormGroup >
+                            <DropdownList
+                                style={{ marginTop: "10px" }}
+                                data = {ddOptions}
+                                valueField={"value"}
+                                textField = {"label"}
+                                value = {type === "layerSA" ? "layerOA" : type}
+                                placeholder= "Choisir un type opération ou programme..."
+                                onSelect={(value) => {
+                                    setType(value.value);
+                                }}
+                                onChange={(value) => setType(value.value)}
+                            />
+                        </FormGroup>
+                    </Col>
+                </Row>
+            </Panel>
             {
-                ["layerOA", "layerSA"].includes(type) || !type ? (
-                    <Tabou2AddOaPaForm layer={type} feature={feature} {...props} childs={ADD_OA_FORM} pluginCfg={props.pluginCfg} />
-                ) : (
-                    <Tabou2AddOaPaForm layer={type} feature={feature} {...props} childs={ADD_PA_FORM} pluginCfg={props.pluginCfg} />
-                )
+                type === "layerPA" ? <Tabou2AddOaPaForm layer={type} feature={feature} {...props} childs={ADD_PA_FORM} pluginCfg={props.pluginCfg} /> : null
             }
-
+            {
+                type === "layerOA" ? <Tabou2AddOaPaForm layer={type} feature={feature} {...props} childs={ADD_OA_FORM} pluginCfg={props.pluginCfg} /> : null
+            }
+                        {
+                type === "layerSA" ? <Tabou2AddOaPaForm layer={type} feature={feature} {...props} childs={ADD_OA_FORM} pluginCfg={props.pluginCfg} /> : null
+            }
         </Grid >
     );
 }

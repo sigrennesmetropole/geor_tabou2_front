@@ -9,7 +9,6 @@ import Tabou2ProgHabitAccord from '@ext/components/form/identify/Tabou2ProgHabit
 import Tabou2SuiviOpAccord from '@ext/components/form/identify/Tabou2SuiviOpAccord';
 import Tabou2DdsAccord from '@ext/components/form/identify/Tabou2DdsAccord';
 import Tabou2SecProgLiesAccord from '@ext/components/form/identify/Tabou2SecProgLiesAccord';
-import Tabou2IdentifyToolbar from './Tabou2IdentifyToolbar';
 import { ACCORDIONS } from '@ext/constants';
 
 export default function Tabou2IdentifyContent({
@@ -88,9 +87,6 @@ export default function Tabou2IdentifyContent({
 
     return (
         <>
-            <Row className="tabou-idToolbar-row text-center" style={{ display: "flex", margin: "auto", justifyContent: "center" }}>
-                <Tabou2IdentifyToolbar response={response} featureId={featureId} {...props} />
-            </Row>
             <Grid style={{ width: '100%' }}>
                 {
                     accordions.map((item, index) => (
