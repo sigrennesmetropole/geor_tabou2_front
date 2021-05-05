@@ -16,7 +16,7 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
         idEmprise: "",
         nature: "",
         secteur: false,
-        parentoa: 0
+        parentoa: null
     };
     const [infos, setInfos] = useState(emptyInfos);
 
@@ -57,15 +57,15 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
             newFeatureObj = {...newFeatureObj, operationId: selection.id, };
             newInfos = {...newInfos, operationId: selection.id, }
         }
-        setInfos(newInfos);
-        getInvalides(newInfos, infos);
+        
         let keysInfos = [];
         if (layer === "layerPA") {
             keysInfos = keys(newInfos).filter(name => name !== "secteur" && name !== "nature");
         } else {
             keysInfos = keys(newInfos).filter(name => name !== "secteur" && name !== "parentoa");
         }
-        setInvalides(keysInfos.filter(name => !get(newInfos, name)));
+        setInvalides(getInvalides(newInfos));
+        setInfos(newInfos);
         setNewFeature(newFeatureObj);
     };
 
@@ -88,14 +88,14 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
     };
     
     
-    const getInvalides = () => {
+    const getInvalides = (obj) => {
         let keysToFilter = [];
         if ( layer === "layerPA") {
-            keysToFilter = keys(infos).filter(name => name !== "secteur" && name !== "nature");
+            keysToFilter = keys(obj).filter(name => name !== "secteur" && name !== "nature");
         } else {
-            keysToFilter = keys(infos).filter(name => name !== "secteur" && name !=="parentoa");
+            keysToFilter = keys(obj).filter(name => name !== "secteur" && name !=="parentoa");
         }
-        return keysToFilter.filter(n => get(infos, n));
+        return keysToFilter.filter(n => !get(obj,n));
     };
 
     const handleSubmit = () => {
@@ -190,7 +190,6 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
                                             load={() => getRequestApi(get(item, "api"), pluginCfg.apiCfg, getParams())}
                                             disabled={item.parent ? isEmpty(item.parent(infos)) : item?.disabled || false}
                                             placeholder={item.placeholder}
-                                            searchByValueField={true}
                                             parentValue={item.parent ? new URLSearchParams(item.parent(infos))?.toString() : ""}
                                             filter="contains"
                                             textField={item.apiLabel}
@@ -266,9 +265,9 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
                         onClick: () => reset()                        
                     }, {
                         glyph: "ok",
-                        tooltip: invalides.length ? "Veuillez compléter tous les champs !" :  "Sauvegarder",
+                        tooltip: getInvalides(infos).length ? "Veuillez compléter tous les champs !" :  "Sauvegarder",
                         id: "saveNewEmprise",
-                        disabled: invalides.length,
+                        disabled: getInvalides(infos).length > 0,
                         onClick: () => handleSubmit()
                     }]}
                 />

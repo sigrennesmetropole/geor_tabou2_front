@@ -381,7 +381,7 @@ export const ADD_PA_FORM = [ {
     label: "Emprise",
     api: "programmes/emprises",
     group: 1,
-    parent: (i) => i?.limitPa ? i.limitPa && !i.parentoa : false,
+    parent: (i) => !i.parentoa ? true : {operationId: i.operationId, nomopa: i.parentoa},
     name: "idEmprise",
     apiLabel: "nom",
     apiField: "id",

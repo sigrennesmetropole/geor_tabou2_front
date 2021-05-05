@@ -51,6 +51,8 @@ function toolContainer({data, ...props }) {
         isTaboufeature.current = feature.properties.id_tabou ? true : false;
     }
 
+    let showAddPanel = getAuthInfos().isAdmin || getAuthInfos().isContrib;
+
     return (
         <>
             {
@@ -58,7 +60,7 @@ function toolContainer({data, ...props }) {
             }
             {
                 // display add panel
-                props.currentTab === "add" && !getAuthInfos().isConsult && !isTaboufeature.current ? (
+                props.currentTab === "add" && showAddPanel && !isTaboufeature.current ? (
                     <Tabou2AddPanel 
                         feature={selection.feature}
                         featureId={selection.featureId}
@@ -68,7 +70,7 @@ function toolContainer({data, ...props }) {
                 : null
             }
             {
-                props.currentTab === "add" && getAuthInfos().isConsult && !isTaboufeature.current ? (
+                props.currentTab === "add" && !showAddPanel && !isTaboufeature.current ? (
                     <Tabou2Information 
                         isVisible={true} 
                         glyph="alert" 
@@ -77,7 +79,7 @@ function toolContainer({data, ...props }) {
                 ) : null
             }
             {
-                props.currentTab === "add" && isTaboufeature.current && !getAuthInfos().isConsult ? (
+                props.currentTab === "add" && isTaboufeature.current && showAddPanel ? (
                     <Tabou2Information 
                         isVisible={true} 
                         glyph="minus-sign" 
