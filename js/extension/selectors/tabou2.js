@@ -82,5 +82,5 @@ export function getAuthInfos(state) {
 
 // loading of search
 export function searchLoading(state) {
-    return state?.cadastrapp?.loadFlags?.search;
+    return state?.tabou2?.loadFlags?.search;
 }
