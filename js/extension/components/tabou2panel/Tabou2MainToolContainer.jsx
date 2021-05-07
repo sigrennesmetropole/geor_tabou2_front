@@ -55,9 +55,6 @@ function toolContainer({data, ...props }) {
     let showAddPanel = getAuthInfos().isAdmin || getAuthInfos().isContrib;
 
     if (isEmpty(data)) isTaboufeature.current = false;
-
-    console.log(props.currentTab === "add" && showAddPanel && !isTaboufeature.current);
-
     return (
         <>
             {
