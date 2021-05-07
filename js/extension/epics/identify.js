@@ -13,7 +13,7 @@ import {
 } from "@mapstore/actions/mapInfo";
 import { TOGGLE_CONTROL } from '@mapstore/actions/controls';
 import { isTabou2Activate, defaultInfoFormat, getTabouResponse } from '@ext/selectors/tabou2';
-import { loadTabouFeatureInfo, setDefaultInfoFormat, setMainActiveTab, PRINT_PROGRAMME_INFOS, downloadBlob } from '@ext/actions/tabou2';
+import { loadTabouFeatureInfo, setDefaultInfoFormat, setMainActiveTab, PRINT_PROGRAMME_INFOS } from '@ext/actions/tabou2';
 import { getPDFProgramme } from '@ext/api/search';
 
 /**
@@ -34,6 +34,8 @@ export function tabouLoadIdentifyContent(action$, store) {
                 // just keep response with features
                 if (action?.data?.features && action.data.features.length) {
                     resp[action.layer.name] = action;
+                } else {
+                    resp = {};
                 }
 
                 return Rx.Observable.of(setMainActiveTab("identify")).concat(

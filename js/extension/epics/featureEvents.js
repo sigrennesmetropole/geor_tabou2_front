@@ -1,11 +1,29 @@
 import * as Rx from 'rxjs';
 import { get, keys } from 'lodash';
 import { loadEvents, loadTiers, SELECT_FEATURE, ADD_FEATURE_EVENT, DELETE_FEATURE_EVENT, CHANGE_FEATURE_EVENT,
-    ADD_FEATURE_TIER, DELETE_FEATURE_TIER, CHANGE_FEATURE_TIER, INACTIVATE_TIER
+    ADD_FEATURE_TIER, DELETE_FEATURE_TIER, CHANGE_FEATURE_TIER, INACTIVATE_TIER, loadFicheInfos
  } from '@ext/actions/tabou2';
-import { getFeatureEvents, addFeatureEvent, deleteFeatureEvent, changeFeatureEvent, getFeatureTiers, addFeatureTier, changeFeatureTier, getTiers, createTier, inactivateTier } from '@ext/api/search';
-import { getSelection, getLayer, getPluginCfg } from '@ext/selectors/tabou2';
+
+import {
+    getFeatureEvents,
+    addFeatureEvent,
+    deleteFeatureEvent,
+    changeFeatureEvent,
+    getFeatureTiers,
+    addFeatureTier,
+    changeFeatureTier,
+    getTiers,
+    createTier,
+    inactivateTier,
+    getProgramme,
+    getProgrammePermis,
+    getOperation,
+    getOperationProgrammes
+} from '@ext/api/search';
+
+import { getSelection, getLayer, getPluginCfg, isTabou2Activate } from '@ext/selectors/tabou2';
 import { LAYER_FIELD_OPTION, URL_ADD } from '@ext/constants';
+import { getOperations } from '@mapstore/utils/WMTSUtils';
 
 const actionOnUpdate = {
     "ADD_FEATURE_EVENT": (layer, idFeature, event) => addFeatureEvent(layer, idFeature, event),
@@ -18,21 +36,30 @@ const actionOnUpdate = {
 };
 
 const getInfos = (state) => {
-    const feature = getSelection(state);
+    const feature = getSelection(state).feature;
     const layer = getLayer(state);
     // get plugin config
     const layersCfg = getPluginCfg(state).layersCfg;
     // layerOA, layerPa, layerSA
     const configName = keys(layersCfg).filter(k => layer === layersCfg[k].nom)[0];
     // return correct name field id according to layer
-    let featureId = get(feature, find(LAYER_FIELD_OPTION, ["name", configName]).id);
+    const featureId = get(feature, "properties.id_tabou");
     // find correct api name
-    let layerUrl = get(URL_ADD, configName);
+    const layerUrl = get(URL_ADD, configName);
     return {
         featureId: featureId,
         layerUrl: layerUrl,
-        layer: layer
+        layer: layer,
+        layerCfg: configName
     }
+}
+
+const selectInfos = {
+    operation: null,
+    programme: null,
+    programmes: null,
+    tiers: null,
+    permis: null
 }
 
 /**
@@ -42,10 +69,16 @@ const getInfos = (state) => {
  */
 export function getTabou2Logs(action$, store) {
     return action$.ofType(SELECT_FEATURE)
+        .filter(() => isTabou2Activate(store.getState()))
         .switchMap((action) => {
-            let {featureId, layerUrl, layer} = getInfos(store.getState());
-            //const idTabou = action?.selectedFeature?.properties.objectid || action?.selectedFeature?.properties.objectid;
+            // get infos from layer's feature directly
+            //const idTabou = get(action.selectedFeature.feature, "properties.id_tabou");
             const idTabou = 3;
+            let tiers = [];
+            let layerCfg = action.selectedFeature.layer;
+            let layerUrl = get(URL_ADD, layerCfg);
+            let searchItem = null;
+            let mapFeature = action.selectedFeature.feature;
             layerUrl = "operations";
 
             // get events from API
@@ -53,7 +86,32 @@ export function getTabou2Logs(action$, store) {
              * TODO
              * - dynamic type layer
              * - dynamic idTabou
+             * - kEEP operation for programme
              */
+            console.log(layerCfg);
+            let observable$ = Rx.Observable.empty();
+            if(layerCfg === "layerOA" || layerCfg === "layerSA") {
+                console.log('Operation or Secteur infos');
+                observable$ = Rx.Observable.defer(() => getOperationProgrammes(searchItem.id)).switchMap( programmes => {
+                    // load info to store
+                    let infos = {...selectInfos, programmes: programmes.data, operation: searchItem, tiers: tiers, mapFeature: mapFeature};
+                    return Rx.Observable.of(loadFicheInfos(infos));
+                    }
+                )
+            } else {
+                console.log('Programme infos');
+                observable$ = Rx.Observable.defer(() => getOperation(searchItem.operationId))
+                    .switchMap( operation => {
+                        // permis for selected programme
+                        return Rx.Observable.defer(() => getProgrammePermis(searchItem.id)).switchMap( permis => {
+                            // load info to store
+                            let infos = {...selectInfos, programme: searchItem, permis: permis.data, tiers: tiers, operation: operation.data, mapFeature: mapFeature};
+                            return Rx.Observable.of(loadFicheInfos(infos))
+                            }
+                        )
+                    })
+            }
+
             return Rx.Observable.defer(() => getFeatureEvents(layerUrl, idTabou))
                 .switchMap( response => {
                     return Rx.Observable.of(loadEvents(response?.data || []))
@@ -61,14 +119,22 @@ export function getTabou2Logs(action$, store) {
                 .concat(
                     Rx.Observable.defer(() => getTiers(layerUrl, idTabou))
                     .switchMap( r => {
+                        tiers = r?.data?.elements;
                         return Rx.Observable.of(loadTiers(r?.data?.elements || []))
                     })
-                )
-        });
+                ).concat(
+                    Rx.Observable.defer(() => layerCfg === "layerPA" ? getProgramme(idTabou) : getOperation(idTabou))
+                    .switchMap((response) => {
+                        searchItem = response.data;
+                        return observable$
+                    })
+                );
+        })
 }
 
 export function updateTabou2Logs(action$, store) {
     return action$.ofType(ADD_FEATURE_EVENT, DELETE_FEATURE_EVENT, CHANGE_FEATURE_EVENT)
+        .filter(() => isTabou2Activate(store.getState()))
         .switchMap((action) => {
             //const idTabou = action?.selectedFeature?.properties.objectid || action?.selectedFeature?.properties.objectid;
             let {featureId, layerUrl} = getInfos(store.getState());
@@ -78,7 +144,7 @@ export function updateTabou2Logs(action$, store) {
 
             // get events from API
             return Rx.Observable.defer(() => toDoOnUpdate(layerUrl, featureId, action.event))
-            .switchMap( events => {
+            .switchMap(() => {
                     return Rx.Observable.defer(() => getFeatureEvents(layerUrl, featureId)).switchMap( events => {
                         return Rx.Observable.of(loadEvents(events?.data || []))
                         }
@@ -90,6 +156,7 @@ export function updateTabou2Logs(action$, store) {
 
 export function addCreateTabou2Tier(action$, store) {
     return action$.ofType(ADD_FEATURE_TIER)
+        .filter(() => isTabou2Activate(store.getState()))
         .switchMap((action) => {
             //const idTabou = action?.selectedFeature?.properties.objectid || action?.selectedFeature?.properties.objectid;
             // selected feature and selected layer
@@ -111,6 +178,7 @@ export function addCreateTabou2Tier(action$, store) {
 
 export function updateTabou2Tier(action$, store) {
     return action$.ofType(DELETE_FEATURE_TIER, CHANGE_FEATURE_TIER, INACTIVATE_TIER)
+        .filter(() => isTabou2Activate(store.getState()))        
         .switchMap((action) => {
             //const idTabou = action?.selectedFeature?.properties.objectid || action?.selectedFeature?.properties.objectid;
             // selected feature and selected layer
