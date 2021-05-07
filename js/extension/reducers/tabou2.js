@@ -15,7 +15,8 @@ import {
     SELECT_LAYER,
     LOAD_EVENTS,
     LOAD_TIERS,
-    LOADING
+    LOADING,
+    LOAD_FICHE_INFOS
 } from '@ext/actions/tabou2';
 
 const initialState = {
@@ -30,7 +31,8 @@ const initialState = {
     selectedFeature: {},
     selectedLayer: "",
     events: [],
-    tiers: []
+    tiers: [],
+    ficheInfos: {}
 };
 
 export default function tabou2(state = initialState, action) {
@@ -75,6 +77,9 @@ export default function tabou2(state = initialState, action) {
     case LOAD_TIERS:
         const { tiers } = action;
         return set('tiers', tiers, state);
+    case LOAD_FICHE_INFOS :
+        const { ficheInfos } = action;
+        return set('ficheInfos', ficheInfos, state);
     case LOADING: {
         let newValue = action.value;
         if (action.mode === 'count') {
