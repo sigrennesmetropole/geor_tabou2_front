@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { keys, isEmpty } from 'lodash';
 import {
@@ -10,7 +10,8 @@ import {
     getSelection,
     getLayer,
     getAuthInfos,
-    getSelectedCfgLayer
+    getSelectedCfgLayer,
+    getFicheInfos
 } from '@ext/selectors/tabou2';
 
 import Tabou2SearchPanel from '../tabou2SearchPanel/Tabou2SearchPanel';
@@ -35,23 +36,27 @@ import {
 } from "@ext/actions/tabou2";
 
 function toolContainer({data, ...props }) {
-    const [selection, setSelection] = useState({feature: {}, id: null, layer:""});
+    const [selectionInfos, setSelection] = useState({feature: {}, id: null, layer:""});
     const isTaboufeature = useRef(false);
 
     const handleSelect = (feature, id, selectedLayer) => {
-        props.setFeature(feature);
-        props.setLayer(selectedLayer);
-
-        setSelection({
+        let selection = {
             feature: feature,
             id: id,
-            layer: keys(props.pluginCfg.layersCfg).filter(k => props.pluginCfg.layersCfg[k].nom === selectedLayer)[0] || ""
-        });
-        
+            layer: keys(props.pluginCfg.layersCfg).filter(k => props.pluginCfg.layersCfg[k].nom === selectedLayer)[0] || "",
+            tocLayer: selectedLayer
+        };
+        setSelection(selection);
+        props.setFeature(selection);
+        props.setLayer(selectedLayer);        
         isTaboufeature.current = feature.properties.id_tabou ? true : false;
     }
 
     let showAddPanel = getAuthInfos().isAdmin || getAuthInfos().isContrib;
+
+    if (isEmpty(data)) isTaboufeature.current = false;
+
+    console.log(props.currentTab === "add" && showAddPanel && !isTaboufeature.current);
 
     return (
         <>
@@ -62,9 +67,9 @@ function toolContainer({data, ...props }) {
                 // display add panel
                 props.currentTab === "add" && showAddPanel && !isTaboufeature.current ? (
                     <Tabou2AddPanel 
-                        feature={selection.feature}
-                        featureId={selection.featureId}
-                        layer={selection.layer}
+                        feature={isEmpty(data) ? {} : selectionInfos.feature}
+                        featureId={ isEmpty(data) ? null : selectionInfos.id}
+                        layer={isEmpty(data) ? "": selectionInfos.layer}
                         queryData={data}
                         {...props} />) 
                 : null
@@ -79,7 +84,7 @@ function toolContainer({data, ...props }) {
                 ) : null
             }
             {
-                props.currentTab === "add" && isTaboufeature.current && showAddPanel ? (
+                props.currentTab === "add" && isTaboufeature.current && showAddPanel && !isEmpty(data) ? (
                     <Tabou2Information 
                         isVisible={true} 
                         glyph="minus-sign" 
@@ -115,7 +120,8 @@ export default connect(
         tiers: getTiers(state),
         selection: getSelection(state),
         selectionLayer: getLayer(state),
-        selectedCfgLayer: getSelectedCfgLayer(state)
+        selectedCfgLayer: getSelectedCfgLayer(state),
+        tabouInfos: getFicheInfos(state)
     }), {
         setTab: setMainActiveTab,
         setFeature: setSelectedFeature,
