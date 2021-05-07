@@ -15,7 +15,6 @@ const Button = tooltip(ButtonRB);
 
 export default function Tabou2TiersModal({
     visible,
-    featureId,
     onClick = () => {},
     ...props
 }) {
