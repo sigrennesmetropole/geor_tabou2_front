@@ -88,7 +88,6 @@ export function tabouResetFilter(action$, store) {
                     idsCql = correctIds.map(id => `${filter.idField} = ${id}`).join(' OR ');
                 }
                 // create toc filter
-                console.log('test');
                 let newFilter = getNewFilter(layer, null, [], null);
                 newFilter.filterFields = ids.map((id,idx) => ({
                     "rowId": new Date().getTime()+ idx,
@@ -103,7 +102,6 @@ export function tabouResetFilter(action$, store) {
                     },
                     "exception": null
                 }));
-                console.log(newFilter);
                 // prepare filter
                 filters[layer] = {
                     cql: idsCql,

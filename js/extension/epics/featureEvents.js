@@ -86,12 +86,9 @@ export function getTabou2Logs(action$, store) {
              * TODO
              * - dynamic type layer
              * - dynamic idTabou
-             * - kEEP operation for programme
              */
-            console.log(layerCfg);
             let observable$ = Rx.Observable.empty();
             if(layerCfg === "layerOA" || layerCfg === "layerSA") {
-                console.log('Operation or Secteur infos');
                 observable$ = Rx.Observable.defer(() => getOperationProgrammes(searchItem.id)).switchMap( programmes => {
                     // load info to store
                     let infos = {...selectInfos, programmes: programmes.data, operation: searchItem, tiers: tiers, mapFeature: mapFeature};
@@ -99,7 +96,6 @@ export function getTabou2Logs(action$, store) {
                     }
                 )
             } else {
-                console.log('Programme infos');
                 observable$ = Rx.Observable.defer(() => getOperation(searchItem.operationId))
                     .switchMap( operation => {
                         // permis for selected programme
