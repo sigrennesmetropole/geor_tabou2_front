@@ -163,17 +163,17 @@ export const LAYER_FIELD_OPTION = [
         //name: "urba_proj:v_oa_programme",
         name: "layerPA",
         field: "properties.nom",
-        id: "properties.objectid"
+        id: "properties.id_tabou"
     },
     {
         name: "layerSA",
         field: "properties.nom",
-        id: "properties.objectid"
+        id: "properties.id_tabou"
     },
     {
         name: "layerOA",
         field: "properties.nom",
-        id: "properties.objectid"
+        id: "properties.id_tabou"
     }
 ];
 
