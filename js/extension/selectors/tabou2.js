@@ -53,6 +53,10 @@ export function getEvents(state) {
     return state?.tabou2?.events;
 }
 
+export function getFicheInfos(state) {
+    return state?.tabou2?.ficheInfos;
+}
+
 export function getTiers(state) {
     return state?.tabou2?.tiers;
 }
@@ -70,7 +74,7 @@ export function getAuthInfos(state) {
     /**
      * TODO : REMOVE roleTest !!!!!
      */
-    const groups = userGroupSecuritySelector(state) ?? roleTest; // [];
+    const groups = userGroupSecuritySelector(state) ?? [];
     const groupNames = groups.map(({ groupName }) => `${groupName}`);
     return {
         isAdmin: groupNames.includes("MAPSTORE_ADMIN"),
