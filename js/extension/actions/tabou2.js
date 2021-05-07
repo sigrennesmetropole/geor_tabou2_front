@@ -25,6 +25,7 @@ export const SET_TABOU_CONFIG = "TABOU2:SET_TABOU_CONFIG";
 export const PRINT_PROGRAMME_INFOS = "TABOU2:PRINT_FICHE_PROGRAMME";
 export const SEARCH_IDS = "TABOU2:SEARCH_IDS";
 export const LOADING = "TABOU2:LOADING";
+export const LOAD_FICHE_INFOS = "TABOU2:LOAD_FICHE_INFOS"; 
 
 export const searchIds = (params) => ({
     type: SEARCH_IDS,
@@ -154,6 +155,11 @@ export const setTabouConfig = (config) => ({
 export const printProgInfos = (id) => ({
     type: PRINT_PROGRAMME_INFOS,
     id
+});
+
+export const loadFicheInfos = (ficheInfos) => ({
+    type: LOAD_FICHE_INFOS,
+    ficheInfos
 });
 
 export const loading = (value, name, mode) => ({

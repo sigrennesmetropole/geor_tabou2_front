@@ -121,3 +121,23 @@ export function inactivateTier(tierId) {
 export function getPDFProgramme(type, id) {
     return axios.get(`${baseURL}/${type}/${id}/fiche-suivi`, {responseType: 'arraybuffer'});
 }
+
+/**
+ * PANEL IDENTIFY INFOS
+ */
+
+export function getProgramme(id) {
+    return axios.get(`${baseURL}/programmes/${id}`);
+}
+
+export function getProgrammePermis(id) {
+    return axios.get(`${baseURL}/programmes/${id}/permis`);
+}
+
+export function getOperationProgrammes(id) {
+    return axios.get(`${baseURL}/operations/${id}/programmes`);
+}
+
+export function getOperation(id) {
+    return axios.get(`${baseURL}/operations/${id}`);
+}
