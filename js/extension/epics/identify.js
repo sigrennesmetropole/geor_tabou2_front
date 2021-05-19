@@ -1,8 +1,9 @@
 import * as Rx from 'rxjs';
-import { CONTROL_NAME } from '../constants';
+import { CONTROL_NAME, URL_ADD } from '../constants';
+
+import { get } from 'lodash';
 
 import { generalInfoFormatSelector } from '@mapstore/selectors/mapInfo';
-
 import { updateUserPlugin } from '@mapstore/actions/context';
 
 import {
@@ -12,9 +13,10 @@ import {
     changeMapInfoFormat
 } from "@mapstore/actions/mapInfo";
 import { TOGGLE_CONTROL } from '@mapstore/actions/controls';
-import { isTabou2Activate, defaultInfoFormat, getTabouResponse } from '@ext/selectors/tabou2';
+import { isTabou2Activate, defaultInfoFormat, getTabouResponse, getPluginCfg } from '@ext/selectors/tabou2';
 import { loadTabouFeatureInfo, setDefaultInfoFormat, setMainActiveTab, PRINT_PROGRAMME_INFOS } from '@ext/actions/tabou2';
-import { getPDFProgramme } from '@ext/api/search';
+import { getPDFProgramme, postRequestApi, putRequestApi } from '@ext/api/search';
+import { CHANGE_FEATURE, CREATE_FEATURE } from '../actions/tabou2';
 
 /**
  * Catch GFI response on identify load event and close identify if Tabou2 identify tabs is selected
@@ -24,9 +26,9 @@ import { getPDFProgramme } from '@ext/api/search';
  */
 export function tabouLoadIdentifyContent(action$, store) {
     return action$.ofType(LOAD_FEATURE_INFO)
-        .filter(() => isTabou2Activate(store.getState()))
+        .filter((action) => isTabou2Activate(store.getState()))
         .switchMap((action) => {
-            if (action.layer && action.layer.id) {
+            if (action?.layer?.id && action?.data?.features && action.data.features.length) {
                 let resp = getTabouResponse(store.getState());
                 // delete response for this GFI layer response
                 delete resp[action.layer.name];
@@ -44,7 +46,7 @@ export function tabouLoadIdentifyContent(action$, store) {
                     )
                 );
             }
-            return Rx.Observable.empty();
+            return  Rx.Observable.of(closeIdentify());
         });
 }
 
@@ -120,4 +122,18 @@ export function printProgramme(action$, store) {
                 return Rx.Observable.empty();
             });
     });
+}
+
+
+export function createChangeFeature (action$, store) {
+    return action$.ofType(CHANGE_FEATURE, CREATE_FEATURE)
+    .switchMap( action => {
+        let request = action?.type === "CREATE_FEATURE" ? postRequestApi : putRequestApi;
+        return Rx.Observable.defer( () => request(`${get(URL_ADD, action.params.layer)}`, getPluginCfg(store.getState()).apiCfg, action.params.feature))
+        .catch(e => {
+            console.log("Error to save feature change or feature creation");
+            console.log(e);
+            return Rx.Observable.empty();
+        })
+    })
 }
