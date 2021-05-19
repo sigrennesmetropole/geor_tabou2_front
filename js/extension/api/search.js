@@ -1,11 +1,10 @@
 import axios from "@mapstore/libs/ajax";
 import { API_BASE_URL } from "@ext/constants";
-import { keys } from "lodash";
+import { keys, find } from "lodash";
 
 let baseURL = "/tabou2";
 
 /** SEARCH - get ids from cross layer filter */
-
 export function getIdsFromSearch(params, geoserverURL) {
     let paramsToStr = keys(params).map(k => `${k}=${params[k]}`);
     return axios.post(`${geoserverURL}/ows`, paramsToStr.join('&'), {
@@ -140,4 +139,15 @@ export function getOperationProgrammes(id) {
 
 export function getOperation(id) {
     return axios.get(`${baseURL}/operations/${id}`);
+}
+
+export function getSecteur(id) {
+    return axios.get(`${baseURL}/operations`)
+    .catch(error => {})
+    .then(response => (
+        {
+            ...response,
+            data: find(response.data.elements, ["id", id])
+        }
+    ));
 }
