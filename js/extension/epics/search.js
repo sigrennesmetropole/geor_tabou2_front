@@ -6,7 +6,7 @@ import { currentTabouFilters, getLayerFilterObj, isTabou2Activate, getPluginCfg 
 import { changeLayerParams, changeLayerProperties } from "@mapstore/actions/layers";
 import { wrapStartStop } from "@mapstore/observables/epics";
 import { error } from "@mapstore/actions/notifications";
-import { getNewCqlFilter, getNewFilter } from "@ext/utils/search";
+import { getNewFilter } from "@ext/utils/search";
 
 import { getIdsFromSearch } from "@ext/api/search";
 
@@ -33,10 +33,7 @@ export function tabouApplyFilter(action$, store) {
         filterObj.filterFields = filterObj?.filterFields || [];
         filterObj.crossLayerFilter = filterObj?.crossLayerFilter || null;
         filterObj.spatialField = filterObj?.spatialField || null;
-        return Rx.Observable.of(changeLayerProperties(layer.id, { layerFilter: filterObj.tocFilter }))
-            /*.concat(Rx.Observable.of(updateNode(layer.id, "id", {})))*/;
-
-        //return Rx.Observable.of(changeLayerParams(layer.id, { cql_filter: filterObj.cql }));
+        return Rx.Observable.of(changeLayerProperties(layer.id, { layerFilter: filterObj.tocFilter }));
     });
 }
 
