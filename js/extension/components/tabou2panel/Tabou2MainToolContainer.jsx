@@ -11,7 +11,8 @@ import {
     getLayer,
     getAuthInfos,
     getSelectedCfgLayer,
-    getFicheInfos
+    getFicheInfos,
+    identifyLoading
 } from '@ext/selectors/tabou2';
 
 import Tabou2SearchPanel from '../tabou2SearchPanel/Tabou2SearchPanel';
@@ -32,12 +33,15 @@ import {
     inactivateTier,
     applyFilterObj,
     printProgInfos,
-    searchIds
+    searchIds,
+    createFeature,
+    changeFeature
 } from "@ext/actions/tabou2";
 
 function toolContainer({data, ...props }) {
     const [selectionInfos, setSelection] = useState({feature: {}, id: null, layer:""});
     const isTaboufeature = useRef(false);
+    const searchValues = useRef({});
 
     const handleSelect = (feature, id, selectedLayer) => {
         let selection = {
@@ -49,23 +53,36 @@ function toolContainer({data, ...props }) {
         setSelection(selection);
         props.setFeature(selection);
         props.setLayer(selectedLayer);        
-        isTaboufeature.current = feature.properties.id_tabou ? true : false;
+        isTaboufeature.current = feature?.properties?.id_tabou ? true : false;
     }
 
     let showAddPanel = getAuthInfos().isAdmin || getAuthInfos().isContrib;
 
     if (isEmpty(data)) isTaboufeature.current = false;
+
+    const changeSearch = (vals) => {
+        searchValues.current = vals;
+    }
+
     return (
         <>
             {
-                props.currentTab === "search" ? (<Tabou2SearchPanel currentTab={props.currentTab} allIndex={props.allIndex} queryData={data} {...props} />) : null
+                props.currentTab === "search" ? 
+                    (<Tabou2SearchPanel 
+                        change={changeSearch}
+                        searchState={searchValues.current}
+                        currentTab={props.currentTab}
+                        allIndex={props.allIndex}
+                        queryData={data}
+                        {...props} />)
+                    : null
             }
             {
                 // display add panel
                 props.currentTab === "add" && showAddPanel && !isTaboufeature.current ? (
                     <Tabou2AddPanel 
                         feature={isEmpty(data) ? {} : selectionInfos.feature}
-                        featureId={ isEmpty(data) ? null : selectionInfos.id}
+                        featureId={ isEmpty(data) ? null : selectionInfos?.id}
                         layer={isEmpty(data) ? "": selectionInfos.layer}
                         queryData={data}
                         {...props} />) 
@@ -86,7 +103,7 @@ function toolContainer({data, ...props }) {
                         isVisible={true} 
                         glyph="minus-sign" 
                         message="Vous pouvez accéder aux informations de la fiche de cette emprise va l'onglet : Identifier une entité."
-                        title="Emprise déjà saisie"/>
+                        title="Entité déjà saisie"/>
                 ) : null
             }
             {
@@ -118,7 +135,8 @@ export default connect(
         selection: getSelection(state),
         selectionLayer: getLayer(state),
         selectedCfgLayer: getSelectedCfgLayer(state),
-        tabouInfos: getFicheInfos(state)
+        tabouInfos: getFicheInfos(state),
+        identifyLoading: identifyLoading(state)
     }), {
         setTab: setMainActiveTab,
         setFeature: setSelectedFeature,
@@ -133,6 +151,8 @@ export default connect(
         changeTier: changeFeatureTier,
         associateTier: associateFeatureTier,
         printProgInfos: printProgInfos,
-        searchIds: searchIds
+        searchIds: searchIds,
+        createFeature: createFeature,
+        changeFeature: changeFeature
     }
 )(toolContainer);
