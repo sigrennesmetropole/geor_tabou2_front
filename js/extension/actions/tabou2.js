@@ -25,7 +25,19 @@ export const SET_TABOU_CONFIG = "TABOU2:SET_TABOU_CONFIG";
 export const PRINT_PROGRAMME_INFOS = "TABOU2:PRINT_FICHE_PROGRAMME";
 export const SEARCH_IDS = "TABOU2:SEARCH_IDS";
 export const LOADING = "TABOU2:LOADING";
-export const LOAD_FICHE_INFOS = "TABOU2:LOAD_FICHE_INFOS"; 
+export const LOAD_FICHE_INFOS = "TABOU2:LOAD_FICHE_INFOS";
+export const CHANGE_FEATURE = "TABOU2:CHANGE_FEATURE";
+export const CREATE_FEATURE = "TABOU2:CREATE_FEATURE";
+
+export const changeFeature = (params) => ({
+    type: CHANGE_FEATURE,
+    params
+});
+
+export const createFeature = (params) => ({
+    type: CREATE_FEATURE,
+    params
+});
 
 export const searchIds = (params) => ({
     type: SEARCH_IDS,
