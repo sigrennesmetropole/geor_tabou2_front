@@ -155,7 +155,7 @@ export default function Tabou2TiersModal({
 
     return (
         <ResizableModal
-            title={"Journal des événements"}
+            title={"Annuaire des tiers"}
             bodyClassName="ms-flex"
             show={visible}
             showClose
