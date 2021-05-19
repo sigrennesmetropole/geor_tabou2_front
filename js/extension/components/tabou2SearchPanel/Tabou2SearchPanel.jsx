@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { keys, get } from 'lodash';
+import { keys, get, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
 import { Checkbox, Col, Row, ControlLabel, FormGroup, Grid, Panel } from 'react-bootstrap';
 import { DateTimePicker } from 'react-widgets';
@@ -21,7 +21,7 @@ const UTCDateTimePicker = utcDateWrapper({
     setDateProp: "onChange"
 })(DateTimePicker);
 
-function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, changeFilters, currentFilters, ...props }) {
+function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, changeFiltersObj, changeFilters, currentFilters, ...props }) {
     if (currentTab !== 'search') return null;
     const comboMarginTop = '5px';
     const layersInfos = getTabouLayersInfos(props?.pluginCfg?.layersCfg || {});
@@ -38,6 +38,12 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
         }
     }, [val]);
 
+    useEffect(() => {
+        if(!isEmpty(searchState) && isEmpty(comboValues)) {
+            setComboValues(searchState);
+        }
+    }, [searchState])
+
     /**
      * Reset all filters value
      */
@@ -45,6 +51,7 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
         props.resetFiltersObj();
         props.resetFiltersCql();
         setComboValues({});
+        change({});
         setVal("");
     };
 
@@ -98,7 +105,8 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                 return changeFiltersObj(filtersObj);
             }
             CQLStr.push('id_tabou IS NOT NULL');
-            // create WFS request
+            CQLStr = CQLStr.filter(el => el);
+            // To change TOC wms request params
             filters.push({
                 layer: lyr,
                 params: {
@@ -109,19 +117,35 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                     OUTPUTFORMAT: 'application/json',
                     VERSION: '1.0.0'
                 },
-                idField: layersInfos[lyr].id,
-                idType: layersInfos[lyr].type
+                idField: layersInfos[lyr]?.id,
+                idType: layersInfos[lyr].type,
+                geomField: layersInfos[lyr].geom
             });
         });
         props.searchIds(filters);
     };
 
     const changeFilter = (combo, value) => {
-        comboValues[combo.name] = value;
+        //comboValues[combo.name] = value;
         setVal(value[get(config, `${combo.name}.apiField`)]);
-        setComboValues(comboValues);
+        setComboValues({...comboValues, [combo.name]: value});
+        change({...comboValues, [combo.name]: value});
         changeCqlFilter(get(combo, "type"), combo.name, value[get(config, `${combo.name}.apiField`)], config[combo.name]);
     };
+
+    const changeDate = (calendar, value) => {
+        setVal(value);
+        let val = {
+            ...comboValues, 
+            [calendar.name]: {
+                start: calendar.isStart ? value : get(comboValues, `${calendar.name}.start`),
+                end: !calendar.isStart ? value : get(comboValues, `${calendar.name}.end`)
+            }
+        };
+        setComboValues(val);
+        change(val);
+        changeCqlFilter("date", calendar.name, val[calendar.name], config[calendar.name]);
+    }
 
     /**
      * Create tabou2 search combobox loadable from api
@@ -178,6 +202,7 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
      * @returns
      */
     const getDate = (item, type) => {
+        let defaultVal = get(comboValues, `${item.name}.${item.isStart ? "start":"end"}`) || null;
         return (
             <Col xs={6}>
                 <FormGroup>
@@ -189,8 +214,10 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                             calendar={get(type, "isCalendar") || true}
                             time={get(type, "isTime") || false}
                             culture="fr"
-                            format="MM/DD/YYYY"
-                            onChange={(e) => e} />
+                            value={defaultVal ? new Date(defaultVal) : null}
+                            format="DD/MM/YYYY"
+                            onSelect={(e) => changeDate(item, new Date(e).toISOString(e))}
+                            onChange={(e) => !e ? changeDate(item, e) : null} />
                     </ControlLabel>
                 </FormGroup>
             </Col>
@@ -209,10 +236,10 @@ function Tabou2SearchPanel({ getFiltersObj, currentTab, changeFiltersObj, change
                             <label>1 - Définir les éléments du référentiel cartographique</label>
                         )}
                     >
-                        <Checkbox inline>PBIL</Checkbox>
                         <Row>
                             { SEARCH_ITEMS.filter(f => f.group === 1).map((cb, i) => getCombo(cb, i, 2)) }
                         </Row>
+                        <Checkbox inline>PBIL</Checkbox>
                     </Panel>
                 </Row>
                 <Row>

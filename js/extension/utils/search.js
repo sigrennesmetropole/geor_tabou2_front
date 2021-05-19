@@ -126,10 +126,27 @@ export function getIdsToCql(ids, field) {
  * @returns {string} as CQL expression value
  */
 export function getSpatialCQL(type, geomA, layer, geomB, field, value, onlyTabou) {
+    if (type === "date" && (value.start || value.end)) {
+        // allow to input only one date filter
+        let cql =  `'((${field}>=''${value.start}'' AND ${field}<=''${value.end}''))'`
+        if (!value.start && value.end) {
+            cql = `'((${field}<=''${value.end}''))'`;
+        } else if (!value.end && value.start) {
+            cql = `'((${field}>=''${value.start}''))'`;
+        }
+        return `(INTERSECTS(${geomA},collectGeometries(queryCollection('${layer}', '${geomB}','(${onlyTabou ? "id_tabou IS NOT NULL AND " : ""}${cql})'))))`;
+    } else if (type === "date"){
+        return "";
+    }
     return `(INTERSECTS(${geomA},collectGeometries(queryCollection('${layer}', '${geomB}','(${onlyTabou ? "id_tabou IS NOT NULL AND " : ""}"${field}" = ${fixStringCql(type, value)})'))))`;
 }
 
 export function getCQL(type, field, value) {
+    if (type === "date" && (value.start || value.end)) {
+        return `((${field}>='${value.start}' AND ${field}<='${value.end}'))`;
+    } else if (type === "date") {
+        return "";
+    }
     return `${field}='${value}'`;
 }
 

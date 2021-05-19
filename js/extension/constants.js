@@ -126,23 +126,35 @@ export const SEARCH_ITEMS = [{
 
 export const SEARCH_CALENDARS = [{
     items: [{
+        name: "doc",
+        isStart: true,
         label: "Date DOC du :"
     },
     {
-        label: "A la date du :"
+        label: "A la date du :",
+        isStart: false,
+        name: "doc",
     }]
 }, {
     items: [{
+        name: "daact",
+        isStart: true,
         label: "Date DAACT du :"
     },
     {
+        name: "daact",
+        isStart: false,
         label: "A la date du :"
     }]
 }, {
     items: [{
+        name: "livraison",
+        isStart: true,
         label: "Date de livraison du :"
     },
     {
+        name: "livraison",
+        isStart: false,
         label: "A la date du :"
     }]
 }];

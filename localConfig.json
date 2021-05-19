@@ -470,6 +470,27 @@
               "apiField": "libelle",
               "apiLabel": "libelle",
               "placeholder": "Zonage PLUI"
+            },
+            "daact": {
+              "layer": "tabou2:tabou_v_oa_programme",
+              "geom": "the_geom",
+              "filterField": "daact_date",
+              "type": "date",
+              "placeholder": "Choisir une date"
+            },
+            "doc": {
+              "layer": "tabou2:tabou_v_oa_programme",
+              "geom": "the_geom",
+              "filterField": "doc_date",
+              "type": "date",
+              "placeholder": "Choisir une date"
+            },
+            "livraison": {
+              "layer": "tabou2:tabou_v_oa_programme",
+              "geom": "the_geom",
+              "filterField": "livraison_date",
+              "type": "date",
+              "placeholder": "Choisir une date"
             }
           },
           "apiCfg": {
