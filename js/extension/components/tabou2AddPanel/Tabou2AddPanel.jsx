@@ -4,7 +4,6 @@ import { Grid } from 'react-bootstrap';
 import { keys, isEqual } from 'lodash';
 import Tabou2AddOaPaForm from '@ext/components/form/add/Tabou2AddOaPaForm';
 
-
 export default function Tabou2AddPanel({feature, featureId, layer, ...props}) {
     
     const [type, setType] = useState("");
