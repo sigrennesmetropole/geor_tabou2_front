@@ -5,9 +5,8 @@ import Tabou2IdentifyContent from './Tabou2IdentifyContent';
 import { LAYER_FIELD_OPTION } from '@ext/constants';
 import { createOptions, getFeaturesOptions } from '@ext/utils/identify';
 import IdentifyDropDown from "./IdentifyDropDown";
-import { Button, Glyphicon, Row, Alert } from 'react-bootstrap';
+import { Button, Glyphicon, Row } from 'react-bootstrap';
 import Tabou2Information from "@ext/components/common/Tabou2Information";
-import Tabou2IdentifyToolbar from './Tabou2IdentifyToolbar';
 
 export default function Tabou2IdentifyPanel({
     queryData,
@@ -36,8 +35,7 @@ export default function Tabou2IdentifyPanel({
         setSelectedLayer(selectedLayer);
         setSelectedFeatures(selectedFeatures);
         setFeature(selectedFeature);
-        onSelect(selectedFeature, get(selectedFeature, find(LAYER_FIELD_OPTION, ["name", configName]).id), selectedLayer);
-
+        onSelect(selectedFeature, get(selectedFeature, find(LAYER_FIELD_OPTION, ["name", configName])?.id), selectedLayer);
     };
 
     useEffect(() => {
@@ -74,21 +72,10 @@ export default function Tabou2IdentifyPanel({
                             icon="glyphicon-list"
                             onChange={(i) => {
                                 let featureSelected = selectedFeatures[i.idx];
-                                setFeature(featureSelected);
                                 onSelect(featureSelected, get(featureSelected, find(LAYER_FIELD_OPTION, ["name", configLayer]).id), selectedLayer);
                             }}
                         />
                     ))
-            }
-            { 
-                !isEmpty(response) && feature ? 
-                    (<Row className="tabou-idToolbar-row text-center" style={{ display: "flex", margin: "auto", justifyContent: "center" }}>
-                        <Tabou2IdentifyToolbar 
-                            response={response[selectedLayer]}
-                            {...props}
-                        />
-                    </Row>)
-                    : null
             }
             {
                 !isEmpty(response) && feature && feature.properties.id_tabou ?
@@ -96,9 +83,10 @@ export default function Tabou2IdentifyPanel({
                         <>
                             <Tabou2IdentifyContent
                                 feature={feature}
-                                featureId={get(feature, find(LAYER_FIELD_OPTION, ["name", configLayer]).id)}
+                                featureId={get(feature, find(LAYER_FIELD_OPTION, ["name", configLayer])?.id)}
                                 response={response[selectedLayer]}
                                 tabouLayer={configLayer}
+                                response={response[selectedLayer]}
                                 {...props}
                             />
                         </>
@@ -110,13 +98,18 @@ export default function Tabou2IdentifyPanel({
                 glyph="eye-close" 
                 content={
                     <div>
-                        <Button onClick={() => props.setTab("add") } bsStyle="primary" bsSize="lg" style={{marginTop:"10%"}}>
+                        <Button
+                            tooltip="Saisir à partir de la sélection"
+                            onClick={() => props.setTab("add") }
+                            bsStyle="primary"
+                            bsSize="lg"
+                            style={{marginTop:"10%"}}>
                             <Glyphicon glyph="pencil-add"/>
                         </Button>
                     </div>
                 }
                 message="Pour saisir les informations de cette emprise, cliquez sur l'onglet Ajouter ou cliquez directement sur ce bouton"
-                title="Emprise non saisie"/>
+                title="Entité non suivie"/>
         </>
     );
 };

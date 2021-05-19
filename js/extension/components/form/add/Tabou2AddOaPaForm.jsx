@@ -7,8 +7,10 @@ import ControlledPopover from '@mapstore/components/widgets/widget/ControlledPop
 import Toolbar from '@mapstore/components/misc/toolbar/Toolbar';
 import { OA_SCHEMA, PA_SCHEMA, URL_ADD, ADD_FIELDS } from '@ext/constants';
 import { postRequestApi } from '@ext/api/search';
+import { DropdownList} from 'react-widgets';
+import { ADD_OA_FORM, ADD_PA_FORM } from '@ext/constants';
 
-export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCfg = {}}) {
+export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...props}) {
     const emptyInfos = {
         code: "",
         nom: "",
@@ -19,6 +21,7 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
         parentoa: null
     };
     const [infos, setInfos] = useState(emptyInfos);
+    const [childs, setChilds] = useState([]);
 
     const [newFeature, setNewFeature] = useState(["layerOA", "layerSA"].includes(layer) ? OA_SCHEMA : PA_SCHEMA);
     const [invalides, setInvalides] = useState([]);
@@ -54,8 +57,8 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
             newInfos = {...newInfos, nom: value}
         }
         if(combo.name === "parentoa") {
-            newFeatureObj = {...newFeatureObj, operationId: selection.id, };
-            newInfos = {...newInfos, operationId: selection.id, }
+            newFeatureObj = {...newFeatureObj, operationId: selection?.id, };
+            newInfos = {...newInfos, operationId: selection?.id, }
         }
         
         let keysInfos = [];
@@ -86,7 +89,7 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
         }
         return params;
     };
-    
+
     
     const getInvalides = (obj) => {
         let keysToFilter = [];
@@ -110,7 +113,7 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
             };
         } else {
             //newFeature = {...OA_SCHEMA, ...newFeature, secteur: infos.secteur};
-            let natureId = isObject(newFeature.nature) ? newFeature.nature : {id: find(naturesInfos.current, ['libelle', newFeature.nature]).id};
+            let natureId = isObject(newFeature.nature) ? newFeature.nature : {id: find(naturesInfos.current, ['libelle', newFeature.nature])?.id};
             params = {
                 ...OA_SCHEMA,
                 ...newFeature,
@@ -140,6 +143,22 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
 
     }, [feature, layer])
 
+    useEffect(() => {
+        switch(layer) {
+            case "layerPA":
+                setChilds(ADD_PA_FORM);
+                break;
+            case "layerSA":
+                setChilds(ADD_OA_FORM);
+                break;
+            case "layerOA":
+                setChilds(ADD_OA_FORM);
+                break;
+            default :
+                setChilds([])
+        }
+    }, [layer])
+
     const constructForm = (items) => {
         return (
             <Row style={{ marginTop: marginTop }} >
@@ -164,7 +183,7 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
                                     break;
                                 case "alert":
                                     el = !item.parent || (item.parent && item.parent(infos)) ? (
-                                        <Alert variant={item.variant} style={{marginTop: comboMarginTop}}>
+                                        <Alert variant={item.variant}>
                                             { item.icon ? (<Glyphicon glyph={item.icon} />) : null}
                                             { item.label }
                                         </Alert>
@@ -227,27 +246,8 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
 
     return (
         <>
-            <Panel
-                header={(
-                    <>
-                        <label style={{marginRight: "2px"}}>2 - Choisir l'emprise géographique </label>
-                        <ControlledPopover text="Tous les champs sont obligatoires" />
-                    </>
-                )}
-            >
-                { constructForm(childs.filter(f => f.group === 1)) }
-            </Panel>
-            <Panel
-                header={(
-                    <>
-                        <label style={{marginRight: "2px"}}>3 - Saisir les informations</label>
-                        <ControlledPopover text="Tous les champs sont obligatoires" />
-                    </>
-                )}
-            >
-                { constructForm(childs.filter(f => !f.group)) }
-            </Panel>
-            <Row className="tabou-idToolbar-row text-center" style={{ display: "flex", margin: "auto", justifyContent: "center" }}>
+            { layer ? 
+            (<Row className="tabou-idToolbar-row text-center" style={{ display: "flex", margin: "auto", justifyContent: "center" }}>
                 <Toolbar
                     btnDefaultProps={{
                         className: "square-button-md",
@@ -271,7 +271,59 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
                         onClick: () => handleSubmit()
                     }]}
                 />
-            </Row>
+            </Row>) : null
+            }
+            <Panel
+                header={(
+                    <>
+                        <label style={{marginRight: "2px"}}>1 - Commencez par choisir un type :</label>
+                        <ControlledPopover text="Tous les champs sont obligatoires" />
+                    </>
+                )}
+            >
+                <Row>
+                    <Col xs={12}>
+                        <FormGroup >
+                            <DropdownList
+                                style={{ marginTop: "10px" }}
+                                data = {props.options}
+                                valueField={"value"}
+                                textField = {"label"}
+                                value = {layer === "layerSA" ? "layerOA" : layer}
+                                placeholder= "Choisir un type opération ou programme..."
+                                onSelect={props.select}
+                                onChange={props.change}
+                            />
+                        </FormGroup>
+                    </Col>
+                </Row>
+            </Panel>
+            {
+                layer ? (
+                <>
+                    <Panel
+                        header={(
+                            <>
+                                <label style={{marginRight: "2px"}}>2 - Choisir l'emprise géographique </label>
+                                <ControlledPopover text="Pour saisir un secteur, cocher la case 'secteur' d'une opération" />
+                            </>
+                        )}
+                    >
+                        { constructForm(childs.filter(f => f.group === 1)) }
+                    </Panel>
+                    <Panel
+                        header={(
+                            <>
+                                <label style={{marginRight: "2px"}}>3 - Saisir les informations</label>
+                                <ControlledPopover text="Tous les champs sont obligatoires" />
+                            </>
+                        )}
+                    >
+                        { constructForm(childs.filter(f => !f.group)) }
+                    </Panel>
+                </>
+                ) : null
+            }
         </>
     );
 }
