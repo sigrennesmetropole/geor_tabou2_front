@@ -1,122 +1,130 @@
-import React from "react";
-import { isEmpty } from "lodash";
+import React, {useEffect, useState, useRef} from "react";
+import { isEmpty, isEqual, pick, has, get, zipObject, keys } from "lodash";
 import { Checkbox, Col, Row, FormGroup, FormControl, Grid, ControlLabel } from "react-bootstrap";
 
-export default function Tabou2IdentAccord({ layer, feature }) {
-    const fields = [{
-        name: "estoff",
-        fieldApi: "diffusionRestreinte",
-        label: "Est off",
-        api: "/operations",
-        type: "boolean",
-        layers: ["layerOA", "layerSA"],
-        write: true
-    }, {
-        name: "ID_Tabou",
-        api: "/operations",
+export default function Tabou2IdentAccord({ initialItem, programme, operation, mapFeature, ...props }) {
+    let layer = props?.selection?.layer;
+
+    const [values, setValues] = useState({});
+    const [fields, setFields] = useState([]);
+    const [required, setRequired] = useState({});
+
+    const getFields = () => [{
+        name: "id",
         type: "text",
         label: "ID Tabou",
-        fieldApi: "id",
-        layers: ["layerOA", "layerSA"],
-        write: false
+        field: "id",
+        source: initialItem,
+        readOnly: true
     }, {
         name: "code",
-        api: "/operations",
         label: "Code",
         type: "text",
-        fieldApi: "code",
-        layers: ["layerOA", "layerSA"]
-    }, {
-        name: "code",
-        api: "/programmes",
-        label: "Code",
-        type: "text",
-        fieldApi: "code",
-        layers: ["layerPA"]
+        field: "code",
+        source: values,
+        readOnly: false,
+        require: true
     }, {
         name: "commune",
-        fieldApi: "",
-        api: "/operations",
+        field: "properties.commune",
         label: "Commune",
         type: "string",
-        layers: [],
-        write: false
+        source: mapFeature,
+        readOnly: true
     }, {
         name: "nature",
-        api: "/operations",
         label: "Nature",
-        fieldApi: "libelle",
+        field: "nature.libelle",
         type: "string",
-        layers: [],
-        write: false
+        source: operation,
+        readOnly: true
+
+    }, {
+        name: "operation",
+        field: "nom",
+        label: "Opération",
+        type: "string",
+        source: operation,
+        readOnly: true
     }, {
         name: "nom",
-        fieldApi: "nom",
+        field: "nom",
         label: "Nom",
-        api: "/operations",
         type: "string",
-        layers: ["layerOA", "layerSA"]
+        source: values,
+        readOnly: false,
+        require: true
     }, {
-        name: "nomoa",
-        fieldApi: "nom",
-        label: "Nom OA Parent",
-        api: "/operations",
-        type: "string",
-        layers: ["layerPA"]
-    }, {
-        name: "nompa",
-        fieldApi: "nom",
-        label: "Nom PA Parent",
-        api: "/programmes",
-        type: "string",
-        layers: ["layerPA"]
-    }, {
-        name: "estoff",
-        fieldApi: "diffusionRestreinte",
-        label: "Est off",
-        api: "/programmes",
-        type: "boolean",
-        layers: ["layerPA"],
-        write: true
-    }, {
-        name: "numads",
+        name: "numAds",
         label: "Num ADS",
-        fieldApi: "numAds",
-        api: "/programmes",
+        field: "numAds",
         type: "string",
-        layers: ["layerPA"]
-    },
-    {
-        name: "numads",
-        label: "Num ADS",
-        fieldApi: "numAds",
-        api: "/operations",
-        type: "string",
-        layers: ["layerOA", "layerSA"]
+        source: values,
+        readOnly: false
     }];
 
+    /**
+     * Effect
+     */
+    // return writable fields as object-keys
+
+    useEffect(() => {
+        const calculFields = getFields();
+        const mandatoryFields = calculFields.filter(f => f.require).map(f => f.name);
+        if (!isEqual(initialItem, values)) {
+            setValues(initialItem);
+            setFields(calculFields);
+            setRequired(mandatoryFields);
+        }
+    }, [initialItem]);
+
+    const getValue = (item) => {
+        if (isEmpty(values) || isEmpty(operation)) return null;
+        let itemSrc = getFields().filter(f => f.name === item.name)[0]?.source;
+        return get(itemSrc, item?.field);
+    }
+
+    const changeInfos = (item) => {
+        let newValues = {...values, ...item};
+        setValues(newValues);
+        // send to parent to save
+        let accordValues = pick(newValues, getFields().filter(f => !f.readOnly).map(f => f.name));
+        props.change(accordValues, pick(accordValues, required));
+    }
+
+    /**
+     * COMPONENT
+     */
     const marginTop = "10px";
     return (
         <Grid style={{ width: "100%" }} className={""}>
             {
-                fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(field => (
-                    <Row style={{ marginTop: marginTop }} key={`key-formrow-${field.name}`}>
+                fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(item => (
+                    <Row style={{ marginTop: marginTop }}>
                         <Col xs={12}>
-                            <FormGroup key={`key-formgp-${field.name}`}>
+                            <FormGroup>
                                 {
-                                    field.type !== "boolean" ? <ControlLabel>{field.label}</ControlLabel> :  null
+                                    item.type !== "boolean" ? <ControlLabel>{item.label}</ControlLabel> :  null
                                 }
                                 {
-                                    field.type === "boolean" ?
-                                        (<Checkbox inline="true" key={`key-chbox-${field.name}`} className="col-xs-3"><ControlLabel>{field.label}</ControlLabel></Checkbox>) : null
-
+                                    item.type === "boolean" ?
+                                        (<Checkbox 
+                                            inline="true"
+                                            checked={item.value(item) || false}
+                                            disabled={item.readOnly}
+                                            id={`chbox-${item.name}`}
+                                            className="col-xs-5">
+                                            <ControlLabel>{item.label}</ControlLabel>
+                                        </Checkbox>) : null
                                 }
                                 {
-                                    field.type !== "boolean" ?
-                                        (<FormControl
-                                            type="text"
-                                            key={`key-ctrl-${field.name}`}
-                                            placeholder={field.label} />) : null
+                                    item.type !== "boolean" ?
+                                        (<FormControl 
+                                            placeholder={item.label}
+                                            value={getValue(item) || ""}
+                                            readOnly={item.readOnly}
+                                            onChange={(v) => changeInfos({[item.name]: v.target.value})}
+                                        />) : null
                                 }
                             </FormGroup>
                         </Col>
