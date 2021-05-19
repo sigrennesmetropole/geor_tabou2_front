@@ -2,48 +2,42 @@ import React from "react";
 import { Checkbox, Col, Row, FormGroup, FormControl, Grid, ControlLabel } from "react-bootstrap";
 import { isEmpty } from "lodash";
 
-export default function Tabou2DescribeAccord({ layer, feature }) {
+export default function Tabou2DescribeAccord({ layer, ...props }) {
     const fields = [
         {
             name: "programme",
-            fieldApi: "programme",
+            field: "programme",
             label: "Programme",
-            api: "/programmes",
             type: "text",
             layers: ["layerPA"]
         }, {
             name: "operation",
-            fieldApi: "operation",
+            field: "operation",
             label: "Opération",
-            api: "/",
             type: "text",
-            layers: ["layerOA", "layerSA"]
+            layers: []
         }, {
             name: "description",
-            fieldApi: "description",
+            field: "description",
             label: "Description",
-            api: "/",
             type: "text",
             layers: []
         }, {
             name: "consommationespace",
-            fieldApi: "consommationEspace.libelle",
+            field: "consommationEspace.libelle",
             label: "Consommation espace",
-            api: "/operation",
             type: "text",
             layers: ["layerOA", "layerSA"]
         }, {
             name: "vocation",
-            fieldApi: "vocation.libelle",
+            field: "vocation.libelle",
             label: "Opération",
-            api: "/",
             type: "text",
             layers: ["layerOA", "layerSA"]
         }, {
             name: "surfacetotale",
-            fieldApi: "surfaceTotale",
+            field: "surfaceTotale",
             label: "Surface Totale",
-            api: "/operations",
             type: "text",
             layers: ["layerOA", "layerSA"]
         }

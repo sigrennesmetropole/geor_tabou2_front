@@ -2,7 +2,7 @@ import React from "react";
 import { Checkbox, Col, Row, FormGroup, FormControl, Grid, ControlLabel } from "react-bootstrap";
 import { isEmpty } from "lodash";
 
-export default function Tabou2SuiviOpAccord({ layer, feature }) {
+export default function Tabou2SuiviOpAccord({ layer, ...props }) {
     const fields = [
         {
             name: "etape",
