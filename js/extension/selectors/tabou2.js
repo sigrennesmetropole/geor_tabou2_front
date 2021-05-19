@@ -74,17 +74,22 @@ export function getAuthInfos(state) {
     /**
      * TODO : REMOVE roleTest !!!!!
      */
-    const groups = userGroupSecuritySelector(state) ?? [];
+    const groups = userGroupSecuritySelector(state) ?? []; //roleTest;
     const groupNames = groups.map(({ groupName }) => `${groupName}`);
     return {
         isAdmin: groupNames.includes("MAPSTORE_ADMIN"),
         isReferent: groupNames.includes("EL_APPLIS_TABOU_REFERENT"),
         isContrib: groupNames.includes("EL_APPLIS_TABOU_CONTRIB"),
-        isConsult: groupNames.includes("EL_APPLIS_TABOU_CONSULT"),
+        isConsult: groupNames.includes("EL_APPLIS_TABOU_CONSULT")
     }
 }
 
 // loading of search
 export function searchLoading(state) {
     return state?.tabou2?.loadFlags?.search;
+}
+
+// loading for identify info
+export function identifyLoading(state) {
+    return state?.tabou2?.loadFlags?.identify;
 }
