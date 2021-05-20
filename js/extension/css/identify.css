@@ -1,0 +1,10 @@
+.tagColor {
+    color: black !important;
+}
+.noClick {
+    pointer-events: none;
+}
+
+.noClick .rw-tag-btn {
+    display: none;
+}
