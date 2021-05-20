@@ -23,7 +23,7 @@ import {
 } from '@ext/api/search';
 
 import { getSelection, getLayer, getPluginCfg, isTabou2Activate } from '@ext/selectors/tabou2';
-import { LAYER_FIELD_OPTION, URL_ADD } from '@ext/constants';
+import { URL_ADD } from '@ext/constants';
 import { wrapStartStop } from "@mapstore/observables/epics";
 import { error } from "@mapstore/actions/notifications";
 
@@ -137,7 +137,7 @@ export function getSelectionInfos(action$, store) {
                     return Rx.Observable.of({data: []});
                 })
                 .switchMap( response => {
-                    return Rx.Observable.of(loadEvents(response?.data || []))
+                    return Rx.Observable.of(loadEvents(response?.data?.elements || []))
                 })
                 .concat(
                     Rx.Observable.defer(() => getTiers(layerUrl, idTabou))
@@ -189,7 +189,7 @@ export function updateTabou2Logs(action$, store) {
             return Rx.Observable.defer(() => toDoOnUpdate(layerUrl, featureId, action.event))
             .switchMap(() => {
                     return Rx.Observable.defer(() => getFeatureEvents(layerUrl, featureId)).switchMap( events => {
-                        return Rx.Observable.of(loadEvents(events?.data || []))
+                        return Rx.Observable.of(loadEvents(events?.data?.elements || []))
                         }
                     )
                 }
