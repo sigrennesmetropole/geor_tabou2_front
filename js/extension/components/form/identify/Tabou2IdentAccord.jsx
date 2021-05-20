@@ -1,6 +1,8 @@
 import React, {useEffect, useState, useRef} from "react";
 import { isEmpty, isEqual, pick, has, get, zipObject, keys } from "lodash";
 import { Checkbox, Col, Row, FormGroup, FormControl, Grid, ControlLabel } from "react-bootstrap";
+import { Multiselect } from "react-widgets";
+import "@ext/css/identify.css";
 
 export default function Tabou2IdentAccord({ initialItem, programme, operation, mapFeature, ...props }) {
     let layer = props?.selection?.layer;
@@ -28,14 +30,14 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
         name: "commune",
         field: "properties.commune",
         label: "Commune",
-        type: "string",
+        type: "multi",
         source: mapFeature,
         readOnly: true
     }, {
         name: "nature",
         label: "Nature",
         field: "nature.libelle",
-        type: "string",
+        type: "text",
         source: operation,
         readOnly: true
 
@@ -43,14 +45,14 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
         name: "operation",
         field: "nom",
         label: "Opération",
-        type: "string",
+        type: "text",
         source: operation,
         readOnly: true
     }, {
         name: "nom",
         field: "nom",
         label: "Nom",
-        type: "string",
+        type: "text",
         source: values,
         readOnly: false,
         require: true
@@ -58,7 +60,7 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
         name: "numAds",
         label: "Num ADS",
         field: "numAds",
-        type: "string",
+        type: "text",
         source: values,
         readOnly: false
     }];
@@ -92,6 +94,8 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
         props.change(accordValues, pick(accordValues, required));
     }
 
+    console.log(mapFeature.commune);
+
     /**
      * COMPONENT
      */
@@ -100,36 +104,46 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
         <Grid style={{ width: "100%" }} className={""}>
             {
                 fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(item => (
-                    <Row style={{ marginTop: marginTop }}>
-                        <Col xs={12}>
-                            <FormGroup>
-                                {
-                                    item.type !== "boolean" ? <ControlLabel>{item.label}</ControlLabel> :  null
-                                }
-                                {
-                                    item.type === "boolean" ?
-                                        (<Checkbox 
-                                            inline="true"
-                                            checked={item.value(item) || false}
-                                            disabled={item.readOnly}
-                                            id={`chbox-${item.name}`}
-                                            className="col-xs-5">
-                                            <ControlLabel>{item.label}</ControlLabel>
-                                        </Checkbox>) : null
-                                }
-                                {
-                                    item.type !== "boolean" ?
-                                        (<FormControl 
-                                            placeholder={item.label}
-                                            value={getValue(item) || ""}
-                                            readOnly={item.readOnly}
-                                            onChange={(v) => changeInfos({[item.name]: v.target.value})}
-                                        />) : null
-                                }
-                            </FormGroup>
-                        </Col>
-                    </Row>
+                    <>
+                        {
+                            item.type !== "boolean" ? <ControlLabel>{item.label}</ControlLabel> :  null
+                        }
+                        {
+                            item.type === "boolean" ?
+                                (<Checkbox 
+                                    inline="true"
+                                    checked={item.value(item) || false}
+                                    disabled={item.readOnly}
+                                    id={`chbox-${item.name}`}
+                                    className="col-xs-5">
+                                    <ControlLabel>{item.label}</ControlLabel>
+                                </Checkbox>) : null
+                        }
+                        {
+                            item.type === "text" ?
+                                (<FormControl 
+                                    placeholder={item.label}
+                                    value={getValue(item) || ""}
+                                    readOnly={item.readOnly}
+                                    onChange={(v) => changeInfos({[item.name]: v.target.value})}
+                                />) : null
+                        }{
+                            item.type === "multi" ? (
+                                <Multiselect
+                                    style={{color:"black !important"}}
+                                    value={getValue(item).split(";") || []}
+                                    readOnly={item.readOnly}
+                                    messages={{
+                                        emptyList: item.readOnly ? "Aucune modification possible" : "Liste vide",
+                                        openCombobox: 'Ouvrir la liste'
+                                    }}
+                                    className={ item.readOnly ? "tagColor noClick" : "tagColor"}
+                                />
+                            ) : null
+                        }
+                        </>
                 ))
+                
             }
         </Grid>
     );
