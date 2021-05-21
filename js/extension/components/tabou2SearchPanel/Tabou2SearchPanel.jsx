@@ -177,7 +177,6 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
                         disabled={isDisabled(combo, urlParams)}
                         placeholder={combo.placeholder}
                         parentValue={parentValue}
-                        filter="contains"
                         textField={get(config, `${combo.name}.apiLabel`)}
                         valueField={get(config, `${combo.name}.apiField`)}
                         onLoad={(r) => r?.elements || r}
