@@ -118,6 +118,10 @@ export default function Tabou2IdentifyContent({
                                 {item.id === "ident" ? <Tabou2IdentAccord operation={operation} mapFeature={mapFeature} initialItem={infos} change={onChange} {...props}/> : null}
                                 {item.id === "describe" ? <Tabou2DescribeAccord operation={operation} mapFeature={mapFeature} initialItem={infos} change={onChange} {...props}/> : null}
                                 {item.id === "gouvernance" ? <Tabou2GouvernanceAccord operation={operation} mapFeature={mapFeature} initialItem={infos} change={onChange} {...props}/> : null}
+                                {item.id === "suivi" ? <Tabou2SuiviOpAccord operation={operation} mapFeature={mapFeature} initialItem={infos} change={onChange} {...props}/> : null}
+                                {item.id === "habitat" ? <Tabou2ProgHabitAccord operation={operation} mapFeature={mapFeature} initialItem={infos} change={onChange} {...props}/> : null}
+                                {item.id === "activite" ? <Tabou2ProgActiviteAccord operation={operation} mapFeature={mapFeature} initialItem={infos} change={onChange} {...props}/> : null}
+                                {item.id === "secteursprog" ? <Tabou2SecProgLiesAccord operation={operation} mapFeature={mapFeature} initialItem={infos} change={onChange} {...props}/> : null}
                             </Panel>
                         </PanelGroup>
                     ))
