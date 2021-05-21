@@ -8,3 +8,7 @@
 .noClick .rw-tag-btn {
     display: none;
 }
+
+.identifyDate .rw-calendar-popup .rw-footer .rw-btn {
+    display: none;
+}
