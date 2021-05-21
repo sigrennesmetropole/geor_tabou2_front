@@ -102,9 +102,10 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
     const marginTop = "10px";
     return (
         <Grid style={{ width: "100%" }} className={""}>
+            
             {
                 fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(item => (
-                    <>
+                    <FormGroup>
                         {
                             item.type !== "boolean" ? <ControlLabel>{item.label}</ControlLabel> :  null
                         }
@@ -141,10 +142,11 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
                                 />
                             ) : null
                         }
-                        </>
+                        </FormGroup>
                 ))
                 
             }
+            
         </Grid>
     );
 }

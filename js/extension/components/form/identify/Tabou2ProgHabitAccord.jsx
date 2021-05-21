@@ -1,132 +1,106 @@
-import React from "react";
+import React, {useEffect, useState, useRef} from "react";
+import { isEmpty, isEqual, pick, has, get, zipObject, keys } from "lodash";
 import { Checkbox, Col, Row, FormGroup, FormControl, Grid, ControlLabel } from "react-bootstrap";
-import { isEmpty } from "lodash";
+import Tabou2Combo from '@ext/components/form/Tabou2Combo';
+import { getRequestApi } from "@ext/api/search";
+import { Multiselect, DateTimePicker } from "react-widgets";
+import utcDateWrapper from '@mapstore/components/misc/enhancers/utcDateWrapper';
+import "@ext/css/identify.css";
 
-export default function Tabou2ProgHabitAccord({ layer, ...props }) {
-    const fields = [
-        {
-            name: "nbLogementsPrevu",
-            fieldApi: "nbLogementsPrevu",
-            label: "Nombre de logement",
-            api: "/",
-            type: "text",
-            layers: ["layerOA", "layerSA"]
-        }, {
-            name: "plhLogementsPrevus",
-            fieldApi: "plhLogementsPrevus",
-            label: "PLH - Nb. logements prévus",
-            api: "/",
-            type: "date",
-            layers: ["layerOA", "layerSA"]
-        }, {
-            name: "plhLogementsLivres",
-            fieldApi: "plhLogementsLivres",
-            label: "PLH - Nb. logements livrés",
-            api: "/",
-            type: "date",
-            layers: ["layerOA", "layerSA"]
-        }, {
-            name: "attributionFonciereAnnee",
-            fieldApi: "attributionFonciereAnnee",
-            label: "Année Attribution Foncière",
-            api: "/",
-            type: "number",
-            layers: ["layerPA"]
-        }, {
-            name: "attributionDate",
-            fieldApi: "attributionFonciereAnnee",
-            label: "Date attribution",
-            api: "/",
-            type: "number",
-            layers: ["layerPA"]
-        }, {
-            name: "commercialisationDate",
-            fieldApi: "commercialisationDate",
-            label: "Date commercialisation",
-            api: "/",
-            type: "number",
-            layers: ["layerPA"]
-        }, {
-            name: "logementsTotal",
-            fieldApi: "logementsTotal",
-            label: "Logement total",
-            api: "/",
-            type: "number",
-            layers: ["layerPA"]
-        }, {
-            name: "logementsAccessAidePrevu",
-            fieldApi: "logementsAccessAidePrevu",
-            label: "Accession aidée",
-            api: "/",
-            type: "number",
-            layers: ["layerPA"]
-        }, {
-            name: "logementsAccessLibrePrevu",
-            fieldApi: "logementsAccessLibrePrevu",
-            label: "Accession libre",
-            api: "/",
-            type: "number",
-            layers: ["layerPA"]
-        }, {
-            name: "logementsAccessMaitrisePrevu",
-            fieldApi: "logementsAccessMaitrisePrevu",
-            label: "Accession maitrisée",
-            api: "/",
-            type: "number",
-            layers: ["layerPA"]
-        }, {
-            name: "logementsLocatifAidePrevu",
-            fieldApi: "logementsLocatifAidePrevu",
-            label: "Locatif Aidé",
-            api: "/",
-            type: "number",
-            layers: ["layerPA"]
-        }, {
-            name: "logementsLocatifReguleHlmPrevu",
-            fieldApi: "logementsLocatifReguleHlmPrevu",
-            label: "Locatif régulé  HLM",
-            api: "/",
-            type: "number",
-            layers: ["layerPA"]
-        }, {
-            name: "logementsLocatifRegulePrivePrevu",
-            fieldApi: "logementsLocatifRegulePrivePrevu",
-            label: "Locatif régulé privé",
-            api: "/",
-            type: "number",
-            layers: ["layerPA"]
+const UTCDateTimePicker = utcDateWrapper({
+    dateProp: "value",
+    dateTypeProp: "type",
+    setDateProp: "onChange"
+})(DateTimePicker);
+
+export default function Tabou2ProgHabitatAccord({ initialItem, programme, operation, mapFeature, ...props }) {
+    let layer = props?.selection?.layer;
+
+    const [values, setValues] = useState({});
+    const [fields, setFields] = useState([]);
+    const [required, setRequired] = useState({});
+    const getFields = () => [{
+        name: "nbLogementsPrevu",
+        layers:["layerSA", "layerOA"],
+        label: "Nombre de logements",
+        field: "nbLogementsPrevu",
+        type: "number",
+        placeholder: "Nombre de logements...",
+        source: values?.nbLogementsPrevu ? values : operation,
+        readOnly: false
+    }, {
+        name: "plhLogementsPrevus",
+        layers:["layerSA", "layerOA"],
+        label: "PLH-Nombre de logements prévus",
+        field: "plhLogementsPrevus",
+        type: "number",
+        placeholder: "PLH-Nombre de logements prévus...",
+        source: values?.plhLogementsPrevus ? values : operation,
+        readOnly: false
+    }, {
+        name: "plhLogementsLivres",
+        layers:["layerSA", "layerOA"],
+        label: "PLH-Nombre de logements livrés",
+        field: "plhLogementsLivres",
+        type: "number",
+        placeholder: "PLH-Nombre de logements prévus...",
+        source: values?.plhLogementsLivres ? values : operation,
+        readOnly: false
+    }].filter(el => el?.layers?.includes(layer) || !el?.layers);
+
+    /**
+     * Effect
+     */
+    // return writable fields as object-keys
+
+    useEffect(() => {
+        const calculFields = getFields();
+        const mandatoryFields = calculFields.filter(f => f.require).map(f => f.name);
+        if (!isEqual(initialItem, values)) {
+            setValues(initialItem);
+            setFields(calculFields);
+            setRequired(mandatoryFields);
         }
-    ];
+    }, [initialItem]);
 
+    const getValue = (item) => {
+        if (isEmpty(values) || isEmpty(operation)) return null;
+        let itemSrc = getFields().filter(f => f.name === item.name)[0]?.source;
+        return get(itemSrc, item?.field);
+    }
+
+    const changeInfos = (item) => {
+        let newValues = {...values, ...item};
+        setValues(newValues);
+        // send to parent to save
+        let accordValues = pick(newValues, getFields().filter(f => !f.readOnly).map(f => f.name));
+        props.change(accordValues, pick(accordValues, required));
+    }
+
+    /**
+     * COMPONENT
+     */
     const marginTop = "10px";
     return (
         <Grid style={{ width: "100%" }} className={""}>
             {
-                fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(field => (
-                    <Row style={{ marginTop: marginTop }} key={`key-formrow-${field.name}`}>
-                        <Col xs={12}>
-                            <FormGroup key={`key-formgp-${field.name}`}>
-                                {
-                                    field.type !== "boolean" ? <ControlLabel>{field.label}</ControlLabel> : null
-                                }
-                                {
-                                    field.type === "boolean" ?
-                                        (<Checkbox inline="true" key={`key-chbox-${field.name}`} className="col-xs-3">{field.label}</Checkbox>) : null
-
-                                }
-                                {
-                                    field.type !== "boolean" ?
-                                        (<FormControl
-                                            type="text"
-                                            key={`key-ctrl-${field.name}`}
-                                            placeholder={field.label} />) : null
-                                }
-                            </FormGroup>
-                        </Col>
-                    </Row>
+                fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(item => (
+                    <>
+                        {
+                            item.type !== "boolean" ? <ControlLabel>{item.label}</ControlLabel> :  null
+                        }{
+                            item.type === "text" || item.type === "number" ?
+                                (<FormControl
+                                    type={item.type}
+                                    placeholder={item.label}
+                                    value={getValue(item) || ""}
+                                    readOnly={item.readOnly}
+                                    onChange={(v) => changeInfos({[item.name]: v.target.value})}
+                                />) : null
+                        }
+                    </>
                 ))
             }
-
         </Grid>
     );
 }

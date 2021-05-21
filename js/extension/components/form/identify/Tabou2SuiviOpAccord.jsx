@@ -1,76 +1,176 @@
-import React from "react";
+import React, {useEffect, useState, useRef} from "react";
+import { isEmpty, isEqual, pick, has, get, zipObject, keys } from "lodash";
 import { Checkbox, Col, Row, FormGroup, FormControl, Grid, ControlLabel } from "react-bootstrap";
-import { isEmpty } from "lodash";
+import Tabou2Combo from '@ext/components/form/Tabou2Combo';
+import { getRequestApi } from "@ext/api/search";
+import { Multiselect, DateTimePicker } from "react-widgets";
+import utcDateWrapper from '@mapstore/components/misc/enhancers/utcDateWrapper';
+import "@ext/css/identify.css";
 
-export default function Tabou2SuiviOpAccord({ layer, ...props }) {
-    const fields = [
-        {
-            name: "etape",
-            fieldApi: "etape.libelle",
-            label: "Etape",
-            api: "/",
-            type: "text",
-            layers: []
-        }, {
-            name: "dateautorisation",
-            fieldApi: "autorisationDate",
-            label: "Date d'autorisation",
-            api: "/",
-            type: "date",
-            layers: ["layerOA", "layerSA"]
-        }, {
-            name: "datelivraison",
-            fieldApi: "dateLivraison",
-            label: "Date livraison",
-            api: "/",
-            type: "date",
-            layers: ["layerPA"]
-        }, {
-            name: "datedemarrage",
-            fieldApi: "operationnelDate",
-            label: "Date démarrage",
-            api: "/",
-            type: "date",
-            layers: []
-        }, {
-            name: "datecloture",
-            fieldApi: "clotureDate",
-            label: "Date clôture",
-            api: "/",
-            type: "date",
-            layers: ["layerOA", "layerSA"]
+const UTCDateTimePicker = utcDateWrapper({
+    dateProp: "value",
+    dateTypeProp: "type",
+    setDateProp: "onChange"
+})(DateTimePicker);
+
+export default function Tabou2SuiviOpAccord({ initialItem, programme, operation, mapFeature, ...props }) {
+    let layer = props?.selection?.layer;
+
+    const [values, setValues] = useState({});
+    const [fields, setFields] = useState([]);
+    const [required, setRequired] = useState({});
+    const getFields = () => [{
+        name: "etape",
+        label: "Etape",
+        field: "etape.libelle",
+        type: "combo",
+        apiLabel: "libelle",
+        api: `${layer === "layerPA" ? "programmes":"operations"}/${initialItem.id}/etapes`,
+        placeholder: "Maîtrise d'ouvrage...",
+        source: values?.etape ? values : initialItem,
+        readOnly: false
+    }, {
+        name: "livraisonDate",
+        label: "Date de livraison",
+        field: "livraisonDate",
+        layers:["layerPA"],
+        type: "date",
+        placeholder: "Date de livraison...",
+        source: values?.livraisonDate ? values : operation,
+        readOnly: false
+    }, {
+        name: "autorisationDate",
+        label: "Date d'autorisation",
+        layers:["layerSA", "layerOA"],
+        type: "date",
+        placeholder: "Date d'autorisation...",
+        source: values?.autorisationDate ? values : operation,
+        readOnly: false
+    }, {
+        name: "operationnelDate",
+        label: "Date de démarrage",
+        field: "operationnelDate",
+        layers:["layerSA", "layerOA"],
+        type: "date",
+        placeholder: "Date de démarrage...",
+        source: values?.operationnelDate ? values : operation,
+        readOnly: false
+    }, {
+        name: "clotureDate",
+        label: "Date de clôture",
+        field: "clotureDate",
+        type: "date",
+        placeholder: "Date de clôture...",
+        source: values?.clotureDate ? values : operation,
+        readOnly: false
+    }].filter(el => el?.layers?.includes(layer) || !el?.layers);
+
+    /**
+     * Effect
+     */
+    // return writable fields as object-keys
+
+    useEffect(() => {
+        const calculFields = getFields();
+        const mandatoryFields = calculFields.filter(f => f.require).map(f => f.name);
+        if (!isEqual(initialItem, values)) {
+            setValues(initialItem);
+            setFields(calculFields);
+            setRequired(mandatoryFields);
         }
-    ];
+    }, [initialItem]);
 
+    const getValue = (item) => {
+        if (isEmpty(values) || isEmpty(operation)) return null;
+        let itemSrc = getFields().filter(f => f.name === item.name)[0]?.source;
+        console.log(itemSrc);
+        return get(itemSrc, item?.field);
+    }
+
+    const changeInfos = (item) => {
+        let newValues = {...values, ...item};
+        setValues(newValues);
+        // send to parent to save
+        let accordValues = pick(newValues, getFields().filter(f => !f.readOnly).map(f => f.name));
+        props.change(accordValues, pick(accordValues, required));
+    }
+
+    /**
+     * COMPONENT
+     */
     const marginTop = "10px";
     return (
         <Grid style={{ width: "100%" }} className={""}>
             {
-                fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(field => (
-                    <Row style={{ marginTop: marginTop }} key={`key-formrow-${field.name}`}>
-                        <Col xs={12}>
-                            <FormGroup key={`key-formgp-${field.name}`}>
-                                {
-                                    field.type !== "boolean" ? <ControlLabel>{field.label}</ControlLabel> : null
-                                }
-                                {
-                                    field.type === "boolean" ?
-                                        (<Checkbox inline="true" key={`key-chbox-${field.name}`} className="col-xs-3">{field.label}</Checkbox>) : null
-
-                                }
-                                {
-                                    field.type !== "boolean" ?
-                                        (<FormControl
-                                            type="text"
-                                            key={`key-ctrl-${field.name}`}
-                                            placeholder={field.label} />) : null
-                                }
-                            </FormGroup>
-                        </Col>
-                    </Row>
+                fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(item => (
+                    <>
+                        {
+                            item.type !== "boolean" ? <ControlLabel>{item.label}</ControlLabel> :  null
+                        }
+                        {
+                            item.type === "boolean" ?
+                                (<Checkbox 
+                                    inline="true"
+                                    checked={item.value(item) || false}
+                                    disabled={item.readOnly}
+                                    id={`chbox-${item.name}`}
+                                    className="col-xs-5">
+                                    <ControlLabel>{item.label}</ControlLabel>
+                                </Checkbox>) : null
+                        }{
+                            item.type === "text" ?
+                                (<FormControl 
+                                    placeholder={item.label}
+                                    value={getValue(item) || ""}
+                                    readOnly={item.readOnly}
+                                    onChange={(v) => changeInfos({[item.name]: v.target.value})}
+                                />) : null
+                        }{
+                            item.type === "combo" ? (
+                                <Tabou2Combo
+                                    load={() => getRequestApi(item.api, props.pluginCfg.apiCfg, {})}
+                                    disabled={item?.readOnly || false}
+                                    placeholder={item?.placeholder || ""}
+                                    textField={item.apiLabel}
+                                    onLoad={(r) => r?.elements || r}
+                                    name={item.name}
+                                    defaultValue={get(values, item.name)}
+                                    onSelect={(v) => changeInfos({[item.name]: v})}
+                                    onChange={(v) => !v ? changeInfos({[item.name]: v}) : null}
+                                    messages={{
+                                        emptyList: 'La liste est vide.',
+                                        openCombobox: 'Ouvrir la liste'
+                                    }}
+                                />
+                            ) : null
+                        }{
+                            item.type === "multi" ? (
+                                <Multiselect
+                                    readOnly={item.readOnly}
+                                    value={item.data}
+                                    className={ item.readOnly ? "tagColor noClick" : "tagColor"}
+                                />
+                            ) : null
+                        }{
+                            item.type === "date" ? (
+                                <UTCDateTimePicker
+                                    type="date"
+                                    className="identifyDate"
+                                    inline
+                                    dropUp
+                                    placeholder={item?.placeholder}
+                                    calendar={true}
+                                    time={false}
+                                    culture="fr"
+                                    value={get(values, item.name) ? new Date(get(values, item.name)) : null}
+                                    format="DD/MM/YYYY"
+                                    onSelect={(v) => changeInfos({[item.name]: new Date(v).toISOString()})}
+                                    onChange={(v) => !v ? changeInfos({[item.name]: new Date(v).toISOString()}) : null} />
+                            ) : null
+                        }
+                    </>
                 ))
             }
-
         </Grid>
     );
 }

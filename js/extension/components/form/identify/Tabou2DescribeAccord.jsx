@@ -16,16 +16,18 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
         type: "text",
         label: "Opération",
         field: "operation",
-        source: values?.operation ? values : operation,
+        source: has(values, "operation") ? values : operation,
         layers:["layerSA", "layerOA"],
-        readOnly: false
+        readOnly: false,
+        isArea: true
     }, {
-        name: "descriptif",
+        name: "description",
         label: "Descriptif",
         type: "text",
         field: "description",
-        source: values?.descriptif ? values : initialItem,
-        readOnly: false
+        source: has(values, "description") ? values : initialItem,
+        readOnly: false,
+        isArea: true
     }, {
         name: "consommationEspace",
         field: "consommationEspace.libelle",
@@ -53,7 +55,7 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
         name: "surfaceTotale",
         field: "surfaceTotale",
         label: "Surface Totale",
-        type: "text",
+        type: "number",
         layers:["layerSA", "layerOA"],
         source: values
     }, {
@@ -118,9 +120,11 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
                                     <ControlLabel>{item.label}</ControlLabel>
                                 </Checkbox>) : null
                         }{
-                            item.type === "text" ?
-                                (<FormControl 
+                            item.type === "text" || item.type === "number" ? 
+                                (<FormControl
+                                    componentClass={item.isArea ? "textarea" : "input"}
                                     placeholder={item.label}
+                                    type={item.type}
                                     value={getValue(item) || ""}
                                     readOnly={item.readOnly}
                                     onChange={(v) => changeInfos({[item.name]: v.target.value})}

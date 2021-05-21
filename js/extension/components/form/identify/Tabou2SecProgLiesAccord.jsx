@@ -1,55 +1,116 @@
-import React from "react";
-import { Checkbox, Col, Row, FormGroup, FormControl, Grid, ControlLabel } from "react-bootstrap";
-import { isEmpty } from "lodash";
+import React, {useEffect, useState, useRef} from "react";
+import { capitalize, isEmpty, isEqual, pick, has, get, zipObject, keys } from "lodash";
+import { Table, Checkbox, Col, Row, FormGroup, FormControl, Grid, ControlLabel } from "react-bootstrap";
+import Tabou2Combo from '@ext/components/form/Tabou2Combo';
+import { getRequestApi } from "@ext/api/search";
+import { Multiselect, DateTimePicker } from "react-widgets";
+import utcDateWrapper from '@mapstore/components/misc/enhancers/utcDateWrapper';
+import "@ext/css/identify.css";
 
-export default function Tabou2SecProgLiesAccord({ layer, ...props }) {
-    const fields = [
-        {
-            name: "lisecoa",
-            fieldApi: "lisecoa",
-            label: "Liste des secteurs de L'OA",
-            api: "/",
-            type: "text",
-            layers: ["layerOA", "layerSA"]
-        }, {
-            name: "lisecpa",
-            label: "Liste des programmes de L'OA",
-            fieldApi: "lisecpa",
-            api: "/",
-            type: "date",
-            layers: ["layerOA", "layerSA"]
+const UTCDateTimePicker = utcDateWrapper({
+    dateProp: "value",
+    dateTypeProp: "type",
+    setDateProp: "onChange"
+})(DateTimePicker);
+
+export default function Tabou2SecProgLiesAccord({ initialItem, programme, operation, mapFeature, ...props }) {
+    let layer = props?.selection?.layer;
+
+    const [values, setValues] = useState({});
+    const [fields, setFields] = useState([]);
+    const [required, setRequired] = useState({});
+    const getFields = () => [{
+        name: "programmes",
+        label: "Liste des programmes",
+        type: "table",
+        fields: ["nom", "promoteur", "etape", "dateLiv"],
+        labels: ["Nom", "Promoteur", "Etape", "Date de livraison"],
+        layers:["layerOA","layerSA"],
+        source: props?.tabouInfos?.programmes?.elements || [],
+        readOnly: true
+    }].filter(el => el?.layers?.includes(layer) || !el?.layers);
+
+    const getValueByField = (field, val) => {
+        let fieldVal;
+        switch (field) {
+            case "dateLiv":
+                fieldVal = val ? new Date(val).toLocaleDateString() : val;
+                break;
+            default:
+                fieldVal = val;
+                break;
         }
-    ];
+        return fieldVal;
+    }
 
+    /**
+     * Effect
+     */
+    // return writable fields as object-keys
+
+    useEffect(() => {
+        const calculFields = getFields();
+        const mandatoryFields = calculFields.filter(f => f.require).map(f => f.name);
+        if (!isEqual(initialItem, values)) {
+            setValues(initialItem);
+            setFields(calculFields);
+            setRequired(mandatoryFields);
+        }
+    }, [initialItem]);
+
+    const getValue = (item) => {
+        if (isEmpty(values) || isEmpty(operation)) return null;
+        let itemSrc = getFields().filter(f => f.name === item.name)[0]?.source;
+        return get(itemSrc, item?.field);
+    }
+
+    const changeInfos = (item) => {
+        let newValues = {...values, ...item};
+        setValues(newValues);
+        // send to parent to save
+        let accordValues = pick(newValues, getFields().filter(f => !f.readOnly).map(f => f.name));
+        props.change(accordValues, pick(accordValues, required));
+    }
+
+    /**
+     * COMPONENT
+     */
     const marginTop = "10px";
     return (
         <Grid style={{ width: "100%" }} className={""}>
             {
-                fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(field => (
-                    <Row style={{ marginTop: marginTop }} key={`key-formrow-${field.name}`}>
-                        <Col xs={12}>
-                            <FormGroup key={`key-formgp-${field.name}`}>
-                                {
-                                    field.type !== "boolean" ? <ControlLabel>{field.label}</ControlLabel> : null
-                                }
-                                {
-                                    field.type === "boolean" ?
-                                        (<Checkbox inline="true" key={`key-chbox-${field.name}`} className="col-xs-3">{field.label}</Checkbox>) : null
-
-                                }
-                                {
-                                    field.type !== "boolean" ?
-                                        (<FormControl
-                                            type="text"
-                                            key={`key-ctrl-${field.name}`}
-                                            placeholder={field.label} />) : null
-                                }
-                            </FormGroup>
-                        </Col>
-                    </Row>
+                fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(item => (
+                    <>
+                        {
+                            item.type !== "checkbox" ? <ControlLabel>{item.label + ' :'}</ControlLabel> :  null
+                        }
+                        {
+                            item.type === "table" ? (
+                                <Table striped bordered condensed hover>
+                                    <thead>
+                                        <tr>
+                                            {item.fields.map((fieldName,i) => (<th>{capitalize(item.labels[i])}</th>))}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {
+                                            item.source.map(programme => (
+                                                <tr>
+                                                    {item.fields.map(field => (
+                                                        <>
+                                                            <td>{getValueByField(field, get(programme, field))}</td>
+                                                        </>
+                                                    ))}
+                                                </tr>
+                                            ))
+                                        }
+                                    </tbody>
+                                </Table>
+                            ) : null
+                        }
+                    </>
                 ))
             }
-
         </Grid>
     );
 }
