@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react';
 import ResizableModal from '@mapstore/components/misc/ResizableModal';
-import { Grid, FormGroup, Checkbox, Col, Table, Glyphicon, Row, ControlLabel } from 'react-bootstrap';
-import { isEqual, orderBy, find, keys } from 'lodash';
+import { Grid, Col, Table, Glyphicon, Row } from 'react-bootstrap';
+import { isEqual, orderBy, find, isEmpty } from 'lodash';
 import Tabou2Combo from '@ext/components/form/Tabou2Combo';
 import Tabou2TextForm from '@ext/components/form/Tabou2TextForm';
 import { LOG_SCHEMA } from '@ext/constants';
@@ -121,7 +121,6 @@ export default function Tabou2LogsModal({
     }];
 
     const readOnly = props?.authent?.isReferent || props?.authent?.isContrib ? false : true;
-
     return (
         <ResizableModal
             title={"Journal des événements"}
@@ -180,23 +179,22 @@ export default function Tabou2LogsModal({
                                                             <Tabou2Combo
                                                                 load={() => getTypesEvents()}
                                                                 valueField={"id"}
-                                                                defaultValue={log.edit ? log.idType : null}
+                                                                defaultValue={log.edit ? log.typeEvenement.id : null}
                                                                 placeholder={"Type..."}
                                                                 filter="contains"
                                                                 dropUp={i < 6 ? false : true}
                                                                 textField={"libelle"}
                                                                 onLoad={(r) => r?.elements || r}
                                                                 onSelect={(t) => {
-                                                                    // TODO : insert all type object not just idType
-                                                                    changeLog({...log, idType: t.id});
+                                                                    changeLog({...log, typeEvenement: t});
                                                                 }}
-                                                                onChange={(t) => !t ? changeLog({...log, idType: t.id}) : null}
+                                                                onChange={(t) => !t ? changeLog({...log, typeEvenement: null}) : null}
                                                                 messages={{
                                                                     emptyList: 'La liste est vide',
                                                                     openCombobox: 'Ouvrir la liste'
                                                                 }}
                                                             />
-                                                        ) : log.idType
+                                                        ) : log.typeEvenement?.libelle
                                                     }
                                                 </td>
                                                 <td>
@@ -222,7 +220,7 @@ export default function Tabou2LogsModal({
                                                         {log.new || log.edit ? (
                                                             <Button
                                                                 tooltip="Enregistrer"
-                                                                disabled={!log.idType || !log.description}
+                                                                disabled={!log.typeEvenement || isEmpty(log.typeEvenement) || !log.description}
                                                                 style={{ borderColor: "rgba(0,0,0,0)"}}
                                                                 onClick={() => saveEvent(log)}>
                                                                 <span style={{ color: "rgb(40, 167, 69)" }}>
@@ -255,7 +253,7 @@ export default function Tabou2LogsModal({
                                                             ) : null
                                                         }
                                                         {
-                                                            log.new || !editionActivate.current ? (
+                                                            log.new || !editionActivate.current && !log.systeme ? (
                                                                 <Button
                                                                     tooltip="Supprimer"
                                                                     style={{ borderColor: "rgba(0,0,0,0)"}}
