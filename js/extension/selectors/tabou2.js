@@ -1,6 +1,6 @@
 import { CONTROL_NAME } from '@ext/constants';
 import { keys, pickBy } from 'lodash';
-import { userGroupSecuritySelector } from '@mapstore/selectors/security';
+import { userGroupSecuritySelector, userRoleSelector, userSelector, userParamsSelector } from '@mapstore/selectors/security';
 
 export function currentActiveTabSelector(state) {
     return state?.tabou2.activeTab;

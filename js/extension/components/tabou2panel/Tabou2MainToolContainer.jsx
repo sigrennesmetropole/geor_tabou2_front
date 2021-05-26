@@ -56,7 +56,7 @@ function toolContainer({data, ...props }) {
         isTaboufeature.current = feature?.properties?.id_tabou ? true : false;
     }
 
-    let showAddPanel = getAuthInfos().isReferent || getAuthInfos().isContrib;
+    let showAddPanel = props.authentInfos.isReferent || props.authentInfos.isContrib;
 
     if (isEmpty(data)) isTaboufeature.current = false;
 
@@ -109,7 +109,7 @@ function toolContainer({data, ...props }) {
             {
                 // Identify panel
                 props.currentTab === "identify" && !isEmpty(data) && keys(data).length ? 
-                (<Tabou2IdentifyPanel authent={getAuthInfos()} queryData={data} {...props} onSelect={handleSelect}/>) : null
+                (<Tabou2IdentifyPanel authent={props.authentInfos} queryData={data} {...props} onSelect={handleSelect}/>) : null
             }
             {
                 // Identify info message if no results or no clicked realized
@@ -136,7 +136,8 @@ export default connect(
         selectionLayer: getLayer(state),
         selectedCfgLayer: getSelectedCfgLayer(state),
         tabouInfos: getFicheInfos(state),
-        identifyLoading: identifyLoading(state)
+        identifyLoading: identifyLoading(state),
+        authentInfos: getAuthInfos(state)
     }), {
         setTab: setMainActiveTab,
         setFeature: setSelectedFeature,
