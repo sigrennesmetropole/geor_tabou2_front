@@ -19,7 +19,8 @@ import {
     getProgrammePermis,
     getOperation,
     getOperationProgrammes,
-    getSecteur
+    getSecteur,
+    getProgrammeAgapeo
 } from '@ext/api/search';
 
 import { getSelection, getLayer, getPluginCfg, isTabou2Activate } from '@ext/selectors/tabou2';
@@ -98,6 +99,7 @@ export function getSelectionInfos(action$, store) {
              */
             let secondObservable$ = Rx.Observable.empty();
             if(layerCfg === "layerOA" || layerCfg === "layerSA") {
+                // GET operation's programmes
                 secondObservable$ = Rx.Observable.defer(() => getOperationProgrammes(searchItem?.id))
                 .catch(e => {
                     console.log("Error retrieving on OA or SA programmes request");
@@ -105,27 +107,47 @@ export function getSelectionInfos(action$, store) {
                     return Rx.Observable.of({data: []});
                 })
                 .switchMap( programmes => {
-                        // load info to store
-                        let infos = {...selectInfos, programmes: programmes.data, operation: searchItem, tiers: tiers, mapFeature: mapFeature};
+                        // store data
+                        let infos = {
+                            ...selectInfos,
+                            programmes: programmes.data,
+                            operation: searchItem,
+                            tiers: tiers,
+                            mapFeature:mapFeature};
                         return Rx.Observable.of(loadFicheInfos(infos));
                     }
                 )
             } else {
                 secondObservable$ = Rx.Observable.defer(() => getOperation(searchItem.operationId))
+                    .catch(e => {
+                        console.log("Error retrieving on PA Agapeo request");
+                        console.log(e);
+                        return Rx.Observable.of({elements: []});
+                    })
                     .switchMap( operation => {
-                        // permis for selected programme
-                        return Rx.Observable.defer(() => getProgrammePermis(searchItem?.id))
-                            .catch(e => {
-                                console.log("Error retrieving on OA or SA permis request");
-                                console.log(e);
-                                return Rx.Observable.of({data: []});
-                            })
-                            .switchMap( permis => {
-                                // load info to store
-                                let infos = {...selectInfos, programme: searchItem, permis: permis.data, tiers: tiers, operation: operation.data, mapFeature: mapFeature};
-                                return Rx.Observable.of(loadFicheInfos(infos))
-                            }
-                        )
+                        // GET programme's permis
+                        return Rx.Observable.defer(() => getProgrammeAgapeo(searchItem?.id))
+                            .switchMap( agapeo => {
+                                return Rx.Observable.defer(() => getProgrammePermis(searchItem?.id))
+                                .catch(e => {
+                                    console.log("Error retrieving PA permis request");
+                                    console.log(e);
+                                    return Rx.Observable.of({data: []});
+                                })
+                                .switchMap( permis => {
+                                    // store data
+                                    let infos = {...selectInfos, 
+                                        agapeo: agapeo.elements,
+                                        programme: searchItem,
+                                        permis: permis.data,
+                                        tiers: tiers,
+                                        operation: operation.data,
+                                        mapFeature: mapFeature
+                                    };
+                                    return Rx.Observable.of(loadFicheInfos(infos))
+                                }
+                            )
+                        })
                     })
             }
 
@@ -137,6 +159,7 @@ export function getSelectionInfos(action$, store) {
                     return Rx.Observable.of({data: []});
                 })
                 .switchMap( response => {
+                    // GET Feature's Events
                     return Rx.Observable.of(loadEvents(response?.data?.elements || []))
                 })
                 .concat(
@@ -147,11 +170,13 @@ export function getSelectionInfos(action$, store) {
                         return Rx.Observable.of({data: []});
                     })
                     .switchMap( r => {
+                        // GET Feature's tiers list
                         tiers = r?.data?.elements;
                         return Rx.Observable.of(loadTiers(r?.data?.elements || []))
                     })
                 ).concat(
                     Rx.Observable.defer(() => resetFeatureBylayer[layerCfg](idTabou))
+                    // GET OA, PA or SA clicked Feature
                     .switchMap((response) => {
                         searchItem = response.data;
                         return secondObservable$
