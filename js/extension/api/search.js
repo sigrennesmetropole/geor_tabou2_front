@@ -58,7 +58,6 @@ export function postRequestApi(name, apiCfg, body) {
  * EVENTS
  */
 export function getFeatureEvents(type, id) {
-    //return getRequestApi(`${type}/${id}/evenements`).then(({ data }) => data);
     return axios.get(`${baseURL}/${type}/${id}/evenements`, null, {});
 }
 
@@ -71,6 +70,7 @@ export function changeFeatureEvent(type, id, event) {
 }
 
 export function deleteFeatureEvent(type, id, eventId) {
+    console.log("delete");
     return axios.delete(`${baseURL}/${type}/${id}/evenements/${eventId}`);
 }
 
@@ -127,6 +127,10 @@ export function getPDFProgramme(type, id) {
 
 export function getProgramme(id) {
     return axios.get(`${baseURL}/programmes/${id}`);
+}
+
+export function getProgrammeAgapeo(id) {
+    return axios.get(`${baseURL}/programmes/${id}/agapeo`);
 }
 
 export function getProgrammePermis(id) {

@@ -135,5 +135,8 @@ export function createChangeFeature (action$, store) {
             console.log(e);
             return Rx.Observable.empty();
         })
+        .switchMap(()=>{
+            return Rx.Observable.empty();
+        })
     })
 }
