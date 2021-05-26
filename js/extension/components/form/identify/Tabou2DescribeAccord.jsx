@@ -3,6 +3,7 @@ import { isEmpty, isEqual, pick, has, get, zipObject, keys } from "lodash";
 import { Checkbox, Col, Row, FormGroup, FormControl, Grid, ControlLabel } from "react-bootstrap";
 import Tabou2Combo from '@ext/components/form/Tabou2Combo';
 import { getRequestApi } from "@ext/api/search";
+import "@ext/css/identify.css";
 
 export default function Tabou2DescribeAccord({ initialItem, programme, operation, mapFeature, ...props }) {
     let layer = props?.selection?.layer;
@@ -105,7 +106,8 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
         <Grid style={{ width: "100%" }} className={""}>
             {
                 fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(item => (
-                    <FormGroup>
+                    <Row className="attributeInfos">
+                        <Col xs={4}>
                         {
                             item.type !== "boolean" ? <ControlLabel>{item.label}</ControlLabel> :  null
                         }
@@ -119,11 +121,15 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
                                     className="col-xs-5">
                                     <ControlLabel>{item.label}</ControlLabel>
                                 </Checkbox>) : null
-                        }{
+                        }
+                        </Col>
+                        <Col xs={8}>
+                        {
                             item.type === "text" || item.type === "number" ? 
                                 (<FormControl
                                     componentClass={item.isArea ? "textarea" : "input"}
                                     placeholder={item.label}
+                                    style={{height: item.isArea ? "100px" : "auto"}}
                                     type={item.type}
                                     value={getValue(item) || ""}
                                     readOnly={item.readOnly}
@@ -149,7 +155,8 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
                                 />
                             ) : null
                         }
-                    </FormGroup>
+                        </Col>
+                    </Row>
                 ))
             }
         </Grid>

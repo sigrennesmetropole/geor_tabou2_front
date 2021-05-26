@@ -1,9 +1,7 @@
-import React, {useEffect, useState, useRef} from "react";
-import { isEmpty, isEqual, pick, has, get, zipObject, keys } from "lodash";
-import { Checkbox, Col, Row, FormGroup, FormControl, Grid, ControlLabel } from "react-bootstrap";
-import Tabou2Combo from '@ext/components/form/Tabou2Combo';
-import { getRequestApi } from "@ext/api/search";
-import { Multiselect, DateTimePicker } from "react-widgets";
+import React, { useEffect, useState } from "react";
+import { isEmpty, isEqual, pick, has, get } from "lodash";
+import { Checkbox, Col, Row, Table, FormControl, Grid, ControlLabel } from "react-bootstrap";
+import { DateTimePicker } from "react-widgets";
 import utcDateWrapper from '@mapstore/components/misc/enhancers/utcDateWrapper';
 import "@ext/css/identify.css";
 
@@ -20,14 +18,7 @@ export default function Tabou2ProgActiviteAccord({ initialItem, programme, opera
     const [fields, setFields] = useState([]);
     const [required, setRequired] = useState({});
     const getFields = () => [{
-        name: "ql2",
-        label: "SCoT",
-        field: "ql2",
-        type: "checkbox",
-        layers:["layerOA","layerSA"],
-        source: has(values, "ql2") ? values : operation,
-        readOnly: false
-    }, {
+        // OPERATION
         name: "ql3",
         label: "Territoire",
         field: "ql3",
@@ -35,6 +26,14 @@ export default function Tabou2ProgActiviteAccord({ initialItem, programme, opera
         type: "text",
         placeholder: "Territoire...",
         source: values?.ql3 ? values : operation,
+        readOnly: false
+    }, {
+        name: "ql2",
+        label: "SCoT",
+        field: "ql2",
+        type: "checkbox",
+        layers:["layerOA","layerSA"],
+        source: has(values, "ql2") ? values : operation,
         readOnly: false
     }].filter(el => el?.layers?.includes(layer) || !el?.layers);
 
@@ -66,7 +65,6 @@ export default function Tabou2ProgActiviteAccord({ initialItem, programme, opera
         let accordValues = pick(newValues, getFields().filter(f => !f.readOnly).map(f => f.name));
         props.change(accordValues, pick(accordValues, required));
     }
-
     /**
      * COMPONENT
      */
@@ -75,7 +73,8 @@ export default function Tabou2ProgActiviteAccord({ initialItem, programme, opera
         <Grid style={{ width: "100%" }} className={""}>
             {
                 fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(item => (
-                    <>
+                    <Row className="attributeInfos">
+                        <Col xs={4}>
                         {
                             item.type !== "checkbox" ? <ControlLabel>{item.label}</ControlLabel> :  null
                         }
@@ -91,7 +90,10 @@ export default function Tabou2ProgActiviteAccord({ initialItem, programme, opera
                                     className="col-xs-12">
                                     <ControlLabel>{item.label}</ControlLabel>
                                 </Checkbox>) : null
-                        }{
+                        }
+                        </Col>
+                        <Col xs={8}>
+                        {
                             item.type === "text" ?
                                 (<FormControl 
                                     placeholder={item.label}
@@ -100,7 +102,8 @@ export default function Tabou2ProgActiviteAccord({ initialItem, programme, opera
                                     onChange={(v) => changeInfos({[item.name]: v.target.value})}
                                 />) : null
                         }
-                    </>
+                        </Col>
+                    </Row>
                 ))
             }
         </Grid>

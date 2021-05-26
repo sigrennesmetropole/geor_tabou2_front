@@ -125,12 +125,11 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
         props.searchIds(filters);
     };
 
-    const changeFilter = (combo, value) => {
-        //comboValues[combo.name] = value;
-        setVal(value[get(config, `${combo.name}.apiField`)]);
-        setComboValues({...comboValues, [combo.name]: value});
-        change({...comboValues, [combo.name]: value});
-        changeCqlFilter(get(combo, "type"), combo.name, value[get(config, `${combo.name}.apiField`)], config[combo.name]);
+    const changeFilter = (item, value) => {
+        setVal(value[get(config, `${item.name}.apiField`)]);
+        setComboValues({...comboValues, [item.name]: value});
+        change({...comboValues, [item.name]: value});
+        changeCqlFilter(get(item, "type"), item.name, value[get(config, `${item.name}.apiField`)], config[item.name]);
     };
 
     const changeDate = (calendar, value) => {
@@ -145,6 +144,15 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
         setComboValues(val);
         change(val);
         changeCqlFilter("date", calendar.name, val[calendar.name], config[calendar.name]);
+    }
+
+    const changeChecked = (name) => {
+        console.log(name);
+        let isChecked = !comboValues[name];
+        setVal(isChecked);
+        setComboValues({...comboValues, [name]: isChecked});
+        change({...comboValues, [name]: isChecked});
+        changeCqlFilter("boolean", name, isChecked, config[name]);
     }
 
     /**
@@ -238,7 +246,13 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
                         <Row>
                             { SEARCH_ITEMS.filter(f => f.group === 1).map((cb, i) => getCombo(cb, i, 2)) }
                         </Row>
-                        <Checkbox inline>PBIL</Checkbox>
+                        <Checkbox
+                                checked={comboValues["pbil"] || false}
+                                onChange={() => changeChecked("pbil")}
+                                inline
+                                id={"search-pbil" + new Date().getTime()}>
+                                PBIL
+                            </Checkbox>
                     </Panel>
                 </Row>
                 <Row>

@@ -101,14 +101,15 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
      */
     const marginTop = "10px";
     return (
-        <Grid style={{ width: "100%" }} className={""}>
-            
+        <Grid style={{ width: "100%" }}>
             {
                 fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(item => (
-                    <FormGroup>
+                    <Row className="attributeInfos">
+                        <Col xs={4}>
                         {
                             item.type !== "boolean" ? <ControlLabel>{item.label}</ControlLabel> :  null
                         }
+
                         {
                             item.type === "boolean" ?
                                 (<Checkbox 
@@ -120,6 +121,8 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
                                     <ControlLabel>{item.label}</ControlLabel>
                                 </Checkbox>) : null
                         }
+                        </Col>
+                        <Col xs={8}>
                         {
                             item.type === "text" ?
                                 (<FormControl 
@@ -142,7 +145,8 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
                                 />
                             ) : null
                         }
-                        </FormGroup>
+                        </Col>
+                        </Row>
                 ))
                 
             }

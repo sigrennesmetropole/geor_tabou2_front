@@ -103,7 +103,8 @@ export default function Tabou2SuiviOpAccord({ initialItem, programme, operation,
         <Grid style={{ width: "100%" }} className={""}>
             {
                 fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(item => (
-                    <>
+                    <Row className="attributeInfos">
+                        <Col xs={4}>
                         {
                             item.type !== "boolean" ? <ControlLabel>{item.label}</ControlLabel> :  null
                         }
@@ -117,7 +118,10 @@ export default function Tabou2SuiviOpAccord({ initialItem, programme, operation,
                                     className="col-xs-5">
                                     <ControlLabel>{item.label}</ControlLabel>
                                 </Checkbox>) : null
-                        }{
+                        }
+                        </Col>
+                        <Col xs={8}>
+                        {
                             item.type === "text" ?
                                 (<FormControl 
                                     placeholder={item.label}
@@ -168,7 +172,8 @@ export default function Tabou2SuiviOpAccord({ initialItem, programme, operation,
                                     onChange={(v) => !v ? changeInfos({[item.name]: new Date(v).toISOString()}) : null} />
                             ) : null
                         }
-                    </>
+                        </Col>
+                    </Row>
                 ))
             }
         </Grid>

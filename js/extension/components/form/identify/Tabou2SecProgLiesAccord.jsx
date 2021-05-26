@@ -80,10 +80,13 @@ export default function Tabou2SecProgLiesAccord({ initialItem, programme, operat
         <Grid style={{ width: "100%" }} className={""}>
             {
                 fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(item => (
-                    <>
+                    <Row className="attributeInfos">
+                        <Col xs={12}>
                         {
                             item.type !== "checkbox" ? <ControlLabel>{item.label + ' :'}</ControlLabel> :  null
                         }
+                        </Col>
+                        <Col xs={12}>
                         {
                             item.type === "table" ? (
                                 <Table striped bordered condensed hover>
@@ -108,7 +111,8 @@ export default function Tabou2SecProgLiesAccord({ initialItem, programme, operat
                                 </Table>
                             ) : null
                         }
-                    </>
+                        </Col>
+                    </Row>
                 ))
             }
         </Grid>

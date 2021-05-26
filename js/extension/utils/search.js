@@ -137,6 +137,8 @@ export function getSpatialCQL(type, geomA, layer, geomB, field, value, onlyTabou
         return `(INTERSECTS(${geomA},collectGeometries(queryCollection('${layer}', '${geomB}','(${onlyTabou ? "id_tabou IS NOT NULL AND " : ""}${cql})'))))`;
     } else if (type === "date"){
         return "";
+    } else if (!field && value) {
+        return `(INTERSECTS(${geomA},collectGeometries(queryCollection('${layer}', '${geomB}','INCLUDE'))))`;
     }
     return `(INTERSECTS(${geomA},collectGeometries(queryCollection('${layer}', '${geomB}','(${onlyTabou ? "id_tabou IS NOT NULL AND " : ""}"${field}" = ${fixStringCql(type, value)})'))))`;
 }
