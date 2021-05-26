@@ -29,7 +29,7 @@ import {
     addFeatureTier,
     deleteFeatureTier,
     changeFeatureTier,
-    associateFeatureTier,
+    associateTier,
     inactivateTier,
     applyFilterObj,
     printProgInfos,
@@ -56,7 +56,7 @@ function toolContainer({data, ...props }) {
         isTaboufeature.current = feature?.properties?.id_tabou ? true : false;
     }
 
-    let showAddPanel = getAuthInfos().isAdmin || getAuthInfos().isContrib;
+    let showAddPanel = getAuthInfos().isReferent || getAuthInfos().isContrib;
 
     if (isEmpty(data)) isTaboufeature.current = false;
 
@@ -89,7 +89,7 @@ function toolContainer({data, ...props }) {
                 : null
             }
             {
-                props.currentTab === "add" && !showAddPanel && !isTaboufeature.current ? (
+                props.currentTab === "add" && !showAddPanel ? (
                     <Tabou2Information 
                         isVisible={true} 
                         glyph="alert" 
@@ -149,7 +149,7 @@ export default connect(
         dissociateTier: deleteFeatureTier,
         inactivateTier: inactivateTier,
         changeTier: changeFeatureTier,
-        associateTier: associateFeatureTier,
+        associateTier: associateTier,
         printProgInfos: printProgInfos,
         searchIds: searchIds,
         createFeature: createFeature,

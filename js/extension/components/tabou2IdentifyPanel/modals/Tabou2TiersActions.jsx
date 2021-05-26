@@ -49,7 +49,7 @@ export default function Tabou2TiersActions({ ...props }) {
             glyph: "ok",
             style: {...style, color: "rgb(40, 167, 69)"},
             tooltip: "Enregistrer",
-            disabled: props.valid(props.tier).length > 0 && props.editionActivate, // TODO : prendre les champs obligatoires pour débloquer le bouton
+            disabled: props.valid(props.tier).length > 0 && props.editionActivate && !props.isAssociation, // TODO : prendre les champs obligatoires pour débloquer le bouton
             showCondition: () => (props.tier.edit || props.tier.new) && !props.tier.dateInactif,
             id: "saveTier",
             onClick: () => props.save()

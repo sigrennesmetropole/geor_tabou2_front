@@ -83,8 +83,8 @@ export function getTypesEvents() {
  * TIERS
  */
 
-export function getTiers() {
-    return axios.get(`${baseURL}/tiers`, null, {});
+export function getTiers(params = {}) {
+    return axios.get(`${baseURL}/tiers`, {params: params}, {});
 }
 
 export function getFeatureTiers(type, id) {
@@ -96,8 +96,19 @@ export function getTypesTiers() {
 }
 
 // associate tier
-export function addFeatureTier(type, id, tier) {
-    return axios.post(`${baseURL}/${type}/${id}/tiers`, tier);
+export function associateFeatureTier(type, id, idTier, idType) {
+    return axios.post(`${baseURL}/${type}/${id}/tiers`, {
+        tiersId: idTier,
+        typeTiersId: idType
+    });
+}
+
+// change association type
+export function changeFeatureTierAssociation(type, id, idTier, idType) {
+    return axios.put(`${baseURL}/${type}/${id}/tiers/${idTier}`, {
+        tiersId: idTier,
+        typeTiersId: idType
+    });
 }
 
 // add tier to general tiers list
@@ -105,8 +116,8 @@ export function createTier(tier) {
     return axios.post(`${baseURL}/tiers`, tier);
 }
 
-export function changeFeatureTier(type, id, tier) {
-    return axios.put(`${baseURL}/${type}/${id}/tiers/${tier.id}`, tier);
+export function changeFeatureTier(tier) {
+    return axios.put(`${baseURL}/tiers`, tier);
 }
 
 export function deleteFeatureTier(type, id, tierId) {

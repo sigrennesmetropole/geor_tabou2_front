@@ -1,7 +1,7 @@
 import * as Rx from 'rxjs';
-import { get, keys } from 'lodash';
-import { loadEvents, loadTiers, SELECT_FEATURE, ADD_FEATURE_EVENT, DELETE_FEATURE_EVENT, CHANGE_FEATURE_EVENT,
-    ADD_FEATURE_TIER, DELETE_FEATURE_TIER, CHANGE_FEATURE_TIER, INACTIVATE_TIER, loadFicheInfos, loading
+import { get, keys, find } from 'lodash';
+import { loadEvents, loadTiers, SELECT_FEATURE, ADD_FEATURE_EVENT, DELETE_FEATURE_EVENT, CHANGE_FEATURE_EVENT, ADD_FEATURE_TIER,
+    ASSOCIATE_TIER, DELETE_FEATURE_TIER, CHANGE_FEATURE_TIER, INACTIVATE_TIER, loadFicheInfos, loading, MAP_TIERS, mapTiers
  } from '@ext/actions/tabou2';
 
 import {
@@ -10,7 +10,8 @@ import {
     deleteFeatureEvent,
     changeFeatureEvent,
     getFeatureTiers,
-    addFeatureTier,
+    associateFeatureTier,
+    getTiers,
     changeFeatureTier,
     createTier,
     inactivateTier,
@@ -19,10 +20,11 @@ import {
     getOperation,
     getOperationProgrammes,
     getSecteur,
-    getProgrammeAgapeo
+    getProgrammeAgapeo,
+    changeFeatureTierAssociation
 } from '@ext/api/search';
 
-import { getSelection, getLayer, getPluginCfg, isTabou2Activate } from '@ext/selectors/tabou2';
+import { getSelection, getLayer, getPluginCfg, isTabou2Activate, } from '@ext/selectors/tabou2';
 import { URL_ADD } from '@ext/constants';
 import { wrapStartStop } from "@mapstore/observables/epics";
 import { error } from "@mapstore/actions/notifications";
@@ -31,9 +33,9 @@ const actionOnUpdate = {
     "ADD_FEATURE_EVENT": (layer, idFeature, event) => addFeatureEvent(layer, idFeature, event),
     "DELETE_FEATURE_EVENT": (layer, idFeature, event) => deleteFeatureEvent(layer, idFeature, event.id),
     "CHANGE_FEATURE_EVENT": (layer, idFeature, event) => changeFeatureEvent(layer, idFeature, event),
-    "ADD_FEATURE_TIER": (layer, idFeature, tier) => addFeatureTier(layer, idFeature, tier),
+    "ASSOCIATE_TIER": (layer, idFeature, tier) => associateFeatureTier(layer, idFeature, tier),
     "DELETE_FEATURE_TIER": (layer, idFeature, tier) => deleteFeatureTier(layer, idFeature, tier.id),
-    "CHANGE_FEATURE_TIER": (layer, idFeature, tier) => changeFeatureTier(layer, idFeature, tier),
+    "CHANGE_FEATURE_TIER": (layer, idFeature, tier) => changeFeatureTier(tier),
     "INACTIVATE_TIER": (layer, idFeature, tier) => inactivateTier(layer, idFeature, tier.id),
 };
 
@@ -159,19 +161,8 @@ export function getSelectionInfos(action$, store) {
                     // GET Feature's Events
                     return Rx.Observable.of(loadEvents(response?.data?.elements || []))
                 })
+                .concat(Rx.Observable.of(mapTiers()))
                 .concat(
-                    Rx.Observable.defer(() => getFeatureTiers(layerUrl, idTabou))
-                    .catch(e => {
-                        console.log("Error retrieving on OA or SA tiers request");
-                        console.log(e);
-                        return Rx.Observable.of({data: []});
-                    })
-                    .switchMap( r => {
-                        // GET Feature's tiers list
-                        tiers = r?.data?.elements;
-                        return Rx.Observable.of(loadTiers(r?.data?.elements || []))
-                    })
-                ).concat(
                     Rx.Observable.defer(() => resetFeatureBylayer[layerCfg](idTabou))
                     // GET OA, PA or SA clicked Feature
                     .switchMap((response) => {
@@ -207,13 +198,13 @@ export function updateTabou2Logs(action$, store) {
 
             // get events from API
             return Rx.Observable.defer(() => toDoOnUpdate(layerUrl, featureId, action.event))
-            .switchMap(() => {
-                    return Rx.Observable.defer(() => getFeatureEvents(layerUrl, featureId)).switchMap( events => {
-                        return Rx.Observable.of(loadEvents(events?.data?.elements || []))
-                        }
-                    )
-                }
-            )
+            .catch(e => {
+                console.log("Error retrieving log's info");
+                console.log(e);
+                return Rx.Observable.of({data: []});
+            })
+            // refresh tiers
+            .switchMap(() => Rx.Observable.of(mapTiers()));
         });
 }
 
@@ -228,14 +219,34 @@ export function addCreateTabou2Tier(action$, store) {
             return Rx.Observable.defer(() => createTier(layerUrl, featureId, action.tier))
                 .switchMap(() => {
                     // Now we associate this tier to element
-                    return Rx.Observable.defer(() => addFeatureTier(layerUrl, featureId)).switchMap( tiers => {
-                        // refresh tiers list now
-                        Rx.Observable.defer(() => getFeatureTiers("operations", featureId))
-                        .switchMap( r => {
-                            return Rx.Observable.of(loadTiers(r?.data?.elements || []))
-                        })
+                    return Rx.Observable.defer(() => associateFeatureTier(layerUrl, featureId))
+                    .catch(e => {
+                        console.log("Error to create association between feature and tier");
+                        console.log(e);
+                        return Rx.Observable.of({data: []});
                     })
+                    // refresh tiers
+                    .switchMap(() => Rx.Observable.of(mapTiers()));
                 })
+        });
+};
+
+export function associateTabou2Tier(action$, store) {
+    return action$.ofType(ASSOCIATE_TIER)
+        .filter(() => isTabou2Activate(store.getState()))
+        .switchMap((action) => {
+            // selected feature and selected layer
+            let {featureId, layerUrl} = getInfos(store.getState());
+            return Rx.Observable.defer(() => getTiers({nom: action.tier.tier.nom}))
+            .switchMap(tier => {
+                return Rx.Observable.defer(() => associateFeatureTier(layerUrl, featureId, tier?.data?.elements[0]?.id, action.tier.type.id))
+                .catch(e => {
+                    console.log("Error on tier association");
+                    console.log(e);
+                    return Rx.Observable.of({data: []});
+                })
+            })
+            .switchMap(() => Rx.Observable.of(mapTiers()));
         });
 };
 
@@ -247,12 +258,37 @@ export function updateTabou2Tier(action$, store) {
             let toDoOnUpdate = get(actionOnUpdate, action.type);
             let {featureId, layerUrl} = getInfos(store.getState());
             return Rx.Observable.defer(() => toDoOnUpdate(layerUrl, featureId, action.tier))
-            .switchMap( () => {
-                    return Rx.Observable.defer(() => getFeatureTiers(layerUrl, featureId)).switchMap( tiers => {
-                        return Rx.Observable.of(loadTiers(tiers?.data || []))
-                        }
-                    )
-                }
-            )
+            .switchMap(() => {
+                return Rx.Observable.defer(() => changeFeatureTierAssociation(layerUrl, featureId, action.tier.id, action.tier.type.id))
+                .catch(e => {
+                    console.log("Error on change feature tier association");
+                    console.log(e);
+                    return Rx.Observable.of({data: []});
+                })
+            })
+            // refresh tiers
+            .switchMap(() => Rx.Observable.of(mapTiers()));
         });
+}
+
+export function getTiersElements(action$, store) {
+    return action$.ofType(MAP_TIERS)
+    .filter(() => isTabou2Activate(store.getState()))
+    .switchMap( action => {
+        let {featureId, layerUrl} = getInfos(store.getState());
+        return Rx.Observable.defer(() => getTiers())
+        .switchMap( tiers => {
+            if (tiers?.data?.elements) {
+                return Rx.Observable.defer(() => getFeatureTiers(layerUrl, featureId))
+                .switchMap( featureTiers => {
+                    if (featureTiers?.data?.elements) {
+                        let allTiers = featureTiers.data.elements.map(t => ({...find(tiers.data.elements, ["nom", t.nom]), ...t}));
+                        return Rx.Observable.of(loadTiers(allTiers))
+                    }
+                    return Rx.Observable.empty();
+                })
+            }
+            return Rx.Observable.empty();
+        })
+    })
 }

@@ -18,6 +18,7 @@ export const DELETE_FEATURE_EVENT = "DELETE_FEATURE_EVENT";
 export const CHANGE_FEATURE_EVENT = "CHANGE_FEATURE_EVENT";
 export const LOAD_TIERS = "LOAD_TIERS";
 export const ADD_FEATURE_TIER = "ADD_FEATURE_TIER";
+export const ASSOCIATE_TIER = "ASSOCIATE_TIER";
 export const DELETE_FEATURE_TIER = "DELETE_FEATURE_TIER";
 export const CHANGE_FEATURE_TIER = "CHANGE_FEATURE_TIER";
 export const INACTIVATE_TIER = "INACTIVATE_TIER";
@@ -28,6 +29,12 @@ export const LOADING = "LOADING";
 export const LOAD_FICHE_INFOS = "LOAD_FICHE_INFOS";
 export const CHANGE_FEATURE = "CHANGE_FEATURE";
 export const CREATE_FEATURE = "CREATE_FEATURE";
+export const MAP_TIERS = "MAP_TIERS";
+
+export const mapTiers = (params) => ({
+    type: MAP_TIERS,
+    params
+});
 
 export const changeFeature = (params) => ({
     type: CHANGE_FEATURE,
@@ -141,6 +148,11 @@ export const loadTiers = (tiers) => ({
 
 export const addFeatureTier = (tier) => ({
     type: ADD_FEATURE_TIER,
+    tier
+});
+
+export const associateTier = (tier) => ({
+    type: ASSOCIATE_TIER,
     tier
 });
 
