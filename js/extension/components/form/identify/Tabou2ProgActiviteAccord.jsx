@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { isEmpty, isEqual, pick, has, get } from "lodash";
-import { Checkbox, Col, Row, Table, FormControl, Grid, ControlLabel } from "react-bootstrap";
+import { Checkbox, Col, Row, FormControl, Grid, ControlLabel } from "react-bootstrap";
 import { DateTimePicker } from "react-widgets";
 import utcDateWrapper from '@mapstore/components/misc/enhancers/utcDateWrapper';
 import "@ext/css/identify.css";
@@ -65,10 +65,11 @@ export default function Tabou2ProgActiviteAccord({ initialItem, programme, opera
         let accordValues = pick(newValues, getFields().filter(f => !f.readOnly).map(f => f.name));
         props.change(accordValues, pick(accordValues, required));
     }
+
+    const allowChange = props.authent.isContrib || props.authent.isReferent;
     /**
      * COMPONENT
      */
-    const marginTop = "10px";
     return (
         <Grid style={{ width: "100%" }} className={""}>
             {
@@ -84,7 +85,7 @@ export default function Tabou2ProgActiviteAccord({ initialItem, programme, opera
                                     inline="true"
                                     style={{marginBottom: "10px"}}
                                     checked={getValue(item) || false}
-                                    disabled={item.readOnly}
+                                    disabled={item.readOnly || !allowChange}
                                     id={`chbox-${item.name}`}
                                     onChange={() => changeInfos({[item.name]: !getValue(item)})}
                                     className="col-xs-12">
@@ -98,7 +99,7 @@ export default function Tabou2ProgActiviteAccord({ initialItem, programme, opera
                                 (<FormControl 
                                     placeholder={item.label}
                                     value={getValue(item) || ""}
-                                    readOnly={item.readOnly}
+                                    readOnly={item.readOnly || !allowChange}
                                     onChange={(v) => changeInfos({[item.name]: v.target.value})}
                                 />) : null
                         }

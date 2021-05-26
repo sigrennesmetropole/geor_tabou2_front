@@ -1,6 +1,6 @@
-import React, {useEffect, useState, useRef} from "react";
-import { isEmpty, isEqual, pick, has, get, zipObject, keys } from "lodash";
-import { Checkbox, Col, Row, FormGroup, FormControl, Grid, ControlLabel } from "react-bootstrap";
+import React, {useEffect, useState } from "react";
+import { isEmpty, isEqual, pick, get } from "lodash";
+import { Checkbox, Col, Row, FormControl, Grid, ControlLabel } from "react-bootstrap";
 import { Multiselect } from "react-widgets";
 import "@ext/css/identify.css";
 
@@ -65,6 +65,8 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
         readOnly: false
     }];
 
+    const allowChange = props.authent.isContrib || props.authent.isReferent;
+
     /**
      * Effect
      */
@@ -94,12 +96,9 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
         props.change(accordValues, pick(accordValues, required));
     }
 
-    console.log(mapFeature.commune);
-
     /**
      * COMPONENT
      */
-    const marginTop = "10px";
     return (
         <Grid style={{ width: "100%" }}>
             {
@@ -115,7 +114,7 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
                                 (<Checkbox 
                                     inline="true"
                                     checked={item.value(item) || false}
-                                    disabled={item.readOnly}
+                                    disabled={item.readOnly || !allowChange}
                                     id={`chbox-${item.name}`}
                                     className="col-xs-5">
                                     <ControlLabel>{item.label}</ControlLabel>
@@ -128,7 +127,7 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
                                 (<FormControl 
                                     placeholder={item.label}
                                     value={getValue(item) || ""}
-                                    readOnly={item.readOnly}
+                                    readOnly={item.readOnly || !allowChange}
                                     onChange={(v) => changeInfos({[item.name]: v.target.value})}
                                 />) : null
                         }{
@@ -136,7 +135,7 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
                                 <Multiselect
                                     style={{color:"black !important"}}
                                     value={getValue(item).split(";") || []}
-                                    readOnly={item.readOnly}
+                                    readOnly={item.readOnly || !allowChange}
                                     messages={{
                                         emptyList: item.readOnly ? "Aucune modification possible" : "Liste vide",
                                         openCombobox: 'Ouvrir la liste'
@@ -146,11 +145,9 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
                             ) : null
                         }
                         </Col>
-                        </Row>
+                    </Row>
                 ))
-                
             }
-            
         </Grid>
     );
 }

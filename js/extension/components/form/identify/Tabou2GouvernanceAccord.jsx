@@ -1,6 +1,6 @@
-import React, {useEffect, useState, useRef} from "react";
-import { isEmpty, isEqual, pick, has, get, zipObject, keys } from "lodash";
-import { Checkbox, Col, Row, FormGroup, FormControl, Grid, ControlLabel } from "react-bootstrap";
+import React, {useEffect, useState } from "react";
+import { isEmpty, isEqual, pick, get } from "lodash";
+import { Checkbox, Col, Row, FormControl, Grid, ControlLabel } from "react-bootstrap";
 import Tabou2Combo from '@ext/components/form/Tabou2Combo';
 import { getRequestApi } from "@ext/api/search";
 import { Multiselect } from "react-widgets";
@@ -67,6 +67,7 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
         readOnly: true
     }].filter(el => el?.layers?.includes(layer) || !el?.layers);
 
+    const allowChange = props.authent.isContrib || props.authent.isReferent;
     /**
      * Effect
      */
@@ -85,7 +86,6 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
     const getValue = (item) => {
         if (isEmpty(values) || isEmpty(operation)) return null;
         let itemSrc = getFields().filter(f => f.name === item.name)[0]?.source;
-        console.log(itemSrc);
         return get(itemSrc, item?.field);
     }
 
@@ -100,7 +100,6 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
     /**
      * COMPONENT
      */
-    const marginTop = "10px";
     return (
         <Grid style={{ width: "100%" }} className={""}>
             {
@@ -115,7 +114,7 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
                                 (<Checkbox 
                                     inline="true"
                                     checked={item.value(item) || false}
-                                    disabled={item.readOnly}
+                                    disabled={item.readOnly || !allowChange}
                                     id={`chbox-${item.name}`}
                                     className="col-xs-5">
                                     <ControlLabel>{item.label}</ControlLabel>
@@ -128,17 +127,17 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
                                 (<FormControl 
                                     placeholder={item.label}
                                     value={getValue(item) || ""}
-                                    readOnly={item.readOnly}
+                                    readOnly={item.readOnly || !allowChange}
                                     onChange={(v) => changeInfos({[item.name]: v.target.value})}
                                 />) : null
                         }{
                             item.type === "combo" ? (
                                 <Tabou2Combo
                                     load={() => getRequestApi(item.api, props.pluginCfg.apiCfg, {})}
-                                    disabled={item?.readOnly || false}
                                     placeholder={item?.placeholder || ""}
                                     filter="contains"
                                     textField={item.apiLabel}
+                                    disabled={item?.readOnly || !allowChange}
                                     onLoad={(r) => r?.elements || r}
                                     name={item.name}
                                     value={get(values, item.name)}
@@ -153,7 +152,7 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
                         }{
                             item.type === "multi" ? (
                                 <Multiselect
-                                    readOnly={item.readOnly}
+                                    readOnly={item.readOnly || !allowChange}
                                     value={item.data}
                                     className={ item.readOnly ? "tagColor noClick" : "tagColor"}
                                 />

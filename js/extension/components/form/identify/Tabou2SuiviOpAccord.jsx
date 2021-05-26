@@ -1,6 +1,6 @@
-import React, {useEffect, useState, useRef} from "react";
-import { isEmpty, isEqual, pick, has, get, zipObject, keys } from "lodash";
-import { Checkbox, Col, Row, FormGroup, FormControl, Grid, ControlLabel } from "react-bootstrap";
+import React, {useEffect, useState } from "react";
+import { isEmpty, isEqual, pick, get } from "lodash";
+import { Checkbox, Col, Row, FormControl, Grid, ControlLabel } from "react-bootstrap";
 import Tabou2Combo from '@ext/components/form/Tabou2Combo';
 import { getRequestApi } from "@ext/api/search";
 import { Multiselect, DateTimePicker } from "react-widgets";
@@ -65,6 +65,8 @@ export default function Tabou2SuiviOpAccord({ initialItem, programme, operation,
         readOnly: false
     }].filter(el => el?.layers?.includes(layer) || !el?.layers);
 
+    const allowChange = props.authent.isContrib || props.authent.isReferent;
+
     /**
      * Effect
      */
@@ -98,7 +100,6 @@ export default function Tabou2SuiviOpAccord({ initialItem, programme, operation,
     /**
      * COMPONENT
      */
-    const marginTop = "10px";
     return (
         <Grid style={{ width: "100%" }} className={""}>
             {
@@ -113,7 +114,7 @@ export default function Tabou2SuiviOpAccord({ initialItem, programme, operation,
                                 (<Checkbox 
                                     inline="true"
                                     checked={item.value(item) || false}
-                                    disabled={item.readOnly}
+                                    disabled={item.readOnly || !allowChange}
                                     id={`chbox-${item.name}`}
                                     className="col-xs-5">
                                     <ControlLabel>{item.label}</ControlLabel>
@@ -126,18 +127,19 @@ export default function Tabou2SuiviOpAccord({ initialItem, programme, operation,
                                 (<FormControl 
                                     placeholder={item.label}
                                     value={getValue(item) || ""}
-                                    readOnly={item.readOnly}
+                                    readOnly={item.readOnly || !allowChange}
                                     onChange={(v) => changeInfos({[item.name]: v.target.value})}
                                 />) : null
                         }{
                             item.type === "combo" ? (
                                 <Tabou2Combo
                                     load={() => getRequestApi(item.api, props.pluginCfg.apiCfg, {})}
-                                    disabled={item?.readOnly || false}
+                                    disabled={item?.readOnly || !allowChange}
                                     placeholder={item?.placeholder || ""}
                                     textField={item.apiLabel}
                                     onLoad={(r) => r?.elements || r}
                                     name={item.name}
+                                    readOnly={item.readOnly || !allowChange}
                                     defaultValue={get(values, item.name)}
                                     onSelect={(v) => changeInfos({[item.name]: v})}
                                     onChange={(v) => !v ? changeInfos({[item.name]: v}) : null}
@@ -150,7 +152,7 @@ export default function Tabou2SuiviOpAccord({ initialItem, programme, operation,
                         }{
                             item.type === "multi" ? (
                                 <Multiselect
-                                    readOnly={item.readOnly}
+                                    readOnly={item.readOnly || !allowChange}
                                     value={item.data}
                                     className={ item.readOnly ? "tagColor noClick" : "tagColor"}
                                 />
@@ -163,6 +165,7 @@ export default function Tabou2SuiviOpAccord({ initialItem, programme, operation,
                                     inline
                                     dropUp
                                     placeholder={item?.placeholder}
+                                    readOnly={item.readOnly || !allowChange}
                                     calendar={true}
                                     time={false}
                                     culture="fr"

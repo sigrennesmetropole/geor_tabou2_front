@@ -1,6 +1,6 @@
-import React, {useEffect, useState, useRef} from "react";
-import { isEmpty, isEqual, pick, has, get, zipObject, keys } from "lodash";
-import { Checkbox, Col, Row, FormGroup, FormControl, Grid, ControlLabel } from "react-bootstrap";
+import React, {useEffect, useState } from "react";
+import { isEmpty, isEqual, pick, has, get } from "lodash";
+import { Checkbox, Col, Row, FormControl, Grid, ControlLabel } from "react-bootstrap";
 import Tabou2Combo from '@ext/components/form/Tabou2Combo';
 import { getRequestApi } from "@ext/api/search";
 import "@ext/css/identify.css";
@@ -98,10 +98,10 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
         props.change(accordValues, pick(accordValues, required));
     }
 
+    const allowChange = props.authent.isContrib || props.authent.isReferent;
     /**
      * COMPONENT
      */
-    const marginTop = "10px";
     return (
         <Grid style={{ width: "100%" }} className={""}>
             {
@@ -116,7 +116,7 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
                                 (<Checkbox 
                                     inline="true"
                                     checked={item.value(item) || false}
-                                    disabled={item.readOnly}
+                                    disabled={item.readOnly || !allowChange}
                                     id={`chbox-${item.name}`}
                                     className="col-xs-5">
                                     <ControlLabel>{item.label}</ControlLabel>
@@ -132,16 +132,16 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
                                     style={{height: item.isArea ? "100px" : "auto"}}
                                     type={item.type}
                                     value={getValue(item) || ""}
-                                    readOnly={item.readOnly}
+                                    readOnly={item.readOnly || !allowChange}
                                     onChange={(v) => changeInfos({[item.name]: v.target.value})}
                                 />) : null
                         }{
                             item.type === "combo" ? (
                                 <Tabou2Combo
                                     load={() => getRequestApi(item.api, props.pluginCfg.apiCfg, {})}
-                                    disabled={item?.readOnly || false}
                                     placeholder={item?.placeholder || ""}
                                     filter="contains"
+                                    disabled={item.readOnly || !allowChange}
                                     textField={item.apiLabel}
                                     onLoad={(r) => r?.elements || r}
                                     name={item.name}

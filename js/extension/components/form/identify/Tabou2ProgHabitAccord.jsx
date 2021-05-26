@@ -1,9 +1,7 @@
-import React, {useEffect, useState, useRef} from "react";
+import React, {useEffect, useState } from "react";
 import { isEmpty, isEqual, pick, has, get, capitalize } from "lodash";
-import { Checkbox, Col, Row, Table, FormControl, Grid, ControlLabel } from "react-bootstrap";
-import Tabou2Combo from '@ext/components/form/Tabou2Combo';
-import { getRequestApi } from "@ext/api/search";
-import { Multiselect, DateTimePicker } from "react-widgets";
+import { Col, Row, Table, FormControl, Grid, ControlLabel } from "react-bootstrap";
+import { DateTimePicker } from "react-widgets";
 import utcDateWrapper from '@mapstore/components/misc/enhancers/utcDateWrapper';
 import "@ext/css/identify.css";
 
@@ -142,8 +140,8 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
         name: "agapeo",
         label: "Données Agapéo",
         type: "table",
-        fields: ["nom", "promoteur", "etape", "dateLiv"],
-        labels: ["Année prog", "N° dossier", "Loc. Aidé", "Loc. reg. privé", "Acc. aidée"],
+        fields: ["anneeProg", "numDossier", "logementsLocatAide", "logementsLocatRegulHlm", "logementsLocatRegulPrive", "logementsAccessAide"],
+        labels: ["Année prog", "N° dossier", "Loc. Aidé","Loc. rég. HLM", "Loc. reg. privé", "Acc. aidée"],
         layers:["layerPA"],
         source: props?.tabouInfos?.agapeo || [],
         readOnly: true
@@ -191,10 +189,11 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
         props.change(accordValues, pick(accordValues, required));
     }
 
+    const allowChange = props.authent.isContrib || props.authent.isReferent;
+
     /**
      * COMPONENT
      */
-    const marginTop = "10px";
     return (
         <Grid style={{ width: "100%" }} className={""}>
             {
@@ -211,7 +210,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
                                 (<FormControl 
                                     placeholder={item.label}
                                     value={getValue(item) || ""}
-                                    readOnly={item.readOnly}
+                                    readOnly={item.readOnly || !allowChange}
                                     onChange={(v) => changeInfos({[item.name]: v.target.value})}
                                 />) : null
                         }
@@ -221,6 +220,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
                                     type="date"
                                     className="identifyDate"
                                     inline
+                                    readOnly={!allowChange || item.readOnly}
                                     dropUp
                                     placeholder={item?.placeholder}
                                     calendar={true}
@@ -238,10 +238,12 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
                                     type={item.type}
                                     placeholder={item.label}
                                     value={getValue(item) || ""}
-                                    readOnly={item.readOnly}
+                                    readOnly={!allowChange || item.readOnly}
                                     onChange={(v) => changeInfos({[item.name]: v.target.value})}
                                 />) : null
                         }
+                        </Col>
+                        <Col xs={12}>
                         {
                             item.type === "table" ? (
                                 <Table striped bordered condensed hover>

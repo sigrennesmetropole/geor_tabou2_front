@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { isEmpty, isEqual, pick, has, get, capitalize } from "lodash";
-import { Col, Row, Grid, ControlLabel, Table, FormControl } from "react-bootstrap";
+import { Col, Row, Grid, ControlLabel, Table } from "react-bootstrap";
 import { DateTimePicker } from "react-widgets";
 import utcDateWrapper from '@mapstore/components/misc/enhancers/utcDateWrapper';
 import "@ext/css/identify.css";
@@ -44,15 +44,6 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
         placeholder: "Date DAACT...",
         source: has(values, "datDate") ? values : programme,
         readOnly: false
-    }, {
-        name: "permis",
-        label: "Liste des permis",
-        type: "table",
-        fields: ["nom", "promoteur", "etape", "dateLiv"],
-        labels: ["Nom", "Promoteur", "Etape", "Date de livraison"],
-        layers:["layerPA"],
-        source: props?.tabouInfos?.permis?.elements || [],
-        readOnly: true
     }, {
         name: "ddc",
         label: "Données DDC",
@@ -100,6 +91,8 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
         props.change(accordValues, pick(accordValues, required));
     }
 
+    const allowChange = props.authent.isContrib || props.authent.isReferent;
+
     /**
      * COMPONENT
      */
@@ -121,6 +114,7 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
                                     className="identifyDate"
                                     inline
                                     dropUp
+                                    disabled={!allowChange}
                                     placeholder={item?.placeholder}
                                     calendar={true}
                                     time={false}
