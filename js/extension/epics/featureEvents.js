@@ -12,7 +12,6 @@ import {
     getFeatureTiers,
     addFeatureTier,
     changeFeatureTier,
-    getTiers,
     createTier,
     inactivateTier,
     getProgramme,
@@ -82,8 +81,6 @@ export function getSelectionInfos(action$, store) {
         .switchMap((action) => {
             // get infos from layer's feature directly
             const idTabou = get(action.selectedFeature.feature, "properties.id_tabou");
-
-            //const idTabou = 3;
             let tiers = [];
             let layerCfg = action.selectedFeature.layer;
             let layerUrl = get(URL_ADD, layerCfg);
@@ -163,7 +160,7 @@ export function getSelectionInfos(action$, store) {
                     return Rx.Observable.of(loadEvents(response?.data?.elements || []))
                 })
                 .concat(
-                    Rx.Observable.defer(() => getTiers(layerUrl, idTabou))
+                    Rx.Observable.defer(() => getFeatureTiers(layerUrl, idTabou))
                     .catch(e => {
                         console.log("Error retrieving on OA or SA tiers request");
                         console.log(e);
@@ -204,9 +201,7 @@ export function updateTabou2Logs(action$, store) {
     return action$.ofType(ADD_FEATURE_EVENT, DELETE_FEATURE_EVENT, CHANGE_FEATURE_EVENT)
         .filter(() => isTabou2Activate(store.getState()))
         .switchMap((action) => {
-            //const idTabou = action?.selectedFeature?.properties.objectid || action?.selectedFeature?.properties.objectid;
             let {featureId, layerUrl} = getInfos(store.getState());
-            featureId = 3;
             layerUrl = "operations";
             let toDoOnUpdate = get(actionOnUpdate, action.type);
 
@@ -226,7 +221,7 @@ export function addCreateTabou2Tier(action$, store) {
     return action$.ofType(ADD_FEATURE_TIER)
         .filter(() => isTabou2Activate(store.getState()))
         .switchMap((action) => {
-            //const idTabou = action?.selectedFeature?.properties.objectid || action?.selectedFeature?.properties.objectid;
+            //const idTabou = action?.selectedFeature?.properties?.id_tabou || action?.selectedFeature?.properties?.id_tabou;
             // selected feature and selected layer
             let {featureId, layerUrl} = getInfos(store.getState());
             // create tier first
@@ -235,7 +230,7 @@ export function addCreateTabou2Tier(action$, store) {
                     // Now we associate this tier to element
                     return Rx.Observable.defer(() => addFeatureTier(layerUrl, featureId)).switchMap( tiers => {
                         // refresh tiers list now
-                        Rx.Observable.defer(() => getTiers("operations", idTabou))
+                        Rx.Observable.defer(() => getFeatureTiers("operations", featureId))
                         .switchMap( r => {
                             return Rx.Observable.of(loadTiers(r?.data?.elements || []))
                         })
@@ -248,7 +243,6 @@ export function updateTabou2Tier(action$, store) {
     return action$.ofType(DELETE_FEATURE_TIER, CHANGE_FEATURE_TIER, INACTIVATE_TIER)
         .filter(() => isTabou2Activate(store.getState()))        
         .switchMap((action) => {
-            //const idTabou = action?.selectedFeature?.properties.objectid || action?.selectedFeature?.properties.objectid;
             // selected feature and selected layer
             let toDoOnUpdate = get(actionOnUpdate, action.type);
             let {featureId, layerUrl} = getInfos(store.getState());
