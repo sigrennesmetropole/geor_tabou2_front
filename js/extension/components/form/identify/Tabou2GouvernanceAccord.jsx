@@ -6,6 +6,11 @@ import { getRequestApi } from "@ext/api/search";
 import { Multiselect } from "react-widgets";
 import "@ext/css/identify.css";
 
+/**
+ * Accordion to display info for Gouvernance panel section - only for feature linked with id tabou
+ * @param {any} param
+ * @returns component
+ */
 export default function Tabou2GouvernanceAccord({ initialItem, programme, operation, mapFeature, ...props }) {
     let layer = props?.selection?.layer;
 
@@ -97,9 +102,6 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
         props.change(accordValues, pick(accordValues, required));
     }
 
-    /**
-     * COMPONENT
-     */
     return (
         <Grid style={{ width: "100%" }} className={""}>
             {

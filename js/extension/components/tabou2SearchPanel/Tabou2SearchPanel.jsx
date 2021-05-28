@@ -67,12 +67,17 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
     };
 
     /**
-     * Get info from request and set / replace MapStore filters for each tabou2 layers
-     * TODO :
-     *  1 - Externalize this function outside by action, epic or util
-     *  2 - Short code to generate combo with only one function or component
-     * @param {*} layer
+     * Get info from request and set / replace MapStore filters for each tabou2 layers.
+     * Steps : 
+     *      1. Create CQL filter
+     *      2. Change, replace or delete filter for each tabou layer if needed
+     *      3. Trigger WFS request to only get id's of feature to display for this filter
+     *      4. Trigger action to create new TOC layer filter
+     * @param {*} type
+     * @param {*} filter
      * @param {*} value
+     * @param {*} value
+     * @return -
      */
     const changeCqlFilter = (type, filter, value, filterConf) => {
         const layers = keys(layersInfos);
@@ -125,6 +130,7 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
         props.searchIds(filters);
     };
 
+    // trigger on filter action
     const changeFilter = (item, value) => {
         setVal(value[get(config, `${item.name}.apiField`)]);
         setComboValues({...comboValues, [item.name]: value});
@@ -132,6 +138,7 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
         changeCqlFilter(get(item, "type"), item.name, value[get(config, `${item.name}.apiField`)], config[item.name]);
     };
 
+    // if date was changed
     const changeDate = (calendar, value) => {
         setVal(value);
         let val = {
@@ -146,8 +153,8 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
         changeCqlFilter("date", calendar.name, val[calendar.name], config[calendar.name]);
     }
 
+    // if checkbox change
     const changeChecked = (name) => {
-        console.log(name);
         let isChecked = !comboValues[name];
         setVal(isChecked);
         setComboValues({...comboValues, [name]: isChecked});
@@ -305,6 +312,7 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
     );
 }
 
+// mandatory to connect component with store / redux
 export default connect((state) => ({
     // searchFilter: getSearchFilters
     currentTab: currentActiveTabSelector(state),

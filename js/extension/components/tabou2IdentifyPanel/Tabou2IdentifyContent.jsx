@@ -14,7 +14,12 @@ import { ACCORDIONS } from '@ext/constants';
 import Tabou2IdentifyToolbar from './Tabou2IdentifyToolbar';
 import Loader from '@mapstore/components/misc/Loader';
 import Tabou2Information from '@ext/components/common/Tabou2Information';
-
+import Message from "@mapstore/components/I18N/Message";
+/**
+ * Content of identify panel component - separate to be more readable
+ * @param {any} param
+ * @returns component
+ */
 export default function Tabou2IdentifyContent({
     response,
     tabouLayer,
@@ -27,12 +32,14 @@ export default function Tabou2IdentifyContent({
     const [openedAccordions, setOpened] = useState({});
     const [operation, setOperation] = useState({});
     const [mapFeature, setMapFeature] = useState({});
+    const [infos, setInfos] = useState({});
+    const mandatory = useRef({});
+
+    // Manage accordion state as open - close
     const toggleAccordion = (idx) => {
         openedAccordions[idx] = openedAccordions[idx] ? false : true;
         setOpened(openedAccordions);
     };
-    const [infos, setInfos] = useState({});
-    const mandatory = useRef({});
 
     /**
      * load CSS
@@ -47,6 +54,7 @@ export default function Tabou2IdentifyContent({
         }
     }, []);
 
+    // hooks to refresh if necessary if user change selected layer or if response change
     useEffect(() => {
         setAccordions(ACCORDIONS.filter(acc => !acc.layers || acc?.layers.indexOf(tabouLayer) > -1));
         if(!isEmpty(props?.tabouInfos)) {
@@ -81,8 +89,8 @@ export default function Tabou2IdentifyContent({
             <Tabou2Information 
                 isVisible={true} 
                 glyph="" 
-                message="Récupération des informations" 
-                title="Chargement..."/>
+                message={<Message msgId="tabou2.identify.getInfos"/>} 
+                title={<Message msgId="tabou2.load"/>}/>
             <Loader size={size} style={{ padding: size / 10, margin: "auto", display: "flex" }} />
             </>
         )

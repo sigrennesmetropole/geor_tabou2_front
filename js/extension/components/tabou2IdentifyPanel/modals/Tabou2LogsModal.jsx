@@ -6,7 +6,6 @@ import Tabou2Combo from '@ext/components/form/Tabou2Combo';
 import Tabou2TextForm from '@ext/components/form/Tabou2TextForm';
 import { LOG_SCHEMA } from '@ext/constants';
 import { getTypesEvents } from "@ext/api/search";
-
 import ButtonRB from '@mapstore/components/misc/Button';
 import tooltip from '@mapstore/components/misc/enhancers/tooltip';
 const Button = tooltip(ButtonRB);
@@ -17,28 +16,28 @@ export default function Tabou2LogsModal({
     onClick = () => {},
     ...props
 }) {
-    // TODO : edit UI and behaviors => don't forget to set edti = false for each feature on other clicked or exit
-
     const [logs, setLogs] = useState([]);
     const [sortField, setSortField] = useState([["eventDate", "id"], ["asc", "asc"]]);
     const disabledAdd = useRef(false);
     const editionActivate = useRef(false);
-    
+    // hooks to manage feature logs if refreshed
     useEffect(() => {
         if (!isEqual(logs, props.events)) {
             setLogs([...props.events, ...logs.filter(lo => !_.find(props.events,["id",lo.id]))]);
         }
     }, [props.events])
-
+    // force to refresh
     useEffect(() => {
         return;
     }, [logs, sortField]);
     
+    // force refresh
     const refreshLogs = () => {
         // call API
         setLogs(props.events);
     }
 
+    // save log
     const saveEvent = (log) => {
         // call action to add log
         if (!props.events.map(e => e.id).includes(log.id)) {
@@ -56,6 +55,7 @@ export default function Tabou2LogsModal({
         }
     }
 
+    // create a new log - allow to pass some default params
     const insertNewLog = (params) => {
         setLogs([...logs, {...LOG_SCHEMA, ...params}]);
         disabledAdd.current = true;
@@ -63,12 +63,14 @@ export default function Tabou2LogsModal({
         
     }
 
+    // cancel log modifications
     const cancelChange = (log) => {
         setLogs([...logs.filter(lo => lo.id !== log.id), props.events.filter(lo => lo.id === log.id)[0]]);
         disabledAdd.current = false;
         editionActivate.current = false;
     }
 
+    // manage change
     const changeLog = (log) => {
         if(log.edit) {
             editionActivate.current = true;
@@ -77,6 +79,7 @@ export default function Tabou2LogsModal({
         setLogs([...logs.filter(lo => lo.id !== log.id), log]);
     }
 
+    // delete a log
     const deleteLog = (log) => {
         setLogs([...logs.filter(lo => lo.id !== log.id)]);
         editionActivate.current = false;
@@ -84,6 +87,7 @@ export default function Tabou2LogsModal({
         props.deleteEvent(log);
     }
 
+    // Manage sort icon
     const getSortIcon = (name) => {
         let icon = "sort-by-attributes";
         let idx = sortField[0].indexOf(name);
@@ -92,7 +96,8 @@ export default function Tabou2LogsModal({
         }
         return (<Glyphicon onClick={() => changeSort(name) } glyph={icon} style={{marginLeft:"5px"}}/>);
     }
-
+    
+    // Manage sort behavior
     const changeSort = (name) => {
         let order = "asc";
         let idx = sortField[0].indexOf(name);
@@ -102,10 +107,12 @@ export default function Tabou2LogsModal({
         setSortField([[name, "id"], [order, "asc"]]);
     }
 
+    // TODO : fix this
     const getStyle = (name) => {
         return find(sortField, [0, name]) ? {color:"darkcyan"} : {color: "rgb(51, 51, 51)"};
     }
 
+    // toolbar button
     const buttons = [{
         text: "",
         bsSize: "lg",

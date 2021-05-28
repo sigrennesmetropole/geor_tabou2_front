@@ -8,6 +8,8 @@ export default function Tabou2SecProgLiesAccord({ initialItem, programme, operat
 
     const [values, setValues] = useState({});
     const [fields, setFields] = useState([]);
+
+    // get fields for this section
     const getFields = () => [{
         name: "programmes",
         label: "Liste des programmes",
@@ -19,6 +21,7 @@ export default function Tabou2SecProgLiesAccord({ initialItem, programme, operat
         readOnly: true
     }].filter(el => el?.layers?.includes(layer) || !el?.layers);
 
+    // get value for field - usefull to display date info correctly
     const getValueByField = (field, val) => {
         let fieldVal;
         switch (field) {
@@ -32,11 +35,7 @@ export default function Tabou2SecProgLiesAccord({ initialItem, programme, operat
         return fieldVal;
     }
 
-    /**
-     * Effect
-     */
-    // return writable fields as object-keys
-
+    // hooks
     useEffect(() => {
         const calculFields = getFields();
         if (!isEqual(initialItem, values)) {
@@ -44,9 +43,6 @@ export default function Tabou2SecProgLiesAccord({ initialItem, programme, operat
         }
     }, [initialItem]);
 
-    /**
-     * COMPONENT
-     */
     return (
         <Grid style={{ width: "100%" }} className={""}>
             {

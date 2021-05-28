@@ -11,12 +11,22 @@ const UTCDateTimePicker = utcDateWrapper({
     setDateProp: "onChange"
 })(DateTimePicker);
 
+/**
+ * Accordion to display info for DDS panel section - only for feature linked with id tabou
+ * @param {any} param
+ * @returns component
+ */
 export default function Tabou2DdsAccord({ initialItem, programme, operation, mapFeature, ...props }) {
     let layer = props?.selection?.layer;
 
     const [values, setValues] = useState({});
     const [fields, setFields] = useState([]);
     const [required, setRequired] = useState({});
+
+    /**
+     * Create fields to display into table
+     * @returns Array of fields
+     */
     const getFields = () => [{
         name: "adsDate",
         label: "Date ADS",
@@ -58,8 +68,6 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
     /**
      * Effect
      */
-    // return writable fields as object-keys
-
     useEffect(() => {
         const calculFields = getFields();
         const mandatoryFields = calculFields.filter(f => f.require).map(f => f.name);
@@ -70,6 +78,12 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
         }
     }, [initialItem]);
 
+    /**
+     * Get a value to display inside table cell according to a field
+     * @param {string} field 
+     * @param {any} val 
+     * @returns any
+     */
     const getValueByField = (field, val) => {
         let fieldVal;
         switch (field) {
@@ -83,6 +97,10 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
         return fieldVal;
     }
 
+    /**
+     * Manage info modification
+     * @param {Array} item 
+     */
     const changeInfos = (item) => {
         let newValues = {...values, ...item};
         setValues(newValues);

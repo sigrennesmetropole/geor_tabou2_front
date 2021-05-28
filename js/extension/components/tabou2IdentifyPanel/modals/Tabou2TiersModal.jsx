@@ -9,7 +9,12 @@ import Tabou2TiersForm from '@ext/components/form/Tabou2TiersForm';
 import { TIERS_SCHEMA, REQUIRED_TIER } from '@ext/constants';
 import { getRequestApi } from "@ext/api/search";
 import "@ext/css/identify.css";
-
+/**
+ * Tier modal
+ * TODO : NEED API FIX TO BE TESTED AND FINISH !!
+ * @param {any} param
+ * @returns component
+ */
 export default function Tabou2TiersModal({
     visible,
     onClick = () => {},
@@ -23,20 +28,22 @@ export default function Tabou2TiersModal({
     const readOnly = props?.authent?.isReferent || props?.authent?.isContrib ? false : true;
     const [filterText, setFilterText] = useState("");
     
+    // hook to manage tiers refresh from API and refresh component only if needed
     useEffect(() => {
         if (!isEqual(tiers, props.tiers)) {
             setTiers([...props.tiers, ...tiers.filter(tier => !_.find(props.tiers,["id",tier.id]))]);
         }
     }, [props.tiers]);
-
+    // hook to refresh on visible value
     useEffect(() => {
         editionActivate.current = false;
-    }, visible)
-
+    }, [visible])
+    // hook to for refresh on tiers change, sort action of search text
     useEffect(() => {
         return;
     }, [tiers, sortField, filterText]);
 
+    // return boolean - true if some info missing
     const getEmpty = (tier) => {
         //return REQUIRED_TIER.map(r => get(tier,r)).filter(a => !a)
         let isInvalid = some(REQUIRED_TIER.map(r => tier[r]), isEmpty);
@@ -46,7 +53,7 @@ export default function Tabou2TiersModal({
         return isInvalid;
     }
 
-    // send put request to save tier
+    // send put request to save tier added, associated, modified
     const saveTier = (tier) => {
         // call action to add log
         let isNew = !props.tiers.map(e => e.id).includes(tier.id);
@@ -68,6 +75,7 @@ export default function Tabou2TiersModal({
         setTiers([...tiers.filter(ti => ti.id !== tier.id)]);
     };
 
+    // cancel edition, association, creation
     const cancelChange = (tier) => {
         editionActivate.current = false;
         if (tier.associate || tier.new) {
@@ -79,7 +87,6 @@ export default function Tabou2TiersModal({
     };
 
     // associate new tiers from combobox
-    // TODO : ASSOCIATION NEED API FIX TO BE TESTED AND FINISH !!
     const changeTier = (newTier, oldTier) => {
         if (newTier.associate) {
             setTiers([...tiers.filter(t => t.id !== newTier.id), newTier]);
@@ -95,11 +102,13 @@ export default function Tabou2TiersModal({
         if (params.new) setOpened(params.id);
     };
 
+    // dissociate tier
     const dissociateTier = (tier) => {
         setTiers([...tiers.filter(el => el.id !== tier.id)]);
         props.dissociateTier(tier);
     };
 
+    // manage if form panel component is visible or hidden
     const openCloseForm = (tier) => {
         let id = tier.id;
         editionActivate.current = false;
@@ -114,11 +123,12 @@ export default function Tabou2TiersModal({
         }
     };
 
+    // innactiv tier
     const inactivateTier = (tier) => {
         return props.inactivateTier(tier);
     }
 
-
+    // bottom modal's buttons
     const buttons = editionActivate.current ? [] : [{
         text: "",
         bsSize: "lg",
@@ -143,7 +153,7 @@ export default function Tabou2TiersModal({
     }];
 
     const displayForm = editionActivate.current && !tiers.filter(t => t.associate).length;
-
+    // return modal title
     const getTitle = () => {
         if (displayForm && tiers.filter(t => t.new).length) {
             return "Annuaire des tiers - Création d'un nouveau tier";
@@ -152,7 +162,6 @@ export default function Tabou2TiersModal({
         }
         return "Annuaire des tiers";
     }
-
     return (
         <ResizableModal
             title={getTitle()}

@@ -1,23 +1,30 @@
 import React, {useState, useEffect} from "react";
 import { Col, FormGroup, FormControl, ControlLabel, Row, Checkbox } from "react-bootstrap";
-import { get, keys, has } from "lodash";
+import { get, has } from "lodash";
 import { getRequestApi } from "@ext/api/search";
 import Tabou2Combo from '@ext/components/form/Tabou2Combo';
 import Toolbar from '@mapstore/components/misc/toolbar/Toolbar';
 
+/**
+ * Form to display when a tier is edit or created.
+ * @param {any} param
+ * @returns component
+ */
 export default function Tabou2TiersForm({...props}) {
     const marginTop = "10px";
-
     const [thisTier, setThisTier] = useState({});
 
+    // hooks
     useEffect(() => {
         setThisTier(props.tier);
     }, [props.opened]);
 
+    // manage props change
     const changeProps = (field, val) => {
         setThisTier({...thisTier, [field]: val});
     };
 
+    // forms will be construct from this array
     const TIERS_FORMS = [
     {
         apiField: "libelle",

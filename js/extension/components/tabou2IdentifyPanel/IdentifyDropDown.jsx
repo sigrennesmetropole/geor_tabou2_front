@@ -2,7 +2,11 @@ import React from 'react';
 import { Row } from 'react-bootstrap';
 import { DropdownList } from 'react-widgets';
 import Message from "@mapstore/components/I18N/Message";
-
+/**
+ * Custom drop down for identify panel
+ * @param {any} param
+ * @returns component
+ */
 export default function IdentifyDropDown({
     icon,
     ...props

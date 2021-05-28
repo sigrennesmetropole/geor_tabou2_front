@@ -2,6 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Combobox } from 'react-widgets';
 import { uniqBy, get } from 'lodash';
 
+
+/**
+ * Extend combobox to create async combo connected to API service.
+ * State is managed according to input or default value.
+ * @param {any} param
+ * @returns component
+ */
 function Tabou2Combo({
     style = {},
     placeholder = '',
@@ -20,6 +27,7 @@ function Tabou2Combo({
     const [data, setData] = useState([]); // array
     const [text, setText] = useState("");
 
+    // execute given request and load data returns into nativ combobox component
     const loadData = () => {
         load().then(result => {
             let response;
@@ -32,6 +40,7 @@ function Tabou2Combo({
         });
     };
 
+    // hooks
     useEffect(() => {
         setText("");
         if (!disabled) {
@@ -45,11 +54,11 @@ function Tabou2Combo({
         }
     }, [value]); // pass array to stop inifity loop
 
+    // manage change value
     const changeText = (v, fn) => {
         if (textField) {
             setText(get(v, textField));
         }
-
         if (fn) {
             fn(v);
         }

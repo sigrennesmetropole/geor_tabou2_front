@@ -8,8 +8,12 @@ import { setMainActiveTab } from '../../actions/tabou2';
 import { currentActiveTabSelector } from '../../selectors/tabou2';
 import { TABS } from '../../constants';
 
+/**
+ * Main Tabou tabs
+ * @param {any} param
+ * @returns component
+ */ 
 const NavItemT = tooltip(NavItem);
-
 function SelectionTab({ currentTab, onClick = () => { } }) {
     return (
         <Nav justified
@@ -31,6 +35,7 @@ function SelectionTab({ currentTab, onClick = () => { } }) {
     );
 }
 
+// connect to store / redux
 export default connect((state) => ({
     currentTab: currentActiveTabSelector(state)
 }), {

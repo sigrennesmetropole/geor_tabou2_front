@@ -3,11 +3,17 @@ import Toolbar from '@mapstore/components/misc/toolbar/Toolbar';
 import Tabou2TiersModal from './modals/Tabou2TiersModal';
 import Tabou2DocsModal from './modals/Tabou2DocsModal';
 import Tabou2LogsModal from './modals/Tabou2LogsModal';
+/**
+ * Toolbar fo identify panel (tab identify)
+ * @param {any} param
+ * @returns component
+ */
 export default function Tabou2IdentifyToolbar({ response, isValid, ...props }) {
     const [isOpenTiers, setIsOpenTiers] = useState(false);
     const [isOpenDocs, setIsOpenDocs] = useState(false);
     const [isOpenLogs, setIsOpenLogs] = useState(false);
 
+    // toolbar buttons
     let modalBtns = [
         {
             glyph: "user",
@@ -29,6 +35,8 @@ export default function Tabou2IdentifyToolbar({ response, isValid, ...props }) {
         },
     ];
 
+    // display print button only for programme feature
+    // TODO : need API fix to finish and work
     if (props.selectedCfgLayer === "layerPA") {
         let idTabou = props?.selection?.feature?.properties.id_tabou;
         modalBtns.push({
@@ -41,6 +49,7 @@ export default function Tabou2IdentifyToolbar({ response, isValid, ...props }) {
             onClick: () => props.printProgInfos(idTabou)
         });
     }
+    // manage buttons according to role
     if (props.authent.isContrib ||  props.authent.isReferent) {
         modalBtns = [...modalBtns, {
             glyph: "ok",
@@ -58,7 +67,6 @@ export default function Tabou2IdentifyToolbar({ response, isValid, ...props }) {
             onClick: () => props.restore()
         }];
     }
-
     return (
         <>
             <Toolbar

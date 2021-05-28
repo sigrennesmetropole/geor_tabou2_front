@@ -5,6 +5,11 @@ import Tabou2Combo from '@ext/components/form/Tabou2Combo';
 import { getRequestApi } from "@ext/api/search";
 import "@ext/css/identify.css";
 
+/**
+ * Accordion to display info for describe panel section - only for feature linked with id tabou
+ * @param {any} param
+ * @returns component
+ */
 export default function Tabou2DescribeAccord({ initialItem, programme, operation, mapFeature, ...props }) {
     let layer = props?.selection?.layer;
 
@@ -99,9 +104,6 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
     }
 
     const allowChange = props.authent.isContrib || props.authent.isReferent;
-    /**
-     * COMPONENT
-     */
     return (
         <Grid style={{ width: "100%" }} className={""}>
             {

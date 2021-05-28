@@ -7,7 +7,11 @@ import { createOptions, getFeaturesOptions } from '@ext/utils/identify';
 import IdentifyDropDown from "./IdentifyDropDown";
 import { Button, Glyphicon, Row } from 'react-bootstrap';
 import Tabou2Information from "@ext/components/common/Tabou2Information";
-
+/**
+ * Parent identify panel
+ * @param {any} param
+ * @returns component
+ */
 export default function Tabou2IdentifyPanel({
     queryData,
     onSelect,
@@ -21,11 +25,8 @@ export default function Tabou2IdentifyPanel({
     const [feature, setFeature] = useState("");
     const [response, setResponse] = useState({});
 
-    /**
-     * Event to trigger when user click on dropdown option
-     * @param {Object} clicked 
-     */
-     const changeLayer = (option) => {
+    //Event to trigger when user click on dropdown option
+    const changeLayer = (option) => {
         let selectedLayer = option.name;
         let selectedFeatures = queryData[selectedLayer]?.data?.features || [];
         let selectedFeature = selectedFeatures[0];
@@ -38,6 +39,7 @@ export default function Tabou2IdentifyPanel({
         onSelect(selectedFeature, get(selectedFeature, find(LAYER_FIELD_OPTION, ["name", configName])?.id), selectedLayer);
     };
 
+    // hooks to refresh only if query data changed
     useEffect(() => {
         if (!isEqual(queryData, response)) {
             setResponse(queryData);

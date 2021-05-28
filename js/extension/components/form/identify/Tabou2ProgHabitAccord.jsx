@@ -17,6 +17,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
     const [values, setValues] = useState({});
     const [fields, setFields] = useState([]);
     const [required, setRequired] = useState({});
+    // create fields from const func
     const getFields = () => [{
     // OPERATION
         name: "nbLogementsPrevu",
@@ -147,11 +148,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
         readOnly: true
     }].filter(el => el?.layers?.includes(layer) || !el?.layers);
 
-    /**
-     * Effect
-     */
-    // return writable fields as object-keys
-
+    // hooks
     useEffect(() => {
         const calculFields = getFields();
         const mandatoryFields = calculFields.filter(f => f.require).map(f => f.name);
@@ -162,12 +159,14 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
         }
     }, [initialItem]);
 
+    // get value for a specific item
     const getValue = (item) => {
         if (isEmpty(values) || isEmpty(operation)) return null;
         let itemSrc = getFields().filter(f => f.name === item.name)[0]?.source;
         return get(itemSrc, item?.field);
     }
 
+    // get value - usefull for date component
     const getValueByField = (field, val) => {
         let fieldVal;
         switch (field) {
@@ -181,6 +180,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
         return fieldVal;
     }
 
+    // manage change info
     const changeInfos = (item) => {
         let newValues = {...values, ...item};
         setValues(newValues);
@@ -190,10 +190,6 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
     }
 
     const allowChange = props.authent.isContrib || props.authent.isReferent;
-
-    /**
-     * COMPONENT
-     */
     return (
         <Grid style={{ width: "100%" }} className={""}>
             {

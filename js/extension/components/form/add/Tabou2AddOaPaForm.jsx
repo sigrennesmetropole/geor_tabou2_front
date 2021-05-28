@@ -26,15 +26,19 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
     const [newFeature, setNewFeature] = useState(["layerOA", "layerSA"].includes(layer) ? OA_SCHEMA : PA_SCHEMA);
     const [invalides, setInvalides] = useState([]);
     const naturesInfos = useRef([]);
+    const natureId = useRef(1);
     const etapesInfos = useRef([]);
+    const [type, setType] = useState("");
 
     const comboMarginTop = "10px";
     const marginTop = "15px";
 
+    // restore default form state
     const reset = () => {
-        setInfos(emptyInfos);
+        isEmpty(feature) ? setInfos(emptyInfos) : setInitialInfos({code: "", etape: ""});
     };
 
+    // manage input modification to change added feature's state
     const changeState = (combo, selection) => {
         let formElement = {};
         let apiElement = {};
@@ -60,40 +64,37 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
             newFeatureObj = {...newFeatureObj, operationId: selection?.id, };
             newInfos = {...newInfos, operationId: selection?.id, }
         }
-        
-        let keysInfos = [];
-        if (layer === "layerPA") {
-            keysInfos = keys(newInfos).filter(name => name !== "secteur" && name !== "nature");
-        } else {
-            keysInfos = keys(newInfos).filter(name => name !== "secteur" && name !== "parentoa");
-        }
+
         setInvalides(getInvalides(newInfos));
         setInfos(newInfos);
         setNewFeature(newFeatureObj);
     };
 
+    // return true if parent is activ
     const getActivate = (v) => {
         return v.parent(infos) === true;
     };
 
+    // TODO : not work
     const isInvalidStyle = (name) => {
         return invalides.includes(name) ? "red !important" : "";
     };
 
+    // return param to complete API request according to selected parent's value
     const getParams = () => {
         // get programme/emprises need only nature param
-        let params = infos.nature && layer ? {nature: encodeURI(infos.nature)} : {};
-        if (["layerOA", "layerSA"].includes(layer)) {
+        let params = infos.nature && natureId.current && type ? {natureId: natureId.current, nature: encodeURI(infos.nature)}  : {};
+        if (["layerOA", "layerSA"].includes(type)) {
             // need nature and secteur to request API get operation/emprises
             params =  has(infos, "secteur") && infos.nature ? {...params, estSecteur: infos.secteur} : {};
         }
         return params;
     };
 
-    
+    // Return invalid or valid if some keys are empty - cant save if not valid
     const getInvalides = (obj) => {
         let keysToFilter = [];
-        if ( layer === "layerPA") {
+        if ( type === "layerPA") {
             keysToFilter = keys(obj).filter(name => name !== "secteur" && name !== "nature");
         } else {
             keysToFilter = keys(obj).filter(name => name !== "secteur" && name !=="parentoa");
@@ -101,9 +102,10 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
         return keysToFilter.filter(n => !get(obj,n));
     };
 
+    // Send request to save new OA, PA, SA
     const handleSubmit = () => {
         let params = {};
-        if (layer === "layerPA") {
+        if (type === "layerPA") {
             params = {
                 ...PA_SCHEMA,
                 ...newFeature,
@@ -121,10 +123,12 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                 nature: natureId
             }
         }
-        postRequestApi(`${get(URL_ADD, layer)}`, pluginCfg.apiCfg, params);
+        postRequestApi(`${get(URL_ADD, type)}`, pluginCfg.apiCfg, params);
     };
 
-    useEffect(() => {
+    // Default info from selected feature
+    const setInitialInfos = (defaultData = {}) => {
+        setType(layer);
         let fProp = feature?.properties;
         let newInfos = {
             idEmprise : get(fProp, ADD_FIELDS.idEmprise[layer]) || infos.idEmprise,
@@ -133,32 +137,41 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
             nom : get(fProp, ADD_FIELDS.nom[layer]) || infos.nom,
             code : get(fProp, ADD_FIELDS.code[layer]) || infos.code,
             etape: get(fProp, ADD_FIELDS.etape[layer]) || get(fProp, "avancement") || infos.code,
+            natureId: 1
         };
         let newObject = {...newInfos, idEmprise : get(fProp, "id_emprise") || _.get(fProp, "objectid")}
         // FIX : need nature id !
         if (!isEqual(newInfos,infos)) {
-            setInfos({...infos, ...newInfos});
-            setNewFeature({...newFeature, ...newObject});
+            setInfos({...infos, ...newInfos, ...defaultData});
+            setNewFeature({...newFeature, ...newObject, ...defaultData});
         }
+    }
 
+    // Refresh to change form items according to selected layer or feature
+    useEffect(() => {
+        if (layer !== type) {
+            setInitialInfos();
+            switch(layer) {
+                case "layerPA":
+                    setChilds(ADD_PA_FORM);
+                    break;
+                case "layerSA":
+                    setChilds(ADD_OA_FORM);
+                    break;
+                case "layerOA":
+                    setChilds(ADD_OA_FORM);
+                    break;
+                default :
+                    setChilds([])
+            }
+        }
     }, [feature, layer])
 
-    useEffect(() => {
-        switch(layer) {
-            case "layerPA":
-                setChilds(ADD_PA_FORM);
-                break;
-            case "layerSA":
-                setChilds(ADD_OA_FORM);
-                break;
-            case "layerOA":
-                setChilds(ADD_OA_FORM);
-                break;
-            default :
-                setChilds([])
-        }
-    }, [layer])
-
+    /**
+     * Construct form
+     * @param {Array} items to construct form according to a limited list items
+     * @returns html to render
+     */
     const constructForm = (items) => {
         return (
             <Row style={{ marginTop: marginTop }} >
@@ -206,7 +219,9 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                                     el = (
                                         <Tabou2Combo
                                             style={{ marginTop: comboMarginTop, borderColor: isInvalidStyle(item.name) }}
-                                            load={() => getRequestApi(get(item, "api"), pluginCfg.apiCfg, getParams())}
+                                            load={() => {
+                                                return getRequestApi(get(item, "api"), pluginCfg.apiCfg, getParams());
+                                            }}
                                             disabled={item.parent ? isEmpty(item.parent(infos)) : item?.disabled || false}
                                             placeholder={item.placeholder}
                                             parentValue={item.parent ? new URLSearchParams(item.parent(infos))?.toString() : ""}
@@ -217,7 +232,10 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                                                 let dataItem = r?.elements || r;
                                                 // used to keep info and send  nature id to the api instead of name return by layer 
                                                 // (need id not return by default)
-                                                if(item.name === "nature") naturesInfos.current = dataItem;
+                                                if(item.name === "nature") {
+                                                    naturesInfos.current = dataItem;
+                                                    natureId.current = find(dataItem, ["libelle", infos.nature]).id;
+                                                }
                                                 if(item.name === "etape") etapesInfos.current = dataItem;
                                                 return dataItem;
                                             }}
@@ -244,9 +262,10 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
         );
     };
 
+    // render component
     return (
-        <>
-            { layer ? 
+        <span key={`${type}`}>
+            { type ? 
             (<Row className="tabou-idToolbar-row text-center" style={{ display: "flex", margin: "auto", justifyContent: "center" }}>
                 <Toolbar
                     btnDefaultProps={{
@@ -259,16 +278,16 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                         }
                     }}
                     buttons={[{
-                        glyph: "ban-circle",
-                        tooltip: "Annuler les saisies",
-                        id: "reset",
-                        onClick: () => reset()                        
-                    }, {
                         glyph: "ok",
                         tooltip: getInvalides(infos).length ? "Veuillez compléter tous les champs !" :  "Sauvegarder",
                         id: "saveNewEmprise",
                         disabled: getInvalides(infos).length > 0,
                         onClick: () => handleSubmit()
+                    }, {
+                        glyph: "remove",
+                        tooltip: "Annuler les saisies",
+                        id: "cancel",
+                        onClick: () => reset()                        
                     }]}
                 />
             </Row>) : null
@@ -288,8 +307,9 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                                 style={{ marginTop: "10px" }}
                                 data = {props.options}
                                 valueField={"value"}
+                                disabled={!isEmpty(feature)}
                                 textField = {"label"}
-                                value = {layer === "layerSA" ? "layerOA" : layer}
+                                value = {type === "layerSA" ? "layerOA" : type}
                                 placeholder= "Choisir un type opération ou programme..."
                                 onSelect={props.select}
                                 onChange={props.change}
@@ -299,7 +319,7 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                 </Row>
             </Panel>
             {
-                layer ? (
+                type ? (
                 <>
                     <Panel
                         header={(
@@ -324,6 +344,6 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                 </>
                 ) : null
             }
-        </>
+        </span>
     );
 }

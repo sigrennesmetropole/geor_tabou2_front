@@ -4,6 +4,11 @@ import { Checkbox, Col, Row, FormControl, Grid, ControlLabel } from "react-boots
 import { Multiselect } from "react-widgets";
 import "@ext/css/identify.css";
 
+/**
+ * Accordion to display info for Identity panel section - only for feature linked with id tabou
+ * @param {any} param
+ * @returns component
+ */
 export default function Tabou2IdentAccord({ initialItem, programme, operation, mapFeature, ...props }) {
     let layer = props?.selection?.layer;
 
@@ -11,6 +16,7 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
     const [fields, setFields] = useState([]);
     const [required, setRequired] = useState({});
 
+    // create fields from const func
     const getFields = () => [{
         name: "id",
         type: "text",
@@ -67,11 +73,7 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
 
     const allowChange = props.authent.isContrib || props.authent.isReferent;
 
-    /**
-     * Effect
-     */
-    // return writable fields as object-keys
-
+    // hooks
     useEffect(() => {
         const calculFields = getFields();
         const mandatoryFields = calculFields.filter(f => f.require).map(f => f.name);
@@ -82,12 +84,14 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
         }
     }, [initialItem]);
 
+    // get value for specific item
     const getValue = (item) => {
         if (isEmpty(values) || isEmpty(operation)) return null;
         let itemSrc = getFields().filter(f => f.name === item.name)[0]?.source;
         return get(itemSrc, item?.field);
     }
 
+    // manage change info
     const changeInfos = (item) => {
         let newValues = {...values, ...item};
         setValues(newValues);
@@ -96,9 +100,6 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
         props.change(accordValues, pick(accordValues, required));
     }
 
-    /**
-     * COMPONENT
-     */
     return (
         <Grid style={{ width: "100%" }}>
             {

@@ -1,16 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { isEmpty, isEqual, pick, has, get } from "lodash";
 import { Checkbox, Col, Row, FormControl, Grid, ControlLabel } from "react-bootstrap";
-import { DateTimePicker } from "react-widgets";
-import utcDateWrapper from '@mapstore/components/misc/enhancers/utcDateWrapper';
 import "@ext/css/identify.css";
 
-const UTCDateTimePicker = utcDateWrapper({
-    dateProp: "value",
-    dateTypeProp: "type",
-    setDateProp: "onChange"
-})(DateTimePicker);
-
+/**
+ * Accordion to display info for this specific panel section - only for feature linked with id tabou
+ * @param {any} param
+ * @returns component
+ */
 export default function Tabou2ProgActiviteAccord({ initialItem, programme, operation, mapFeature, ...props }) {
     let layer = props?.selection?.layer;
 
@@ -37,11 +34,7 @@ export default function Tabou2ProgActiviteAccord({ initialItem, programme, opera
         readOnly: false
     }].filter(el => el?.layers?.includes(layer) || !el?.layers);
 
-    /**
-     * Effect
-     */
-    // return writable fields as object-keys
-
+    // hook
     useEffect(() => {
         const calculFields = getFields();
         const mandatoryFields = calculFields.filter(f => f.require).map(f => f.name);
@@ -52,12 +45,14 @@ export default function Tabou2ProgActiviteAccord({ initialItem, programme, opera
         }
     }, [initialItem]);
 
+    // return value for given item to display
     const getValue = (item) => {
         if (isEmpty(values) || isEmpty(operation)) return null;
         let itemSrc = getFields().filter(f => f.name === item.name)[0]?.source;
         return get(itemSrc, item?.field);
     }
 
+    // manage info modification
     const changeInfos = (item) => {
         let newValues = {...values, ...item};
         setValues(newValues);
@@ -67,9 +62,6 @@ export default function Tabou2ProgActiviteAccord({ initialItem, programme, opera
     }
 
     const allowChange = props.authent.isContrib || props.authent.isReferent;
-    /**
-     * COMPONENT
-     */
     return (
         <Grid style={{ width: "100%" }} className={""}>
             {

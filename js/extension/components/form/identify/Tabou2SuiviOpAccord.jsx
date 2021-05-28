@@ -19,6 +19,7 @@ export default function Tabou2SuiviOpAccord({ initialItem, programme, operation,
     const [values, setValues] = useState({});
     const [fields, setFields] = useState([]);
     const [required, setRequired] = useState({});
+    // get fields for this section
     const getFields = () => [{
         name: "etape",
         label: "Etape",
@@ -65,13 +66,7 @@ export default function Tabou2SuiviOpAccord({ initialItem, programme, operation,
         readOnly: false
     }].filter(el => el?.layers?.includes(layer) || !el?.layers);
 
-    const allowChange = props.authent.isContrib || props.authent.isReferent;
-
-    /**
-     * Effect
-     */
-    // return writable fields as object-keys
-
+    // hooks
     useEffect(() => {
         const calculFields = getFields();
         const mandatoryFields = calculFields.filter(f => f.require).map(f => f.name);
@@ -82,6 +77,7 @@ export default function Tabou2SuiviOpAccord({ initialItem, programme, operation,
         }
     }, [initialItem]);
 
+    // get value for item
     const getValue = (item) => {
         if (isEmpty(values) || isEmpty(operation)) return null;
         let itemSrc = getFields().filter(f => f.name === item.name)[0]?.source;
@@ -89,6 +85,7 @@ export default function Tabou2SuiviOpAccord({ initialItem, programme, operation,
         return get(itemSrc, item?.field);
     }
 
+    // manage change infos
     const changeInfos = (item) => {
         let newValues = {...values, ...item};
         setValues(newValues);
@@ -97,9 +94,7 @@ export default function Tabou2SuiviOpAccord({ initialItem, programme, operation,
         props.change(accordValues, pick(accordValues, required));
     }
 
-    /**
-     * COMPONENT
-     */
+    const allowChange = props.authent.isContrib || props.authent.isReferent;
     return (
         <Grid style={{ width: "100%" }} className={""}>
             {

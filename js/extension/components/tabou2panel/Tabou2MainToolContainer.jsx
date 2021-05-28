@@ -1,6 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { connect } from 'react-redux';
 import { keys, isEmpty } from 'lodash';
+import Message from "@mapstore/components/I18N/Message";
 import {
     currentActiveTabSelector,
     getTabouResponse,
@@ -93,17 +94,18 @@ function toolContainer({data, ...props }) {
                     <Tabou2Information 
                         isVisible={true} 
                         glyph="alert" 
-                        message="Vous ne disposez pas des droits suffisants pour utiliser cette fonctionnalité." 
-                        title="Fonctionnalité non disponible"/>
+                        message={<Message msgId="tabou2.add.addNoSecureMsg"/>}
+                        title={<Message msgId="tabou2.add.addNoSecureTitle"/>}
+                    />
                 ) : null
             }
             {
                 props.currentTab === "add" && isTaboufeature.current && showAddPanel && !isEmpty(data) ? (
-                    <Tabou2Information 
-                        isVisible={true} 
-                        glyph="minus-sign" 
-                        message="Vous pouvez accéder aux informations de la fiche de cette emprise va l'onglet : Identifier une entité."
-                        title="Entité déjà saisie"/>
+                    <Tabou2AddPanel 
+                        feature={{}}
+                        featureId={null}
+                        layer={""}
+                        {...props} />
                 ) : null
             }
             {
@@ -117,8 +119,9 @@ function toolContainer({data, ...props }) {
                     (<Tabou2Information 
                         isVisible={isEmpty(data)} 
                         glyph="info-sign" 
-                        message="Cliquer sur une emprise, programme, opération ou secteur visible sur la carte pour commencer" 
-                        title="Identifier"/>)
+                        message={<Message msgId="tabou2.identify.selectFeatureMsg"/>}
+                        title={<Message msgId="tabou2.identify.selectFeatureTitle"/>}/>
+                    )
                 : null
             }
         </>

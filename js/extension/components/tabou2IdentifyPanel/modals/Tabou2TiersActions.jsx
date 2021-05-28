@@ -1,5 +1,10 @@
 import React from 'react';
 import Toolbar from '@mapstore/components/misc/toolbar/Toolbar';
+/**
+ * Tier Action's as toolbar beside each tier.
+ * @param {any} param
+ * @returns component
+ */
 export default function Tabou2TiersActions({ ...props }) {
     if (props.readOnly || !props.visible) {
         return null;
