@@ -37,10 +37,11 @@ export const URL_TIERS = {
     "tabou2:oa_secteur": "operations"
 };
 
-export const REQUIRED_TIER = ["adresseRue", "nom","adresseCp","adresseVille", "email"];
+export const REQUIRED_TIER = ["adresseRue", "nom","adresseCp","adresseVille", "email", "libelle"];
 export const TIERS_SCHEMA = {
     "id": 0,
     "nom": "",
+    "libelle": "",
     "adresseNum": "",
     "adresseRue": "",
     "adresseCp": "",
@@ -76,6 +77,7 @@ export const SEARCH_ITEMS = [{
     name: 'plui',
     disabled: false,
     placeholder: 'Tous zonage PLUI',
+    type: 'string',
     group: 1
 }, {
     name: 'types-financements',

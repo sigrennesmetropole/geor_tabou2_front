@@ -70,7 +70,6 @@ export function changeFeatureEvent(type, id, event) {
 }
 
 export function deleteFeatureEvent(type, id, eventId) {
-    console.log("delete");
     return axios.delete(`${baseURL}/${type}/${id}/evenements/${eventId}`);
 }
 
@@ -120,12 +119,12 @@ export function changeFeatureTier(tier) {
     return axios.put(`${baseURL}/tiers`, tier);
 }
 
-export function deleteFeatureTier(type, id, tierId) {
-    return axios.delete(`${baseURL}/${type}/${id}/tiers/${tierId}`);
+export function dissociateFeatureTier(type, id, associationId) {
+    return axios.delete(`${baseURL}/${type}/${id}/tiers/${associationId}`);
 }
 
 export function inactivateTier(tierId) {
-    return axios.put(`${baseURL}/tiers/${tierId}/inactivate`, tier);
+    return axios.put(`${baseURL}/tiers/${tierId}/inactivate`, {});
 }
 
 export function getPDFProgramme(type, id) {
