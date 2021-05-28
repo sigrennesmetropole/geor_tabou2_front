@@ -1,7 +1,7 @@
 import * as Rx from 'rxjs';
 import { CONTROL_NAME, URL_ADD } from '../constants';
 
-import { get } from 'lodash';
+import { get, pickBy, find } from 'lodash';
 
 import { generalInfoFormatSelector } from '@mapstore/selectors/mapInfo';
 import { updateUserPlugin } from '@mapstore/actions/context';
@@ -30,12 +30,17 @@ export function tabouLoadIdentifyContent(action$, store) {
         .switchMap((action) => {
             if (action?.layer?.id && action?.data?.features && action.data.features.length) {
                 let resp = getTabouResponse(store.getState());
+                let cfg = getPluginCfg(store.getState()).layersCfg;
                 // delete response for this GFI layer response
                 delete resp[action.layer.name];
 
-                // just keep response with features
+                // just keep tabou feature response with features
                 if (action?.data?.features && action.data.features.length) {
                     resp[action.layer.name] = action;
+                    // only return response for OA, PA, SA
+                    resp = pickBy(resp, (v,k) => 
+                        find(cfg, ["nom", k])
+                    );
                 } else {
                     resp = {};
                 }

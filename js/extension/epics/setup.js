@@ -1,8 +1,12 @@
 import { UPDATE_MAP_LAYOUT, updateMapLayout } from '@mapstore/actions/maplayout';
 import { isTabou2Activate } from '../selectors/tabou2';
 import { PANEL_SIZE } from '../constants';
-import { userGroupSecuritySelector } from '@mapstore/selectors/security';
-
+/**
+ * Manage mapstore toolbar layout
+ * @param {any} action$ 
+ * @param {any} store 
+ * @returns 
+ */
 export const setTbarPosition = (action$, store) =>
     action$.ofType(UPDATE_MAP_LAYOUT)
         .filter(() => isTabou2Activate(store.getState()))

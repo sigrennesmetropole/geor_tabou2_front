@@ -30,6 +30,7 @@ import { URL_ADD } from '@ext/constants';
 import { wrapStartStop } from "@mapstore/observables/epics";
 import { error } from "@mapstore/actions/notifications";
 
+// get service to request according to action type
 const actionOnUpdate = {
     "ADD_FEATURE_EVENT": (layer, idFeature, event) => addFeatureEvent(layer, idFeature, event),
     "DELETE_FEATURE_EVENT": (layer, idFeature, event) => deleteFeatureEvent(layer, idFeature, event.id),
@@ -40,12 +41,18 @@ const actionOnUpdate = {
     "INACTIVATE_TIER": (layer, idFeature, tier) => inactivateTier(layer, idFeature, tier.id),
 };
 
+// get feature from API according to selected layer feature
 const resetFeatureBylayer = {
     "layerOA": (id) => getOperation(id),
     "layerPA": (id) => getProgramme(id),
     "layerSA": (id) => getSecteur(id)
 }
 
+/**
+ * Get infos from store
+ * @param {any} state 
+ * @returns object
+ */
 const getInfos = (state) => {
     const feature = getSelection(state).feature;
     const layer = getLayer(state);
@@ -74,9 +81,11 @@ const selectInfos = {
 }
 
 /**
- * call API to get events logs on feature selection
- * @param {any} action$
- * @param {any} store
+ * Process to get all info from selected feature.
+ * Many services was called, and some infos was keep from clicked map feature.
+ * @param {any} action$ 
+ * @param {any} store 
+ * @returns action
  */
 export function getSelectionInfos(action$, store) {
     return action$.ofType(SELECT_FEATURE)
@@ -189,6 +198,12 @@ export function getSelectionInfos(action$, store) {
         })
 }
 
+/**
+ * Add, change, delete events from feature diary
+ * @param {any} action$ 
+ * @param {any} store 
+ * @returns action
+ */
 export function updateTabou2Logs(action$, store) {
     return action$.ofType(ADD_FEATURE_EVENT, DELETE_FEATURE_EVENT, CHANGE_FEATURE_EVENT)
         .filter(() => isTabou2Activate(store.getState()))
@@ -209,6 +224,13 @@ export function updateTabou2Logs(action$, store) {
         });
 }
 
+/**
+ * New tier creation. Will associate the created tier next.
+ * TODO: trigger ASSOCIATE_TIER action istead of same behavior.
+ * @param {any} action$ 
+ * @param {any} store 
+ * @returns action
+ */
 export function addCreateTabou2Tier(action$, store) {
     return action$.ofType(ADD_FEATURE_TIER)
         .filter(() => isTabou2Activate(store.getState()))
@@ -232,6 +254,12 @@ export function addCreateTabou2Tier(action$, store) {
         });
 };
 
+/**
+ * Tier assiciation
+ * @param {any} action$ 
+ * @param {any} store 
+ * @returns action
+ */
 export function associateTabou2Tier(action$, store) {
     return action$.ofType(ASSOCIATE_TIER)
         .filter(() => isTabou2Activate(store.getState()))
@@ -251,6 +279,12 @@ export function associateTabou2Tier(action$, store) {
         });
 };
 
+/**
+ * Trigger when user delete, change or inactivate a tier. Will refresh all tiers next.
+ * @param {any} action$ 
+ * @param {any} store 
+ * @returns action
+ */
 export function updateTabou2Tier(action$, store) {
     /**
      * TODO : use id association (not available yet from API) to change feature association
@@ -275,6 +309,12 @@ export function updateTabou2Tier(action$, store) {
         });
 }
 
+/**
+ * Epics to match tiers with tiers type and return only one object to store
+ * @param {any} action$ 
+ * @param {any} store 
+ * @returns action
+ */
 export function getTiersElements(action$, store) {
     return action$.ofType(MAP_TIERS)
     .filter(() => isTabou2Activate(store.getState()))
