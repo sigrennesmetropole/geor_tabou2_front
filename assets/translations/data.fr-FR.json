@@ -2,6 +2,7 @@
   "locale": "fr-FR",
   "messages": {
     "tabou2": {
+      "load": "Chargement...",
       "dropdown": "Afficher / fermer la liste",
       "btnTooltip": "Accéder à Tabou2",
       "windowTitle": "Tabou2",
@@ -34,13 +35,20 @@
         "selectDate": "Sélectionner une date"
       },
       "identify": {
+        "getInfos": "Récupération des informations",
         "noData": "Aucune données...",
         "documents": "Documents",
         "logs": "Journal de bord",
         "tiers": {
           "title": "Tiers associés",
           "tooltip": "Tiers"
-        }
+        },
+        "selectFeatureTitle": "Identifier",
+        "selectFeatureMsg": "Cliquer sur une emprise, programme, opération ou secteur visible sur la carte pour commencer"
+      },
+      "add": {
+        "addNoSecureTitle": "Fonctionnalité non disponible",
+        "addNoSecureMsg": "Vous ne disposez pas des droits suffisants pour utiliser cette fonctionnalité."
       }
     }
   }
