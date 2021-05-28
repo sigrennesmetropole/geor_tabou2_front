@@ -15,6 +15,7 @@ import {
     changeFeatureTier,
     createTier,
     inactivateTier,
+    dissociateFeatureTier,
     getProgramme,
     getProgrammePermis,
     getOperation,
@@ -34,7 +35,7 @@ const actionOnUpdate = {
     "DELETE_FEATURE_EVENT": (layer, idFeature, event) => deleteFeatureEvent(layer, idFeature, event.id),
     "CHANGE_FEATURE_EVENT": (layer, idFeature, event) => changeFeatureEvent(layer, idFeature, event),
     "ASSOCIATE_TIER": (layer, idFeature, tier) => associateFeatureTier(layer, idFeature, tier),
-    "DELETE_FEATURE_TIER": (layer, idFeature, tier) => deleteFeatureTier(layer, idFeature, tier.id),
+    "DELETE_FEATURE_TIER": (layer, idFeature, tier) => dissociateFeatureTier(layer, idFeature, tier.id),
     "CHANGE_FEATURE_TIER": (layer, idFeature, tier) => changeFeatureTier(tier),
     "INACTIVATE_TIER": (layer, idFeature, tier) => inactivateTier(layer, idFeature, tier.id),
 };
@@ -216,10 +217,10 @@ export function addCreateTabou2Tier(action$, store) {
             // selected feature and selected layer
             let {featureId, layerUrl} = getInfos(store.getState());
             // create tier first
-            return Rx.Observable.defer(() => createTier(layerUrl, featureId, action.tier))
-                .switchMap(() => {
+            return Rx.Observable.defer(() => createTier(action.tier))
+                .switchMap((tier) => {
                     // Now we associate this tier to element
-                    return Rx.Observable.defer(() => associateFeatureTier(layerUrl, featureId))
+                    return Rx.Observable.defer(() => associateFeatureTier(layerUrl, featureId, tier?.data?.id, action.tier.type.id))
                     .catch(e => {
                         console.log("Error to create association between feature and tier");
                         console.log(e);
@@ -251,6 +252,9 @@ export function associateTabou2Tier(action$, store) {
 };
 
 export function updateTabou2Tier(action$, store) {
+    /**
+     * TODO : use id association (not available yet from API) to change feature association
+     */
     return action$.ofType(DELETE_FEATURE_TIER, CHANGE_FEATURE_TIER, INACTIVATE_TIER)
         .filter(() => isTabou2Activate(store.getState()))        
         .switchMap((action) => {

@@ -12,6 +12,7 @@ export default function Tabou2TiersActions({ ...props }) {
 
     const simpleMode = !props.editionActivate && !props.tierVisible;
     const simpleModeActivate = !props.tier.dateInactif && simpleMode;
+    const notValid = props.valid(props.tier) && props.editionActivate;
     const tiersActions = [
         {
             glyph: "eye-open",
@@ -48,8 +49,9 @@ export default function Tabou2TiersActions({ ...props }) {
         {
             glyph: "ok",
             style: {...style, color: "rgb(40, 167, 69)"},
-            tooltip: "Enregistrer",
-            disabled: props.valid(props.tier).length > 0 && props.editionActivate && !props.isAssociation, // TODO : prendre les champs obligatoires pour débloquer le bouton
+            tooltip: notValid ? "Vous devez saisir les champs obligatoire" : "Enregistrer",
+            readOnly:notValid,
+            disabled: notValid,
             showCondition: () => (props.tier.edit || props.tier.new) && !props.tier.dateInactif,
             id: "saveTier",
             onClick: () => props.save()
