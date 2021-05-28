@@ -336,7 +336,7 @@ export const ADD_OA_FORM = [{
     apiField: "id",
     apiLabel: "nom",
     placeholder: "Selectionner une emprise",
-    parent: (i) => !i.nature ? true : {nature: i.nature, secteur: i.secteur},
+    parent: (i) => !i.nature ? true : {nature: i.natureId, secteur: i.secteur},
     type: "combo"
 }, {
     label: "Nom",

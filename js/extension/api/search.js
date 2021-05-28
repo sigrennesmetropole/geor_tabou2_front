@@ -81,7 +81,6 @@ export function getTypesEvents() {
 /**
  * TIERS
  */
-
 export function getTiers(params = {}) {
     return axios.get(`${baseURL}/tiers`, {params: params}, {});
 }
@@ -110,31 +109,29 @@ export function changeFeatureTierAssociation(type, id, idTier, idType) {
     });
 }
 
-// add tier to general tiers list
 export function createTier(tier) {
     return axios.post(`${baseURL}/tiers`, tier);
 }
-
 export function changeFeatureTier(tier) {
     return axios.put(`${baseURL}/tiers`, tier);
 }
-
 export function dissociateFeatureTier(type, id, associationId) {
     return axios.delete(`${baseURL}/${type}/${id}/tiers/${associationId}`);
 }
-
 export function inactivateTier(tierId) {
     return axios.put(`${baseURL}/tiers/${tierId}/inactivate`, {});
 }
 
+/**
+ * PRINT TABOU FEATURE INFOS
+ */
 export function getPDFProgramme(type, id) {
     return axios.get(`${baseURL}/${type}/${id}/fiche-suivi`, {responseType: 'arraybuffer'});
 }
 
 /**
- * PANEL IDENTIFY INFOS
+ * IDENTIFY PANEL INFOS
  */
-
 export function getProgramme(id) {
     return axios.get(`${baseURL}/programmes/${id}`);
 }
