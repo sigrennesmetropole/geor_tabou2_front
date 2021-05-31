@@ -71,9 +71,9 @@ export function getAuthInfos(state) {
     const groupNames = groups.map(({ groupName }) => `${groupName}`);
     return {
         isAdmin: groupNames.includes("MAPSTORE_ADMIN"),
-        isReferent: true,
-        isContrib: false,
-        isConsult: false
+        isReferent: groupNames.includes("EL_APPLIS_TABOU_REFERENT"),
+        isContrib: groupNames.includes("EL_APPLIS_TABOU_CONTRIB"),
+        isConsult: groupNames.includes("EL_APPLIS_TABOU_CONSULT")
     }
 }
 
