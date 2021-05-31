@@ -188,7 +188,6 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
                         style={{ marginTop: comboMarginTop }}
                         load={() => getRequestApi(get(combo, "api") || get(combo, "name"), props.pluginCfg.apiCfg, urlParams)}
                         disabled={isDisabled(combo, urlParams)}
-                        placeholder={props.i18n(props.messages, combo.placeholder)}
                         parentValue={parentValue}
                         textField={get(config, `${combo.name}.apiLabel`)}
                         valueField={get(config, `${combo.name}.apiField`)}
@@ -218,11 +217,11 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
         return (
             <Col xs={6}>
                 <FormGroup>
-                    <ControlLabel inline="true"> {<Message msgId={item.label}/>}
+                    <ControlLabel inline="true"> {<Message msgId={item?.placeholder || item.label}/>} :
                         <UTCDateTimePicker inline="true"
                             type="date"
                             dropUp
-                            placeholder={props.i18n(props.messages,"tabou2.serch.selectDate")}
+                            placeholder={props.i18n(props.messages, item.label)}
                             calendar={get(type, "isCalendar") || true}
                             time={get(type, "isTime") || false}
                             culture="fr"

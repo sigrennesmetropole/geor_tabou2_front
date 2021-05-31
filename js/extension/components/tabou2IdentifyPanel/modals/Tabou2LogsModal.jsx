@@ -229,7 +229,7 @@ export default function Tabou2LogsModal({
                                                     (<td>
                                                         {log.new || log.edit ? (
                                                             <Button
-                                                                tooltip={props.i18n(messages,"tabou2.save")}
+                                                                tooltip={props.i18n(props.messages,"tabou2.save")}
                                                                 disabled={!log.typeEvenement || isEmpty(log.typeEvenement) || !log.description}
                                                                 style={{ borderColor: "rgba(0,0,0,0)"}}
                                                                 onClick={() => saveEvent(log)}>
@@ -241,7 +241,7 @@ export default function Tabou2LogsModal({
                                                         {
                                                             log.edit && !log.new ? (
                                                                 <Button 
-                                                                    tooltip={props.i18n(messages,"tabou2.cancel")}
+                                                                    tooltip={props.i18n(props.messages,"tabou2.cancel")}
                                                                     style={{ borderColor: "rgba(0,0,0,0)"}}
                                                                     onClick={() => cancelChange(log) }>
                                                                     <span style={{color: "rgb(229,0,0)"}}>
@@ -253,7 +253,7 @@ export default function Tabou2LogsModal({
                                                         {
                                                             !log.new && !log.edit && !editionActivate.current ? (
                                                                 <Button
-                                                                tooltip={props.i18n(messages,"tabou2.change")}
+                                                                tooltip={props.i18n(props.messages,"tabou2.change")}
                                                                 style={{ borderColor: "rgba(0,0,0,0)"}}
                                                                 onClick={() => changeLog({...log, edit: true}) }>
                                                                 <span style={{color: "rgb(137,178,211)"}}>
@@ -265,7 +265,7 @@ export default function Tabou2LogsModal({
                                                         {
                                                             log.new || !editionActivate.current && !log.systeme ? (
                                                                 <Button
-                                                                    tooltip={props.i18n(messages,"tabou2.delete")}
+                                                                    tooltip={props.i18n(props.messages,"tabou2.delete")}
                                                                     style={{ borderColor: "rgba(0,0,0,0)"}}
                                                                     onClick={() => deleteLog(log) }>
                                                                     <span style={{color: "rgb(229,0,0)"}}>

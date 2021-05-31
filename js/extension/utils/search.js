@@ -1,5 +1,11 @@
 import { keys, get } from 'lodash';
 
+/**
+ * Utils to format string
+ * @param {string} type 
+ * @param {string} value 
+ * @returns string expected by CQL Url format
+ */
 const fixStringCql = (type, value) => {
     let cqlVal = value;
     if (type === 'string' && value) {
@@ -143,6 +149,13 @@ export function getSpatialCQL(type, geomA, layer, geomB, field, value, onlyTabou
     return `(INTERSECTS(${geomA},collectGeometries(queryCollection('${layer}', '${geomB}','(${onlyTabou ? "id_tabou IS NOT NULL AND " : ""}"${field}" = ${fixStringCql(type, value)})'))))`;
 }
 
+/**
+ * Create a CQL syntax
+ * @param {string} type layer expected from config as layerOA, layerPA, layer SA values
+ * @param {any} field to filter
+ * @param {*} value to apply
+ * @returns 
+ */
 export function getCQL(type, field, value) {
     if (type === "date" && (value.start || value.end)) {
         return `((${field}>='${value.start}' AND ${field}<='${value.end}'))`;

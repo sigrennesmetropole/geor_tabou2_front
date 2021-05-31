@@ -41,10 +41,10 @@
         "allFoncier": "Tous secteurs Foncier",
         "allEtapesOA": "Toutes étapes OA",
         "allEtapesPA": "Toutes étapes PA",
-        "dateDocFrom": "Date DOC du :",
-        "dateDaactFrom": "Date DAACT du :",
-        "dateLivFrom": "Date de livraison du :",
-        "dateTo": "A la date du :",
+        "dateDocFrom": "Date DOC du ",
+        "dateDaactFrom": "Date DAACT du ",
+        "dateLivFrom": "Date de livraison du ",
+        "dateTo": "A la date du ",
         "partOne": "1 - Définir les éléments du référentiel cartographique",
         "partTwo": "2 - Définir les critères liés aux secteurs",
         "partThree": "3 - Définir les critères liés aux opérations",
@@ -140,7 +140,17 @@
       },
       "add": {
         "addNoSecureTitle": "Fonctionnalité non disponible",
-        "addNoSecureMsg": "Vous ne disposez pas des droits suffisants pour utiliser cette fonctionnalité."
+        "addNoSecureMsg": "Vous ne disposez pas des droits suffisants pour utiliser cette fonctionnalité.",
+        "oaSelectType": " Choisissez si c'est un secteur, puis sélectionnez la nature et l'emprise",
+        "sector": "Secteur",
+        "nature": "Nature",
+        "emprise": "Emprise",
+        "name": "Nom",
+        "code": "Code",
+        "step": "Etape",
+        "limiteEmprise": "Limiter les emprises selon l'opération",
+        "msgStartPa": "Commencez par choisir l'opération parente",
+        "selectePaParent": "Sélectionner l'opération parente :"
       },
       "docsModal": {
         "title": "Documents associés"

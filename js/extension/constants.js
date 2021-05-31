@@ -304,14 +304,14 @@ export const ADD_FIELDS = {
 }
 
 export const ADD_OA_FORM = [{
-    label: " Choisissez si c'est un secteur, puis sélectionnez la nature et l'emprise",
+    label: "tabou2.add.onSelectType",
     group: 1,
     type: "alert",
     name: "msgOaCondition",
     icon: "info-sign",
     variant: "info"
 }, {
-    label: "Secteur",
+    label: "tabou2.add.secteur",
     name: "secteur",
     apiField: "",
     // parent: (infos) => infos.emprise, // to activate secteur only if emprise name formControl is selected
@@ -319,43 +319,39 @@ export const ADD_OA_FORM = [{
     group: 1,
     type: "checkbox"
 }, {
-    label: "Nature",
+    label: "tabou2.add.nature",
     api: "natures",
     name: "nature",
     group: 1,
     apiField: "id",
     apiLabel: "libelle",
     parent: null,
-    placeholder: "Selectionner une nature",
     type: "combo"
 }, {
-    label: "Emprise",
+    label: "tabou2.add.emprise",
     name: "idEmprise",
     group: 1,
     api: "operations/emprises",
     apiField: "id",
     apiLabel: "nom",
-    placeholder: "Selectionner une emprise",
     parent: (i) => !i.nature ? true : {nature: i.natureId, secteur: i.secteur},
     type: "combo"
 }, {
-    label: "Nom",
+    label: "tabou2.add.name",
     apiField: "",
     name: "nom",
-    placeholder: "Saisir un nom",
     // parent: () => emprise, // to activate nom only if emprise name formControl is selected
     required: true,
     type: "text"
 }, {
-    label: "Code",
+    label: "tabou2.add.code",
     apiField: "",
     name: "code",
-    placeholder: "Saisir un code",
     // parent: (infos) => infos.emprise, // to activate code only if emprise name formControl is selected
     required: true,
     type: "text"
 }, {
-    label: "Etape",
+    label: "tabou2.add.step",
     apiField: "code",
     apiLabel: "libelle",
     api: "operations/etapes",
@@ -367,14 +363,14 @@ export const ADD_OA_FORM = [{
 }];
 
 export const ADD_PA_FORM = [ {
-    label: "Limiter les emprises selon l'opération",
+    label: "tabou2.add.limiteEmprise",
     apiField: "",
     name: "limitPa",
     required: false,
     type: "checkbox",
     group: 1
 }, {
-    label: " Commencez par choisir l'opération parente",
+    label: "tabou2.add.msgStartPa",
     group: 1,
     type: "alert",
     name: "msgPaCondition",
@@ -382,17 +378,16 @@ export const ADD_PA_FORM = [ {
     icon: "info-sign",
     variant: "info"
 }, {
-    label: "Sélectionner l'opération parente :",
+    label: "tabou2.add.selectePaParent",
     api: "operations",
     name: "parentoa",
     apiLabel: "nom",
     apiField: "nom",
     parent: null,
-    placeholder: "Selectionner une opération",
     group: 1,
     type: "combo"
 }, {
-    label: "Emprise",
+    label: "tabou2.add.emprise",
     api: "programmes/emprises",
     group: 1,
     parent: (i) => !i.parentoa ? true : {operationId: i.operationId, nomopa: i.parentoa},
@@ -402,7 +397,7 @@ export const ADD_PA_FORM = [ {
     placeholder: "Selectionner une emprise",
     type: "combo"
 }, {
-    label: "Nom",
+    label: "tabou2.add.name",
     apiField: "",
     name: "nom",
     placeholder: "Saisir un nom",
@@ -410,7 +405,7 @@ export const ADD_PA_FORM = [ {
     required: true,
     type: "text"
 }, {
-    label: "Code",
+    label: "tabou2.add.code",
     apiField: "",
     name: "code",
     placeholder: "Saisir un code",
@@ -418,7 +413,7 @@ export const ADD_PA_FORM = [ {
     required: true,
     type: "text"
 }, {
-    label: "Etape",
+    label: "tabou2.add.step",
     apiField: "code",
     apiLabel: "libelle",
     api: "operations/etapes",
