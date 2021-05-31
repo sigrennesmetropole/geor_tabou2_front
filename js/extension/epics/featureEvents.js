@@ -3,6 +3,7 @@ import { get, keys, find } from 'lodash';
 import { loadEvents, loadTiers, SELECT_FEATURE, ADD_FEATURE_EVENT, DELETE_FEATURE_EVENT, CHANGE_FEATURE_EVENT, ADD_FEATURE_TIER,
     ASSOCIATE_TIER, DELETE_FEATURE_TIER, CHANGE_FEATURE_TIER, INACTIVATE_TIER, loadFicheInfos, loading, MAP_TIERS, mapTiers
  } from '@ext/actions/tabou2';
+import {getMessageById} from "@mapstore/utils/LocaleUtils";
 
 import {
     getFeatureEvents,
@@ -91,6 +92,8 @@ export function getSelectionInfos(action$, store) {
     return action$.ofType(SELECT_FEATURE)
         .filter((action) => isTabou2Activate(store.getState()) && get(action?.selectedFeature?.feature, "properties.id_tabou"))
         .switchMap((action) => {
+            let messages = store.getState()?.locale.messages;
+
             // get infos from layer's feature directly
             const idTabou = get(action.selectedFeature.feature, "properties.id_tabou");
             let tiers = [];
@@ -129,13 +132,18 @@ export function getSelectionInfos(action$, store) {
             } else {
                 secondObservable$ = Rx.Observable.defer(() => getOperation(searchItem.operationId))
                     .catch(e => {
-                        console.log("Error retrieving on PA Agapeo request");
+                        console.log("Error retrieving get operation request");
                         console.log(e);
-                        return Rx.Observable.of({elements: []});
+                        return Rx.Observable.of({data: []});
                     })
                     .switchMap( operation => {
                         // GET programme's permis
                         return Rx.Observable.defer(() => getProgrammeAgapeo(searchItem?.id))
+                            .catch(e => {
+                                console.log("Error on get Agapeo data request");
+                                console.log(e);
+                                return Rx.Observable.of({elements: []});
+                            })
                             .switchMap( agapeo => {
                                 return Rx.Observable.defer(() => getProgrammePermis(searchItem?.id))
                                 .catch(e => {
@@ -150,7 +158,7 @@ export function getSelectionInfos(action$, store) {
                                         programme: searchItem,
                                         permis: permis.data,
                                         tiers: tiers,
-                                        operation: operation.data,
+                                        operation: operation?.data,
                                         mapFeature: mapFeature
                                     };
                                     return Rx.Observable.of(loadFicheInfos(infos))
@@ -174,6 +182,11 @@ export function getSelectionInfos(action$, store) {
                 .concat(Rx.Observable.of(mapTiers()))
                 .concat(
                     Rx.Observable.defer(() => resetFeatureBylayer[layerCfg](idTabou))
+                    .catch(e => {
+                        console.log("Error on get selected tabou infos");
+                        console.log(e);
+                        return Rx.Observable.of({data: []});
+                    })
                     // GET OA, PA or SA clicked Feature
                     .switchMap((response) => {
                         searchItem = response.data;
@@ -187,8 +200,8 @@ export function getSelectionInfos(action$, store) {
                         () => {
                             return Rx.Observable.of(
                                 error({
-                                    title: "Erreur API",
-                                    message: "Echec de la récupération des informations"
+                                    title: getMessageById(messages, "tabou2.infos.failApi"),
+                                    message: getMessageById(messages, "tabou2.infos.failIdentify")
                                 }),
                                 loading(false, "identify")
                             );

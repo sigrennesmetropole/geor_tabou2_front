@@ -6,8 +6,8 @@ import { currentTabouFilters, getLayerFilterObj, isTabou2Activate, getPluginCfg 
 import { changeLayerParams, changeLayerProperties } from "@mapstore/actions/layers";
 import { wrapStartStop } from "@mapstore/observables/epics";
 import { error } from "@mapstore/actions/notifications";
+import {getMessageById} from "@mapstore/utils/LocaleUtils";
 import { getNewFilter } from "@ext/utils/search";
-
 import { getIdsFromSearch } from "@ext/api/search";
 
 /**
@@ -68,16 +68,24 @@ export function tabouResetFilter(action$, store) {
     return action$.ofType(SEARCH_IDS)
     .filter(() => isTabou2Activate(store.getState()))
     .switchMap((action) => {
+        let messages = store.getState()?.locale.messages;
         let observable$ = Rx.Observable.empty();
-
         observable$ = Rx.Observable.from((action.params)).mergeMap( filter => {
             return Rx.Observable.defer(() => getIdsFromSearch(filter.params, getPluginCfg(store.getState()).geoserverURL))
+            .catch(e => {
+                console.log("Error retrieving ids from filter");
+                console.log(e);
+                return Rx.Observable.of({totalFeatures: 0, features: [], fail: true});
+            })
             .switchMap(response => {
+                if (response?.fail) {
+                    return Rx.Observable.empty();
+                }
                 let filters = getLayerFilterObj(store.getState());
                 let layer = filter.layer;
                 let ids = [0];
                 let idsCql = "";
-                if (response.totalFeatures) {
+                if (response?.totalFeatures) {
                     ids = response.features.map(feature => feature.properties.objectid || '');
                     ids = ids.filter(id => id);
                     let correctIds = filter.idType === 'string' ? ids.map(i => `'${i}'`) : (ids.length ? ids : [0]);
@@ -118,8 +126,8 @@ export function tabouResetFilter(action$, store) {
                 () => {
                     return Rx.Observable.of(
                         error({
-                            title: "Error",
-                            message: "Echec de la création du filtre"
+                            title: getMessageById(messages, "tabou2.infos.error"),
+                            message: getMessageById(messages, "tabou2.infos.failFilter")
                         }),
                         loading(false, "search")
                     );

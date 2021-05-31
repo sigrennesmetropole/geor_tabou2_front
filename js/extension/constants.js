@@ -57,18 +57,18 @@ export const TIERS_SCHEMA = {
 
 export const SEARCH_ITEMS = [{
     name: 'communes',
-    placeholder: 'Toutes communes',
+    placeholder: 'tabou2.search.allCity',
     group: 1
 }, {
     name: 'quartiers',
-    placeholder: 'Tous quartiers',
+    placeholder: 'tabou2.search.allDistrict',
     group: 1,
     parent: 'communes',
     cascadeField: 'codeInsee',
     parentField: 'codeInsee'
 }, {
     name: 'iris',
-    placeholder: 'Tous iris',
+    placeholder: 'tabou2.search.allIris',
     group: 1,
     parent: 'communes',
     cascadeField: 'ccom',
@@ -76,43 +76,43 @@ export const SEARCH_ITEMS = [{
 }, {
     name: 'plui',
     disabled: false,
-    placeholder: 'Tous zonage PLUI',
+    placeholder: 'tabou2.search.allPlui',
     type: 'string',
     group: 1
 }, {
     name: 'types-financements',
+    placeholder: 'tabou2.search.allFinancement',
     disabled: false,
-    placeholder: 'Tous Financement',
     group: 4
 }, {
     name: "natures",
-    placeholder: "Toutes natures",
+    placeholder: 'tabou2.search.allNatures',
     type: 'string',
     group: 3
 }, {
     name: "secteurs-sam",
-    placeholder: 'Tous secteurs SAM',
+    placeholder: 'tabou2.search.allSAM',
     type: 'string',
     group: 2
 }, {
     name: "secteurs-speu",
-    placeholder: 'Tous secteurs SPEU',
+    placeholder: 'tabou2.search.allSPEU',
     type: 'string',
     group: 2
 }, {
     name: "secteurs-sds",
-    placeholder: 'Tous secteurs SDS',
+    placeholder: 'tabou2.search.allSDS',
     api: "secteurs-dds",
     type: 'string',
     group: 2
 }, {
     name: "secteurs-foncier",
-    placeholder: "Tous secteurs Foncier",
+    placeholder: 'tabou2.search.allFoncier',
     type: 'string',
     group: 2
 }, {
     name: "etapesoa",
-    placeholder: "Toutes Etapes OA",
+    placeholder: 'tabou2.search.allEtapesOA',
     api: "operations/etapes",
     type: 'string',
     disabled: false,
@@ -120,7 +120,7 @@ export const SEARCH_ITEMS = [{
 }, {
     name: "etapespa",
     api: "programmes/etapes",
-    placeholder: "Toutes Etapes PA",
+    placeholder: 'tabou2.search.allEtapesPA',
     disabled: false,
     type: 'string',
     group: 4
@@ -130,10 +130,10 @@ export const SEARCH_CALENDARS = [{
     items: [{
         name: "doc",
         isStart: true,
-        label: "Date DOC du :"
+        label: "tabou2.search.dateDocFrom"
     },
     {
-        label: "A la date du :",
+        label: "tabou2.search.dateTo",
         isStart: false,
         name: "doc",
     }]
@@ -141,35 +141,35 @@ export const SEARCH_CALENDARS = [{
     items: [{
         name: "daact",
         isStart: true,
-        label: "Date DAACT du :"
+        label: "tabou2.search.dateDaactFrom"
     },
     {
         name: "daact",
         isStart: false,
-        label: "A la date du :"
+        label: "tabou2.search.dateTo"
     }]
 }, {
     items: [{
         name: "livraison",
         isStart: true,
-        label: "Date de livraison du :"
+        label: "tabou2.search.dateLivFrom"
     },
     {
         name: "livraison",
         isStart: false,
-        label: "A la date du :"
+        label: "tabou2.search.dateTo"
     }]
 }];
 
 export const ACCORDIONS = [
-    {title: 'Identification', id: 'ident'},
-    {title: 'Descriptif', id: 'describe'},
-    {title: 'Gouvernance', id: 'gouvernance'},
-    {title: 'Suivi Opérationnel', id: 'suivi'},
-    {title: 'Programmation Habitat', id: 'habitat'},
-    {title: 'Programmation Activités', id: 'activite', layers: ['layerOA', 'layerSA']},
-    {title: 'Instruction Droit des Sols', id: 'dds', layers: ['layerPA']},
-    {title: 'Secteurs et programmes liés', id: 'secteursprog', layers: ['layerOA', 'layerSA']}
+    {title: 'tabou2.identify.accordions.identify', id: 'ident'},
+    {title: 'tabou2.identify.accordions.describe', id: 'describe'},
+    {title: 'tabou2.identify.accordions.gouv', id: 'gouvernance'},
+    {title: 'tabou2.identify.accordions.opTracking', id: 'suivi'},
+    {title: 'tabou2.identify.accordions.progHabitat', id: 'habitat'},
+    {title: 'tabou2.identify.accordions.progActivity', id: 'activite', layers: ['layerOA', 'layerSA']},
+    {title: 'tabou2.identify.accordions.dds', id: 'dds', layers: ['layerPA']},
+    {title: 'tabou2.identify.accordions.secProg', id: 'secteursprog', layers: ['layerOA', 'layerSA']}
 ];
 
 export const LAYER_FIELD_OPTION = [

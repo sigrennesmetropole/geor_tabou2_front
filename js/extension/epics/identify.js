@@ -1,7 +1,7 @@
 import * as Rx from 'rxjs';
 import { CONTROL_NAME, URL_ADD } from '../constants';
 
-import { get, pickBy, find } from 'lodash';
+import { get, pickBy, find, isEmpty } from 'lodash';
 
 import { generalInfoFormatSelector } from '@mapstore/selectors/mapInfo';
 import { updateUserPlugin } from '@mapstore/actions/context';
@@ -106,30 +106,42 @@ export function printProgramme(action$, store) {
         .filter(() => isTabou2Activate(store.getState()))
         .switchMap((action) => {
             return Rx.Observable.defer(() => getPDFProgramme("programme", action.id))
+            .catch(e => {
+                console.log("Error on get PDF request");
+                console.log(e);
+                return Rx.Observable.of({data: []});
+            })
             .switchMap( response => {
-                const blob = new Blob([response.data], { type: response.data.type || 'application/pdf' });
-                const url = window.URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.href = url;
-                const contentDisposition = response.headers['content-disposition'];
-                let name = `fiche-suivi-${action.id}`;
-                if (contentDisposition) {
-                    const fileNameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
-                    if (fileNameMatch.length > 2 && fileNameMatch[1]) {
-                        name = fileNameMatch[1];
+                if (!isEmpty(response.data)) {
+                    const blob = new Blob([response.data], { type: response.data.type || 'application/pdf' });
+                    const url = window.URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    const contentDisposition = response.headers['content-disposition'];
+                    let name = `fiche-suivi-${action.id}`;
+                    if (contentDisposition) {
+                        const fileNameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+                        if (fileNameMatch.length > 2 && fileNameMatch[1]) {
+                            name = fileNameMatch[1];
+                        }
                     }
+                    link.setAttribute('download', name);
+                    document.body.appendChild(link);
+                    link.click();
+                    link.remove();
+                    window.URL.revokeObjectURL(url);
                 }
-                link.setAttribute('download', name);
-                document.body.appendChild(link);
-                link.click();
-                link.remove();
-                window.URL.revokeObjectURL(url);
                 return Rx.Observable.empty();
             });
     });
 }
 
-
+/**
+ * Epic to create PA, OA, SA Feature. This action will create new Tabou feature from selected geom.
+ * @param {any} action$ 
+ * @param {any} store 
+ * @returns empty
+ */
 export function createChangeFeature (action$, store) {
     return action$.ofType(CHANGE_FEATURE, CREATE_FEATURE)
     .switchMap( action => {

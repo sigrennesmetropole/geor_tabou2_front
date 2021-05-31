@@ -61,26 +61,19 @@ export function getTiers(state) {
     return state?.tabou2?.tiers;
 }
 
+/**
+ * Get security infos.
+ * @param {any} state 
+ * @returns 
+ */
 export function getAuthInfos(state) {
-    let roleTest = [
-        {enabled: true, groupName: "MAPSTORE_ADMIN", id: 2},
-        {enabled: true, groupName: "EL_APPLIS_TABOU_CONTRIB", id: 5},
-        {enabled: true, groupName: "EL_PREST", id: 1},
-        {enabled: true, groupName: "USER", id: 3},
-        {enabled: true, groupName: "EL_APPLIS_TABOU_REFERENT", id: 4},
-        {enabled: true, groupName: "EL_APPLIS_TABOU_CONSULT", id: 6},
-        {enabled: true, groupName: "everyone", id: 7}
-    ];
-    /**
-     * TODO : REMOVE roleTest !!!!!
-     */
-    const groups = userGroupSecuritySelector(state) ?? []; //roleTest;
+    const groups = userGroupSecuritySelector(state) ?? [];
     const groupNames = groups.map(({ groupName }) => `${groupName}`);
     return {
         isAdmin: groupNames.includes("MAPSTORE_ADMIN"),
-        isReferent: groupNames.includes("EL_APPLIS_TABOU_REFERENT"),
-        isContrib: groupNames.includes("EL_APPLIS_TABOU_CONTRIB"),
-        isConsult: groupNames.includes("EL_APPLIS_TABOU_CONSULT")
+        isReferent: true,
+        isContrib: false,
+        isConsult: false
     }
 }
 
