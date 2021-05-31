@@ -12,24 +12,23 @@ export default function Tabou2IdentifyToolbar({ response, isValid, ...props }) {
     const [isOpenTiers, setIsOpenTiers] = useState(false);
     const [isOpenDocs, setIsOpenDocs] = useState(false);
     const [isOpenLogs, setIsOpenLogs] = useState(false);
-
     // toolbar buttons
     let modalBtns = [
         {
             glyph: "user",
-            tooltip: "Tiers",
+            tooltip: props.i18n(props.messages, "tabou2.identify.toolbar.tiers"),
             id: "tiers",
             onClick: () => setIsOpenTiers(true)
         },
         {
             glyph: "file",
-            tooltip: "Documents",
+            tooltip: props.i18n(props.messages, "tabou2.identify.toolbar.docs"),
             id: "docs",
             onClick: () => setIsOpenDocs(true)
         },
         {
             glyph: "list-alt",
-            tooltip: "Journal de bord",
+            tooltip: props.i18n(props.messages, "tabou2.identify.toolbar.logs"),
             id: "logs",
             onClick: () => setIsOpenLogs(true)
         },
@@ -44,7 +43,7 @@ export default function Tabou2IdentifyToolbar({ response, isValid, ...props }) {
             style: {
                 marginLeft: "15px"
             },
-            tooltip: "Impression du suivi",
+            tooltip: props.i18n(props.messages, "tabou2.identify.toolbar.print"),
             id: "print",
             onClick: () => props.printProgInfos(idTabou)
         });
@@ -53,7 +52,7 @@ export default function Tabou2IdentifyToolbar({ response, isValid, ...props }) {
     if (props.authent.isContrib ||  props.authent.isReferent) {
         modalBtns = [...modalBtns, {
             glyph: "ok",
-            tooltip: isValid ? "Enregistrer" : "Saisie incomplète !",
+            tooltip: isValid ? props.i18n(props.messages, "tabou2.identify.toolbar.save") : props.i18n(props.messages, "tabou2.identify.toolbar.notValid"),
             id: "valid",
             disabled: !isValid,
             style: {
@@ -62,7 +61,7 @@ export default function Tabou2IdentifyToolbar({ response, isValid, ...props }) {
             onClick: () => props.save()
         }, {
             glyph: "remove",
-            tooltip: "Annuler",
+            tooltip: props.i18n(props.messages, "tabou2.identify.toolbar.cancel"),
             id: "cancel",
             onClick: () => props.restore()
         }];

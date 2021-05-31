@@ -1,9 +1,9 @@
 import React, {useEffect, useState } from "react";
 import { isEmpty, isEqual, pick, get } from "lodash";
-import { Checkbox, Col, Row, FormControl, Grid, ControlLabel } from "react-bootstrap";
+import { Col, Row, FormControl, Grid, ControlLabel } from "react-bootstrap";
 import { Multiselect } from "react-widgets";
 import "@ext/css/identify.css";
-
+import Message from "@mapstore/components/I18N/Message";
 /**
  * Accordion to display info for Identity panel section - only for feature linked with id tabou
  * @param {any} param
@@ -20,13 +20,13 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
     const getFields = () => [{
         name: "id",
         type: "text",
-        label: "ID Tabou",
+        label: "tabou2.identify.accordions.idTabou",
         field: "id",
         source: initialItem,
         readOnly: true
     }, {
         name: "code",
-        label: "Code",
+        label: "tabou2.identify.accordions.code",
         type: "text",
         field: "code",
         source: values,
@@ -35,13 +35,13 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
     }, {
         name: "commune",
         field: "properties.commune",
-        label: "Commune",
+        label: "tabou2.identify.accordions.city",
         type: "multi",
         source: mapFeature,
         readOnly: true
     }, {
         name: "nature",
-        label: "Nature",
+        label: "tabou2.identify.accordions.nature",
         field: "nature.libelle",
         type: "text",
         source: operation,
@@ -50,21 +50,21 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
     }, {
         name: "operation",
         field: "nom",
-        label: "Opération",
+        label: "tabou2.identify.accordions.operation",
         type: "text",
         source: operation,
         readOnly: true
     }, {
         name: "nom",
         field: "nom",
-        label: "Nom",
+        label: "tabou2.identify.accordions.name",
         type: "text",
         source: values,
         readOnly: false,
         require: true
     }, {
         name: "numAds",
-        label: "Num ADS",
+        label: "tabou2.identify.accordions.numAds",
         field: "numAds",
         type: "text",
         source: values,
@@ -106,27 +106,13 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
                 fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(item => (
                     <Row className="attributeInfos">
                         <Col xs={4}>
-                        {
-                            item.type !== "boolean" ? <ControlLabel>{item.label}</ControlLabel> :  null
-                        }
-
-                        {
-                            item.type === "boolean" ?
-                                (<Checkbox 
-                                    inline="true"
-                                    checked={item.value(item) || false}
-                                    disabled={item.readOnly || !allowChange}
-                                    id={`chbox-${item.name}`}
-                                    className="col-xs-5">
-                                    <ControlLabel>{item.label}</ControlLabel>
-                                </Checkbox>) : null
-                        }
+                            <ControlLabel><Message msgId={item.label}/></ControlLabel>
                         </Col>
                         <Col xs={8}>
                         {
                             item.type === "text" ?
-                                (<FormControl 
-                                    placeholder={item.label}
+                                (<FormControl
+                                    placeholder={props.i18n(props.messages, item?.label || "")}
                                     value={getValue(item) || ""}
                                     readOnly={item.readOnly || !allowChange}
                                     onChange={(v) => changeInfos({[item.name]: v.target.value})}
@@ -135,11 +121,12 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
                             item.type === "multi" ? (
                                 <Multiselect
                                     style={{color:"black !important"}}
+                                    placeholder={props.i18n(props.messages, item?.label || "")}
                                     value={getValue(item).split(";") || []}
                                     readOnly={item.readOnly || !allowChange}
                                     messages={{
-                                        emptyList: item.readOnly ? "Aucune modification possible" : "Liste vide",
-                                        openCombobox: 'Ouvrir la liste'
+                                        emptyList: item.readOnly ? "tabou2.identify.accordions.notAvailable" : "tabou2.emptyList",
+                                        openCombobox: "tabou2.displayList"
                                     }}
                                     className={ item.readOnly ? "tagColor noClick" : "tagColor"}
                                 />

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { isEmpty, isEqual, pick, has, get } from "lodash";
 import { Checkbox, Col, Row, FormControl, Grid, ControlLabel } from "react-bootstrap";
 import "@ext/css/identify.css";
-
+import Message from "@mapstore/components/I18N/Message";
 /**
  * Accordion to display info for this specific panel section - only for feature linked with id tabou
  * @param {any} param
@@ -17,16 +17,15 @@ export default function Tabou2ProgActiviteAccord({ initialItem, programme, opera
     const getFields = () => [{
         // OPERATION
         name: "ql3",
-        label: "Territoire",
+        label: "tabou2.identify.accordions.ql3",
         field: "ql3",
         layers:["layerOA","layerSA"],
         type: "text",
-        placeholder: "Territoire...",
         source: values?.ql3 ? values : operation,
         readOnly: false
     }, {
         name: "ql2",
-        label: "SCoT",
+        label: "tabou2.identify.accordions.scot",
         field: "ql2",
         type: "checkbox",
         layers:["layerOA","layerSA"],
@@ -69,7 +68,7 @@ export default function Tabou2ProgActiviteAccord({ initialItem, programme, opera
                     <Row className="attributeInfos">
                         <Col xs={4}>
                         {
-                            item.type !== "checkbox" ? <ControlLabel>{item.label}</ControlLabel> :  null
+                            item.type !== "checkbox" ? <ControlLabel><Message msgId={item.label}/></ControlLabel> :  null
                         }
                         {
                             item.type === "checkbox" ?
@@ -81,7 +80,7 @@ export default function Tabou2ProgActiviteAccord({ initialItem, programme, opera
                                     id={`chbox-${item.name}`}
                                     onChange={() => changeInfos({[item.name]: !getValue(item)})}
                                     className="col-xs-12">
-                                    <ControlLabel>{item.label}</ControlLabel>
+                                    <ControlLabel><Message msgId={item.label}/></ControlLabel>
                                 </Checkbox>) : null
                         }
                         </Col>
@@ -89,7 +88,7 @@ export default function Tabou2ProgActiviteAccord({ initialItem, programme, opera
                         {
                             item.type === "text" ?
                                 (<FormControl 
-                                    placeholder={item.label}
+                                    placeholder={props.i18n(props.messages, item?.label || "")}
                                     value={getValue(item) || ""}
                                     readOnly={item.readOnly || !allowChange}
                                     onChange={(v) => changeInfos({[item.name]: v.target.value})}

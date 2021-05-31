@@ -1,11 +1,11 @@
 import React, {useEffect, useState } from "react";
 import { isEmpty, isEqual, pick, get } from "lodash";
-import { Checkbox, Col, Row, FormControl, Grid, ControlLabel } from "react-bootstrap";
+import { Checkbox, Col, Row, Grid, ControlLabel } from "react-bootstrap";
 import Tabou2Combo from '@ext/components/form/Tabou2Combo';
 import { getRequestApi } from "@ext/api/search";
 import { Multiselect } from "react-widgets";
 import "@ext/css/identify.css";
-
+import Message from "@mapstore/components/I18N/Message";
 /**
  * Accordion to display info for Gouvernance panel section - only for feature linked with id tabou
  * @param {any} param
@@ -19,54 +19,51 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
     const [required, setRequired] = useState({});
     const getFields = () => [{
         name: "promoteur",
-        label: "Promoteur",
+        label: "tabou2.identify.accordions.promoteur",
         type: "multi",
         data: props.tiers.filter(t => t.libelle === "Maître d'ouvrage").map(t => t.nom),
         readOnly: true
     }, {
         name: "decision",
-        label: "Décision",
+        label: "tabou2.identify.accordions.decision",
         field: "decision.libelle",
         layers:["layerSA", "layerOA"],
         type: "combo",
         apiLabel: "libelle",
         api: "decisions",
-        placeholder: "Décisions...",
         source: operation,
         readOnly: false
     }, {
         name: "maitriseOuvrage",
-        label: "Maîtrise d'ouvrage",
+        label: "tabou2.identify.accordions.moa",
         field: "maitriseOuvrage.libelle",
         layers:["layerSA", "layerOA"],
         type: "combo",
         apiLabel: "libelle",
         api: "maitrise-ouvrage",
-        placeholder: "Maîtrise d'ouvrage...",
         source: operation,
         readOnly: false
     }, {
         layers:["layerSA", "layerOA"],
         name: "modeAmenagement",
-        label: "Mode d'aménagement",
+        label: "tabou2.identify.accordions.modeAmenagement",
         field: "modeAmenagement.libelle",
         type: "combo",
         apiLabel: "libelle",
         api: "mode-amenagement",
-        placeholder: "Mode d'aménagement...",
         source: initialItem,
         readOnly: false
     }, {
         name: "amenageur",
         field: "nom",
-        label: "Aménageurs",
+        label: "tabou2.identify.accordions.amenageur",
         layers:["layerSA", "layerOA"],
         type: "multi",
         data: props.tiers.filter(t => t.libelle === "Maître d'ouvrage").map(t => t.nom),
         readOnly: true
     },{
         name: "moe",
-        label: "Maîtrise d'oeuvre",
+        label:"tabou2.identify.accordions.moe",
         type: "multi",
         data: props.tiers.filter(t => t.libelle === "Maître d'oeuvre").map(t => t.nom),
         readOnly: true
@@ -109,7 +106,7 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
                     <Row className="attributeInfos">
                         <Col xs={4}>
                         {
-                            item.type !== "boolean" ? <ControlLabel>{item.label}</ControlLabel> :  null
+                            item.type !== "boolean" ? <ControlLabel><Message msgId={item.label}/></ControlLabel> :  null
                         }
                         {
                             item.type === "boolean" ?
@@ -119,24 +116,16 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
                                     disabled={item.readOnly || !allowChange}
                                     id={`chbox-${item.name}`}
                                     className="col-xs-5">
-                                    <ControlLabel>{item.label}</ControlLabel>
+                                    <ControlLabel><Message msgId={item.label}/></ControlLabel>
                                 </Checkbox>) : null
                         }
                         </Col>
                         <Col xs={8}>
                         {
-                            item.type === "text" ?
-                                (<FormControl 
-                                    placeholder={item.label}
-                                    value={getValue(item) || ""}
-                                    readOnly={item.readOnly || !allowChange}
-                                    onChange={(v) => changeInfos({[item.name]: v.target.value})}
-                                />) : null
-                        }{
                             item.type === "combo" ? (
                                 <Tabou2Combo
                                     load={() => getRequestApi(item.api, props.pluginCfg.apiCfg, {})}
-                                    placeholder={item?.placeholder || ""}
+                                    placeholder={props.i18n(props.messages, item?.label || "")}
                                     filter="contains"
                                     textField={item.apiLabel}
                                     disabled={item?.readOnly || !allowChange}
@@ -146,14 +135,15 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
                                     onSelect={(v) => changeInfos({[item.name]: v})}
                                     onChange={(v) => !v ? changeInfos({[item.name]: v}) : null}
                                     messages={{
-                                        emptyList: 'La liste est vide.',
-                                        openCombobox: 'Ouvrir la liste'
+                                        emptyList: props.i18n(props.messages, "tabou2.emptyList"),
+                                        openCombobox: props.i18n(props.messages, "tabou2.displayList")
                                     }}
                                 />
                             ) : null
                         }{
                             item.type === "multi" ? (
                                 <Multiselect
+                                    placeholder={props.i18n(props.messages, item?.label || "")}
                                     readOnly={item.readOnly || !allowChange}
                                     value={item.data}
                                     className={ item.readOnly ? "tagColor noClick" : "tagColor"}

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Combobox } from 'react-widgets';
 import { uniqBy, get } from 'lodash';
 
-
 /**
  * Extend combobox to create async combo connected to API service.
  * State is managed according to input or default value.
@@ -68,6 +67,7 @@ function Tabou2Combo({
         value={text}
         textField={textField}
         valueField={valueField}
+        className="toto"
         style={style}
         data={data}
         defaultValue={props.defaultValue}

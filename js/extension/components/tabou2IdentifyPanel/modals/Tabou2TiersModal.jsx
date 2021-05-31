@@ -9,6 +9,8 @@ import Tabou2TiersForm from '@ext/components/form/Tabou2TiersForm';
 import { TIERS_SCHEMA, REQUIRED_TIER } from '@ext/constants';
 import { getRequestApi } from "@ext/api/search";
 import "@ext/css/identify.css";
+import Message from "@mapstore/components/I18N/Message";
+import {getMessageById} from "@mapstore/utils/LocaleUtils";
 /**
  * Tier modal
  * TODO : NEED API FIX TO BE TESTED AND FINISH !!
@@ -135,14 +137,14 @@ export default function Tabou2TiersModal({
         bsStyle: 'primary',
         glyph: "1-user-add",
         disabled: editionActivate.current,
-        tooltip: "Associer un tier",
+        tooltip: getMessageById(props.messages, "tabou2.tiersModal.associateTier"),
         onClick: () => insertNewTier({id: 0, associate: true, edit: true})
     }, {
         text: "",
         bsSize: "lg",
         bsStyle: 'primary',
         glyph: "pencil-add",
-        tooltip: "Créer un tier",
+        tooltip: getMessageById(props.messages, "tabou2.tiersModal.createTier"),
         disabled: editionActivate.current,
         style: {
             color: "white",
@@ -156,11 +158,11 @@ export default function Tabou2TiersModal({
     // return modal title
     const getTitle = () => {
         if (displayForm && tiers.filter(t => t.new).length) {
-            return "Annuaire des tiers - Création d'un nouveau tier";
+            return (<Message msgId="tabou2.tiersModal.titleCreate"/>);
         } else if (displayForm){
-            return "Annuaire des tiers - Modification d'un tier"
+            return (<Message msgId="tabou2.tiersModal.titleChange"/>)
         }
-        return "Annuaire des tiers";
+        return (<Message msgId="tabou2.tiersModal.title"/>);
     }
     return (
         <ResizableModal
@@ -181,7 +183,7 @@ export default function Tabou2TiersModal({
                                         onChange={(e) => {
                                             setFilterText(e.target.value);
                                         }}
-                                        placeholder="Recherche un nom..." />
+                                        placeholder={getMessageById(props.messages, "tabou2.tiersModal.searchName")} />
                                 </Col>
                             </Row>
                         ) : null
@@ -194,11 +196,11 @@ export default function Tabou2TiersModal({
                                     <Table>
                                         <thead>
                                             <tr>
-                                                <th className="col-xs-1">Actif</th>
-                                                <th className="col-xs-1">Privé</th>
-                                                <th className="col-xs-3">Type</th>
-                                                <th className="col-xs-3">Nom</th>
-                                                {!readOnly ? (<th>Actions</th>) : null}
+                                                <th className="col-xs-1"><Message msgId="tabou2.tiersModal.actif"/></th>
+                                                <th className="col-xs-1"><Message msgId="tabou2.tiersModal.private"/></th>
+                                                <th className="col-xs-3"><Message msgId="tabou2.tiersModal.type"/></th>
+                                                <th className="col-xs-3"><Message msgId="tabou2.tiersModal.name"/></th>
+                                                {!readOnly ? (<th><Message msgId="tabou2.tiersModal.actions"/></th>) : null}
                                             </tr>
                                         </thead>
                                         <tbody style={{overflow: "auto"}}>
@@ -233,7 +235,7 @@ export default function Tabou2TiersModal({
                                                                     <Tabou2Combo
                                                                         load={() => getRequestApi("types-tiers?asc=true", props.pluginCfg.apiCfg, {})}
                                                                         defaultValue={tier.libelle}
-                                                                        placeholder={"Sélectionner un type..."}
+                                                                        placeholder={getMessageById(props.messages, "tabou2.tiersModal.typePlaceholder")}
                                                                         textField={"libelle"}
                                                                         value={associateTier?.type?.libelle}
                                                                         onLoad={(r) => r?.elements || r}
@@ -249,8 +251,8 @@ export default function Tabou2TiersModal({
                                                                             }
                                                                         }
                                                                         messages={{
-                                                                            emptyList: 'Aucun type disponible',
-                                                                            openCombobox: 'Afficher les types'
+                                                                            emptyList: getMessageById(props.messages, "tabou2.emptyList"),
+                                                                            openCombobox: getMessageById(props.messages, "tabou2.displaylist")
                                                                         }}
                                                                     />
                                                                 ): tier.libelle}
@@ -263,7 +265,7 @@ export default function Tabou2TiersModal({
                                                                             <Tabou2Combo
                                                                                 load={() => getRequestApi("tiers", props.pluginCfg.apiCfg, {})}
                                                                                 valueField={"id"}
-                                                                                placeholder={"Sélectionner un tier..."}
+                                                                                placeholder={getMessageById(props.messages, "tabou2.tiersModal.tierPlaceholder")}
                                                                                 textField={"nom"}
                                                                                 value={associateTier?.tier?.nom}
                                                                                 onLoad={(r) => (r?.elements || r).filter(t => !t.dateInactif && !props.tiers.map(t => t.id).includes(t.id))}
@@ -271,8 +273,8 @@ export default function Tabou2TiersModal({
                                                                                 onSelect={(t) =>  setAssociateTier({...associateTier, tier: t})}
                                                                                 onChange={(t) => !t ? setAssociateTier(omit(associateTier,["tier"])) : null}
                                                                                 messages={{
-                                                                                    emptyList: 'Aucun tier à ajouter.',
-                                                                                    openCombobox: 'Ouvrir la liste'
+                                                                                    emptyList: getMessageById(props.messages, "tabou2.emptyList"),
+                                                                                    openCombobox: getMessageById(props.messages, "tabou2.displaylist")
                                                                                 }}
                                                                             />
         
@@ -280,7 +282,9 @@ export default function Tabou2TiersModal({
                                                                 }
                                                             </td>
                                                             <td>
-                                                                <Tabou2TiersActions 
+                                                                <Tabou2TiersActions
+                                                                    messages={props.messages}
+                                                                    i18n={props.i18n}
                                                                     tier={tier}
                                                                     tiers={tiers}
                                                                     visible={opened > -1 ? opened === tier.id : true}
@@ -308,6 +312,8 @@ export default function Tabou2TiersModal({
                             {
                                 displayForm ? (
                                     <Tabou2TiersForm
+                                        i18n={props.i18n}
+                                        messages={props.messages}
                                         pluginCfg={props.pluginCfg.apiCfg}
                                         tier={tiers.filter(t => t.id === opened)[0] || {}}
                                         opened={tiers.filter(t => t.id === opened)[0]?.id}

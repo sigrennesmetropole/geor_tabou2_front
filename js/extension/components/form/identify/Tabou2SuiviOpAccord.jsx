@@ -6,6 +6,7 @@ import { getRequestApi } from "@ext/api/search";
 import { Multiselect, DateTimePicker } from "react-widgets";
 import utcDateWrapper from '@mapstore/components/misc/enhancers/utcDateWrapper';
 import "@ext/css/identify.css";
+import Message from "@mapstore/components/I18N/Message";
 
 const UTCDateTimePicker = utcDateWrapper({
     dateProp: "value",
@@ -22,46 +23,41 @@ export default function Tabou2SuiviOpAccord({ initialItem, programme, operation,
     // get fields for this section
     const getFields = () => [{
         name: "etape",
-        label: "Etape",
+        label: "tabou2.identify.accordions.step",
         field: "etape.libelle",
         type: "combo",
         apiLabel: "libelle",
         api: `${layer === "layerPA" ? "programmes":"operations"}/${initialItem.id}/etapes`,
-        placeholder: "Maîtrise d'ouvrage...",
         source: values?.etape ? values : initialItem,
         readOnly: false
     }, {
         name: "livraisonDate",
-        label: "Date de livraison",
+        label: "tabou2.identify.accordions.dateLiv",
         field: "livraisonDate",
         layers:["layerPA"],
         type: "date",
-        placeholder: "Date de livraison...",
         source: values?.livraisonDate ? values : operation,
         readOnly: false
     }, {
         name: "autorisationDate",
-        label: "Date d'autorisation",
+        label: "tabou2.identify.accordions.dateAuth",
         layers:["layerSA", "layerOA"],
         type: "date",
-        placeholder: "Date d'autorisation...",
         source: values?.autorisationDate ? values : operation,
         readOnly: false
     }, {
         name: "operationnelDate",
-        label: "Date de démarrage",
+        label: "tabou2.identify.accordions.dateStart",
         field: "operationnelDate",
         layers:["layerSA", "layerOA"],
         type: "date",
-        placeholder: "Date de démarrage...",
         source: values?.operationnelDate ? values : operation,
         readOnly: false
     }, {
         name: "clotureDate",
-        label: "Date de clôture",
+        label: "tabou2.identify.accordions.dateClose",
         field: "clotureDate",
         type: "date",
-        placeholder: "Date de clôture...",
         source: values?.clotureDate ? values : operation,
         readOnly: false
     }].filter(el => el?.layers?.includes(layer) || !el?.layers);
@@ -76,14 +72,6 @@ export default function Tabou2SuiviOpAccord({ initialItem, programme, operation,
             setRequired(mandatoryFields);
         }
     }, [initialItem]);
-
-    // get value for item
-    const getValue = (item) => {
-        if (isEmpty(values) || isEmpty(operation)) return null;
-        let itemSrc = getFields().filter(f => f.name === item.name)[0]?.source;
-        console.log(itemSrc);
-        return get(itemSrc, item?.field);
-    }
 
     // manage change infos
     const changeInfos = (item) => {
@@ -101,36 +89,15 @@ export default function Tabou2SuiviOpAccord({ initialItem, programme, operation,
                 fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(item => (
                     <Row className="attributeInfos">
                         <Col xs={4}>
-                        {
-                            item.type !== "boolean" ? <ControlLabel>{item.label}</ControlLabel> :  null
-                        }
-                        {
-                            item.type === "boolean" ?
-                                (<Checkbox 
-                                    inline="true"
-                                    checked={item.value(item) || false}
-                                    disabled={item.readOnly || !allowChange}
-                                    id={`chbox-${item.name}`}
-                                    className="col-xs-5">
-                                    <ControlLabel>{item.label}</ControlLabel>
-                                </Checkbox>) : null
-                        }
+                            <ControlLabel><Message msgId={item.label}/></ControlLabel>
                         </Col>
                         <Col xs={8}>
                         {
-                            item.type === "text" ?
-                                (<FormControl 
-                                    placeholder={item.label}
-                                    value={getValue(item) || ""}
-                                    readOnly={item.readOnly || !allowChange}
-                                    onChange={(v) => changeInfos({[item.name]: v.target.value})}
-                                />) : null
-                        }{
                             item.type === "combo" ? (
                                 <Tabou2Combo
                                     load={() => getRequestApi(item.api, props.pluginCfg.apiCfg, {})}
                                     disabled={item?.readOnly || !allowChange}
-                                    placeholder={item?.placeholder || ""}
+                                    placeholder={props.i18n(props.messages, item?.label || "")}
                                     textField={item.apiLabel}
                                     onLoad={(r) => r?.elements || r}
                                     name={item.name}
@@ -139,8 +106,8 @@ export default function Tabou2SuiviOpAccord({ initialItem, programme, operation,
                                     onSelect={(v) => changeInfos({[item.name]: v})}
                                     onChange={(v) => !v ? changeInfos({[item.name]: v}) : null}
                                     messages={{
-                                        emptyList: 'La liste est vide.',
-                                        openCombobox: 'Ouvrir la liste'
+                                        emptyList: props.i18n(props.messages, "tabou2.emptyList"),
+                                        openCombobox: props.i18n(props.messages, "tabou2.displayList")
                                     }}
                                 />
                             ) : null
@@ -150,6 +117,7 @@ export default function Tabou2SuiviOpAccord({ initialItem, programme, operation,
                                     readOnly={item.readOnly || !allowChange}
                                     value={item.data}
                                     className={ item.readOnly ? "tagColor noClick" : "tagColor"}
+                                    placeholder={props.i18n(props.messages, item?.label || "")}
                                 />
                             ) : null
                         }{
@@ -159,7 +127,7 @@ export default function Tabou2SuiviOpAccord({ initialItem, programme, operation,
                                     className="identifyDate"
                                     inline
                                     dropUp
-                                    placeholder={item?.placeholder}
+                                    placeholder={props.i18n(props.messages, item?.label || "")}
                                     readOnly={item.readOnly || !allowChange}
                                     calendar={true}
                                     time={false}

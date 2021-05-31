@@ -1,9 +1,10 @@
 import React, {useEffect, useState } from "react";
 import { isEmpty, isEqual, pick, has, get } from "lodash";
-import { Checkbox, Col, Row, FormControl, Grid, ControlLabel } from "react-bootstrap";
+import { Col, Row, FormControl, Grid, ControlLabel } from "react-bootstrap";
 import Tabou2Combo from '@ext/components/form/Tabou2Combo';
 import { getRequestApi } from "@ext/api/search";
 import "@ext/css/identify.css";
+import Message from "@mapstore/components/I18N/Message";
 
 /**
  * Accordion to display info for describe panel section - only for feature linked with id tabou
@@ -20,7 +21,7 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
     const getFields = () => [{
         name: "operation",
         type: "text",
-        label: "Opération",
+        label: "tabou2.identify.accordions.operation",
         field: "operation",
         source: has(values, "operation") ? values : operation,
         layers:["layerSA", "layerOA"],
@@ -37,37 +38,37 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
     }, {
         name: "consommationEspace",
         field: "consommationEspace.libelle",
-        label: "Consommation Espace",
+        label: "tabou2.identify.accordions.space",
         layers:["layerSA", "layerOA"],
         type: "combo",
         api: `consommation-espace`,
         apiLabel: "libelle",
-        placeholder: "Consommation Espace...",
+        placeholder: "tabou2.identify.accordions.spaceEmpty",
         source: operation,
         readOnly: false
     }, {
         name: "vocation",
-        label: "Vocation",
+        label: "tabou2.identify.accordions.vocation",
         field: "vocation.libelle",
         layers:["layerSA", "layerOA"],
         type: "combo",
         apiLabel: "libelle",
         api: "vocations",
-        placeholder: "Vocations...",
+        placeholder: "tabou2.identify.accordions.vocationEmpty",
         source: operation,
         readOnly: false
 
     }, {
         name: "surfaceTotale",
         field: "surfaceTotale",
-        label: "Surface Totale",
+        label: "tabou2.identify.accordions.totalSpace",
         type: "number",
         layers:["layerSA", "layerOA"],
         source: values
     }, {
         name: "programme",
         field: "programme",
-        label: "Programme",
+        label: "tabou2.identify.accordions.programme",
         type: "text",
         layers:["layerPA"],
         source: programme,
@@ -110,27 +111,14 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
                 fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(item => (
                     <Row className="attributeInfos">
                         <Col xs={4}>
-                        {
-                            item.type !== "boolean" ? <ControlLabel>{item.label}</ControlLabel> :  null
-                        }
-                        {
-                            item.type === "boolean" ?
-                                (<Checkbox 
-                                    inline="true"
-                                    checked={item.value(item) || false}
-                                    disabled={item.readOnly || !allowChange}
-                                    id={`chbox-${item.name}`}
-                                    className="col-xs-5">
-                                    <ControlLabel>{item.label}</ControlLabel>
-                                </Checkbox>) : null
-                        }
+                            <ControlLabel><Message msgId={item.label}/></ControlLabel>
                         </Col>
                         <Col xs={8}>
                         {
                             item.type === "text" || item.type === "number" ? 
                                 (<FormControl
                                     componentClass={item.isArea ? "textarea" : "input"}
-                                    placeholder={item.label}
+                                    placeholder={props.i18n(props.messages, item?.placeholder || item.label)}
                                     style={{height: item.isArea ? "100px" : "auto"}}
                                     type={item.type}
                                     value={getValue(item) || ""}
@@ -141,7 +129,7 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
                             item.type === "combo" ? (
                                 <Tabou2Combo
                                     load={() => getRequestApi(item.api, props.pluginCfg.apiCfg, {})}
-                                    placeholder={item?.placeholder || ""}
+                                    placeholder={props.i18n(props.messages, item?.placeholder || "")}
                                     filter="contains"
                                     disabled={item.readOnly || !allowChange}
                                     textField={item.apiLabel}
@@ -151,8 +139,8 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
                                     onSelect={(v) => changeInfos({[item.name]: v})}
                                     onChange={(v) => !v ? changeInfos({[item.name]: v}) : null}
                                     messages={{
-                                        emptyList: 'La liste est vide.',
-                                        openCombobox: 'Ouvrir la liste'
+                                        emptyList: props.i18n(props.messages, "tabou2.emptyList"),
+                                        openCombobox: props.i18n(props.messages, "tabou2.displayList")
                                     }}
                                 />
                             ) : null

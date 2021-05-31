@@ -2,6 +2,7 @@ import React, {useEffect, useState } from "react";
 import { capitalize, isEmpty, isEqual, get } from "lodash";
 import { Table, Col, Row, Grid, ControlLabel } from "react-bootstrap";
 import "@ext/css/identify.css";
+import Message from "@mapstore/components/I18N/Message";
 
 export default function Tabou2SecProgLiesAccord({ initialItem, programme, operation, mapFeature, ...props }) {
     let layer = props?.selection?.layer;
@@ -12,10 +13,15 @@ export default function Tabou2SecProgLiesAccord({ initialItem, programme, operat
     // get fields for this section
     const getFields = () => [{
         name: "programmes",
-        label: "Liste des programmes",
+        label: "tabou2.identify.accordions.liProg",
         type: "table",
         fields: ["nom", "promoteur", "etape", "dateLiv"],
-        labels: ["Nom", "Promoteur", "Etape", "Date de livraison"],
+        labels: [
+            "tabou2.identify.accordions.name",
+            "tabou2.identify.accordions.promoteur",
+            "tabou2.identify.accordions.step",
+            "tabou2.identify.accordions.dateLiv"
+        ],
         layers:["layerOA","layerSA"],
         source: props?.tabouInfos?.programmes?.elements || [],
         readOnly: true
@@ -39,6 +45,7 @@ export default function Tabou2SecProgLiesAccord({ initialItem, programme, operat
     useEffect(() => {
         const calculFields = getFields();
         if (!isEqual(initialItem, values)) {
+            setValues(initialItem);
             setFields(calculFields);
         }
     }, [initialItem]);
@@ -49,9 +56,7 @@ export default function Tabou2SecProgLiesAccord({ initialItem, programme, operat
                 fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(item => (
                     <Row className="attributeInfos">
                         <Col xs={12}>
-                        {
-                            item.type !== "checkbox" ? <ControlLabel>{item.label + ' :'}</ControlLabel> :  null
-                        }
+                            <ControlLabel><Message msgId={item.label}/> : </ControlLabel>
                         </Col>
                         <Col xs={12}>
                         {
@@ -59,7 +64,11 @@ export default function Tabou2SecProgLiesAccord({ initialItem, programme, operat
                                 <Table striped bordered condensed hover>
                                     <thead>
                                         <tr>
-                                            {item.fields.map((fieldName,i) => (<th>{capitalize(item.labels[i])}</th>))}
+                                            {item.fields.map((fieldName,i) => 
+                                                (
+                                                    <th>{capitalize(props.i18n(props.messages, item.labels[i]))}</th>
+                                                )
+                                            )}
                                         </tr>
                                     </thead>
                                     <tbody>

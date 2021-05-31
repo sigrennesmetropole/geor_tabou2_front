@@ -39,7 +39,7 @@ function Tabou2MainPanel({
                 header={
                     <Row key="ms-tabou-navbar" className="ms-row-tab">
                         <Col xs={12}>
-                            {<Tabou2MainTabs />}
+                            {<Tabou2MainTabs {...props}/>}
                         </Col>
                     </Row>
                 }>

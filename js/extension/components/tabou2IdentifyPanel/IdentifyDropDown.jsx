@@ -1,7 +1,6 @@
 import React from 'react';
 import { Row } from 'react-bootstrap';
 import { DropdownList } from 'react-widgets';
-import Message from "@mapstore/components/I18N/Message";
 /**
  * Custom drop down for identify panel
  * @param {any} param
@@ -24,7 +23,7 @@ export default function IdentifyDropDown({
                 <div style={{ flex: "1 1 0%", padding: "0px 4px" }}>
                     <DropdownList
                         disabled={false}
-                        placeholder="Aucune donnée"
+                        placeholder={props.i18n(props.messages, "tabou2.noData")}
                         {...props}
                     />
                 </div>

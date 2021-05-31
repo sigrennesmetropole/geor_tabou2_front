@@ -1,5 +1,6 @@
 import React from 'react';
 import ResizableModal from '@mapstore/components/misc/ResizableModal';
+import Message from "@mapstore/components/I18N/Message";
 /**
  * Modal for documentation (Alfresco)
  * TODO : need all API services
@@ -12,7 +13,7 @@ export default function Tabou2DocsModal({
 }) {
     return (
         <ResizableModal
-            title={"Documents associés"}
+            title={<Message msgId="tabou2.docsModal.title"/>}
             bodyClassName="ms-flex"
             show={visible}
             showClose

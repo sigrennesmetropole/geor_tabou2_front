@@ -118,7 +118,7 @@ export default function Tabou2IdentifyContent({
                                 header={(
                                     <span onClick={() => toggleAccordion(index)}>
                                         <label>
-                                            {item.title}
+                                            <Message msgId={item.title}/>
                                         </label>
                                     </span>
                                 )}

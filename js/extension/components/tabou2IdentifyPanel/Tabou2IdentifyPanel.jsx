@@ -52,6 +52,8 @@ export default function Tabou2IdentifyPanel({
     return (
         <>
             <IdentifyDropDown
+                i18n={props.i18n}
+                messages={props.messages}
                 defaultValue={defaultIndex}
                 disabled={false}
                 visible
@@ -65,6 +67,8 @@ export default function Tabou2IdentifyPanel({
                 isEmpty(response) ? null :
                     keys(response).map(l => (
                         <IdentifyDropDown
+                            i18n={props.i18n}
+                            messages={props.messages}
                             disabled={false}
                             visible={response[l].data.features.length > 1 && selectedLayer === l}
                             data={getFeaturesOptions(response[l].data.features, keys(props.layersCfg).filter(k => l === props.layersCfg[k].nom)[0])}
@@ -101,7 +105,7 @@ export default function Tabou2IdentifyPanel({
                 content={
                     <div>
                         <Button
-                            tooltip="Saisir à partir de la sélection"
+                            tooltip={props.i18n(props.messages, "tabou2.identify.fromSelection")}
                             onClick={() => props.setTab("add") }
                             bsStyle="primary"
                             bsSize="lg"
@@ -110,8 +114,8 @@ export default function Tabou2IdentifyPanel({
                         </Button>
                     </div>
                 }
-                message="Pour saisir les informations de cette emprise, cliquez sur l'onglet Ajouter ou cliquez directement sur ce bouton"
-                title="Entité non suivie"/>
+                message={props.i18n(props.messages, "tabou2.identify.msgCreateEmprise")}
+                title={props.i18n(props.messages, "tabou2.identify.titleCreateEmprise")}/>
         </>
     );
 };

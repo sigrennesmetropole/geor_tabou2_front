@@ -4,6 +4,7 @@ import { Col, Row, Grid, ControlLabel, Table } from "react-bootstrap";
 import { DateTimePicker } from "react-widgets";
 import utcDateWrapper from '@mapstore/components/misc/enhancers/utcDateWrapper';
 import "@ext/css/identify.css";
+import Message from "@mapstore/components/I18N/Message";
 
 const UTCDateTimePicker = utcDateWrapper({
     dateProp: "value",
@@ -29,37 +30,39 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
      */
     const getFields = () => [{
         name: "adsDate",
-        label: "Date ADS",
+        label: "tabou2.identify.accordions.adsDate",
         field: "adsDate",
         type: "date",
         layers:["layerPA"],
-        placeholder: "Date ADS...",
         source: has(values, "adsDate") ? values : programme,
         readOnly: false
     }, {
         name: "docDate",
-        label: "Date DOC",
+        label: "tabou2.identify.accordions.docDate",
         field: "docDate",
         type: "date",
         layers:["layerPA"],
-        placeholder: "Date DOC...",
         source: has(values, "docDate") ? values : programme,
         readOnly: false
     }, {
         name: "datDate",
-        label: "Date DAACT",
+        label: "tabou2.identify.accordions.daactDate",
         field: "datDate",
         type: "date",
         layers:["layerPA"],
-        placeholder: "Date DAACT...",
         source: has(values, "datDate") ? values : programme,
         readOnly: false
     }, {
         name: "ddc",
-        label: "Données DDC",
+        label: "tabou2.identify.accordions.ddcData",
         type: "table",
         fields: ["nom", "promoteur", "etape", "dateLiv"],
-        labels: ["N° ADS", "Date ADS", "Date DOC", "Date DAACT"],
+        labels: [
+            "tabou2.identify.accordions.numAds",
+            "tabou2.identify.accordions.adsDate",
+            "tabou2.identify.accordions.docDate",
+            "tabou2.identify.accordions.daactDate"
+        ],
         layers:["layerPA"],
         source: props?.tabouInfos?.permis?.elements || [],
         readOnly: true
@@ -121,7 +124,7 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
                     <Row className="attributeInfos">
                         <Col xs={4}>
                         {
-                            item.type !== "boolean" ? <ControlLabel>{item.label}</ControlLabel> :  null
+                            item.type !== "boolean" ? <ControlLabel><Message msgId={item.label}/></ControlLabel> :  null
                         }
                         </Col>
                         {
@@ -133,7 +136,7 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
                                     inline
                                     dropUp
                                     disabled={!allowChange}
-                                    placeholder={item?.placeholder}
+                                    placeholder={props.i18n(props.messages, item?.placeholder || item?.label)}
                                     calendar={true}
                                     time={false}
                                     culture="fr"
@@ -149,7 +152,9 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
                                 <Table striped bordered condensed hover>
                                     <thead>
                                         <tr>
-                                            {item.fields.map((fieldName,i) => (<th>{capitalize(item.labels[i])}</th>))}
+                                            {item.fields.map((fieldName,i) => (
+                                                <th>{capitalize(props.i18n(props.messages, item.labels[i]))}</th>)
+                                            )}
                                         </tr>
                                     </thead>
                                     <tbody>

@@ -4,6 +4,7 @@ import { Col, Row, Table, FormControl, Grid, ControlLabel } from "react-bootstra
 import { DateTimePicker } from "react-widgets";
 import utcDateWrapper from '@mapstore/components/misc/enhancers/utcDateWrapper';
 import "@ext/css/identify.css";
+import Message from "@mapstore/components/I18N/Message";
 
 const UTCDateTimePicker = utcDateWrapper({
     dateProp: "value",
@@ -22,127 +23,122 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
     // OPERATION
         name: "nbLogementsPrevu",
         layers:["layerSA", "layerOA"],
-        label: "Nombre de logements",
+        label: "tabou2.identify.accordions.logementPlan",
         field: "nbLogementsPrevu",
         type: "number",
-        placeholder: "Nombre de logements...",
         source: values?.nbLogementsPrevu ? values : operation,
         readOnly: false
     }, {
         name: "plhLogementsPrevus",
         layers:["layerSA", "layerOA"],
-        label: "PLH-Nombre de logements prévus",
+        label: "tabou2.identify.accordions.plhPlan",
         field: "plhLogementsPrevus",
         type: "number",
-        placeholder: "PLH-Nombre de logements prévus...",
         source: values?.plhLogementsPrevus ? values : operation,
         readOnly: false
     }, {
         name: "plhLogementsLivres",
         layers:["layerSA", "layerOA"],
-        label: "PLH-Nombre de logements livrés",
+        label: "tabou2.identify.accordions.plhLiv",
         field: "plhLogementsLivres",
         type: "number",
-        placeholder: "PLH-Nombre de logements prévus...",
         source: values?.plhLogementsLivres ? values : operation,
         readOnly: false
     },// PROGRAMME
     {
         name: "attributionFonciereAnnee",
-        label: "Année attribution foncière",
+        label: "tabou2.identify.accordions.yearAttrib",
         field: "attributionFonciereAnnee",
         layers:["layerPA"],
         type: "number",
-        placeholder: "Année...",
         source: has(values, "attributionFonciereAnnee") ? values : programme,
         readOnly: false
     }, {
         name: "attributionDate",
-        label: "Date attribution",
+        label: "tabou2.identify.accordions.dateAttrib",
         field: "attributionDate",
         type: "date",
         layers:["layerPA"],
-        placeholder: "Date attribution...",
         source: has(values, "attributionDate") ? values : programme,
         readOnly: false
     }, {
         name: "commercialisationDate",
-        label: "Date commercialisation",
+        label: "tabou2.identify.accordions.dateCom",
         field: "commercialisationDate",
         type: "date",
         layers:["layerPA"],
-        placeholder: "Date commercialisation...",
         source: has(values, "commercialisationDate") ? values : programme,
         readOnly: false
     }, {
         name: "logementsTotal",
-        label: "Logements total",
+        label: "tabou2.identify.accordions.totalLog",
         field: "logementsTotal",
         layers:["layerPA"],
         type: "number",
-        placeholder: "Logements total...",
         source: has(values, "logementsTotal") ? values : programme,
         readOnly: false
     }, {
         name: "logementsAccessAidePrevu",
-        label: "Accession aidée",
+        label: "tabou2.identify.accordions.helpAccess",
         field: "logementsAccessAidePrevu",
         layers:["layerPA"],
         type: "number",
-        placeholder: "Accession aidée...",
         source: has(values, "logementsAccessAidePrevu") ? values : programme,
         readOnly: false
     }, {
         name: "logementsAccessLibrePrevu",
-        label: "Accession libre",
+        label: "tabou2.identify.accordions.freeAccess",
         field: "logementsAccessLibrePrevu",
         layers:["layerPA"],
         type: "number",
-        placeholder: "Accession libres...",
         source: has(values, "logementsAccessLibrePrevu") ? values : programme,
         readOnly: false
     }, {
         name: "logementsAccessMaitrisePrevu",
-        label: "Accession maîtrisée",
+        label: "tabou2.identify.accordions.controlAccess",
         field: "logementsAccessMaitrisePrevu",
         layers:["layerPA"],
         type: "number",
-        placeholder: "Accession libres...",
         source: has(values, "logementsAccessMaitrisePrevu") ? values : programme,
         readOnly: false
     }, {
         name: "logementsLocatifAidePrevu",
-        label: "Locatif Aidé",
+        label: "tabou2.identify.accordions.locHelp",
         field: "logementsLocatifAidePrevu",
         layers:["layerPA"],
         type: "number",
-        placeholder: "Locatif Aidé...",
         source: has(values, "logementsLocatifAidePrevu") ? values : programme,
         readOnly: false
     }, {
         name: "logementsLocatifReguleHlmPrevu",
-        label: "Locatif régulé HLM",
+        label: "tabou2.identify.accordions.locHlm",
         field: "logementsLocatifReguleHlmPrevu",
         layers:["layerPA"],
         type: "number",
-        placeholder: "Locatif régulé HLM...",
         source: has(values, "logementsLocatifReguleHlmPrevu") ? values : programme,
         readOnly: false
     }, {
         name: "logementsLocatifRegulePrivePrevu",
-        label: "Locatif régulé privé",
+        label: "tabou2.identify.accordions.privateLoc",
         field: "logementsLocatifRegulePrivePrevu",
         layers:["layerPA"],
         type: "number",
-        placeholder: "Locatif régulé privé...",
         source: has(values, "logementsLocatifRegulePrivePrevu") ? values : programme,
         readOnly: false
     }, {
         name: "agapeo",
-        label: "Données Agapéo",
+        label: "tabou2.identify.accordions.agapeoData",
         type: "table",
         fields: ["anneeProg", "numDossier", "logementsLocatAide", "logementsLocatRegulHlm", "logementsLocatRegulPrive", "logementsAccessAide"],
-        labels: ["Année prog", "N° dossier", "Loc. Aidé","Loc. rég. HLM", "Loc. reg. privé", "Acc. aidée"],
+        labels: [
+            "tabou2.identify.accordions.progYear",
+            "tabou2.identify.accordions.numFolder",
+            "tabou2.identify.accordions.numFolder",
+            "tabou2.identify.accordions.locHelpTitle",
+            "tabou2.identify.accordions.locRegHlm",
+            "tabou2.identify.accordions.locRegPriv",
+            "tabou2.identify.accordions.accessHelpTitle"
+        ],
         layers:["layerPA"],
         source: props?.tabouInfos?.agapeo || [],
         readOnly: true
@@ -196,20 +192,9 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
                 fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(item => (
                     <Row className="attributeInfos">
                         <Col xs={4}>
-                        {
-                            item.type !== "boolean" ? <ControlLabel>{item.label}</ControlLabel> :  null
-                        }
+                            <ControlLabel><Message msgId={item.label}/></ControlLabel>
                         </Col>
                         <Col xs={8}>
-                        {
-                            item.type === "text" ?
-                                (<FormControl 
-                                    placeholder={item.label}
-                                    value={getValue(item) || ""}
-                                    readOnly={item.readOnly || !allowChange}
-                                    onChange={(v) => changeInfos({[item.name]: v.target.value})}
-                                />) : null
-                        }
                         {
                             item.type === "date" ? (
                                 <UTCDateTimePicker
@@ -218,7 +203,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
                                     inline
                                     readOnly={!allowChange || item.readOnly}
                                     dropUp
-                                    placeholder={item?.placeholder}
+                                    placeholder={props.i18n(props.messages, item?.label || "")}
                                     calendar={true}
                                     time={false}
                                     culture="fr"
@@ -232,7 +217,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
                             item.type === "text" || item.type === "number" ?
                                 (<FormControl
                                     type={item.type}
-                                    placeholder={item.label}
+                                    placeholder={props.i18n(props.messages, item?.label || "")}
                                     value={getValue(item) || ""}
                                     readOnly={!allowChange || item.readOnly}
                                     onChange={(v) => changeInfos({[item.name]: v.target.value})}
@@ -245,7 +230,11 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
                                 <Table striped bordered condensed hover>
                                     <thead>
                                         <tr>
-                                            {item.fields.map((fieldName,i) => (<th>{capitalize(item.labels[i])}</th>))}
+                                            {item.fields.map((fieldName,i) => 
+                                                (
+                                                    <th>{capitalize(props.i18n(props.messages, item.labels[i]))}</th>
+                                                )
+                                            )}
                                         </tr>
                                     </thead>
                                     <tbody>
