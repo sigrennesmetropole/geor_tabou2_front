@@ -101,7 +101,6 @@ export default function Tabou2TiersForm({...props}) {
         required: false        
     }];
 
-    console.log("test");
     return (
         <>
             <Row className="tabou-idToolbar-row text-center" style={{ display: "flex", margin: "auto", marginBottom: "15px", justifyContent: "center" }}>
