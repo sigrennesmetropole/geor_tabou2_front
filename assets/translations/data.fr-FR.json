@@ -150,7 +150,16 @@
         "step": "Etape",
         "limiteEmprise": "Limiter les emprises selon l'opération",
         "msgStartPa": "Commencez par choisir l'opération parente",
-        "selectePaParent": "Sélectionner l'opération parente :"
+        "selectePaParent": "Sélectionner l'opération parente :",
+        "selectType": "Choisir un type opération ou programme...",
+        "checkSector": "Pour saisir un secteur, cocher la case 'secteur' d'une opération",
+        "needAllFields": "Tous les champs sont obligatoires",
+        "cancelAll": "Annuler les saisies",
+        "save": "Sauvegarder",
+        "missingFields": "Veuillez compléter tous les champs !",
+        "addFirst": "1 - Commencez par choisir un type",
+        "addSecond": "2 - Choisir l'emprise géographique",
+        "addThird": "3 - Saisir les informations"
       },
       "docsModal": {
         "title": "Documents associés"

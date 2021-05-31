@@ -9,6 +9,7 @@ import { OA_SCHEMA, PA_SCHEMA, URL_ADD, ADD_FIELDS } from '@ext/constants';
 import { postRequestApi } from '@ext/api/search';
 import { DropdownList} from 'react-widgets';
 import { ADD_OA_FORM, ADD_PA_FORM } from '@ext/constants';
+import Message from "@mapstore/components/I18N/Message";
 
 export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...props}) {
     const emptyInfos = {
@@ -223,7 +224,7 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                                                 return getRequestApi(get(item, "api"), pluginCfg.apiCfg, getParams());
                                             }}
                                             disabled={item.parent ? isEmpty(item.parent(infos)) : item?.disabled || false}
-                                            placeholder={item.placeholder}
+                                            placeholder={props.i18n(props.message,item.placeholder)}
                                             parentValue={item.parent ? new URLSearchParams(item.parent(infos))?.toString() : ""}
                                             filter="contains"
                                             textField={item.apiLabel}
@@ -279,13 +280,13 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                     }}
                     buttons={[{
                         glyph: "ok",
-                        tooltip: getInvalides(infos).length ? "Veuillez compléter tous les champs !" :  "Sauvegarder",
+                        tooltip: props.i18n(props.messages, getInvalides(infos).length ? "tabou2.add.missingFields" : "tabou2.add.save"),
                         id: "saveNewEmprise",
                         disabled: getInvalides(infos).length > 0,
                         onClick: () => handleSubmit()
                     }, {
                         glyph: "remove",
-                        tooltip: "Annuler les saisies",
+                        tooltip: props.i18n(props.messages, "tabou2.add.cancelAll"),
                         id: "cancel",
                         onClick: () => reset()                        
                     }]}
@@ -295,8 +296,8 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
             <Panel
                 header={(
                     <>
-                        <label style={{marginRight: "2px"}}>1 - Commencez par choisir un type :</label>
-                        <ControlledPopover text="Tous les champs sont obligatoires" />
+                        <label style={{marginRight: "2px"}}><Message msgId="tabou2.add.addFirst"/></label>
+                        <ControlledPopover text={props.i18n(props.message,"tabou2.add.needAllFields")} />
                     </>
                 )}
             >
@@ -310,7 +311,7 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                                 disabled={!isEmpty(feature)}
                                 textField = {"label"}
                                 value = {type === "layerSA" ? "layerOA" : type}
-                                placeholder= "Choisir un type opération ou programme..."
+                                placeholder= {props.i18n(props.message,"tabou2.add.selectType")}
                                 onSelect={props.select}
                                 onChange={props.change}
                             />
@@ -324,8 +325,8 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                     <Panel
                         header={(
                             <>
-                                <label style={{marginRight: "2px"}}>2 - Choisir l'emprise géographique </label>
-                                <ControlledPopover text="Pour saisir un secteur, cocher la case 'secteur' d'une opération" />
+                                <label style={{marginRight: "2px"}}><Message msgId="tabou2.add.addSecond"/></label>
+                                <ControlledPopover text={props.i18n(props.message,"tabou2.add.checkSector")} />
                             </>
                         )}
                     >
@@ -334,8 +335,8 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                     <Panel
                         header={(
                             <>
-                                <label style={{marginRight: "2px"}}>3 - Saisir les informations</label>
-                                <ControlledPopover text="Tous les champs sont obligatoires" />
+                                <label style={{marginRight: "2px"}}><Message msgId="tabou2.add.addThird"/></label>
+                                <ControlledPopover text={props.i18n(props.message,"tabou2.add.needAllFields")} />
                             </>
                         )}
                     >

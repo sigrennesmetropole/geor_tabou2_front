@@ -188,6 +188,7 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
                         style={{ marginTop: comboMarginTop }}
                         load={() => getRequestApi(get(combo, "api") || get(combo, "name"), props.pluginCfg.apiCfg, urlParams)}
                         disabled={isDisabled(combo, urlParams)}
+                        placeholder={props.i18n(props.messages, combo.placeholder)}
                         parentValue={parentValue}
                         textField={get(config, `${combo.name}.apiLabel`)}
                         valueField={get(config, `${combo.name}.apiField`)}
