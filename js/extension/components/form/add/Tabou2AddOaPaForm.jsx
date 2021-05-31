@@ -191,7 +191,7 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                                             onChange={() => changeState(item)}
                                             inline
                                             id={item.name + new Date().getTime()}>
-                                            {item.label}
+                                            <Message msgId={ item.label }/>
                                         </Checkbox>
                                     );
                                     break;
@@ -199,7 +199,7 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                                     el = !item.parent || (item.parent && item.parent(infos)) ? (
                                         <Alert variant={item.variant}>
                                             { item.icon ? (<Glyphicon glyph={item.icon} />) : null}
-                                            { item.label }
+                                            <Message msgId={item.label}/>
                                         </Alert>
                                     ) : null;
                                     break;
@@ -211,7 +211,7 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                                             type={item.type}
                                             value={get(infos, item.name)}
                                             required={item?.required}
-                                            placeholder={item?.placeholder}
+                                            placeholder={props.i18n(props.messages, item?.placeholder || item?.label)}
                                             onChange={(t) => changeState(item, t.target.value.toLowerCase())}
                                         />
                                     );
@@ -224,7 +224,7 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                                                 return getRequestApi(get(item, "api"), pluginCfg.apiCfg, getParams());
                                             }}
                                             disabled={item.parent ? isEmpty(item.parent(infos)) : item?.disabled || false}
-                                            placeholder={props.i18n(props.message,item.placeholder)}
+                                            placeholder={props.i18n(props.messages, item?.placeholder || item?.label)}
                                             parentValue={item.parent ? new URLSearchParams(item.parent(infos))?.toString() : ""}
                                             filter="contains"
                                             textField={item.apiLabel}
@@ -297,7 +297,7 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                 header={(
                     <>
                         <label style={{marginRight: "2px"}}><Message msgId="tabou2.add.addFirst"/></label>
-                        <ControlledPopover text={props.i18n(props.message,"tabou2.add.needAllFields")} />
+                        <ControlledPopover text={<Message msgId="tabou2.add.needAllFields"/>} />
                     </>
                 )}
             >
@@ -311,7 +311,7 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                                 disabled={!isEmpty(feature)}
                                 textField = {"label"}
                                 value = {type === "layerSA" ? "layerOA" : type}
-                                placeholder= {props.i18n(props.message,"tabou2.add.selectType")}
+                                placeholder= {props.i18n(props.messages,"tabou2.add.selectLayer")}
                                 onSelect={props.select}
                                 onChange={props.change}
                             />
@@ -326,7 +326,7 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                         header={(
                             <>
                                 <label style={{marginRight: "2px"}}><Message msgId="tabou2.add.addSecond"/></label>
-                                <ControlledPopover text={props.i18n(props.message,"tabou2.add.checkSector")} />
+                                <ControlledPopover text={props.i18n(props.messages,"tabou2.add.checkSector")} />
                             </>
                         )}
                     >
@@ -336,7 +336,7 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                         header={(
                             <>
                                 <label style={{marginRight: "2px"}}><Message msgId="tabou2.add.addThird"/></label>
-                                <ControlledPopover text={props.i18n(props.message,"tabou2.add.needAllFields")} />
+                                <ControlledPopover text={props.i18n(props.messages,"tabou2.add.needAllFields")} />
                             </>
                         )}
                     >

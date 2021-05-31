@@ -304,14 +304,14 @@ export const ADD_FIELDS = {
 }
 
 export const ADD_OA_FORM = [{
-    label: "tabou2.add.onSelectType",
+    label: "tabou2.add.checkSector",
     group: 1,
     type: "alert",
     name: "msgOaCondition",
     icon: "info-sign",
     variant: "info"
 }, {
-    label: "tabou2.add.secteur",
+    label: "tabou2.add.sector",
     name: "secteur",
     apiField: "",
     // parent: (infos) => infos.emprise, // to activate secteur only if emprise name formControl is selected
@@ -378,7 +378,7 @@ export const ADD_PA_FORM = [ {
     icon: "info-sign",
     variant: "info"
 }, {
-    label: "tabou2.add.selectePaParent",
+    label: "tabou2.add.selectPaParent",
     api: "operations",
     name: "parentoa",
     apiLabel: "nom",
