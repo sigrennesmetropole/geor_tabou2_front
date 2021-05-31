@@ -1,6 +1,12 @@
 import React from 'react';
 import { Glyphicon } from "react-bootstrap";
 
+
+/**
+ * A simple component to display a message with title, text and icon
+ * @param {object} props 
+ * @returns component
+ */
 export default function Tabou2Information(props) {
     let className = props.isVisible ? null : "collapse";
 

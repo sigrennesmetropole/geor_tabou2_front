@@ -37,10 +37,11 @@ export const URL_TIERS = {
     "tabou2:oa_secteur": "operations"
 };
 
-export const REQUIRED_TIER = ["adresseRue", "nom","adresseCp","adresseVille", "email"];
+export const REQUIRED_TIER = ["adresseRue", "nom","adresseCp","adresseVille", "email", "libelle"];
 export const TIERS_SCHEMA = {
     "id": 0,
     "nom": "",
+    "libelle": "",
     "adresseNum": "",
     "adresseRue": "",
     "adresseCp": "",
@@ -56,18 +57,18 @@ export const TIERS_SCHEMA = {
 
 export const SEARCH_ITEMS = [{
     name: 'communes',
-    placeholder: 'Toutes communes',
+    placeholder: 'tabou2.search.allCity',
     group: 1
 }, {
     name: 'quartiers',
-    placeholder: 'Tous quartiers',
+    placeholder: 'tabou2.search.allDistrict',
     group: 1,
     parent: 'communes',
     cascadeField: 'codeInsee',
     parentField: 'codeInsee'
 }, {
     name: 'iris',
-    placeholder: 'Tous iris',
+    placeholder: 'tabou2.search.allIris',
     group: 1,
     parent: 'communes',
     cascadeField: 'ccom',
@@ -75,42 +76,43 @@ export const SEARCH_ITEMS = [{
 }, {
     name: 'plui',
     disabled: false,
-    placeholder: 'Tous zonage PLUI',
+    placeholder: 'tabou2.search.allPlui',
+    type: 'string',
     group: 1
 }, {
     name: 'types-financements',
+    placeholder: 'tabou2.search.allFinancement',
     disabled: false,
-    placeholder: 'Tous Financement',
     group: 4
 }, {
     name: "natures",
-    placeholder: "Toutes natures",
+    placeholder: 'tabou2.search.allNatures',
     type: 'string',
     group: 3
 }, {
     name: "secteurs-sam",
-    placeholder: 'Tous secteurs SAM',
+    placeholder: 'tabou2.search.allSAM',
     type: 'string',
     group: 2
 }, {
     name: "secteurs-speu",
-    placeholder: 'Tous secteurs SPEU',
+    placeholder: 'tabou2.search.allSPEU',
     type: 'string',
     group: 2
 }, {
     name: "secteurs-sds",
-    placeholder: 'Tous secteurs SDS',
+    placeholder: 'tabou2.search.allSDS',
     api: "secteurs-dds",
     type: 'string',
     group: 2
 }, {
     name: "secteurs-foncier",
-    placeholder: "Tous secteurs Foncier",
+    placeholder: 'tabou2.search.allFoncier',
     type: 'string',
     group: 2
 }, {
     name: "etapesoa",
-    placeholder: "Toutes Etapes OA",
+    placeholder: 'tabou2.search.allEtapesOA',
     api: "operations/etapes",
     type: 'string',
     disabled: false,
@@ -118,7 +120,7 @@ export const SEARCH_ITEMS = [{
 }, {
     name: "etapespa",
     api: "programmes/etapes",
-    placeholder: "Toutes Etapes PA",
+    placeholder: 'tabou2.search.allEtapesPA',
     disabled: false,
     type: 'string',
     group: 4
@@ -126,36 +128,48 @@ export const SEARCH_ITEMS = [{
 
 export const SEARCH_CALENDARS = [{
     items: [{
-        label: "Date DOC du :"
+        name: "doc",
+        isStart: true,
+        label: "tabou2.search.dateDocFrom"
     },
     {
-        label: "A la date du :"
+        label: "tabou2.search.dateTo",
+        isStart: false,
+        name: "doc",
     }]
 }, {
     items: [{
-        label: "Date DAACT du :"
+        name: "daact",
+        isStart: true,
+        label: "tabou2.search.dateDaactFrom"
     },
     {
-        label: "A la date du :"
+        name: "daact",
+        isStart: false,
+        label: "tabou2.search.dateTo"
     }]
 }, {
     items: [{
-        label: "Date de livraison du :"
+        name: "livraison",
+        isStart: true,
+        label: "tabou2.search.dateLivFrom"
     },
     {
-        label: "A la date du :"
+        name: "livraison",
+        isStart: false,
+        label: "tabou2.search.dateTo"
     }]
 }];
 
 export const ACCORDIONS = [
-    {title: 'Identification', id: 'ident'},
-    {title: 'Descriptif', id: 'describe'},
-    {title: 'Gouvernance', id: 'gouvernance'},
-    {title: 'Suivi Opérationnel', id: 'suivi'},
-    {title: 'Programmation Habitat', id: 'habitat'},
-    {title: 'Programmation Activités', id: 'activite', layers: ['layerOA', 'layerSA']},
-    {title: 'Instruction Droit des Sols', id: 'dds', layers: ['layerPA']},
-    {title: 'Secteurs et programmes liés', id: 'secteursprog', layers: ['layerOA', 'layerSA']}
+    {title: 'tabou2.identify.accordions.identify', id: 'ident'},
+    {title: 'tabou2.identify.accordions.describe', id: 'describe'},
+    {title: 'tabou2.identify.accordions.gouv', id: 'gouvernance'},
+    {title: 'tabou2.identify.accordions.opTracking', id: 'suivi'},
+    {title: 'tabou2.identify.accordions.progHabitat', id: 'habitat'},
+    {title: 'tabou2.identify.accordions.progActivity', id: 'activite', layers: ['layerOA', 'layerSA']},
+    {title: 'tabou2.identify.accordions.dds', id: 'dds', layers: ['layerPA']},
+    {title: 'tabou2.identify.accordions.secProg', id: 'secteursprog', layers: ['layerOA', 'layerSA']}
 ];
 
 export const LAYER_FIELD_OPTION = [
@@ -163,17 +177,17 @@ export const LAYER_FIELD_OPTION = [
         //name: "urba_proj:v_oa_programme",
         name: "layerPA",
         field: "properties.nom",
-        id: "properties.objectid"
+        id: "properties.id_tabou"
     },
     {
         name: "layerSA",
         field: "properties.nom",
-        id: "properties.objectid"
+        id: "properties.id_tabou"
     },
     {
         name: "layerOA",
         field: "properties.nom",
-        id: "properties.objectid"
+        id: "properties.id_tabou"
     }
 ];
 
@@ -290,14 +304,14 @@ export const ADD_FIELDS = {
 }
 
 export const ADD_OA_FORM = [{
-    label: " Choisissez si c'est un secteur, puis sélectionnez la nature et l'emprise",
+    label: "tabou2.add.checkSector",
     group: 1,
     type: "alert",
     name: "msgOaCondition",
     icon: "info-sign",
     variant: "info"
 }, {
-    label: "Secteur",
+    label: "tabou2.add.sector",
     name: "secteur",
     apiField: "",
     // parent: (infos) => infos.emprise, // to activate secteur only if emprise name formControl is selected
@@ -305,43 +319,39 @@ export const ADD_OA_FORM = [{
     group: 1,
     type: "checkbox"
 }, {
-    label: "Nature",
+    label: "tabou2.add.nature",
     api: "natures",
     name: "nature",
     group: 1,
     apiField: "id",
     apiLabel: "libelle",
     parent: null,
-    placeholder: "Selectionner une nature",
     type: "combo"
 }, {
-    label: "Emprise",
+    label: "tabou2.add.emprise",
     name: "idEmprise",
     group: 1,
     api: "operations/emprises",
     apiField: "id",
     apiLabel: "nom",
-    placeholder: "Selectionner une emprise",
-    parent: (i) => !i.nature ? true : {nature: i.nature, secteur: i.secteur},
+    parent: (i) => !i.nature ? true : {nature: i.natureId, secteur: i.secteur},
     type: "combo"
 }, {
-    label: "Nom",
+    label: "tabou2.add.name",
     apiField: "",
     name: "nom",
-    placeholder: "Saisir un nom",
     // parent: () => emprise, // to activate nom only if emprise name formControl is selected
     required: true,
     type: "text"
 }, {
-    label: "Code",
+    label: "tabou2.add.code",
     apiField: "",
     name: "code",
-    placeholder: "Saisir un code",
     // parent: (infos) => infos.emprise, // to activate code only if emprise name formControl is selected
     required: true,
     type: "text"
 }, {
-    label: "Etape",
+    label: "tabou2.add.step",
     apiField: "code",
     apiLabel: "libelle",
     api: "operations/etapes",
@@ -353,14 +363,14 @@ export const ADD_OA_FORM = [{
 }];
 
 export const ADD_PA_FORM = [ {
-    label: "Limiter les emprises selon l'opération",
+    label: "tabou2.add.limiteEmprise",
     apiField: "",
     name: "limitPa",
     required: false,
     type: "checkbox",
     group: 1
 }, {
-    label: " Commencez par choisir l'opération parente",
+    label: "tabou2.add.msgStartPa",
     group: 1,
     type: "alert",
     name: "msgPaCondition",
@@ -368,27 +378,26 @@ export const ADD_PA_FORM = [ {
     icon: "info-sign",
     variant: "info"
 }, {
-    label: "Sélectionner l'opération parente :",
+    label: "tabou2.add.selectPaParent",
     api: "operations",
     name: "parentoa",
     apiLabel: "nom",
     apiField: "nom",
     parent: null,
-    placeholder: "Selectionner une opération",
     group: 1,
     type: "combo"
 }, {
-    label: "Emprise",
+    label: "tabou2.add.emprise",
     api: "programmes/emprises",
     group: 1,
-    parent: (i) => i?.limitPa ? i.limitPa && !i.parentoa : false,
+    parent: (i) => !i.parentoa ? true : {operationId: i.operationId, nomopa: i.parentoa},
     name: "idEmprise",
     apiLabel: "nom",
     apiField: "id",
     placeholder: "Selectionner une emprise",
     type: "combo"
 }, {
-    label: "Nom",
+    label: "tabou2.add.name",
     apiField: "",
     name: "nom",
     placeholder: "Saisir un nom",
@@ -396,7 +405,7 @@ export const ADD_PA_FORM = [ {
     required: true,
     type: "text"
 }, {
-    label: "Code",
+    label: "tabou2.add.code",
     apiField: "",
     name: "code",
     placeholder: "Saisir un code",
@@ -404,7 +413,7 @@ export const ADD_PA_FORM = [ {
     required: true,
     type: "text"
 }, {
-    label: "Etape",
+    label: "tabou2.add.step",
     apiField: "code",
     apiLabel: "libelle",
     api: "operations/etapes",

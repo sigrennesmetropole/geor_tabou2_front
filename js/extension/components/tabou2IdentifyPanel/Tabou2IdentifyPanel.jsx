@@ -5,10 +5,13 @@ import Tabou2IdentifyContent from './Tabou2IdentifyContent';
 import { LAYER_FIELD_OPTION } from '@ext/constants';
 import { createOptions, getFeaturesOptions } from '@ext/utils/identify';
 import IdentifyDropDown from "./IdentifyDropDown";
-import { Button, Glyphicon, Row, Alert } from 'react-bootstrap';
+import { Button, Glyphicon, Row } from 'react-bootstrap';
 import Tabou2Information from "@ext/components/common/Tabou2Information";
-import Tabou2IdentifyToolbar from './Tabou2IdentifyToolbar';
-
+/**
+ * Parent identify panel
+ * @param {any} param
+ * @returns component
+ */
 export default function Tabou2IdentifyPanel({
     queryData,
     onSelect,
@@ -22,11 +25,8 @@ export default function Tabou2IdentifyPanel({
     const [feature, setFeature] = useState("");
     const [response, setResponse] = useState({});
 
-    /**
-     * Event to trigger when user click on dropdown option
-     * @param {Object} clicked 
-     */
-     const changeLayer = (option) => {
+    //Event to trigger when user click on dropdown option
+    const changeLayer = (option) => {
         let selectedLayer = option.name;
         let selectedFeatures = queryData[selectedLayer]?.data?.features || [];
         let selectedFeature = selectedFeatures[0];
@@ -36,10 +36,10 @@ export default function Tabou2IdentifyPanel({
         setSelectedLayer(selectedLayer);
         setSelectedFeatures(selectedFeatures);
         setFeature(selectedFeature);
-        onSelect(selectedFeature, get(selectedFeature, find(LAYER_FIELD_OPTION, ["name", configName]).id), selectedLayer);
-
+        onSelect(selectedFeature, get(selectedFeature, find(LAYER_FIELD_OPTION, ["name", configName])?.id), selectedLayer);
     };
 
+    // hooks to refresh only if query data changed
     useEffect(() => {
         if (!isEqual(queryData, response)) {
             setResponse(queryData);
@@ -52,6 +52,8 @@ export default function Tabou2IdentifyPanel({
     return (
         <>
             <IdentifyDropDown
+                i18n={props.i18n}
+                messages={props.messages}
                 defaultValue={defaultIndex}
                 disabled={false}
                 visible
@@ -65,6 +67,8 @@ export default function Tabou2IdentifyPanel({
                 isEmpty(response) ? null :
                     keys(response).map(l => (
                         <IdentifyDropDown
+                            i18n={props.i18n}
+                            messages={props.messages}
                             disabled={false}
                             visible={response[l].data.features.length > 1 && selectedLayer === l}
                             data={getFeaturesOptions(response[l].data.features, keys(props.layersCfg).filter(k => l === props.layersCfg[k].nom)[0])}
@@ -74,21 +78,10 @@ export default function Tabou2IdentifyPanel({
                             icon="glyphicon-list"
                             onChange={(i) => {
                                 let featureSelected = selectedFeatures[i.idx];
-                                setFeature(featureSelected);
                                 onSelect(featureSelected, get(featureSelected, find(LAYER_FIELD_OPTION, ["name", configLayer]).id), selectedLayer);
                             }}
                         />
                     ))
-            }
-            { 
-                !isEmpty(response) && feature ? 
-                    (<Row className="tabou-idToolbar-row text-center" style={{ display: "flex", margin: "auto", justifyContent: "center" }}>
-                        <Tabou2IdentifyToolbar 
-                            response={response[selectedLayer]}
-                            {...props}
-                        />
-                    </Row>)
-                    : null
             }
             {
                 !isEmpty(response) && feature && feature.properties.id_tabou ?
@@ -96,9 +89,10 @@ export default function Tabou2IdentifyPanel({
                         <>
                             <Tabou2IdentifyContent
                                 feature={feature}
-                                featureId={get(feature, find(LAYER_FIELD_OPTION, ["name", configLayer]).id)}
+                                featureId={get(feature, find(LAYER_FIELD_OPTION, ["name", configLayer])?.id)}
                                 response={response[selectedLayer]}
                                 tabouLayer={configLayer}
+                                response={response[selectedLayer]}
                                 {...props}
                             />
                         </>
@@ -110,13 +104,18 @@ export default function Tabou2IdentifyPanel({
                 glyph="eye-close" 
                 content={
                     <div>
-                        <Button onClick={() => props.setTab("add") } bsStyle="primary" bsSize="lg" style={{marginTop:"10%"}}>
+                        <Button
+                            tooltip={props.i18n(props.messages, "tabou2.identify.fromSelection")}
+                            onClick={() => props.setTab("add") }
+                            bsStyle="primary"
+                            bsSize="lg"
+                            style={{marginTop:"10%"}}>
                             <Glyphicon glyph="pencil-add"/>
                         </Button>
                     </div>
                 }
-                message="Pour saisir les informations de cette emprise, cliquez sur l'onglet Ajouter ou cliquez directement sur ce bouton"
-                title="Emprise non saisie"/>
+                message={props.i18n(props.messages, "tabou2.identify.msgCreateEmprise")}
+                title={props.i18n(props.messages, "tabou2.identify.titleCreateEmprise")}/>
         </>
     );
 };

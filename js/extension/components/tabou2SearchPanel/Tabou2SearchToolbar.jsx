@@ -2,8 +2,14 @@ import React from 'react';
 import { keys } from 'lodash';
 import Toolbar from '@mapstore/components/misc/toolbar/Toolbar';
 
+/**
+ * Search panel toolbar
+ * @param {any} param
+ * @returns component
+ */
 export default function Tabou2SearchToolbar({ ...props }) {
 
+    // trigger search method
     const search = () => {
         keys(props.filters).forEach(k => {
             props.apply(k);

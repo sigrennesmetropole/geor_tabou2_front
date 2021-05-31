@@ -2,24 +2,23 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Glyphicon } from 'react-bootstrap';
 import { connect } from "react-redux";
+
 import { toggleControl } from "@mapstore/actions/controls";
 import { changeLayerProperties, changeLayerParams } from "@mapstore/actions/layers";
 import { search } from "@mapstore/actions/queryform";
-
 import { syncLayers, selectLayers } from "@mapstore/selectors/layerinfo";
 import { layersSelector } from '@mapstore/selectors/layers';
 import { selectedLayerIdSelector } from '@mapstore/selectors/featuregrid';
-
-import Tabou2MainPanel from '@ext/components/tabou2Panel/Tabou2MainPanel';
-
-import tabou2 from '@ext/reducers/tabou2';
+import {getMessageById} from "@mapstore/utils/LocaleUtils";
 
 import { setUp } from '@ext/actions/tabou2';
+import Tabou2MainPanel from '@ext/components/tabou2Panel/Tabou2MainPanel';
+import tabou2 from '@ext/reducers/tabou2';
 import init from '@ext/utils/init';
 
 import { tabouApplyFilter, tabouResetFilter, tabouGetSearchIds } from '@ext/epics/search';
-import { tabouLoadIdentifyContent, tabouSetGFIFormat, purgeTabou, printProgramme } from '@ext/epics/identify';
-import { getTabou2Logs, updateTabou2Logs, updateTabou2Tier, addCreateTabou2Tier } from '@ext/epics/featureEvents';
+import { tabouLoadIdentifyContent, tabouSetGFIFormat, purgeTabou, printProgramme, createChangeFeature } from '@ext/epics/identify';
+import { getSelectionInfos, updateTabou2Logs, updateTabou2Tier, addCreateTabou2Tier, getTiersElements, associateTabou2Tier } from '@ext/epics/featureEvents';
 import { setTbarPosition } from '@ext/epics/setup';
 
 import { CONTROL_NAME } from '@ext/constants';
@@ -45,7 +44,7 @@ class Tabou2Panel extends React.Component {
 
     render() {
         return (
-            <Tabou2MainPanel size={this.props.size} {...this.props} />
+            <Tabou2MainPanel size={this.props.size} {...this.props} i18n={getMessageById} />
         );
     }
 }
@@ -54,7 +53,8 @@ const Tabou2Plugin = compose(
     connect((state) => ({
         active: () => (state.controls && state.controls[CONTROL_NAME] && state.controls[CONTROL_NAME].enabled) || (state[CONTROL_NAME] && state[CONTROL_NAME].closing) || false,
         tocLayers: layersSelector(state),
-        selectedLayerId: selectedLayerIdSelector(state)
+        selectedLayerId: selectedLayerIdSelector(state),
+        messages: state?.locale.messages || {}
     }), {
         onClose: toggleControl.bind(null, CONTROL_NAME, null),
         changeLayerParams: changeLayerParams,
@@ -62,8 +62,7 @@ const Tabou2Plugin = compose(
         onSyncLayers: syncLayers,
         onSelectLayers: selectLayers,
         onQuery: search,
-        setCfg: setUp,
-        getState: state => state
+        setCfg: setUp
     }),
     // setup and teardown due to open/close
     compose(
@@ -85,12 +84,15 @@ export default {
         purgeTabou: purgeTabou,
         tabouResetFilter: tabouResetFilter,
         setTbarPosition: setTbarPosition,
-        getTabou2Logs: getTabou2Logs,
+        getSelectionInfos: getSelectionInfos,
         updateTabou2Logs: updateTabou2Logs,
         updateTabou2Tier: updateTabou2Tier,
         addCreateTabou2Tier: addCreateTabou2Tier,
         printProgramme: printProgramme,
-        tabouGetSearchIds: tabouGetSearchIds
+        tabouGetSearchIds: tabouGetSearchIds,
+        createChangeFeature:createChangeFeature,
+        getTiersElements: getTiersElements,
+        associateTabou2Tier: associateTabou2Tier,
     },
     containers: {
         Toolbar: {

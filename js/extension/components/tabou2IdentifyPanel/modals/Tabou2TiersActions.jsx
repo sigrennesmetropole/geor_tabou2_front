@@ -1,5 +1,10 @@
 import React from 'react';
 import Toolbar from '@mapstore/components/misc/toolbar/Toolbar';
+/**
+ * Tier Action's as toolbar beside each tier.
+ * @param {any} param
+ * @returns component
+ */
 export default function Tabou2TiersActions({ ...props }) {
     if (props.readOnly || !props.visible) {
         return null;
@@ -12,10 +17,11 @@ export default function Tabou2TiersActions({ ...props }) {
 
     const simpleMode = !props.editionActivate && !props.tierVisible;
     const simpleModeActivate = !props.tier.dateInactif && simpleMode;
+    const notValid = props.valid(props.tier) && props.editionActivate;
     const tiersActions = [
         {
             glyph: "eye-open",
-            tooltip: "Consulter",
+            tooltip: props.i18n(props.messages, "tabou2.tiersModal.read"),
             style: { ...style, color: "rgb(137,178,211)"},
             showCondition: () => props.tier.dateInactif && !props.editionActivate,
             id: "readTier",
@@ -25,21 +31,21 @@ export default function Tabou2TiersActions({ ...props }) {
             glyph: "pencil",
             style: {...style, color: "rgb(137,178,211)"},
             showCondition: () => simpleModeActivate,
-            tooltip: "Modifier",
+            tooltip: props.i18n(props.messages, "tabou2.change"),
             id: "editTier",
             onClick: () => props.open()
         },
         {
             glyph: "off",
             style: {...style, color: "#797979"},
-            tooltip: "Désactiver",
+            tooltip: props.i18n(props.messages, "tabou2.tiersModal.inactiv"),
             showCondition: () => simpleModeActivate,
             id: "inactivate",
             onClick: () => props.inactivate()
         },
         {
             glyph: "ban-circle",
-            tooltip: "Dissocier",
+            tooltip: props.i18n(props.messages, "tabou2.tiersModal.dissociate"),
             style: {...style, color: "rgb(229,0,0)"},
             showCondition: () => simpleMode,
             id: "dissociateTier",
@@ -48,8 +54,9 @@ export default function Tabou2TiersActions({ ...props }) {
         {
             glyph: "ok",
             style: {...style, color: "rgb(40, 167, 69)"},
-            tooltip: "Enregistrer",
-            disabled: props.valid(props.tier).length > 0 && props.editionActivate, // TODO : prendre les champs obligatoires pour débloquer le bouton
+            tooltip: notValid ? props.i18n(props.messages, "tabou2.tiersModal.notValid") : props.i18n(props.messages, "tabou2.save"),
+            readOnly:notValid,
+            disabled: notValid,
             showCondition: () => (props.tier.edit || props.tier.new) && !props.tier.dateInactif,
             id: "saveTier",
             onClick: () => props.save()
@@ -58,7 +65,7 @@ export default function Tabou2TiersActions({ ...props }) {
             glyph: "remove",
             style: {...style, color: "rgb(229,0,0)"},
             showCondition: () => props.tier.edit || props.tier.new || props.collapse === props.tier.id,
-            tooltip: "Annuler",
+            tooltip: props.i18n(props.messages, "tabou2.cancel"),
             id: "cancelEdit",
             showWith: [""],
             onClick: () => props.cancel()

@@ -1,30 +1,50 @@
-export const SETUP = "TABOU2:SETUP";
-export const TEAR_DOWN = "TABOU2:TEAR_DOWN";
-export const SET_MAIN_ACTIVE_TAB = "TABOU2:SET_MAIN_ACTIVE_TAB";
-export const APPLY_SEARCH_QUERY = "TABOU2:APPLY_SEARCH_QUERY";
-export const RESET_SEARCH_FILTERS = "TABOU2:RESET_SEARCH_FILTERS";
-export const SET_TABOU_FILTERS = "TABOU2:SET_TABOU_FILTERS";
-export const SET_DEFAULT_INFO_FORMAT = "TABOU2:SET_DEFAULT_INFO_FORMAT";
-export const LOAD_TABOU_FEATURE_INFO = "TABOU2:LOAD_TABOU_FEATURE_INFO";
-export const SET_SELECTOR_INDEX = "TABOU2:SET_SELECTOR_INDEX";
-export const SET_TABOU_FILTEROBJ = "TABOU2:SET_TABOU_FILTEROBJ";
-export const UPDATE_LAYER_PARAMS = "TABOU2:UPDATE_LAYER_PARAMS";
-export const RESET_CQL_FILTERS = "TABOU2:RESET_CQL_FILTERS";
-export const SELECT_FEATURE = "TABOU2:SELECT_FEATURE";
-export const SELECT_LAYER = "TABOU2:SELECT_LAYER";
-export const LOAD_EVENTS = "TABOU2:LOAD_EVENTS";
-export const ADD_FEATURE_EVENT = "TABOU2:ADD_FEATURE_EVENT";
-export const DELETE_FEATURE_EVENT = "TABOU2:DELETE_FEATURE_EVENT";
-export const CHANGE_FEATURE_EVENT = "TABOU2:CHANGE_FEATURE_EVENT";
-export const LOAD_TIERS = "TABOU2:LOAD_TIERS";
-export const ADD_FEATURE_TIER = "TABOU2:ADD_FEATURE_TIER";
-export const DELETE_FEATURE_TIER = "TABOU2:DELETE_FEATURE_TIER";
-export const CHANGE_FEATURE_TIER = "TABOU2:CHANGE_FEATURE_TIER";
-export const INACTIVATE_TIER = "TABOU2:INACTIVATE_TIER";
-export const SET_TABOU_CONFIG = "TABOU2:SET_TABOU_CONFIG";
-export const PRINT_PROGRAMME_INFOS = "TABOU2:PRINT_FICHE_PROGRAMME";
-export const SEARCH_IDS = "TABOU2:SEARCH_IDS";
-export const LOADING = "TABOU2:LOADING";
+export const SETUP = "SETUP";
+export const TEAR_DOWN = "TEAR_DOWN";
+export const SET_MAIN_ACTIVE_TAB = "SET_MAIN_ACTIVE_TAB";
+export const APPLY_SEARCH_QUERY = "APPLY_SEARCH_QUERY";
+export const RESET_SEARCH_FILTERS = "RESET_SEARCH_FILTERS";
+export const SET_TABOU_FILTERS = "SET_TABOU_FILTERS";
+export const SET_DEFAULT_INFO_FORMAT = "SET_DEFAULT_INFO_FORMAT";
+export const LOAD_TABOU_FEATURE_INFO = "LOAD_TABOU_FEATURE_INFO";
+export const SET_SELECTOR_INDEX = "SET_SELECTOR_INDEX";
+export const SET_TABOU_FILTEROBJ = "SET_TABOU_FILTEROBJ";
+export const UPDATE_LAYER_PARAMS = "UPDATE_LAYER_PARAMS";
+export const RESET_CQL_FILTERS = "RESET_CQL_FILTERS";
+export const SELECT_FEATURE = "SELECT_FEATURE";
+export const SELECT_LAYER = "SELECT_LAYER";
+export const LOAD_EVENTS = "LOAD_EVENTS";
+export const ADD_FEATURE_EVENT = "ADD_FEATURE_EVENT";
+export const DELETE_FEATURE_EVENT = "DELETE_FEATURE_EVENT";
+export const CHANGE_FEATURE_EVENT = "CHANGE_FEATURE_EVENT";
+export const LOAD_TIERS = "LOAD_TIERS";
+export const ADD_FEATURE_TIER = "ADD_FEATURE_TIER";
+export const ASSOCIATE_TIER = "ASSOCIATE_TIER";
+export const DELETE_FEATURE_TIER = "DELETE_FEATURE_TIER";
+export const CHANGE_FEATURE_TIER = "CHANGE_FEATURE_TIER";
+export const INACTIVATE_TIER = "INACTIVATE_TIER";
+export const SET_TABOU_CONFIG = "SET_TABOU_CONFIG";
+export const PRINT_PROGRAMME_INFOS = "PRINT_FICHE_PROGRAMME";
+export const SEARCH_IDS = "SEARCH_IDS";
+export const LOADING = "LOADING";
+export const LOAD_FICHE_INFOS = "LOAD_FICHE_INFOS";
+export const CHANGE_FEATURE = "CHANGE_FEATURE";
+export const CREATE_FEATURE = "CREATE_FEATURE";
+export const MAP_TIERS = "MAP_TIERS";
+
+export const mapTiers = (params) => ({
+    type: MAP_TIERS,
+    params
+});
+
+export const changeFeature = (params) => ({
+    type: CHANGE_FEATURE,
+    params
+});
+
+export const createFeature = (params) => ({
+    type: CREATE_FEATURE,
+    params
+});
 
 export const searchIds = (params) => ({
     type: SEARCH_IDS,
@@ -131,6 +151,11 @@ export const addFeatureTier = (tier) => ({
     tier
 });
 
+export const associateTier = (tier) => ({
+    type: ASSOCIATE_TIER,
+    tier
+});
+
 export const deleteFeatureTier = (tier) => ({
     type: DELETE_FEATURE_TIER,
     tier
@@ -154,6 +179,11 @@ export const setTabouConfig = (config) => ({
 export const printProgInfos = (id) => ({
     type: PRINT_PROGRAMME_INFOS,
     id
+});
+
+export const loadFicheInfos = (ficheInfos) => ({
+    type: LOAD_FICHE_INFOS,
+    ficheInfos
 });
 
 export const loading = (value, name, mode) => ({

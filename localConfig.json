@@ -354,7 +354,7 @@
           "showIdentify": false,
           "layersCfg": {
             "layerPA": {
-              "nom": "tabou2:tabou_v_oa_programme",
+              "nom": "tabou2:tabou_v_oa_programme0",
               "geomField": "the_geom",
               "idField": "objectid",
               "idType": "number"
@@ -406,7 +406,7 @@
               "apiLabel": "libelle"
             },
             "etapespa": {
-              "layer": "tabou2:tabou_v_oa_programme",
+              "layer": "tabou2:tabou_v_oa_programme0",
               "geom": "the_geom",
               "filterField": "etape",
               "apiLabel": "libelle",
@@ -466,10 +466,37 @@
               "placeholder": "Type de financement"
             },
             "plui": {
-              "filterField": "libelle",
+              "layer": "tabou2:plui_plan_zonage_simplifie",
+              "geom": "the_geom",
+              "filterField": "etiquette",
               "apiField": "libelle",
               "apiLabel": "libelle",
               "placeholder": "Zonage PLUI"
+            },
+            "daact": {
+              "layer": "tabou2:tabou_v_oa_programme0",
+              "geom": "the_geom",
+              "filterField": "daact_date",
+              "type": "date",
+              "placeholder": "Choisir une date"
+            },
+            "doc": {
+              "layer": "tabou2:tabou_v_oa_programme0",
+              "geom": "the_geom",
+              "filterField": "doc_date",
+              "type": "date",
+              "placeholder": "Choisir une date"
+            },
+            "livraison": {
+              "layer": "tabou2:tabou_v_oa_programme0",
+              "geom": "the_geom",
+              "filterField": "livraison_date",
+              "type": "date",
+              "placeholder": "Choisir une date"
+            },
+            "pbil": {
+              "layer": "tabou2:v_pbil0",
+              "geom": "the_geom"
             }
           },
           "apiCfg": {
@@ -702,7 +729,7 @@
                 "subTitle": " Programme d'aménagement",
                 "options": {
                   "url": "https://gis.jdev.fr/geoserver/wfs",
-                  "typeName": "tabou2:tabou_v_oa_programme",
+                  "typeName": "tabou2:tabou_v_oa_programme0",
                   "queriableAttributes": [
                     "nomopa"
                   ],
@@ -736,7 +763,7 @@
                 "subTitle": " Programme d'aménagement",
                 "options": {
                   "url": "https://gis.jdev.fr/geoserver/wfs",
-                  "typeName": "tabou2:tabou_v_oa_programme",
+                  "typeName": "tabou2:tabou_v_oa_programme0",
                   "queriableAttributes": [
                     "programme"
                   ],

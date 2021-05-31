@@ -7,8 +7,11 @@ import ControlledPopover from '@mapstore/components/widgets/widget/ControlledPop
 import Toolbar from '@mapstore/components/misc/toolbar/Toolbar';
 import { OA_SCHEMA, PA_SCHEMA, URL_ADD, ADD_FIELDS } from '@ext/constants';
 import { postRequestApi } from '@ext/api/search';
+import { DropdownList} from 'react-widgets';
+import { ADD_OA_FORM, ADD_PA_FORM } from '@ext/constants';
+import Message from "@mapstore/components/I18N/Message";
 
-export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCfg = {}}) {
+export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...props}) {
     const emptyInfos = {
         code: "",
         nom: "",
@@ -16,22 +19,27 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
         idEmprise: "",
         nature: "",
         secteur: false,
-        parentoa: 0
+        parentoa: null
     };
     const [infos, setInfos] = useState(emptyInfos);
+    const [childs, setChilds] = useState([]);
 
     const [newFeature, setNewFeature] = useState(["layerOA", "layerSA"].includes(layer) ? OA_SCHEMA : PA_SCHEMA);
     const [invalides, setInvalides] = useState([]);
     const naturesInfos = useRef([]);
+    const natureId = useRef(1);
     const etapesInfos = useRef([]);
+    const [type, setType] = useState("");
 
     const comboMarginTop = "10px";
     const marginTop = "15px";
 
+    // restore default form state
     const reset = () => {
-        setInfos(emptyInfos);
+        isEmpty(feature) ? setInfos(emptyInfos) : setInitialInfos({code: "", etape: ""});
     };
 
+    // manage input modification to change added feature's state
     const changeState = (combo, selection) => {
         let formElement = {};
         let apiElement = {};
@@ -54,53 +62,51 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
             newInfos = {...newInfos, nom: value}
         }
         if(combo.name === "parentoa") {
-            newFeatureObj = {...newFeatureObj, operationId: selection.id, };
-            newInfos = {...newInfos, operationId: selection.id, }
+            newFeatureObj = {...newFeatureObj, operationId: selection?.id, };
+            newInfos = {...newInfos, operationId: selection?.id, }
         }
+
+        setInvalides(getInvalides(newInfos));
         setInfos(newInfos);
-        getInvalides(newInfos, infos);
-        let keysInfos = [];
-        if (layer === "layerPA") {
-            keysInfos = keys(newInfos).filter(name => name !== "secteur" && name !== "nature");
-        } else {
-            keysInfos = keys(newInfos).filter(name => name !== "secteur" && name !== "parentoa");
-        }
-        setInvalides(keysInfos.filter(name => !get(newInfos, name)));
         setNewFeature(newFeatureObj);
     };
 
+    // return true if parent is activ
     const getActivate = (v) => {
         return v.parent(infos) === true;
     };
 
+    // TODO : not work
     const isInvalidStyle = (name) => {
         return invalides.includes(name) ? "red !important" : "";
     };
 
+    // return param to complete API request according to selected parent's value
     const getParams = () => {
         // get programme/emprises need only nature param
-        let params = infos.nature && layer ? {nature: encodeURI(infos.nature)} : {};
-        if (["layerOA", "layerSA"].includes(layer)) {
+        let params = infos.nature && natureId.current && type ? {natureId: natureId.current, nature: encodeURI(infos.nature)}  : {};
+        if (["layerOA", "layerSA"].includes(type)) {
             // need nature and secteur to request API get operation/emprises
             params =  has(infos, "secteur") && infos.nature ? {...params, estSecteur: infos.secteur} : {};
         }
         return params;
     };
-    
-    
-    const getInvalides = () => {
+
+    // Return invalid or valid if some keys are empty - cant save if not valid
+    const getInvalides = (obj) => {
         let keysToFilter = [];
-        if ( layer === "layerPA") {
-            keysToFilter = keys(infos).filter(name => name !== "secteur" && name !== "nature");
+        if ( type === "layerPA") {
+            keysToFilter = keys(obj).filter(name => name !== "secteur" && name !== "nature");
         } else {
-            keysToFilter = keys(infos).filter(name => name !== "secteur" && name !=="parentoa");
+            keysToFilter = keys(obj).filter(name => name !== "secteur" && name !=="parentoa");
         }
-        return keysToFilter.filter(n => get(infos, n));
+        return keysToFilter.filter(n => !get(obj,n));
     };
 
+    // Send request to save new OA, PA, SA
     const handleSubmit = () => {
         let params = {};
-        if (layer === "layerPA") {
+        if (type === "layerPA") {
             params = {
                 ...PA_SCHEMA,
                 ...newFeature,
@@ -110,7 +116,7 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
             };
         } else {
             //newFeature = {...OA_SCHEMA, ...newFeature, secteur: infos.secteur};
-            let natureId = isObject(newFeature.nature) ? newFeature.nature : {id: find(naturesInfos.current, ['libelle', newFeature.nature]).id};
+            let natureId = isObject(newFeature.nature) ? newFeature.nature : {id: find(naturesInfos.current, ['libelle', newFeature.nature])?.id};
             params = {
                 ...OA_SCHEMA,
                 ...newFeature,
@@ -118,10 +124,12 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
                 nature: natureId
             }
         }
-        postRequestApi(`${get(URL_ADD, layer)}`, pluginCfg.apiCfg, params);
+        postRequestApi(`${get(URL_ADD, type)}`, pluginCfg.apiCfg, params);
     };
 
-    useEffect(() => {
+    // Default info from selected feature
+    const setInitialInfos = (defaultData = {}) => {
+        setType(layer);
         let fProp = feature?.properties;
         let newInfos = {
             idEmprise : get(fProp, ADD_FIELDS.idEmprise[layer]) || infos.idEmprise,
@@ -130,16 +138,41 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
             nom : get(fProp, ADD_FIELDS.nom[layer]) || infos.nom,
             code : get(fProp, ADD_FIELDS.code[layer]) || infos.code,
             etape: get(fProp, ADD_FIELDS.etape[layer]) || get(fProp, "avancement") || infos.code,
+            natureId: 1
         };
         let newObject = {...newInfos, idEmprise : get(fProp, "id_emprise") || _.get(fProp, "objectid")}
         // FIX : need nature id !
         if (!isEqual(newInfos,infos)) {
-            setInfos({...infos, ...newInfos});
-            setNewFeature({...newFeature, ...newObject});
+            setInfos({...infos, ...newInfos, ...defaultData});
+            setNewFeature({...newFeature, ...newObject, ...defaultData});
         }
+    }
 
+    // Refresh to change form items according to selected layer or feature
+    useEffect(() => {
+        if (layer !== type) {
+            setInitialInfos();
+            switch(layer) {
+                case "layerPA":
+                    setChilds(ADD_PA_FORM);
+                    break;
+                case "layerSA":
+                    setChilds(ADD_OA_FORM);
+                    break;
+                case "layerOA":
+                    setChilds(ADD_OA_FORM);
+                    break;
+                default :
+                    setChilds([])
+            }
+        }
     }, [feature, layer])
 
+    /**
+     * Construct form
+     * @param {Array} items to construct form according to a limited list items
+     * @returns html to render
+     */
     const constructForm = (items) => {
         return (
             <Row style={{ marginTop: marginTop }} >
@@ -158,15 +191,15 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
                                             onChange={() => changeState(item)}
                                             inline
                                             id={item.name + new Date().getTime()}>
-                                            {item.label}
+                                            <Message msgId={ item.label }/>
                                         </Checkbox>
                                     );
                                     break;
                                 case "alert":
                                     el = !item.parent || (item.parent && item.parent(infos)) ? (
-                                        <Alert variant={item.variant} style={{marginTop: comboMarginTop}}>
+                                        <Alert variant={item.variant}>
                                             { item.icon ? (<Glyphicon glyph={item.icon} />) : null}
-                                            { item.label }
+                                            <Message msgId={item.label}/>
                                         </Alert>
                                     ) : null;
                                     break;
@@ -178,7 +211,7 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
                                             type={item.type}
                                             value={get(infos, item.name)}
                                             required={item?.required}
-                                            placeholder={item?.placeholder}
+                                            placeholder={props.i18n(props.messages, item?.placeholder || item?.label)}
                                             onChange={(t) => changeState(item, t.target.value.toLowerCase())}
                                         />
                                     );
@@ -187,10 +220,11 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
                                     el = (
                                         <Tabou2Combo
                                             style={{ marginTop: comboMarginTop, borderColor: isInvalidStyle(item.name) }}
-                                            load={() => getRequestApi(get(item, "api"), pluginCfg.apiCfg, getParams())}
+                                            load={() => {
+                                                return getRequestApi(get(item, "api"), pluginCfg.apiCfg, getParams());
+                                            }}
                                             disabled={item.parent ? isEmpty(item.parent(infos)) : item?.disabled || false}
-                                            placeholder={item.placeholder}
-                                            searchByValueField={true}
+                                            placeholder={props.i18n(props.messages, item?.placeholder || item?.label)}
                                             parentValue={item.parent ? new URLSearchParams(item.parent(infos))?.toString() : ""}
                                             filter="contains"
                                             textField={item.apiLabel}
@@ -199,7 +233,10 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
                                                 let dataItem = r?.elements || r;
                                                 // used to keep info and send  nature id to the api instead of name return by layer 
                                                 // (need id not return by default)
-                                                if(item.name === "nature") naturesInfos.current = dataItem;
+                                                if(item.name === "nature") {
+                                                    naturesInfos.current = dataItem;
+                                                    natureId.current = find(dataItem, ["libelle", infos.nature]).id;
+                                                }
                                                 if(item.name === "etape") etapesInfos.current = dataItem;
                                                 return dataItem;
                                             }}
@@ -226,29 +263,11 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
         );
     };
 
+    // render component
     return (
-        <>
-            <Panel
-                header={(
-                    <>
-                        <label style={{marginRight: "2px"}}>2 - Choisir l'emprise géographique </label>
-                        <ControlledPopover text="Tous les champs sont obligatoires" />
-                    </>
-                )}
-            >
-                { constructForm(childs.filter(f => f.group === 1)) }
-            </Panel>
-            <Panel
-                header={(
-                    <>
-                        <label style={{marginRight: "2px"}}>3 - Saisir les informations</label>
-                        <ControlledPopover text="Tous les champs sont obligatoires" />
-                    </>
-                )}
-            >
-                { constructForm(childs.filter(f => !f.group)) }
-            </Panel>
-            <Row className="tabou-idToolbar-row text-center" style={{ display: "flex", margin: "auto", justifyContent: "center" }}>
+        <span key={`${type}`}>
+            { type ? 
+            (<Row className="tabou-idToolbar-row text-center" style={{ display: "flex", margin: "auto", justifyContent: "center" }}>
                 <Toolbar
                     btnDefaultProps={{
                         className: "square-button-md",
@@ -260,19 +279,72 @@ export default function Tabou2AddOaPaForm({layer, childs = [], feature, pluginCf
                         }
                     }}
                     buttons={[{
-                        glyph: "ban-circle",
-                        tooltip: "Annuler les saisies",
-                        id: "reset",
-                        onClick: () => reset()                        
-                    }, {
                         glyph: "ok",
-                        tooltip: invalides.length ? "Veuillez compléter tous les champs !" :  "Sauvegarder",
+                        tooltip: props.i18n(props.messages, getInvalides(infos).length ? "tabou2.add.missingFields" : "tabou2.add.save"),
                         id: "saveNewEmprise",
-                        disabled: invalides.length,
+                        disabled: getInvalides(infos).length > 0,
                         onClick: () => handleSubmit()
+                    }, {
+                        glyph: "remove",
+                        tooltip: props.i18n(props.messages, "tabou2.add.cancelAll"),
+                        id: "cancel",
+                        onClick: () => reset()                        
                     }]}
                 />
-            </Row>
-        </>
+            </Row>) : null
+            }
+            <Panel
+                header={(
+                    <>
+                        <label style={{marginRight: "2px"}}><Message msgId="tabou2.add.addFirst"/></label>
+                        <ControlledPopover text={<Message msgId="tabou2.add.needAllFields"/>} />
+                    </>
+                )}
+            >
+                <Row>
+                    <Col xs={12}>
+                        <FormGroup >
+                            <DropdownList
+                                style={{ marginTop: "10px" }}
+                                data = {props.options}
+                                valueField={"value"}
+                                disabled={!isEmpty(feature)}
+                                textField = {"label"}
+                                value = {type === "layerSA" ? "layerOA" : type}
+                                placeholder= {props.i18n(props.messages,"tabou2.add.selectLayer")}
+                                onSelect={props.select}
+                                onChange={props.change}
+                            />
+                        </FormGroup>
+                    </Col>
+                </Row>
+            </Panel>
+            {
+                type ? (
+                <>
+                    <Panel
+                        header={(
+                            <>
+                                <label style={{marginRight: "2px"}}><Message msgId="tabou2.add.addSecond"/></label>
+                                <ControlledPopover text={props.i18n(props.messages,"tabou2.add.checkSector")} />
+                            </>
+                        )}
+                    >
+                        { constructForm(childs.filter(f => f.group === 1)) }
+                    </Panel>
+                    <Panel
+                        header={(
+                            <>
+                                <label style={{marginRight: "2px"}}><Message msgId="tabou2.add.addThird"/></label>
+                                <ControlledPopover text={props.i18n(props.messages,"tabou2.add.needAllFields")} />
+                            </>
+                        )}
+                    >
+                        { constructForm(childs.filter(f => !f.group)) }
+                    </Panel>
+                </>
+                ) : null
+            }
+        </span>
     );
 }

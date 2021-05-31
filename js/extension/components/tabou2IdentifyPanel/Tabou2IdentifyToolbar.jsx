@@ -3,42 +3,69 @@ import Toolbar from '@mapstore/components/misc/toolbar/Toolbar';
 import Tabou2TiersModal from './modals/Tabou2TiersModal';
 import Tabou2DocsModal from './modals/Tabou2DocsModal';
 import Tabou2LogsModal from './modals/Tabou2LogsModal';
-export default function Tabou2IdentifyToolbar({ response, ...props }) {
+/**
+ * Toolbar fo identify panel (tab identify)
+ * @param {any} param
+ * @returns component
+ */
+export default function Tabou2IdentifyToolbar({ response, isValid, ...props }) {
     const [isOpenTiers, setIsOpenTiers] = useState(false);
     const [isOpenDocs, setIsOpenDocs] = useState(false);
     const [isOpenLogs, setIsOpenLogs] = useState(false);
-
-    const modalBtns = [
+    // toolbar buttons
+    let modalBtns = [
         {
             glyph: "user",
-            tooltip: "Tiers",
+            tooltip: props.i18n(props.messages, "tabou2.identify.toolbar.tiers"),
             id: "tiers",
             onClick: () => setIsOpenTiers(true)
         },
         {
             glyph: "file",
-            tooltip: "Documents",
+            tooltip: props.i18n(props.messages, "tabou2.identify.toolbar.docs"),
             id: "docs",
             onClick: () => setIsOpenDocs(true)
         },
         {
             glyph: "list-alt",
-            tooltip: "Journal de bord",
+            tooltip: props.i18n(props.messages, "tabou2.identify.toolbar.logs"),
             id: "logs",
             onClick: () => setIsOpenLogs(true)
-        }
+        },
     ];
 
-    let featureId = props.selection.id;
-    if (props.selectedCfgLayer === "layerPA" && props.selection.properties.id_tabou) {
+    // display print button only for programme feature
+    // TODO : need API fix to finish and work
+    if (props.selectedCfgLayer === "layerPA") {
+        let idTabou = props?.selection?.feature?.properties.id_tabou;
         modalBtns.push({
             glyph: "print",
-            tooltip: "Impression du suivi",
+            style: {
+                marginLeft: "15px"
+            },
+            tooltip: props.i18n(props.messages, "tabou2.identify.toolbar.print"),
             id: "print",
-            onClick: () => props.printProgInfos(props.selection.properties.id_tabou)
+            onClick: () => props.printProgInfos(idTabou)
         });
     }
-
+    // manage buttons according to role
+    if (props.authent.isContrib ||  props.authent.isReferent) {
+        modalBtns = [...modalBtns, {
+            glyph: "ok",
+            tooltip: isValid ? props.i18n(props.messages, "tabou2.identify.toolbar.save") : props.i18n(props.messages, "tabou2.identify.toolbar.notValid"),
+            id: "valid",
+            disabled: !isValid,
+            style: {
+                marginLeft: "15px"
+            },
+            onClick: () => props.save()
+        }, {
+            glyph: "remove",
+            tooltip: props.i18n(props.messages, "tabou2.identify.toolbar.cancel"),
+            id: "cancel",
+            onClick: () => props.restore()
+        }];
+    }
     return (
         <>
             <Toolbar
@@ -53,9 +80,9 @@ export default function Tabou2IdentifyToolbar({ response, ...props }) {
                 }}
                 buttons={modalBtns}
             />
-            <Tabou2TiersModal visible={isOpenTiers} onClick={() => setIsOpenTiers(false)} featureId={featureId} {...props}/>
-            <Tabou2DocsModal visible={isOpenDocs} onClick={() => setIsOpenDocs(false)} featureId={featureId} {...props} />
-            <Tabou2LogsModal visible={isOpenLogs} onClick={() => setIsOpenLogs(false)} featureId={featureId} {...props}/>
+            <Tabou2TiersModal visible={isOpenTiers} onClick={() => setIsOpenTiers(false)} {...props}/>
+            <Tabou2DocsModal visible={isOpenDocs} onClick={() => setIsOpenDocs(false)} {...props} />
+            <Tabou2LogsModal visible={isOpenLogs} onClick={() => setIsOpenLogs(false)} {...props}/>
         </>
     );
 

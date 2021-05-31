@@ -3,10 +3,11 @@ import { keys } from 'lodash';
 import { RESET_SEARCH_FILTERS, UPDATE_LAYER_PARAMS, SEARCH_IDS, setTabouFilterObj, loading } from '../actions/tabou2';
 import { layersSelector } from '@mapstore/selectors/layers';
 import { currentTabouFilters, getLayerFilterObj, isTabou2Activate, getPluginCfg } from '../selectors/tabou2';
-import { changeLayerParams } from "@mapstore/actions/layers";
+import { changeLayerParams, changeLayerProperties } from "@mapstore/actions/layers";
 import { wrapStartStop } from "@mapstore/observables/epics";
 import { error } from "@mapstore/actions/notifications";
-
+import {getMessageById} from "@mapstore/utils/LocaleUtils";
+import { getNewFilter } from "@ext/utils/search";
 import { getIdsFromSearch } from "@ext/api/search";
 
 /**
@@ -27,7 +28,12 @@ export function tabouApplyFilter(action$, store) {
         }
         filterObj = filterObj[action.layerToFilter];
         layer = layer[0];
-        return Rx.Observable.of(changeLayerParams(layer.id, { cql_filter: filterObj.cql }));
+
+        
+        filterObj.filterFields = filterObj?.filterFields || [];
+        filterObj.crossLayerFilter = filterObj?.crossLayerFilter || null;
+        filterObj.spatialField = filterObj?.spatialField || null;
+        return Rx.Observable.of(changeLayerProperties(layer.id, { layerFilter: filterObj.tocFilter }));
     });
 }
 
@@ -47,6 +53,7 @@ export function tabouResetFilter(action$, store) {
 
         return Rx.Observable.from((layersId)).mergeMap(id => {
             return Rx.Observable.of(changeLayerParams(id, { cql_filter: undefined }))
+            .concat(Rx.Observable.of(changeLayerProperties(id, { layerFilter: undefined })))
         });
     });
 }
@@ -61,26 +68,52 @@ export function tabouResetFilter(action$, store) {
     return action$.ofType(SEARCH_IDS)
     .filter(() => isTabou2Activate(store.getState()))
     .switchMap((action) => {
+        let messages = store.getState()?.locale.messages;
         let observable$ = Rx.Observable.empty();
-
         observable$ = Rx.Observable.from((action.params)).mergeMap( filter => {
             return Rx.Observable.defer(() => getIdsFromSearch(filter.params, getPluginCfg(store.getState()).geoserverURL))
+            .catch(e => {
+                console.log("Error retrieving ids from filter");
+                console.log(e);
+                return Rx.Observable.of({totalFeatures: 0, features: [], fail: true});
+            })
             .switchMap(response => {
+                if (response?.fail) {
+                    return Rx.Observable.empty();
+                }
                 let filters = getLayerFilterObj(store.getState());
+                let layer = filter.layer;
                 let ids = [0];
                 let idsCql = "";
-                if (response.totalFeatures) {
+                if (response?.totalFeatures) {
                     ids = response.features.map(feature => feature.properties.objectid || '');
                     ids = ids.filter(id => id);
-                    ids = filter.idType === 'string' ? ids.map(i => `'${i}'`) : (ids.length ? ids : [0]);
+                    let correctIds = filter.idType === 'string' ? ids.map(i => `'${i}'`) : (ids.length ? ids : [0]);
                     // create entire filter string
-                    idsCql = ids.map(id => `${filter.idField} = ${id}`).join(' OR ');
+                    idsCql = correctIds.map(id => `${filter.idField} = ${id}`).join(' OR ');
                 }
+                // create toc filter
+                let newFilter = getNewFilter(layer, null, [], null);
+                newFilter.filterFields = ids.map((id,idx) => ({
+                    "rowId": new Date().getTime()+ idx,
+                    "groupId": 1,
+                    "attribute": "objectid",
+                    "operator": "=",
+                    "value": id,
+                    "type": "number",
+                    "fieldOptions": {
+                        "valuesCount": 0,
+                        "currentPage": 1
+                    },
+                    "exception": null
+                }));
                 // prepare filter
-                filters[filter.layer] = {
+                filters[layer] = {
                     cql: idsCql,
-                    layerToFilter: filter.layer
+                    layerToFilter: layer,
+                    tocFilter : newFilter
                 };
+
                 // affect filter
                 return Rx.Observable.of(setTabouFilterObj(filters));
             })
@@ -93,8 +126,8 @@ export function tabouResetFilter(action$, store) {
                 () => {
                     return Rx.Observable.of(
                         error({
-                            title: "Error",
-                            message: "Echec de la création du filtre"
+                            title: getMessageById(messages, "tabou2.infos.error"),
+                            message: getMessageById(messages, "tabou2.infos.failFilter")
                         }),
                         loading(false, "search")
                     );

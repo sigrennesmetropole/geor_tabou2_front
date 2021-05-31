@@ -1,0 +1,22 @@
+.tagColor {
+    color: black !important;
+}
+.noClick {
+    pointer-events: none;
+}
+
+.noClick .rw-tag-btn {
+    display: none;
+}
+
+.identifyDate .rw-calendar-popup .rw-footer .rw-btn {
+    display: none;
+}
+
+.attributeInfos {
+    margin-bottom: 10px;
+}
+
+.searchTier {
+    margin-top: 5px;
+}

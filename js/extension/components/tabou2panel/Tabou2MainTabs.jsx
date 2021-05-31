@@ -8,9 +8,13 @@ import { setMainActiveTab } from '../../actions/tabou2';
 import { currentActiveTabSelector } from '../../selectors/tabou2';
 import { TABS } from '../../constants';
 
+/**
+ * Main Tabou tabs
+ * @param {any} param
+ * @returns component
+ */ 
 const NavItemT = tooltip(NavItem);
-
-function SelectionTab({ currentTab, onClick = () => { } }) {
+function SelectionTab({ currentTab, onClick, ...props}) {
     return (
         <Nav justified
             bsStyle="tabs"
@@ -20,7 +24,7 @@ function SelectionTab({ currentTab, onClick = () => { } }) {
                 TABS.map(tab =>
                     <NavItemT
                         key={'ms-tab-settings-' + tab.id}
-                        tooltip={<Message msgId={tab.tooltip} />}
+                        tooltip={props.i18n(props.messages, tab.tooltip)}
                         eventKey={tab.id}
                         onClick={() => onClick(tab.id) }>
                         <Glyphicon glyph={tab.glyph} />
@@ -31,6 +35,7 @@ function SelectionTab({ currentTab, onClick = () => { } }) {
     );
 }
 
+// connect to store / redux
 export default connect((state) => ({
     currentTab: currentActiveTabSelector(state)
 }), {

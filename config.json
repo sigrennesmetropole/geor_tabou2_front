@@ -409,9 +409,9 @@
                 "url": "https://gis.jdev.fr/geoserver/ows",
                 "type": "wfs"
             },
-            "name": "tabou2:tabou_v_oa_programme",
+            "name": "tabou2:tabou_v_oa_programme0",
             "opacity": 1,
-            "description": "tabou2:tabou_v_oa_programme",
+            "description": "tabou2:tabou_v_oa_programme0",
             "title": "Programmes",
             "type": "wms",
             "url": "https://gis.jdev.fr/geoserver/wms",

@@ -1,8 +1,9 @@
 import * as Rx from 'rxjs';
-import { CONTROL_NAME } from '../constants';
+import { CONTROL_NAME, URL_ADD } from '../constants';
+
+import { get, pickBy, find, isEmpty } from 'lodash';
 
 import { generalInfoFormatSelector } from '@mapstore/selectors/mapInfo';
-
 import { updateUserPlugin } from '@mapstore/actions/context';
 
 import {
@@ -12,9 +13,10 @@ import {
     changeMapInfoFormat
 } from "@mapstore/actions/mapInfo";
 import { TOGGLE_CONTROL } from '@mapstore/actions/controls';
-import { isTabou2Activate, defaultInfoFormat, getTabouResponse } from '@ext/selectors/tabou2';
-import { loadTabouFeatureInfo, setDefaultInfoFormat, setMainActiveTab, PRINT_PROGRAMME_INFOS, downloadBlob } from '@ext/actions/tabou2';
-import { getPDFProgramme } from '@ext/api/search';
+import { isTabou2Activate, defaultInfoFormat, getTabouResponse, getPluginCfg } from '@ext/selectors/tabou2';
+import { loadTabouFeatureInfo, setDefaultInfoFormat, setMainActiveTab, PRINT_PROGRAMME_INFOS } from '@ext/actions/tabou2';
+import { getPDFProgramme, postRequestApi, putRequestApi } from '@ext/api/search';
+import { CHANGE_FEATURE, CREATE_FEATURE } from '../actions/tabou2';
 
 /**
  * Catch GFI response on identify load event and close identify if Tabou2 identify tabs is selected
@@ -24,16 +26,23 @@ import { getPDFProgramme } from '@ext/api/search';
  */
 export function tabouLoadIdentifyContent(action$, store) {
     return action$.ofType(LOAD_FEATURE_INFO)
-        .filter(() => isTabou2Activate(store.getState()))
+        .filter((action) => isTabou2Activate(store.getState()))
         .switchMap((action) => {
-            if (action.layer && action.layer.id) {
+            if (action?.layer?.id && action?.data?.features && action.data.features.length) {
                 let resp = getTabouResponse(store.getState());
+                let cfg = getPluginCfg(store.getState()).layersCfg;
                 // delete response for this GFI layer response
                 delete resp[action.layer.name];
 
-                // just keep response with features
+                // just keep tabou feature response with features
                 if (action?.data?.features && action.data.features.length) {
                     resp[action.layer.name] = action;
+                    // only return response for OA, PA, SA
+                    resp = pickBy(resp, (v,k) => 
+                        find(cfg, ["nom", k])
+                    );
+                } else {
+                    resp = {};
                 }
 
                 return Rx.Observable.of(setMainActiveTab("identify")).concat(
@@ -42,7 +51,7 @@ export function tabouLoadIdentifyContent(action$, store) {
                     )
                 );
             }
-            return Rx.Observable.empty();
+            return  Rx.Observable.of(closeIdentify());
         });
 }
 
@@ -78,8 +87,9 @@ export function tabouSetGFIFormat(action$, store) {
  * @param {any} action$
  * @param {any} store
  */
-export function purgeTabou(action$) {
+export function purgeTabou(action$, store) {
     return action$.ofType(FEATURE_INFO_CLICK)
+    .filter(() => isTabou2Activate(store.getState()))
     .switchMap(() => {
         return Rx.Observable.of(loadTabouFeatureInfo({}));
     });
@@ -93,27 +103,57 @@ export function purgeTabou(action$) {
  */
 export function printProgramme(action$, store) {
     return action$.ofType(PRINT_PROGRAMME_INFOS)
+        .filter(() => isTabou2Activate(store.getState()))
         .switchMap((action) => {
             return Rx.Observable.defer(() => getPDFProgramme("programme", action.id))
+            .catch(e => {
+                console.log("Error on get PDF request");
+                console.log(e);
+                return Rx.Observable.of({data: []});
+            })
             .switchMap( response => {
-                const blob = new Blob([response.data], { type: response.data.type || 'application/pdf' });
-                const url = window.URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.href = url;
-                const contentDisposition = response.headers['content-disposition'];
-                let name = `fiche-suivi-${action.id}`;
-                if (contentDisposition) {
-                    const fileNameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
-                    if (fileNameMatch.length > 2 && fileNameMatch[1]) {
-                        name = fileNameMatch[1];
+                if (!isEmpty(response.data)) {
+                    const blob = new Blob([response.data], { type: response.data.type || 'application/pdf' });
+                    const url = window.URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    const contentDisposition = response.headers['content-disposition'];
+                    let name = `fiche-suivi-${action.id}`;
+                    if (contentDisposition) {
+                        const fileNameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+                        if (fileNameMatch.length > 2 && fileNameMatch[1]) {
+                            name = fileNameMatch[1];
+                        }
                     }
+                    link.setAttribute('download', name);
+                    document.body.appendChild(link);
+                    link.click();
+                    link.remove();
+                    window.URL.revokeObjectURL(url);
                 }
-                link.setAttribute('download', name);
-                document.body.appendChild(link);
-                link.click();
-                link.remove();
-                window.URL.revokeObjectURL(url);
                 return Rx.Observable.empty();
             });
     });
+}
+
+/**
+ * Epic to create PA, OA, SA Feature. This action will create new Tabou feature from selected geom.
+ * @param {any} action$ 
+ * @param {any} store 
+ * @returns empty
+ */
+export function createChangeFeature (action$, store) {
+    return action$.ofType(CHANGE_FEATURE, CREATE_FEATURE)
+    .switchMap( action => {
+        let request = action?.type === "CREATE_FEATURE" ? postRequestApi : putRequestApi;
+        return Rx.Observable.defer( () => request(`${get(URL_ADD, action.params.layer)}`, getPluginCfg(store.getState()).apiCfg, action.params.feature))
+        .catch(e => {
+            console.log("Error to save feature change or feature creation");
+            console.log(e);
+            return Rx.Observable.empty();
+        })
+        .switchMap(()=>{
+            return Rx.Observable.empty();
+        })
+    })
 }

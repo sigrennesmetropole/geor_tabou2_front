@@ -1,11 +1,10 @@
 import axios from "@mapstore/libs/ajax";
 import { API_BASE_URL } from "@ext/constants";
-import { keys } from "lodash";
+import { keys, find } from "lodash";
 
 let baseURL = "/tabou2";
 
 /** SEARCH - get ids from cross layer filter */
-
 export function getIdsFromSearch(params, geoserverURL) {
     let paramsToStr = keys(params).map(k => `${k}=${params[k]}`);
     return axios.post(`${geoserverURL}/ows`, paramsToStr.join('&'), {
@@ -59,7 +58,6 @@ export function postRequestApi(name, apiCfg, body) {
  * EVENTS
  */
 export function getFeatureEvents(type, id) {
-    //return getRequestApi(`${type}/${id}/evenements`).then(({ data }) => data);
     return axios.get(`${baseURL}/${type}/${id}/evenements`, null, {});
 }
 
@@ -83,9 +81,8 @@ export function getTypesEvents() {
 /**
  * TIERS
  */
-
-export function getTiers() {
-    return axios.get(`${baseURL}/tiers`, null, {});
+export function getTiers(params = {}) {
+    return axios.get(`${baseURL}/tiers`, {params: params}, {});
 }
 
 export function getFeatureTiers(type, id) {
@@ -97,27 +94,71 @@ export function getTypesTiers() {
 }
 
 // associate tier
-export function addFeatureTier(type, id, tier) {
-    return axios.post(`${baseURL}/${type}/${id}/tiers`, tier);
+export function associateFeatureTier(type, id, idTier, idType) {
+    return axios.post(`${baseURL}/${type}/${id}/tiers`, {
+        tiersId: idTier,
+        typeTiersId: idType
+    });
 }
 
-// add tier to general tiers list
+// change association type
+export function changeFeatureTierAssociation(type, id, idTier, idType) {
+    return axios.put(`${baseURL}/${type}/${id}/tiers/${idTier}`, {
+        tiersId: idTier,
+        typeTiersId: idType
+    });
+}
+
 export function createTier(tier) {
     return axios.post(`${baseURL}/tiers`, tier);
 }
-
-export function changeFeatureTier(type, id, tier) {
-    return axios.put(`${baseURL}/${type}/${id}/tiers/${tier.id}`, tier);
+export function changeFeatureTier(tier) {
+    return axios.put(`${baseURL}/tiers`, tier);
 }
-
-export function deleteFeatureTier(type, id, tierId) {
-    return axios.delete(`${baseURL}/${type}/${id}/tiers/${tierId}`);
+export function dissociateFeatureTier(type, id, associationId) {
+    return axios.delete(`${baseURL}/${type}/${id}/tiers/${associationId}`);
 }
-
 export function inactivateTier(tierId) {
-    return axios.put(`${baseURL}/tiers/${tierId}/inactivate`, tier);
+    return axios.put(`${baseURL}/tiers/${tierId}/inactivate`, {});
 }
 
+/**
+ * PRINT TABOU FEATURE INFOS
+ */
 export function getPDFProgramme(type, id) {
     return axios.get(`${baseURL}/${type}/${id}/fiche-suivi`, {responseType: 'arraybuffer'});
+}
+
+/**
+ * IDENTIFY PANEL INFOS
+ */
+export function getProgramme(id) {
+    return axios.get(`${baseURL}/programmes/${id}`);
+}
+
+export function getProgrammeAgapeo(id) {
+    return axios.get(`${baseURL}/programmes/${id}/agapeo`);
+}
+
+export function getProgrammePermis(id) {
+    return axios.get(`${baseURL}/programmes/${id}/permis`);
+}
+
+export function getOperationProgrammes(id) {
+    return axios.get(`${baseURL}/operations/${id}/programmes`);
+}
+
+export function getOperation(id) {
+    return axios.get(`${baseURL}/operations/${id}`);
+}
+
+export function getSecteur(id) {
+    return axios.get(`${baseURL}/operations`)
+    .catch(error => {})
+    .then(response => (
+        {
+            ...response,
+            data: find(response.data.elements, ["id", id])
+        }
+    ));
 }

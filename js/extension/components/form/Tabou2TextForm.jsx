@@ -6,18 +6,21 @@ export default function Tabou2TextForm({
 }) {
     const [text, setText] = useState("");
 
+    // hooks
     useEffect(() => {
         if (text !== props.value) {
             setText(props.value);
         }
     }, [props.value]);
 
+    // action on blur
     const triggerBlur = (event) => {
         if (event.target.value !== text && props.onBlur) {
             props.onBlur(event);
         }
     };
 
+    // action on change
     const triggerChange = (event) => {
         if (event.target.value !== text && props.onChange) {
             props.onChange(event);
