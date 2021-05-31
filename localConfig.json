@@ -466,7 +466,9 @@
               "placeholder": "Type de financement"
             },
             "plui": {
-              "filterField": "libelle",
+              "layer": "tabou2:plui_plan_zonage_simplifie",
+              "geom": "the_geom",
+              "filterField": "etiquette",
               "apiField": "libelle",
               "apiLabel": "libelle",
               "placeholder": "Zonage PLUI"
