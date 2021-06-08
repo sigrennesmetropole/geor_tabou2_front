@@ -3,18 +3,18 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Tabou2's documentation!
-==================================
+Documentation Tabou2
+==========================
+
+Cette documentation Tabou2 aborde la configuration du module MapStore2, son installation et la description des ressources techniques du module.
+
+.. image:: _img/home.png
+   :width: 600
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Documentation administrateur
 
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+   _pages/config
+   _pages/tech
+   _pages/doc
