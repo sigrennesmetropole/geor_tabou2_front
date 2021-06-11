@@ -15,6 +15,7 @@ Cette documentation Tabou2 aborde la configuration du module MapStore2, son inst
    :maxdepth: 2
    :caption: Documentation administrateur
 
-   _pages/config
+   _pages/contrib
    _pages/tech
+   _pages/config
    _pages/doc
