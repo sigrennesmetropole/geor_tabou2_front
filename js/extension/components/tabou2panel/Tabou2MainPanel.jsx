@@ -23,7 +23,7 @@ function Tabou2MainPanel({
     return (
         <span className="ms-tabou2-panel">
             <DockablePanel
-                open={true}
+                open
                 glyph="th"
                 bsStyle="primary"
                 title={<Message msgId="tabou2.windowTitle"/>}
@@ -31,9 +31,9 @@ function Tabou2MainPanel({
                 draggable={false}
                 onClose={onClose}
                 size={size}
-                dock={true}
+                dock
                 style={dockStyle}
-                fade={true}
+                fade
                 clickOutEnabled={false}
                 position={'right'}
                 header={

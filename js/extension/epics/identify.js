@@ -26,7 +26,7 @@ import { CHANGE_FEATURE, CREATE_FEATURE } from '../actions/tabou2';
  */
 export function tabouLoadIdentifyContent(action$, store) {
     return action$.ofType(LOAD_FEATURE_INFO)
-        .filter((action) => isTabou2Activate(store.getState()))
+        .filter(() => isTabou2Activate(store.getState()))
         .switchMap((action) => {
             if (action?.layer?.id && action?.data?.features && action.data.features.length) {
                 let resp = getTabouResponse(store.getState());
@@ -38,7 +38,7 @@ export function tabouLoadIdentifyContent(action$, store) {
                 if (action?.data?.features && action.data.features.length) {
                     resp[action.layer.name] = action;
                     // only return response for OA, PA, SA
-                    resp = pickBy(resp, (v,k) => 
+                    resp = pickBy(resp, (v, k) =>
                         find(cfg, ["nom", k])
                     );
                 } else {
@@ -65,21 +65,21 @@ export function tabouSetGFIFormat(action$, store) {
     return action$.ofType(TOGGLE_CONTROL)
         .filter(() => isTabou2Activate(store.getState()))
         .switchMap((action) => {
-        if (action.control !== CONTROL_NAME) return Rx.Observable.empty();
-        if (store.getState().controls[CONTROL_NAME].enabled) {
+            if (action.control !== CONTROL_NAME) return Rx.Observable.empty();
+            if (store.getState().controls[CONTROL_NAME].enabled) {
             // to save default info format from config or default MS2 config
-            const defaultMime = generalInfoFormatSelector(store.getState());
-            // change format to application/json
-            return Rx.Observable.of(setDefaultInfoFormat(defaultMime))
-                .concat(Rx.Observable.of(changeMapInfoFormat('application/json')))
-                .concat(Rx.Observable.of(updateUserPlugin("Identify", { active: false })));
-        }
-        // restore default info format
-        const firstDefaultMime = defaultInfoFormat(store.getState());
-        return Rx.Observable.of(changeMapInfoFormat(firstDefaultMime))
-            .concat(Rx.Observable.of(updateUserPlugin("Identify", { active: true })));
+                const defaultMime = generalInfoFormatSelector(store.getState());
+                // change format to application/json
+                return Rx.Observable.of(setDefaultInfoFormat(defaultMime))
+                    .concat(Rx.Observable.of(changeMapInfoFormat('application/json')))
+                    .concat(Rx.Observable.of(updateUserPlugin("Identify", { active: false })));
+            }
+            // restore default info format
+            const firstDefaultMime = defaultInfoFormat(store.getState());
+            return Rx.Observable.of(changeMapInfoFormat(firstDefaultMime))
+                .concat(Rx.Observable.of(updateUserPlugin("Identify", { active: true })));
 
-    });
+        });
 }
 
 /**
@@ -89,71 +89,71 @@ export function tabouSetGFIFormat(action$, store) {
  */
 export function purgeTabou(action$, store) {
     return action$.ofType(FEATURE_INFO_CLICK)
-    .filter(() => isTabou2Activate(store.getState()))
-    .switchMap(() => {
-        return Rx.Observable.of(loadTabouFeatureInfo({}));
-    });
+        .filter(() => isTabou2Activate(store.getState()))
+        .switchMap(() => {
+            return Rx.Observable.of(loadTabouFeatureInfo({}));
+        });
 }
 
 /**
  * Get fiche-suivi from tabou2 API as document
- * @param {*} action$ 
- * @param {*} store 
- * @returns 
+ * @param {*} action$
+ * @param {*} store
+ * @returns
  */
 export function printProgramme(action$, store) {
     return action$.ofType(PRINT_PROGRAMME_INFOS)
         .filter(() => isTabou2Activate(store.getState()))
         .switchMap((action) => {
             return Rx.Observable.defer(() => getPDFProgramme("programme", action.id))
-            .catch(e => {
-                console.log("Error on get PDF request");
-                console.log(e);
-                return Rx.Observable.of({data: []});
-            })
-            .switchMap( response => {
-                if (!isEmpty(response.data)) {
-                    const blob = new Blob([response.data], { type: response.data.type || 'application/pdf' });
-                    const url = window.URL.createObjectURL(blob);
-                    const link = document.createElement('a');
-                    link.href = url;
-                    const contentDisposition = response.headers['content-disposition'];
-                    let name = `fiche-suivi-${action.id}`;
-                    if (contentDisposition) {
-                        const fileNameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
-                        if (fileNameMatch.length > 2 && fileNameMatch[1]) {
-                            name = fileNameMatch[1];
+                .catch(e => {
+                    console.log("Error on get PDF request");
+                    console.log(e);
+                    return Rx.Observable.of({data: []});
+                })
+                .switchMap( response => {
+                    if (!isEmpty(response.data)) {
+                        const blob = new Blob([response.data], { type: response.data.type || 'application/pdf' });
+                        const url = window.URL.createObjectURL(blob);
+                        const link = document.createElement('a');
+                        link.href = url;
+                        const contentDisposition = response.headers['content-disposition'];
+                        let name = `fiche-suivi-${action.id}`;
+                        if (contentDisposition) {
+                            const fileNameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+                            if (fileNameMatch.length > 2 && fileNameMatch[1]) {
+                                name = fileNameMatch[1];
+                            }
                         }
+                        link.setAttribute('download', name);
+                        document.body.appendChild(link);
+                        link.click();
+                        link.remove();
+                        window.URL.revokeObjectURL(url);
                     }
-                    link.setAttribute('download', name);
-                    document.body.appendChild(link);
-                    link.click();
-                    link.remove();
-                    window.URL.revokeObjectURL(url);
-                }
-                return Rx.Observable.empty();
-            });
-    });
+                    return Rx.Observable.empty();
+                });
+        });
 }
 
 /**
  * Epic to create PA, OA, SA Feature. This action will create new Tabou feature from selected geom.
- * @param {any} action$ 
- * @param {any} store 
+ * @param {any} action$
+ * @param {any} store
  * @returns empty
  */
-export function createChangeFeature (action$, store) {
+export function createChangeFeature(action$, store) {
     return action$.ofType(CHANGE_FEATURE, CREATE_FEATURE)
-    .switchMap( action => {
-        let request = action?.type === "CREATE_FEATURE" ? postRequestApi : putRequestApi;
-        return Rx.Observable.defer( () => request(`${get(URL_ADD, action.params.layer)}`, getPluginCfg(store.getState()).apiCfg, action.params.feature))
-        .catch(e => {
-            console.log("Error to save feature change or feature creation");
-            console.log(e);
-            return Rx.Observable.empty();
-        })
-        .switchMap(()=>{
-            return Rx.Observable.empty();
-        })
-    })
+        .switchMap( action => {
+            let request = action?.type === "CREATE_FEATURE" ? postRequestApi : putRequestApi;
+            return Rx.Observable.defer( () => request(`${get(URL_ADD, action.params.layer)}`, getPluginCfg(store.getState()).apiCfg, action.params.feature))
+                .catch(e => {
+                    console.log("Error to save feature change or feature creation");
+                    console.log(e);
+                    return Rx.Observable.empty();
+                })
+                .switchMap(()=>{
+                    return Rx.Observable.empty();
+                });
+        });
 }

@@ -37,7 +37,7 @@ export const URL_TIERS = {
     "tabou2:oa_secteur": "operations"
 };
 
-export const REQUIRED_TIER = ["adresseRue", "nom","adresseCp","adresseVille", "email", "libelle"];
+export const REQUIRED_TIER = ["adresseRue", "nom", "adresseCp", "adresseVille", "email", "libelle"];
 export const TIERS_SCHEMA = {
     "id": 0,
     "nom": "",
@@ -135,7 +135,7 @@ export const SEARCH_CALENDARS = [{
     {
         label: "tabou2.search.dateTo",
         isStart: false,
-        name: "doc",
+        name: "doc"
     }]
 }, {
     items: [{
@@ -174,7 +174,7 @@ export const ACCORDIONS = [
 
 export const LAYER_FIELD_OPTION = [
     {
-        //name: "urba_proj:v_oa_programme",
+        // name: "urba_proj:v_oa_programme",
         name: "layerPA",
         field: "properties.nom",
         id: "properties.id_tabou"
@@ -272,36 +272,36 @@ export const ACC_ATTRIBUTE_DESCRIBE = [{
 
 export const ADD_FIELDS = {
     secteur: {
-        layerOA : "secteur",
-        layerPA : "secteur",
-        layerSA : "secteur"
+        layerOA: "secteur",
+        layerPA: "secteur",
+        layerSA: "secteur"
     },
     idEmprise: {
-        layerOA : "nom",
-        layerPA : "nom",
-        layerSA : "nom"
+        layerOA: "nom",
+        layerPA: "nom",
+        layerSA: "nom"
     },
     nom: {
-        layerOA : "nom",
-        layerPA : "nom",
-        layerSA : "nom"
+        layerOA: "nom",
+        layerPA: "nom",
+        layerSA: "nom"
     },
     etape: {
-        layerOA : "etape",
-        layerPA : "etape",
-        layerSA : "etape"
+        layerOA: "etape",
+        layerPA: "etape",
+        layerSA: "etape"
     },
     nature: {
-        layerOA : "nature",
-        layerPA : "nature",
-        layerSA : "nature"
+        layerOA: "nature",
+        layerPA: "nature",
+        layerSA: "nature"
     },
     code: {
-        layerOA : "code",
-        layerPA : "code",
-        layerSA : "code"
+        layerOA: "code",
+        layerPA: "code",
+        layerSA: "code"
     }
-}
+};
 
 export const ADD_OA_FORM = [{
     label: "tabou2.add.checkSector",
@@ -427,7 +427,7 @@ export const ADD_PA_FORM = [ {
 export const OA_SCHEMA = {
     "diffusionRestreinte": false,
     "nature": {
-      "id": 1
+        "id": 1
     },
     "idEmprise": 0,
     "code": "",
@@ -437,25 +437,25 @@ export const OA_SCHEMA = {
     "nbLogementsPrevu": 0,
     "secteur": false,
     "surfaceTotale": 0,
-    "consommationEspace": {  
-      "id": 1
+    "consommationEspace": {
+        "id": 1
     },
-    "decision": {  
-      "id": 1
+    "decision": {
+        "id": 1
     },
-    "etape": {  
-      "id": 1
+    "etape": {
+        "id": 1
     },
-    "maitriseOuvrage": {  
-      "id": 1
+    "maitriseOuvrage": {
+        "id": 1
     },
     "modeAmenagement": {
-      "id": 1
+        "id": 1
     },
     "vocation": {
-      "id": 1
+        "id": 1
     }
-  };
+};
 
 export const PA_SCHEMA = {
     "operationId": 0,
@@ -466,7 +466,7 @@ export const PA_SCHEMA = {
     "description": "nc",
     "programme": "nc",
     "etape": {
-      "id": 0  
+        "id": 0
     },
     "numAds": "nc"
 };
@@ -476,5 +476,5 @@ export const LOG_SCHEMA = {
     eventDate: "2021-04-21T14:39:54.176Z",
     id: 0,
     idType: 3,
-    new: true
-}
+    "new": true
+};

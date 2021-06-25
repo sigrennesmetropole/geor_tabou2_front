@@ -27,7 +27,7 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
         name: "decision",
         label: "tabou2.identify.accordions.decision",
         field: "decision.libelle",
-        layers:["layerSA", "layerOA"],
+        layers: ["layerSA", "layerOA"],
         type: "combo",
         apiLabel: "libelle",
         api: "decisions",
@@ -37,14 +37,14 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
         name: "maitriseOuvrage",
         label: "tabou2.identify.accordions.moa",
         field: "maitriseOuvrage.libelle",
-        layers:["layerSA", "layerOA"],
+        layers: ["layerSA", "layerOA"],
         type: "combo",
         apiLabel: "libelle",
         api: "maitrise-ouvrage",
         source: operation,
         readOnly: false
     }, {
-        layers:["layerSA", "layerOA"],
+        layers: ["layerSA", "layerOA"],
         name: "modeAmenagement",
         label: "tabou2.identify.accordions.modeAmenagement",
         field: "modeAmenagement.libelle",
@@ -57,13 +57,13 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
         name: "amenageur",
         field: "nom",
         label: "tabou2.identify.accordions.amenageur",
-        layers:["layerSA", "layerOA"],
+        layers: ["layerSA", "layerOA"],
         type: "multi",
         data: props.tiers.filter(t => t.libelle === "Maître d'ouvrage").map(t => t.nom),
         readOnly: true
-    },{
+    }, {
         name: "moe",
-        label:"tabou2.identify.accordions.moe",
+        label: "tabou2.identify.accordions.moe",
         type: "multi",
         data: props.tiers.filter(t => t.libelle === "Maître d'oeuvre").map(t => t.nom),
         readOnly: true
@@ -85,19 +85,13 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
         }
     }, [initialItem]);
 
-    const getValue = (item) => {
-        if (isEmpty(values) || isEmpty(operation)) return null;
-        let itemSrc = getFields().filter(f => f.name === item.name)[0]?.source;
-        return get(itemSrc, item?.field);
-    }
-
     const changeInfos = (item) => {
         let newValues = {...values, ...item};
         setValues(newValues);
         // send to parent to save
         let accordValues = pick(newValues, getFields().filter(f => !f.readOnly).map(f => f.name));
         props.change(accordValues, pick(accordValues, required));
-    }
+    };
 
     return (
         <Grid style={{ width: "100%" }} className={""}>
@@ -105,52 +99,52 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
                 fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(item => (
                     <Row className="attributeInfos">
                         <Col xs={4}>
-                        {
-                            item.type !== "boolean" ? <ControlLabel><Message msgId={item.label}/></ControlLabel> :  null
-                        }
-                        {
-                            item.type === "boolean" ?
-                                (<Checkbox 
-                                    inline="true"
-                                    checked={item.value(item) || false}
-                                    disabled={item.readOnly || !allowChange}
-                                    id={`chbox-${item.name}`}
-                                    className="col-xs-5">
-                                    <ControlLabel><Message msgId={item.label}/></ControlLabel>
-                                </Checkbox>) : null
-                        }
+                            {
+                                item.type !== "boolean" ? <ControlLabel><Message msgId={item.label}/></ControlLabel> :  null
+                            }
+                            {
+                                item.type === "boolean" ?
+                                    (<Checkbox
+                                        inline="true"
+                                        checked={item.value(item) || false}
+                                        disabled={item.readOnly || !allowChange}
+                                        id={`chbox-${item.name}`}
+                                        className="col-xs-5">
+                                        <ControlLabel><Message msgId={item.label}/></ControlLabel>
+                                    </Checkbox>) : null
+                            }
                         </Col>
                         <Col xs={8}>
-                        {
-                            item.type === "combo" ? (
-                                <Tabou2Combo
-                                    load={() => getRequestApi(item.api, props.pluginCfg.apiCfg, {})}
-                                    placeholder={props.i18n(props.messages, item?.label || "")}
-                                    filter="contains"
-                                    textField={item.apiLabel}
-                                    disabled={item?.readOnly || !allowChange}
-                                    onLoad={(r) => r?.elements || r}
-                                    name={item.name}
-                                    value={get(values, item.name)}
-                                    onSelect={(v) => changeInfos({[item.name]: v})}
-                                    onChange={(v) => !v ? changeInfos({[item.name]: v}) : null}
-                                    messages={{
-                                        emptyList: props.i18n(props.messages, "tabou2.emptyList"),
-                                        openCombobox: props.i18n(props.messages, "tabou2.displayList")
-                                    }}
-                                />
-                            ) : null
-                        }{
-                            item.type === "multi" ? (
-                                <Multiselect
-                                    placeholder={props.i18n(props.messages, item?.label || "")}
-                                    readOnly={item.readOnly || !allowChange}
-                                    value={item.data}
-                                    className={ item.readOnly ? "tagColor noClick" : "tagColor"}
-                                />
-                            ) : null
-                        }
-                    </Col>
+                            {
+                                item.type === "combo" ? (
+                                    <Tabou2Combo
+                                        load={() => getRequestApi(item.api, props.pluginCfg.apiCfg, {})}
+                                        placeholder={props.i18n(props.messages, item?.label || "")}
+                                        filter="contains"
+                                        textField={item.apiLabel}
+                                        disabled={item?.readOnly || !allowChange}
+                                        onLoad={(r) => r?.elements || r}
+                                        name={item.name}
+                                        value={get(values, item.name)}
+                                        onSelect={(v) => changeInfos({[item.name]: v})}
+                                        onChange={(v) => !v ? changeInfos({[item.name]: v}) : null}
+                                        messages={{
+                                            emptyList: props.i18n(props.messages, "tabou2.emptyList"),
+                                            openCombobox: props.i18n(props.messages, "tabou2.displayList")
+                                        }}
+                                    />
+                                ) : null
+                            }{
+                                item.type === "multi" ? (
+                                    <Multiselect
+                                        placeholder={props.i18n(props.messages, item?.label || "")}
+                                        readOnly={item.readOnly || !allowChange}
+                                        value={item.data}
+                                        className={ item.readOnly ? "tagColor noClick" : "tagColor"}
+                                    />
+                                ) : null
+                            }
+                        </Col>
                     </Row>
                 ))
             }

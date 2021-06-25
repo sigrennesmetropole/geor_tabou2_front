@@ -2,8 +2,8 @@ import { keys, get } from 'lodash';
 
 /**
  * Utils to format string
- * @param {string} type 
- * @param {string} value 
+ * @param {string} type
+ * @param {string} value
  * @returns string expected by CQL Url format
  */
 const fixStringCql = (type, value) => {
@@ -117,9 +117,9 @@ export function getIdsToCql(ids, field) {
             rowId: new Date().getTime(),
             type: "number",
             value: id
-        }
-    })
-};
+        };
+    });
+}
 
 /**
  * Create standard CQL Cross Layer filter expression
@@ -134,14 +134,14 @@ export function getIdsToCql(ids, field) {
 export function getSpatialCQL(type, geomA, layer, geomB, field, value, onlyTabou) {
     if (type === "date" && (value.start || value.end)) {
         // allow to input only one date filter
-        let cql =  `'((${field}>=''${value.start}'' AND ${field}<=''${value.end}''))'`
+        let cql =  `'((${field}>=''${value.start}'' AND ${field}<=''${value.end}''))'`;
         if (!value.start && value.end) {
             cql = `'((${field}<=''${value.end}''))'`;
         } else if (!value.end && value.start) {
             cql = `'((${field}>=''${value.start}''))'`;
         }
         return `(INTERSECTS(${geomA},collectGeometries(queryCollection('${layer}', '${geomB}','(${onlyTabou ? "id_tabou IS NOT NULL AND " : ""}${cql})'))))`;
-    } else if (type === "date"){
+    } else if (type === "date") {
         return "";
     } else if (!field && value) {
         return `(INTERSECTS(${geomA},collectGeometries(queryCollection('${layer}', '${geomB}','INCLUDE'))))`;
@@ -154,7 +154,7 @@ export function getSpatialCQL(type, geomA, layer, geomB, field, value, onlyTabou
  * @param {string} type layer expected from config as layerOA, layerPA, layer SA values
  * @param {any} field to filter
  * @param {*} value to apply
- * @returns 
+ * @returns
  */
 export function getCQL(type, field, value) {
     if (type === "date" && (value.start || value.end)) {

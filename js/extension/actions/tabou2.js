@@ -92,9 +92,10 @@ export const setDefaultInfoFormat = (infoFormat) => ({
 
 export const loadTabouFeatureInfo = (response) => {
     return ({
-    type: LOAD_TABOU_FEATURE_INFO,
-    response
-})};
+        type: LOAD_TABOU_FEATURE_INFO,
+        response
+    });
+};
 
 export const setSelectorIndex = (selectorsIndex) => ({
     type: SET_SELECTOR_INDEX,

@@ -90,9 +90,9 @@ export default {
         addCreateTabou2Tier: addCreateTabou2Tier,
         printProgramme: printProgramme,
         tabouGetSearchIds: tabouGetSearchIds,
-        createChangeFeature:createChangeFeature,
+        createChangeFeature: createChangeFeature,
         getTiersElements: getTiersElements,
-        associateTabou2Tier: associateTabou2Tier,
+        associateTabou2Tier: associateTabou2Tier
     },
     containers: {
         Toolbar: {

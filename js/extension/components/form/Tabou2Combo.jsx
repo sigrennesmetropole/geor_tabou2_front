@@ -67,7 +67,6 @@ function Tabou2Combo({
         value={text}
         textField={textField}
         valueField={valueField}
-        className="toto"
         style={style}
         data={data}
         defaultValue={props.defaultValue}

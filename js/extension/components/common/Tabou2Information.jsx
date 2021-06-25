@@ -4,7 +4,7 @@ import { Glyphicon } from "react-bootstrap";
 
 /**
  * A simple component to display a message with title, text and icon
- * @param {object} props 
+ * @param {object} props
  * @returns component
  */
 export default function Tabou2Information(props) {

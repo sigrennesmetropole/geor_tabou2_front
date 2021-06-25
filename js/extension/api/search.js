@@ -86,7 +86,7 @@ export function getTiers(params = {}) {
 }
 
 export function getFeatureTiers(type, id) {
-    return axios.get(`${baseURL}/${type}/${id}/tiers?asc=true`, null, {})
+    return axios.get(`${baseURL}/${type}/${id}/tiers?asc=true`, null, {});
 }
 
 export function getTypesTiers() {
@@ -154,11 +154,11 @@ export function getOperation(id) {
 
 export function getSecteur(id) {
     return axios.get(`${baseURL}/operations`)
-    .catch(error => {})
-    .then(response => (
-        {
-            ...response,
-            data: find(response.data.elements, ["id", id])
-        }
-    ));
+        .catch(error => console.log(error))
+        .then(response => (
+            {
+                ...response,
+                data: find(response.data.elements, ["id", id])
+            }
+        ));
 }

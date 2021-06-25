@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Glyphicon, Nav, NavItem } from 'react-bootstrap';
-import Message from "@mapstore/components/I18N/Message";
 import tooltip from '@mapstore/components/misc/enhancers/tooltip';
 
 import { setMainActiveTab } from '../../actions/tabou2';
@@ -12,7 +11,7 @@ import { TABS } from '../../constants';
  * Main Tabou tabs
  * @param {any} param
  * @returns component
- */ 
+ */
 const NavItemT = tooltip(NavItem);
 function SelectionTab({ currentTab, onClick, ...props}) {
     return (

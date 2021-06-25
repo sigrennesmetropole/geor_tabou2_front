@@ -89,7 +89,7 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
         if (isEmpty(values) || isEmpty(operation)) return null;
         let itemSrc = getFields().filter(f => f.name === item.name)[0]?.source;
         return get(itemSrc, item?.field);
-    }
+    };
 
     // manage change info
     const changeInfos = (item) => {
@@ -98,7 +98,7 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
         // send to parent to save
         let accordValues = pick(newValues, getFields().filter(f => !f.readOnly).map(f => f.name));
         props.change(accordValues, pick(accordValues, required));
-    }
+    };
 
     return (
         <Grid style={{ width: "100%" }}>
@@ -109,29 +109,29 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
                             <ControlLabel><Message msgId={item.label}/></ControlLabel>
                         </Col>
                         <Col xs={8}>
-                        {
-                            item.type === "text" ?
-                                (<FormControl
-                                    placeholder={props.i18n(props.messages, item?.label || "")}
-                                    value={getValue(item) || ""}
-                                    readOnly={item.readOnly || !allowChange}
-                                    onChange={(v) => changeInfos({[item.name]: v.target.value})}
-                                />) : null
-                        }{
-                            item.type === "multi" ? (
-                                <Multiselect
-                                    style={{color:"black !important"}}
-                                    placeholder={props.i18n(props.messages, item?.label || "")}
-                                    value={getValue(item).split(";") || []}
-                                    readOnly={item.readOnly || !allowChange}
-                                    messages={{
-                                        emptyList: item.readOnly ? "tabou2.identify.accordions.notAvailable" : "tabou2.emptyList",
-                                        openCombobox: "tabou2.displayList"
-                                    }}
-                                    className={ item.readOnly ? "tagColor noClick" : "tagColor"}
-                                />
-                            ) : null
-                        }
+                            {
+                                item.type === "text" ?
+                                    (<FormControl
+                                        placeholder={props.i18n(props.messages, item?.label || "")}
+                                        value={getValue(item) || ""}
+                                        readOnly={item.readOnly || !allowChange}
+                                        onChange={(v) => changeInfos({[item.name]: v.target.value})}
+                                    />) : null
+                            }{
+                                item.type === "multi" ? (
+                                    <Multiselect
+                                        style={{color: "black !important"}}
+                                        placeholder={props.i18n(props.messages, item?.label || "")}
+                                        value={getValue(item).split(";") || []}
+                                        readOnly={item.readOnly || !allowChange}
+                                        messages={{
+                                            emptyList: item.readOnly ? "tabou2.identify.accordions.notAvailable" : "tabou2.emptyList",
+                                            openCombobox: "tabou2.displayList"
+                                        }}
+                                        className={ item.readOnly ? "tagColor noClick" : "tagColor"}
+                                    />
+                                ) : null
+                            }
                         </Col>
                     </Row>
                 ))

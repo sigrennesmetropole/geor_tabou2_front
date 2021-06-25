@@ -1,5 +1,5 @@
 import { set } from '@mapstore/utils/ImmutableUtils';
-import { get } from 'lodash';
+import { get, isNumber } from 'lodash';
 import {
     SETUP,
     SET_MAIN_ACTIVE_TAB,

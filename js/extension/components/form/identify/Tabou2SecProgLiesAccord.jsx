@@ -22,7 +22,7 @@ export default function Tabou2SecProgLiesAccord({ initialItem, programme, operat
             "tabou2.identify.accordions.step",
             "tabou2.identify.accordions.dateLiv"
         ],
-        layers:["layerOA","layerSA"],
+        layers: ["layerOA", "layerSA"],
         source: props?.tabouInfos?.programmes?.elements || [],
         readOnly: true
     }].filter(el => el?.layers?.includes(layer) || !el?.layers);
@@ -31,15 +31,15 @@ export default function Tabou2SecProgLiesAccord({ initialItem, programme, operat
     const getValueByField = (field, val) => {
         let fieldVal;
         switch (field) {
-            case "dateLiv":
-                fieldVal = val ? new Date(val).toLocaleDateString() : val;
-                break;
-            default:
-                fieldVal = val;
-                break;
+        case "dateLiv":
+            fieldVal = val ? new Date(val).toLocaleDateString() : val;
+            break;
+        default:
+            fieldVal = val;
+            break;
         }
         return fieldVal;
-    }
+    };
 
     // hooks
     useEffect(() => {
@@ -59,34 +59,34 @@ export default function Tabou2SecProgLiesAccord({ initialItem, programme, operat
                             <ControlLabel><Message msgId={item.label}/> : </ControlLabel>
                         </Col>
                         <Col xs={12}>
-                        {
-                            item.type === "table" ? (
-                                <Table striped bordered condensed hover>
-                                    <thead>
-                                        <tr>
-                                            {item.fields.map((fieldName,i) => 
-                                                (
-                                                    <th>{capitalize(props.i18n(props.messages, item.labels[i]))}</th>
-                                                )
-                                            )}
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {
-                                            item.source.map(programme => (
-                                                <tr>
-                                                    {item.fields.map(field => (
-                                                        <>
-                                                            <td>{getValueByField(field, get(programme, field))}</td>
-                                                        </>
-                                                    ))}
-                                                </tr>
-                                            ))
-                                        }
-                                    </tbody>
-                                </Table>
-                            ) : null
-                        }
+                            {
+                                item.type === "table" ? (
+                                    <Table striped bordered condensed hover>
+                                        <thead>
+                                            <tr>
+                                                {item.fields.map((fieldName, i) =>
+                                                    (
+                                                        <th>{capitalize(props.i18n(props.messages, item.labels[i]))}</th>
+                                                    )
+                                                )}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {
+                                                item.source.map(programmeItem => (
+                                                    <tr>
+                                                        {item.fields.map(field => (
+                                                            <>
+                                                                <td>{getValueByField(field, get(programmeItem, field))}</td>
+                                                            </>
+                                                        ))}
+                                                    </tr>
+                                                ))
+                                            }
+                                        </tbody>
+                                    </Table>
+                                ) : null
+                            }
                         </Col>
                     </Row>
                 ))

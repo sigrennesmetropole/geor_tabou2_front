@@ -22,7 +22,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
     const getFields = () => [{
     // OPERATION
         name: "nbLogementsPrevu",
-        layers:["layerSA", "layerOA"],
+        layers: ["layerSA", "layerOA"],
         label: "tabou2.identify.accordions.logementPlan",
         field: "nbLogementsPrevu",
         type: "number",
@@ -30,7 +30,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
         readOnly: false
     }, {
         name: "plhLogementsPrevus",
-        layers:["layerSA", "layerOA"],
+        layers: ["layerSA", "layerOA"],
         label: "tabou2.identify.accordions.plhPlan",
         field: "plhLogementsPrevus",
         type: "number",
@@ -38,18 +38,18 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
         readOnly: false
     }, {
         name: "plhLogementsLivres",
-        layers:["layerSA", "layerOA"],
+        layers: ["layerSA", "layerOA"],
         label: "tabou2.identify.accordions.plhLiv",
         field: "plhLogementsLivres",
         type: "number",
         source: values?.plhLogementsLivres ? values : operation,
         readOnly: false
-    },// PROGRAMME
+    }, // PROGRAMME
     {
         name: "attributionFonciereAnnee",
         label: "tabou2.identify.accordions.yearAttrib",
         field: "attributionFonciereAnnee",
-        layers:["layerPA"],
+        layers: ["layerPA"],
         type: "number",
         source: has(values, "attributionFonciereAnnee") ? values : programme,
         readOnly: false
@@ -58,7 +58,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
         label: "tabou2.identify.accordions.dateAttrib",
         field: "attributionDate",
         type: "date",
-        layers:["layerPA"],
+        layers: ["layerPA"],
         source: has(values, "attributionDate") ? values : programme,
         readOnly: false
     }, {
@@ -66,14 +66,14 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
         label: "tabou2.identify.accordions.dateCom",
         field: "commercialisationDate",
         type: "date",
-        layers:["layerPA"],
+        layers: ["layerPA"],
         source: has(values, "commercialisationDate") ? values : programme,
         readOnly: false
     }, {
         name: "logementsTotal",
         label: "tabou2.identify.accordions.totalLog",
         field: "logementsTotal",
-        layers:["layerPA"],
+        layers: ["layerPA"],
         type: "number",
         source: has(values, "logementsTotal") ? values : programme,
         readOnly: false
@@ -81,7 +81,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
         name: "logementsAccessAidePrevu",
         label: "tabou2.identify.accordions.helpAccess",
         field: "logementsAccessAidePrevu",
-        layers:["layerPA"],
+        layers: ["layerPA"],
         type: "number",
         source: has(values, "logementsAccessAidePrevu") ? values : programme,
         readOnly: false
@@ -89,7 +89,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
         name: "logementsAccessLibrePrevu",
         label: "tabou2.identify.accordions.freeAccess",
         field: "logementsAccessLibrePrevu",
-        layers:["layerPA"],
+        layers: ["layerPA"],
         type: "number",
         source: has(values, "logementsAccessLibrePrevu") ? values : programme,
         readOnly: false
@@ -97,7 +97,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
         name: "logementsAccessMaitrisePrevu",
         label: "tabou2.identify.accordions.controlAccess",
         field: "logementsAccessMaitrisePrevu",
-        layers:["layerPA"],
+        layers: ["layerPA"],
         type: "number",
         source: has(values, "logementsAccessMaitrisePrevu") ? values : programme,
         readOnly: false
@@ -105,7 +105,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
         name: "logementsLocatifAidePrevu",
         label: "tabou2.identify.accordions.locHelp",
         field: "logementsLocatifAidePrevu",
-        layers:["layerPA"],
+        layers: ["layerPA"],
         type: "number",
         source: has(values, "logementsLocatifAidePrevu") ? values : programme,
         readOnly: false
@@ -113,7 +113,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
         name: "logementsLocatifReguleHlmPrevu",
         label: "tabou2.identify.accordions.locHlm",
         field: "logementsLocatifReguleHlmPrevu",
-        layers:["layerPA"],
+        layers: ["layerPA"],
         type: "number",
         source: has(values, "logementsLocatifReguleHlmPrevu") ? values : programme,
         readOnly: false
@@ -121,7 +121,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
         name: "logementsLocatifRegulePrivePrevu",
         label: "tabou2.identify.accordions.privateLoc",
         field: "logementsLocatifRegulePrivePrevu",
-        layers:["layerPA"],
+        layers: ["layerPA"],
         type: "number",
         source: has(values, "logementsLocatifRegulePrivePrevu") ? values : programme,
         readOnly: false
@@ -139,7 +139,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
             "tabou2.identify.accordions.locRegPriv",
             "tabou2.identify.accordions.accessHelpTitle"
         ],
-        layers:["layerPA"],
+        layers: ["layerPA"],
         source: props?.tabouInfos?.agapeo || [],
         readOnly: true
     }].filter(el => el?.layers?.includes(layer) || !el?.layers);
@@ -160,21 +160,21 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
         if (isEmpty(values) || isEmpty(operation)) return null;
         let itemSrc = getFields().filter(f => f.name === item.name)[0]?.source;
         return get(itemSrc, item?.field);
-    }
+    };
 
     // get value - usefull for date component
     const getValueByField = (field, val) => {
         let fieldVal;
         switch (field) {
-            case "dateLiv":
-                fieldVal = val ? new Date(val).toLocaleDateString() : val;
-                break;
-            default:
-                fieldVal = val;
-                break;
+        case "dateLiv":
+            fieldVal = val ? new Date(val).toLocaleDateString() : val;
+            break;
+        default:
+            fieldVal = val;
+            break;
         }
         return fieldVal;
-    }
+    };
 
     // manage change info
     const changeInfos = (item) => {
@@ -183,7 +183,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
         // send to parent to save
         let accordValues = pick(newValues, getFields().filter(f => !f.readOnly).map(f => f.name));
         props.change(accordValues, pick(accordValues, required));
-    }
+    };
 
     const allowChange = props.authent.isContrib || props.authent.isReferent;
     return (
@@ -195,64 +195,64 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
                             <ControlLabel><Message msgId={item.label}/></ControlLabel>
                         </Col>
                         <Col xs={8}>
-                        {
-                            item.type === "date" ? (
-                                <UTCDateTimePicker
-                                    type="date"
-                                    className="identifyDate"
-                                    inline
-                                    readOnly={!allowChange || item.readOnly}
-                                    dropUp
-                                    placeholder={props.i18n(props.messages, item?.label || "")}
-                                    calendar={true}
-                                    time={false}
-                                    culture="fr"
-                                    value={get(values, item.name) ? new Date(get(values, item.name)) : null}
-                                    format="DD/MM/YYYY"
-                                    onSelect={(v) => changeInfos({[item.name]: new Date(v).toISOString()})}
-                                    onChange={(v) => !v ? changeInfos({[item.name]: null}) : null} />
-                            ) : null
-                        }
-                        {
-                            item.type === "text" || item.type === "number" ?
-                                (<FormControl
-                                    type={item.type}
-                                    placeholder={props.i18n(props.messages, item?.label || "")}
-                                    value={getValue(item) || ""}
-                                    readOnly={!allowChange || item.readOnly}
-                                    onChange={(v) => changeInfos({[item.name]: v.target.value})}
-                                />) : null
-                        }
+                            {
+                                item.type === "date" ? (
+                                    <UTCDateTimePicker
+                                        type="date"
+                                        className="identifyDate"
+                                        inline
+                                        readOnly={!allowChange || item.readOnly}
+                                        dropUp
+                                        placeholder={props.i18n(props.messages, item?.label || "")}
+                                        calendar
+                                        time={false}
+                                        culture="fr"
+                                        value={get(values, item.name) ? new Date(get(values, item.name)) : null}
+                                        format="DD/MM/YYYY"
+                                        onSelect={(v) => changeInfos({[item.name]: new Date(v).toISOString()})}
+                                        onChange={(v) => !v ? changeInfos({[item.name]: null}) : null} />
+                                ) : null
+                            }
+                            {
+                                item.type === "text" || item.type === "number" ?
+                                    (<FormControl
+                                        type={item.type}
+                                        placeholder={props.i18n(props.messages, item?.label || "")}
+                                        value={getValue(item) || ""}
+                                        readOnly={!allowChange || item.readOnly}
+                                        onChange={(v) => changeInfos({[item.name]: v.target.value})}
+                                    />) : null
+                            }
                         </Col>
                         <Col xs={12}>
-                        {
-                            item.type === "table" ? (
-                                <Table striped bordered condensed hover>
-                                    <thead>
-                                        <tr>
-                                            {item.fields.map((fieldName,i) => 
-                                                (
-                                                    <th>{capitalize(props.i18n(props.messages, item.labels[i]))}</th>
-                                                )
-                                            )}
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {
-                                            item.source.map(programme => (
-                                                <tr>
-                                                    {item.fields.map(field => (
-                                                        <>
-                                                            <td>{getValueByField(field, get(programme, field))}</td>
-                                                        </>
-                                                    ))}
-                                                </tr>
-                                            ))
-                                        }
-                                    </tbody>
-                                </Table>
-                            ) : null
-                        }
+                            {
+                                item.type === "table" ? (
+                                    <Table striped bordered condensed hover>
+                                        <thead>
+                                            <tr>
+                                                {item.fields.map((fieldName, i) =>
+                                                    (
+                                                        <th>{capitalize(props.i18n(props.messages, item.labels[i]))}</th>
+                                                    )
+                                                )}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {
+                                                item.source.map(programmeItem => (
+                                                    <tr>
+                                                        {item.fields.map(field => (
+                                                            <>
+                                                                <td>{getValueByField(field, get(programmeItem, field))}</td>
+                                                            </>
+                                                        ))}
+                                                    </tr>
+                                                ))
+                                            }
+                                        </tbody>
+                                    </Table>
+                                ) : null
+                            }
                         </Col>
                     </Row>
                 ))

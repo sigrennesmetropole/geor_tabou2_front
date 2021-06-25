@@ -1,6 +1,6 @@
 import { CONTROL_NAME } from '@ext/constants';
 import { keys, pickBy } from 'lodash';
-import { userGroupSecuritySelector, userRoleSelector, userSelector, userParamsSelector } from '@mapstore/selectors/security';
+import { userGroupSecuritySelector } from '@mapstore/selectors/security';
 
 export function currentActiveTabSelector(state) {
     return state?.tabou2.activeTab;
@@ -63,8 +63,8 @@ export function getTiers(state) {
 
 /**
  * Get security infos.
- * @param {any} state 
- * @returns 
+ * @param {any} state
+ * @returns
  */
 export function getAuthInfos(state) {
     const groups = userGroupSecuritySelector(state) ?? [];
@@ -74,7 +74,7 @@ export function getAuthInfos(state) {
         isReferent: groupNames.includes("EL_APPLIS_TABOU_REFERENT"),
         isContrib: groupNames.includes("EL_APPLIS_TABOU_CONTRIB"),
         isConsult: groupNames.includes("EL_APPLIS_TABOU_CONSULT")
-    }
+    };
 }
 
 // loading of search
