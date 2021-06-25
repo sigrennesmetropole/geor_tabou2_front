@@ -354,13 +354,13 @@
           "showIdentify": false,
           "layersCfg": {
             "layerPA": {
-              "nom": "tabou2:tabou_v_oa_programme0",
+              "nom": "tabou2:tabou_v_oa_programme",
               "geomField": "the_geom",
               "idField": "objectid",
               "idType": "number"
             },
             "layerOA": {
-              "nom": "tabou2:tabou_v_oa_operation0",
+              "nom": "tabou2:tabou_v_oa_operation",
               "geomField": "the_geom",
               "idField": "objectid",
               "idType": "number"
@@ -398,7 +398,7 @@
               "apiLabel": "nmiris"
             },
             "etapesoa": {
-              "layer": "tabou2:tabou_v_oa_operation0",
+              "layer": "tabou2:tabou_v_oa_operation",
               "geom": "the_geom",
               "filterField": "etape",
               "placeholder": "Etapes OA",
@@ -406,7 +406,7 @@
               "apiLabel": "libelle"
             },
             "etapespa": {
-              "layer": "tabou2:tabou_v_oa_programme0",
+              "layer": "tabou2:tabou_v_oa_programme",
               "geom": "the_geom",
               "filterField": "etape",
               "apiLabel": "libelle",
@@ -447,7 +447,7 @@
               "placeholder": "Sec. Foncier"
             },
             "natures": {
-              "layer": "tabou2:tabou_v_oa_operation0",
+              "layer": "tabou2:tabou_v_oa_operation",
               "geom": "the_geom",
               "service": "operations?nature",
               "attribute": "layerOA",
@@ -474,21 +474,21 @@
               "placeholder": "Zonage PLUI"
             },
             "daact": {
-              "layer": "tabou2:tabou_v_oa_programme0",
+              "layer": "tabou2:tabou_v_oa_programme",
               "geom": "the_geom",
               "filterField": "daact_date",
               "type": "date",
               "placeholder": "Choisir une date"
             },
             "doc": {
-              "layer": "tabou2:tabou_v_oa_programme0",
+              "layer": "tabou2:tabou_v_oa_programme",
               "geom": "the_geom",
               "filterField": "doc_date",
               "type": "date",
               "placeholder": "Choisir une date"
             },
             "livraison": {
-              "layer": "tabou2:tabou_v_oa_programme0",
+              "layer": "tabou2:tabou_v_oa_programme",
               "geom": "the_geom",
               "filterField": "livraison_date",
               "type": "date",
@@ -712,7 +712,7 @@
                 "subTitle": " Opérations d'aménagement",
                 "options": {
                   "url": "https://gis.jdev.fr/geoserver/wfs",
-                  "typeName": "tabou2:tabou_v_oa_operation0",
+                  "typeName": "tabou2:tabou_v_oa_operation",
                   "queriableAttributes": [
                     "nomzac"
                   ],
@@ -729,7 +729,7 @@
                 "subTitle": " Programme d'aménagement",
                 "options": {
                   "url": "https://gis.jdev.fr/geoserver/wfs",
-                  "typeName": "tabou2:tabou_v_oa_programme0",
+                  "typeName": "tabou2:tabou_v_oa_programme",
                   "queriableAttributes": [
                     "nomopa"
                   ],
@@ -763,7 +763,7 @@
                 "subTitle": " Programme d'aménagement",
                 "options": {
                   "url": "https://gis.jdev.fr/geoserver/wfs",
-                  "typeName": "tabou2:tabou_v_oa_programme0",
+                  "typeName": "tabou2:tabou_v_oa_programme",
                   "queriableAttributes": [
                     "programme"
                   ],
