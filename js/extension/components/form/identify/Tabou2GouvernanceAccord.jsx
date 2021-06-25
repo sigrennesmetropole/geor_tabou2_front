@@ -17,11 +17,13 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
     const [values, setValues] = useState({});
     const [fields, setFields] = useState([]);
     const [required, setRequired] = useState({});
+
     const getFields = () => [{
         name: "promoteur",
         label: "tabou2.identify.accordions.promoteur",
+        layers: ["layerPA"],
         type: "multi",
-        data: props.tiers.filter(t => t.libelle === "Maître d'ouvrage").map(t => t.nom),
+        data: props.tiers.filter(t => t.typeTiers.id === 1).map(t => t.tiers.nom),
         readOnly: true
     }, {
         name: "decision",
@@ -59,13 +61,13 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
         label: "tabou2.identify.accordions.amenageur",
         layers: ["layerSA", "layerOA"],
         type: "multi",
-        data: props.tiers.filter(t => t.libelle === "Maître d'ouvrage").map(t => t.nom),
+        data: props.tiers.filter(t => t.typeTiers.id === 1).map(t => t.tiers.nom),
         readOnly: true
     }, {
         name: "moe",
         label: "tabou2.identify.accordions.moe",
         type: "multi",
-        data: props.tiers.filter(t => t.libelle === "Maître d'oeuvre").map(t => t.nom),
+        data: props.tiers.filter(t => t.typeTiers.id === 2).map(t => t.tiers.nom),
         readOnly: true
     }].filter(el => el?.layers?.includes(layer) || !el?.layers);
 

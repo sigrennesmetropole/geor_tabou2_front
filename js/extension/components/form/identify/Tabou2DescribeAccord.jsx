@@ -29,7 +29,7 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
         isArea: true
     }, {
         name: "description",
-        label: "Descriptif",
+        label: "tabou2.identify.accordions.describe",
         type: "text",
         field: "description",
         source: has(values, "description") ? values : initialItem,

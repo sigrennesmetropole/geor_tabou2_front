@@ -49,6 +49,7 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
 
     }, {
         name: "operation",
+        layers: ["layerPA"],
         field: "nom",
         label: "tabou2.identify.accordions.operation",
         type: "text",
@@ -124,6 +125,7 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
                                         placeholder={props.i18n(props.messages, item?.label || "")}
                                         value={getValue(item).split(";") || []}
                                         readOnly={item.readOnly || !allowChange}
+                                        onChange={() => null}
                                         messages={{
                                             emptyList: item.readOnly ? "tabou2.identify.accordions.notAvailable" : "tabou2.emptyList",
                                             openCombobox: "tabou2.displayList"

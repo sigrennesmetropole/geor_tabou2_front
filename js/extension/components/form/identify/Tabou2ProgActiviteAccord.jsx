@@ -5,6 +5,7 @@ import "@ext/css/identify.css";
 import Message from "@mapstore/components/I18N/Message";
 /**
  * Accordion to display info for this specific panel section - only for feature linked with id tabou
+ * This component is only use and display for OA, SA entity
  * @param {any} param
  * @returns component
  */
@@ -15,13 +16,12 @@ export default function Tabou2ProgActiviteAccord({ initialItem, programme, opera
     const [fields, setFields] = useState([]);
     const [required, setRequired] = useState({});
     const getFields = () => [{
-        // OPERATION
-        name: "ql3",
-        label: "tabou2.identify.accordions.ql3",
-        field: "ql3",
+        name: "ql1",
+        label: "tabou2.identify.accordions.ql1",
+        field: "ql1",
+        type: "checkbox",
         layers: ["layerOA", "layerSA"],
-        type: "text",
-        source: values?.ql3 ? values : operation,
+        source: has(values, "ql1") ? values : operation,
         readOnly: false
     }, {
         name: "ql2",
@@ -30,6 +30,14 @@ export default function Tabou2ProgActiviteAccord({ initialItem, programme, opera
         type: "checkbox",
         layers: ["layerOA", "layerSA"],
         source: has(values, "ql2") ? values : operation,
+        readOnly: false
+    }, {
+        name: "ql3",
+        label: "tabou2.identify.accordions.ql3",
+        field: "ql3",
+        layers: ["layerOA", "layerSA"],
+        type: "text",
+        source: values?.ql3 ? values : operation,
         readOnly: false
     }].filter(el => el?.layers?.includes(layer) || !el?.layers);
 
