@@ -180,6 +180,7 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                         {
                             items.map(item => {
                                 let el;
+                                if (item.name === "idEmprise" && !isEmpty(feature)) item.type = "text";
                                 switch (item.type) {
                                 case "checkbox":
                                     el = (
