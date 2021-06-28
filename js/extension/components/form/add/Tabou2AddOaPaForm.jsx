@@ -25,7 +25,7 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
     const [newFeature, setNewFeature] = useState(["layerOA", "layerSA"].includes(layer) ? OA_SCHEMA : PA_SCHEMA);
     const [invalides, setInvalides] = useState([]);
     const naturesInfos = useRef([]);
-    const natureId = useRef(1);
+    const natureId = useRef(-1);
     const etapesInfos = useRef([]);
     const [type, setType] = useState("");
 
@@ -52,15 +52,15 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
             formElement[combo.name] = !infos[combo.name];
         } else {
             // temporary fix for https://github.com/sigrennesmetropole/geor_tabou2_front/issues/82
-
             value = !selection ? selection : selection[combo?.apiLabel] || selection[combo?.apiField] || selection;
-            formElement[combo.name] = value === "En diffus" ? "EN_DIFFUS" : value;
+            formElement[combo.name] = value;
             apiElement[combo.name] = ["etape", "nature"].includes(combo.name) ? {
                 id: selection?.id
             } : selection?.id || selection;
         }
         let newInfos = {...infos, ...formElement};
         let newFeatureObj = {...newFeature, ...apiElement};
+
         if (combo.name === "idEmprise") {
             newFeatureObj = {...newFeatureObj, nom: value};
             newInfos = {...newInfos, nom: value};
@@ -68,6 +68,12 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
         if (combo.name === "parentoa") {
             newFeatureObj = {...newFeatureObj, operationId: selection?.id };
             newInfos = {...newInfos, operationId: selection?.id };
+        }
+
+        if (combo.name === "nature") {
+            natureId.current = selection.id;
+            newInfos.natureId = selection.id;
+            newFeatureObj.natureId = selection.id;
         }
 
         setInvalides(getInvalides(newInfos));
@@ -203,10 +209,15 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                                     ) : null;
                                     break;
                                 case "text":
+                                    let isReadOnly = false;
+                                    // name combo stay editable
+                                    if (item.name !== "nom") {
+                                        isReadOnly = !isEmpty(feature) && infos[item.name] && item.name !== "code" ? true : item.parent ? getActivate(item) : false;
+                                    }
                                     el = (
                                         <FormControl
                                             style={{ marginTop: comboMarginTop, borderColor: isInvalidStyle(item.name) }}
-                                            readOnly={feature && infos[item.name] && item.name !== "code" ? true : item.parent ? getActivate(item) : false}
+                                            readOnly={isReadOnly}
                                             type={item.type}
                                             value={get(infos, item.name)}
                                             required={item?.required}
@@ -232,9 +243,9 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                                                 let dataItem = r?.elements || r;
                                                 // used to keep info and send  nature id to the api instead of name return by layer
                                                 // (need id not return by default)
-                                                if (item.name === "nature") {
+                                                if (item.name === "nature" && infos.nature) {
                                                     naturesInfos.current = dataItem;
-                                                    natureId.current = find(dataItem, ["libelle", infos.nature]).id;
+                                                    natureId.current = find(dataItem, ["libelle", infos.nature])?.id;
                                                 }
                                                 if (item.name === "etape") etapesInfos.current = dataItem;
                                                 return dataItem;
