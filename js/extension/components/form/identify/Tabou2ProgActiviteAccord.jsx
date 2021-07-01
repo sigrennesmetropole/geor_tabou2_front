@@ -16,14 +16,6 @@ export default function Tabou2ProgActiviteAccord({ initialItem, programme, opera
     const [fields, setFields] = useState([]);
     const [required, setRequired] = useState({});
     const getFields = () => [{
-        name: "ql1",
-        label: "tabou2.identify.accordions.ql1",
-        field: "ql1",
-        type: "checkbox",
-        layers: ["layerOA", "layerSA"],
-        source: has(values, "ql1") ? values : operation,
-        readOnly: false
-    }, {
         name: "ql2",
         label: "tabou2.identify.accordions.scot",
         field: "ql2",
