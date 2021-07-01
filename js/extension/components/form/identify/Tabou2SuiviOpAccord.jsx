@@ -1,5 +1,5 @@
 import React, {useEffect, useState } from "react";
-import { isEmpty, isEqual, pick, get } from "lodash";
+import { isEmpty, isEqual, pick, get, has } from "lodash";
 import { Col, Row, Grid, ControlLabel } from "react-bootstrap";
 import Tabou2Combo from '@ext/components/form/Tabou2Combo';
 import { getRequestApi } from "@ext/api/search";
@@ -27,6 +27,7 @@ export default function Tabou2SuiviOpAccord({ initialItem, programme, operation,
         field: "etape.libelle",
         type: "combo",
         apiLabel: "libelle",
+        filter: false,
         api: `${layer === "layerPA" ? "programmes" : "operations"}/${initialItem.id}/etapes`,
         source: values?.etape ? values : initialItem,
         readOnly: false
@@ -101,6 +102,7 @@ export default function Tabou2SuiviOpAccord({ initialItem, programme, operation,
                                         textField={item.apiLabel}
                                         onLoad={(r) => r?.elements || r}
                                         name={item.name}
+                                        filter={has(item, "filter") ? item.filter : "contains"}
                                         readOnly={item.readOnly || !allowChange}
                                         defaultValue={get(values, item.name)}
                                         onSelect={(v) => changeInfos({[item.name]: v})}
