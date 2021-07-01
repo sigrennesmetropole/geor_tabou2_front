@@ -162,3 +162,8 @@ export function getSecteur(id) {
             }
         ));
 }
+
+// CREATE TABOU ENTITY FROM FEATURE
+export function createNewTabouFeature(layer, params) {
+    return axios.post(`${baseURL}/${layer}`, params);
+}

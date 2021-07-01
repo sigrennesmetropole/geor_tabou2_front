@@ -1,6 +1,6 @@
 import * as Rx from 'rxjs';
 import { get, keys, find } from 'lodash';
-import { loadEvents, loadTiers, SELECT_FEATURE, ADD_FEATURE_EVENT, DELETE_FEATURE_EVENT, CHANGE_FEATURE_EVENT, ADD_FEATURE_TIER,
+import { loadEvents, loadTiers, CREATE_FEATURE, SELECT_FEATURE, ADD_FEATURE_EVENT, DELETE_FEATURE_EVENT, CHANGE_FEATURE_EVENT, ADD_FEATURE_TIER,
     ASSOCIATE_TIER, DELETE_FEATURE_TIER, CHANGE_FEATURE_TIER, INACTIVATE_TIER, loadFicheInfos, loading, MAP_TIERS, mapTiers
 } from '@ext/actions/tabou2';
 import {getMessageById} from "@mapstore/utils/LocaleUtils";
@@ -23,7 +23,8 @@ import {
     getOperationProgrammes,
     getSecteur,
     getProgrammeAgapeo,
-    changeFeatureTierAssociation
+    changeFeatureTierAssociation,
+    createNewTabouFeature
 } from '@ext/api/search';
 
 import { getSelection, getLayer, getPluginCfg, isTabou2Activate } from '@ext/selectors/tabou2';
@@ -222,7 +223,6 @@ export function updateTabou2Logs(action$, store) {
         .filter(() => isTabou2Activate(store.getState()))
         .switchMap((action) => {
             let {featureId, layerUrl} = getInfos(store.getState());
-            layerUrl = "operations";
             let toDoOnUpdate = get(actionOnUpdate, action.type);
 
             // get events from API
@@ -345,6 +345,27 @@ export function getTiersElements(action$, store) {
                                 return Rx.Observable.empty();
                             });
                     }
+                    return Rx.Observable.empty();
+                });
+        });
+}
+
+/**
+ * Epic to create PA, OA, SA Feature. This action will create new Tabou feature from selected geom.
+ * @param {any} action$
+ * @param {any} store
+ * @returns empty
+ */
+export function createTabouFeature(action$, store) {
+    return action$.ofType(CREATE_FEATURE)
+        .switchMap( action => {
+            return Rx.Observable.defer( () => createNewTabouFeature(getInfos(store.getState()).layerUrl, action.params))
+                .catch(e => {
+                    console.log("Error to save feature change or feature creation");
+                    console.log(e);
+                    return Rx.Observable.empty();
+                })
+                .switchMap(()=>{
                     return Rx.Observable.empty();
                 });
         });

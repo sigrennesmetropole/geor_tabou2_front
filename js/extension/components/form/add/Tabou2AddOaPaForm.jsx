@@ -2,10 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Row, Col, FormGroup, Checkbox, FormControl, Panel, Alert, Glyphicon } from 'react-bootstrap';
 import Tabou2Combo from '@ext/components/form/Tabou2Combo';
 import { get, has, isEmpty, keys, isEqual, isObject, find } from 'lodash';
-import { getRequestApi, postRequestApi } from '@ext/api/search';
+import { getRequestApi } from '@ext/api/search';
 import ControlledPopover from '@mapstore/components/widgets/widget/ControlledPopover';
 import Toolbar from '@mapstore/components/misc/toolbar/Toolbar';
-import { OA_SCHEMA, PA_SCHEMA, URL_ADD, ADD_FIELDS, ADD_OA_FORM, ADD_PA_FORM } from '@ext/constants';
+import { OA_SCHEMA, PA_SCHEMA, ADD_FIELDS, ADD_OA_FORM, ADD_PA_FORM } from '@ext/constants';
 import { DropdownList} from 'react-widgets';
 import Message from "@mapstore/components/I18N/Message";
 
@@ -123,7 +123,7 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                 nature: natureIdValue
             };
         }
-        postRequestApi(`${get(URL_ADD, type)}`, pluginCfg.apiCfg, params);
+        props.createFeature(params);
     };
 
     // Default info from selected feature

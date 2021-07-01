@@ -15,8 +15,8 @@ import {
 import { TOGGLE_CONTROL } from '@mapstore/actions/controls';
 import { isTabou2Activate, defaultInfoFormat, getTabouResponse, getPluginCfg } from '@ext/selectors/tabou2';
 import { loadTabouFeatureInfo, setDefaultInfoFormat, setMainActiveTab, PRINT_PROGRAMME_INFOS } from '@ext/actions/tabou2';
-import { getPDFProgramme, postRequestApi, putRequestApi } from '@ext/api/search';
-import { CHANGE_FEATURE, CREATE_FEATURE } from '../actions/tabou2';
+import { getPDFProgramme, putRequestApi } from '@ext/api/search';
+import { CHANGE_FEATURE } from '../actions/tabou2';
 
 /**
  * Catch GFI response on identify load event and close identify if Tabou2 identify tabs is selected
@@ -143,10 +143,9 @@ export function printProgramme(action$, store) {
  * @returns empty
  */
 export function createChangeFeature(action$, store) {
-    return action$.ofType(CHANGE_FEATURE, CREATE_FEATURE)
+    return action$.ofType(CHANGE_FEATURE)
         .switchMap( action => {
-            let request = action?.type === "CREATE_FEATURE" ? postRequestApi : putRequestApi;
-            return Rx.Observable.defer( () => request(`${get(URL_ADD, action.params.layer)}`, getPluginCfg(store.getState()).apiCfg, action.params.feature))
+            return Rx.Observable.defer( () => putRequestApi(`${get(URL_ADD, action.params.layer)}`, getPluginCfg(store.getState()).apiCfg, action.params.feature))
                 .catch(e => {
                     console.log("Error to save feature change or feature creation");
                     console.log(e);
