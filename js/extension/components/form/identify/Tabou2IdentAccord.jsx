@@ -2,8 +2,10 @@ import React, {useEffect, useState } from "react";
 import { isEmpty, isEqual, pick, get } from "lodash";
 import { Col, Row, FormControl, Grid, ControlLabel } from "react-bootstrap";
 import { Multiselect } from "react-widgets";
+import { getRequestApi } from "@ext/api/search";
 import "@ext/css/identify.css";
 import Message from "@mapstore/components/I18N/Message";
+import Tabou2Combo from '@ext/components/form/Tabou2Combo';
 /**
  * Accordion to display info for Identity panel section - only for feature linked with id tabou
  * @param {any} param
@@ -15,6 +17,7 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
     const [values, setValues] = useState({});
     const [fields, setFields] = useState([]);
     const [required, setRequired] = useState({});
+    let changeInfos = () => {};
 
     // create fields from const func
     const getFields = () => [{
@@ -48,13 +51,18 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
         readOnly: true
 
     }, {
-        name: "operation",
         layers: ["layerPA"],
-        field: "nom",
+        name: "operationId",
         label: "tabou2.identify.accordions.operation",
-        type: "text",
+        field: "operationId",
+        value: () => values.operationName || operation.nom,
+        select: (v) => changeInfos({operationId: v.id, operationName: v.nom}),
+        change: (v) => !v ? changeInfos({operationId: "", operationName: ""}) : null,
+        type: "combo",
+        apiLabel: "nom",
+        api: "operations",
         source: operation,
-        readOnly: true
+        readOnly: false
     }, {
         name: "nom",
         field: "nom",
@@ -93,7 +101,7 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
     };
 
     // manage change info
-    const changeInfos = (item) => {
+    changeInfos = (item) => {
         let newValues = {...values, ...item};
         setValues(newValues);
         // send to parent to save
@@ -110,6 +118,28 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
                             <ControlLabel><Message msgId={item.label}/></ControlLabel>
                         </Col>
                         <Col xs={8}>
+                            {
+                                item.type === "combo" ? (
+                                    <Tabou2Combo
+                                        load={() => getRequestApi(item.api, props.pluginCfg.apiCfg, {})}
+                                        placeholder={props.i18n(props.messages, item?.label || "")}
+                                        filter="contains"
+                                        textField={item.apiLabel}
+                                        disabled={item?.readOnly || !allowChange}
+                                        onLoad={(r) => {
+                                            return r?.elements || r;
+                                        }}
+                                        name={item.name}
+                                        value={item.value()}
+                                        onSelect={item.select}
+                                        onChange={item.change}
+                                        messages={{
+                                            emptyList: props.i18n(props.messages, "tabou2.emptyList"),
+                                            openCombobox: props.i18n(props.messages, "tabou2.displayList")
+                                        }}
+                                    />
+                                ) : null
+                            }
                             {
                                 item.type === "text" ?
                                     (<FormControl
