@@ -1,7 +1,7 @@
 import * as Rx from 'rxjs';
 import { get, keys, find } from 'lodash';
-import { loadEvents, loadTiers, CREATE_FEATURE, SELECT_FEATURE, ADD_FEATURE_EVENT, DELETE_FEATURE_EVENT, CHANGE_FEATURE_EVENT, ADD_FEATURE_TIER,
-    ASSOCIATE_TIER, DELETE_FEATURE_TIER, CHANGE_FEATURE_TIER, INACTIVATE_TIER, loadFicheInfos, loading, MAP_TIERS, mapTiers
+import { loadEvents, loadTiers, RELOAD_LAYER, CREATE_FEATURE, SELECT_FEATURE, ADD_FEATURE_EVENT, DELETE_FEATURE_EVENT, CHANGE_FEATURE_EVENT, ADD_FEATURE_TIER,
+    ASSOCIATE_TIER, DELETE_FEATURE_TIER, CHANGE_FEATURE_TIER, INACTIVATE_TIER, loadFicheInfos, loading, MAP_TIERS, mapTiers, reloadLayer
 } from '@ext/actions/tabou2';
 import {getMessageById} from "@mapstore/utils/LocaleUtils";
 
@@ -31,6 +31,8 @@ import { getSelection, getLayer, getPluginCfg, isTabou2Activate } from '@ext/sel
 import { URL_ADD } from '@ext/constants';
 import { wrapStartStop } from "@mapstore/observables/epics";
 import { error } from "@mapstore/actions/notifications";
+import { refreshLayers } from "@mapstore/actions/layers";
+import { layersSelector } from '@mapstore/selectors/layers';
 
 // get service to request according to action type
 const actionOnUpdate = {
@@ -102,13 +104,15 @@ export function getSelectionInfos(action$, store) {
             let layerUrl = get(URL_ADD, layerCfg);
             let searchItem = null;
             let mapFeature = action.selectedFeature.feature;
-            layerUrl = "operations";
 
             // get events from API
             /**
              * TODO
              * - dynamic type layer
              * - dynamic idTabou
+             *
+             * WARNING
+             * - API GET operations/{id}/programmes not works for SA layer
              */
             let secondObservable$ = Rx.Observable.empty();
             if (layerCfg === "layerOA" || layerCfg === "layerSA") {
@@ -359,14 +363,29 @@ export function getTiersElements(action$, store) {
 export function createTabouFeature(action$, store) {
     return action$.ofType(CREATE_FEATURE)
         .switchMap( action => {
-            return Rx.Observable.defer( () => createNewTabouFeature(getInfos(store.getState()).layerUrl, action.params))
+            let infos = getInfos(store.getState());
+            return Rx.Observable.defer( () => createNewTabouFeature(infos.layerUrl, action.params))
                 .catch(e => {
                     console.log("Error to save feature change or feature creation");
                     console.log(e);
                     return Rx.Observable.empty();
                 })
                 .switchMap(()=>{
-                    return Rx.Observable.empty();
+                    return Rx.Observable.of(reloadLayer(infos.layer));
                 });
+        });
+}
+
+/**
+ * Epic force refresh layer
+ * @param {any} action$
+ * @param {any} store
+ * @returns empty
+ */
+export function onLayerReload(action$, store) {
+    return action$.ofType(RELOAD_LAYER)
+        .switchMap( action => {
+            let layer = layersSelector(store.getState()).filter(lyr => lyr.name === action.layer);
+            return Rx.Observable.of(refreshLayers([layer[0]], {}));
         });
 }

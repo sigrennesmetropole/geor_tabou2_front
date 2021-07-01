@@ -30,6 +30,12 @@ export const LOAD_FICHE_INFOS = "LOAD_FICHE_INFOS";
 export const CHANGE_FEATURE = "CHANGE_FEATURE";
 export const CREATE_FEATURE = "CREATE_FEATURE";
 export const MAP_TIERS = "MAP_TIERS";
+export const RELOAD_LAYER = "RELOAD_LAYER";
+
+export const reloadLayer = (layer) => ({
+    type: MAP_TIERS,
+    layer
+});
 
 export const mapTiers = (params) => ({
     type: MAP_TIERS,
