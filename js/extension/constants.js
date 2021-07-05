@@ -314,7 +314,6 @@ export const ADD_OA_FORM = [{
     label: "tabou2.add.sector",
     name: "secteur",
     apiField: "",
-    // parent: (infos) => infos.emprise, // to activate secteur only if emprise name formControl is selected
     required: true,
     group: 1,
     type: "checkbox"
@@ -340,14 +339,12 @@ export const ADD_OA_FORM = [{
     label: "tabou2.add.name",
     apiField: "",
     name: "nom",
-    // parent: () => emprise, // to activate nom only if emprise name formControl is selected
     required: true,
     type: "text"
 }, {
     label: "tabou2.add.code",
     apiField: "",
     name: "code",
-    // parent: (infos) => infos.emprise, // to activate code only if emprise name formControl is selected
     required: true,
     type: "text"
 }, {
@@ -356,9 +353,9 @@ export const ADD_OA_FORM = [{
     apiLabel: "libelle",
     api: "operations/etapes",
     name: "etape",
-    // parent: (infos) => infos.emprise, // to activate etape only if emprise name formControl is selected
     placeholder: "Sélectionner une étape",
     required: true,
+    distinct: false,
     type: "combo"
 }];
 
@@ -401,7 +398,6 @@ export const ADD_PA_FORM = [ {
     apiField: "",
     name: "nom",
     placeholder: "Saisir un nom",
-    // parent: () => emprise, // to activate nom only if emprise name formControl is selected
     required: true,
     type: "text"
 }, {
@@ -409,16 +405,15 @@ export const ADD_PA_FORM = [ {
     apiField: "",
     name: "code",
     placeholder: "Saisir un code",
-    // parent: (infos) => infos.emprise, // to activate code only if emprise name formControl is selected
     required: true,
     type: "text"
 }, {
     label: "tabou2.add.step",
     apiField: "code",
     apiLabel: "libelle",
-    api: "operations/etapes",
+    api: "programmes/etapes",
+    distinct: false,
     name: "etape",
-    // parent: (infos) => infos.emprise, // to activate etape only if emprise name formControl is selected
     placeholder: "Sélectionner une étape",
     required: true,
     type: "combo"

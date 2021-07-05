@@ -17,7 +17,8 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
         idEmprise: "",
         nature: "",
         secteur: false,
-        parentoa: null
+        parentoa: null,
+        limitPa: true
     };
     const [infos, setInfos] = useState(emptyInfos);
     const [childs, setChilds] = useState([]);
@@ -92,12 +93,14 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
     };
 
     // return param to complete API request according to selected parent's value
-    const getParams = () => {
+    const getParams = (combo) => {
         // get programme/emprises need only nature param
         let params = infos.nature && natureId.current && type ? {natureId: natureId.current, nature: encodeURI(infos.nature)}  : {};
         if (["layerOA", "layerSA"].includes(type)) {
             // need nature and secteur to request API get operation/emprises
             params =  has(infos, "secteur") && infos.nature ? {...params, estSecteur: infos.secteur} : {};
+        } else if (type === "layerPA" && combo.parent) {
+            params = combo.parent(infos);
         }
         return params;
     };
@@ -231,7 +234,7 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                                         <Tabou2Combo
                                             style={{ marginTop: comboMarginTop, borderColor: isInvalidStyle(item.name) }}
                                             load={() => {
-                                                return getRequestApi(get(item, "api"), pluginCfg.apiCfg, getParams());
+                                                return getRequestApi(get(item, "api"), pluginCfg.apiCfg, getParams(item));
                                             }}
                                             disabled={item.parent ? isEmpty(item.parent(infos)) : item?.disabled || false}
                                             placeholder={props.i18n(props.messages, item?.placeholder || item?.label)}
@@ -239,6 +242,7 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                                             filter="contains"
                                             textField={item.apiLabel}
                                             valueField={item.apiField}
+                                            distinct={has(item, "distinct") ? item.distinct : true}
                                             onLoad={(r) => {
                                                 let dataItem = r?.elements || r;
                                                 // used to keep info and send  nature id to the api instead of name return by layer

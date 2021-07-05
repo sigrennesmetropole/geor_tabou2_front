@@ -34,7 +34,9 @@ function Tabou2Combo({
                 response = onLoad(result);
             }
             if (firstItem) response.unshift(firstItem);
-            response = uniqBy(response, textField);
+            if (!has(props, "distinct") || props.distinct) {
+                response = uniqBy(response, textField);
+            }
             setData(response);
         });
     };
