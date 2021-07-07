@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { keys, isEqual, isEmpty, get, find } from 'lodash';
 
 import Tabou2IdentifyContent from './Tabou2IdentifyContent';
@@ -17,8 +17,10 @@ export default function Tabou2IdentifyPanel({
     onSelect,
     ...props
 }) {
-    const defaultIndex = 0;
     // use state to rerender if change.
+    const layersData = useRef({});
+    const layerIndex = useRef(0);
+    const featureIndex = useRef(0);
     const [selectedLayer, setSelectedLayer] = useState("");
     const [configLayer, setConfigLayer] = useState("");
     const [selectedFeatures, setSelectedFeatures] = useState([]);
@@ -29,35 +31,34 @@ export default function Tabou2IdentifyPanel({
     const changeLayer = (option) => {
         let actualLayer = option.name;
         let actualFeatures = queryData[actualLayer]?.data?.features || [];
-        let selectedFeature = actualFeatures[0];
-        let configName = keys(props.layersCfg).filter(k => actualLayer === props.layersCfg[k].nom)[0];
-
+        let selectedFeature = actualFeatures[props.indentifyInfos?.featureIdx || 0];
+        let configName = keys(props.layersCfg).filter(k => actualLayer === props.layersCfg[k].nom)[props.indentifyInfos?.layerIdx || 0];
         setConfigLayer(configName);
         setSelectedLayer(actualLayer);
         setSelectedFeatures(actualFeatures);
         setFeature(selectedFeature);
-        onSelect(selectedFeature, get(selectedFeature, find(LAYER_FIELD_OPTION, ["name", configName])?.id), actualLayer);
+        onSelect(selectedFeature, get(selectedFeature, find(LAYER_FIELD_OPTION, ["name", configName])?.id), actualLayer, option.value, props.indentifyInfos?.featureIdx || 0);
     };
 
     // hooks to refresh only if query data changed
     useEffect(() => {
-        if (!isEqual(queryData, response)) {
+        if (!isEqual(queryData, response) || layerIndex.current !== props.identifyInfos?.layerIdx || featureIndex.current !== props.identifyInfos?.featureIdx) {
             setResponse(queryData);
-            changeLayer({
-                name: keys(queryData)[0]
-            });
+            layersData.current = createOptions(keys(queryData).map(e => queryData[e]));
+            changeLayer(layersData.current[props.identifyInfos?.layerIdx || 0]);
+            layerIndex.current = props.identifyInfos?.layerIdx;
         }
-    }, [queryData]);
+    }, [queryData, props.identifyInfos?.featureIdx, props.identifyInfos?.layerIdx]);
 
     return (
         <>
             <IdentifyDropDown
                 i18n={props.i18n}
                 messages={props.messages}
-                defaultValue={defaultIndex}
                 disabled={false}
+                value={layersData.current[layerIndex.current]}
                 visible
-                data={createOptions(keys(response).map(e => response[e]))}
+                data={layersData.current}
                 valueField={'value'}
                 textField={'label'}
                 icon="glyphicon-1-layer"
@@ -72,13 +73,13 @@ export default function Tabou2IdentifyPanel({
                             disabled={false}
                             visible={response[l].data.features.length > 1 && selectedLayer === l}
                             data={getFeaturesOptions(response[l].data.features, keys(props.layersCfg).filter(k => l === props.layersCfg[k].nom)[0])}
-                            defaultValue={defaultIndex}
+                            value = {getFeaturesOptions(response[l].data.features, keys(props.layersCfg).filter(k => l === props.layersCfg[k].nom)[0])[props.indentifyInfos?.featureIdx || 0]}
                             textField={"label"}
                             valueField={"idx"}
                             icon="glyphicon-list"
                             onChange={(i) => {
                                 let featureSelected = selectedFeatures[i.idx];
-                                onSelect(featureSelected, get(featureSelected, find(LAYER_FIELD_OPTION, ["name", configLayer]).id), selectedLayer);
+                                onSelect(featureSelected, get(featureSelected, find(LAYER_FIELD_OPTION, ["name", configLayer]).id), selectedLayer, layerIndex.current, i.idx);
                             }}
                         />
                     ))

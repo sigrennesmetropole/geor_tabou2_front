@@ -3,21 +3,29 @@ import { CONTROL_NAME, URL_ADD } from '../constants';
 
 import { get, pickBy, find, isEmpty } from 'lodash';
 
-import { generalInfoFormatSelector } from '@mapstore/selectors/mapInfo';
+import { generalInfoFormatSelector, identifyOptionsSelector, clickPointSelector } from '@mapstore/selectors/mapInfo';
+import uuid from 'uuid';
+import { localizedLayerStylesEnvSelector } from "@mapstore/selectors/localizedLayerStyles";
 import { updateUserPlugin } from '@mapstore/actions/context';
+import { buildIdentifyRequest } from '@mapstore/utils/MapInfoUtils';
+import { layersSelector } from '@mapstore/selectors/layers';
 import { error, success } from "@mapstore/actions/notifications";
 import {getMessageById} from "@mapstore/utils/LocaleUtils";
 import {
     LOAD_FEATURE_INFO,
     FEATURE_INFO_CLICK,
     closeIdentify,
-    changeMapInfoFormat
+    changeMapInfoFormat,
+    loadFeatureInfo,
+    updateFeatureInfoClickPoint
 } from "@mapstore/actions/mapInfo";
 import { TOGGLE_CONTROL } from '@mapstore/actions/controls';
-import { isTabou2Activate, defaultInfoFormat, getTabouResponse, getPluginCfg } from '@ext/selectors/tabou2';
+import { isTabou2Activate, defaultInfoFormat, getTabouResponse, getPluginCfg, getSelection } from '@ext/selectors/tabou2';
 import { loadTabouFeatureInfo, setDefaultInfoFormat, setMainActiveTab, PRINT_PROGRAMME_INFOS,
-    CHANGE_FEATURE } from '@ext/actions/tabou2';
+    CHANGE_FEATURE, DISPLAY_FEATURE } from '@ext/actions/tabou2';
 import { getPDFProgramme, putRequestApi } from '@ext/api/search';
+
+import { getFeatureInfo } from "@mapstore/api/identify";
 
 /**
  * Catch GFI response on identify load event and close identify if Tabou2 identify tabs is selected
@@ -165,8 +173,47 @@ export function createChangeFeature(action$, store) {
                         success({
                             title: getMessageById(messages, "tabou2.infos.successApi"),
                             message: getMessageById(messages, "tabou2.infos.successSaveInfos")
-                        })
+                        }),
+                        // we just update last GFI request to refresh panel
+                        updateFeatureInfoClickPoint(clickPointSelector(store.getState()))
                     );
                 });
+        });
+}
+
+/**
+ * Behavior to display feature from add tab to identify tab
+ * @param {any} action$
+ * @param {any} store
+ * @returns empty
+ *
+ * TODO : Finish by direct open identify combobox with saved infos
+ */
+export function displayFeatureInfos(action$, store) {
+    return action$.ofType(DISPLAY_FEATURE)
+        .switchMap( action => {
+            let tocLayer = layersSelector(store.getState()).filter(lyr => lyr.name === action.infos.layer)[0];
+            let env = localizedLayerStylesEnvSelector(store.getState());
+            let { url, request, metadata } = buildIdentifyRequest(tocLayer, {...identifyOptionsSelector(store.getState()), env});
+            request.cql_filter = `id_tabou = ${action.infos.feature.id}`;
+            return Rx.Observable.defer(() =>
+                // call geoserver feature
+                getFeatureInfo(url, request, tocLayer)
+            ).switchMap(response => {
+                // control this feature is the selected feature from identify tab
+                let selected = !isEmpty(getSelection(store.getState())) ? getSelection(store.getState())?.feature : null;
+                let isSelected = selected && selected.properties?.objectid === response.features[0]?.properties?.objectid;
+                // if not we load the entire response to trigger fake map click response and display response into indentify panel
+                if (!isSelected) {
+                    return Rx.Observable.of(
+                        loadTabouFeatureInfo({}),
+                        loadFeatureInfo(uuid.v1(), response.data, request, { ...metadata, features: response.features, featuresCrs: response.featuresCrs }, tocLayer)
+                    );
+                }
+                // if same we just update last GFI request
+                return Rx.Observable.of(
+                    updateFeatureInfoClickPoint(clickPointSelector(store.getState()))
+                );
+            });
         });
 }

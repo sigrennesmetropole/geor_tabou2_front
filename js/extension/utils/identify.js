@@ -13,6 +13,7 @@ export function createOptions(response) {
         let label = opt?.layerMetadata?.title;
         return { label: label, value: idx, name: opt?.layer.name };
     });
+    console.log(data);
     return data.filter(v => v);
 }
 

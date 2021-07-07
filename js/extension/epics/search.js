@@ -19,7 +19,7 @@ import { getIdsFromSearch } from "@ext/api/search";
 export function tabouApplyFilter(action$, store) {
     return action$.ofType(UPDATE_LAYER_PARAMS)
         .filter(() => isTabou2Activate(store.getState()))
-        .switchMap((action) => {
+        .switchMap( action => {
             let filterObj = getLayerFilterObj(store.getState()) ?? {};
             const tocLayers = layersSelector(store.getState()) ?? [];
             let layer = tocLayers.filter(lyr => lyr.name === action.layerToFilter);

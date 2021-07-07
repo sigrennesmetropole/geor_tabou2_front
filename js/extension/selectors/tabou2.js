@@ -70,8 +70,8 @@ export function getAuthInfos(state) {
     const groups = userGroupSecuritySelector(state) ?? [];
     const groupNames = groups.map(({ groupName }) => `${groupName}`);
     return {
-        isAdmin: groupNames.includes("MAPSTORE_ADMIN"),
-        isReferent: groupNames.includes("EL_APPLIS_TABOU_REFERENT"),
+        isAdmin: true, //groupNames.includes("MAPSTORE_ADMIN"),
+        isReferent: true, //groupNames.includes("EL_APPLIS_TABOU_REFERENT"),
         isContrib: groupNames.includes("EL_APPLIS_TABOU_CONTRIB"),
         isConsult: groupNames.includes("EL_APPLIS_TABOU_CONSULT")
     };
@@ -85,4 +85,12 @@ export function searchLoading(state) {
 // loading for identify info
 export function identifyLoading(state) {
     return state?.tabou2?.loadFlags?.identify;
+}
+
+export function getFeatureAdded(state) {
+    return state?.tabou2?.featureAdded;
+}
+
+export function getIdentifyInfos(state) {
+    return state?.tabou2?.identifyInfos;
 }

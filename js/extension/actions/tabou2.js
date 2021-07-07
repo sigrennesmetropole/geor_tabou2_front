@@ -31,6 +31,9 @@ export const CHANGE_FEATURE = "CHANGE_FEATURE";
 export const CREATE_FEATURE = "CREATE_FEATURE";
 export const MAP_TIERS = "MAP_TIERS";
 export const RELOAD_LAYER = "RELOAD_LAYER";
+export const DISPLAY_FEATURE = "DISPLAY_FEATURE";
+export const SET_GFI_REQUEST = "SET_GFI_REQUEST";
+export const SET_IDENTIFY_INFOS = "SET_IDENTIFY_INFOS";
 
 export const reloadLayer = (layer) => ({
     type: MAP_TIERS,
@@ -68,9 +71,10 @@ export const tearDown = () => ({
     type: TEAR_DOWN
 });
 
-export const setMainActiveTab = (activeTab) => ({
+export const setMainActiveTab = (activeTab, params = {}) => ({
     type: SET_MAIN_ACTIVE_TAB,
-    activeTab
+    activeTab,
+    params
 });
 
 export const applySearchQuery = () => ({
@@ -198,4 +202,14 @@ export const loading = (value, name, mode) => ({
     value,
     name,
     mode
+});
+
+export const displayFeature = infos => ({
+    type: DISPLAY_FEATURE,
+    infos
+});
+
+export const setIdentifyInfos = infos => ({
+    type: SET_IDENTIFY_INFOS,
+    infos
 });

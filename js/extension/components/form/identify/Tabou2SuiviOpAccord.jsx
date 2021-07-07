@@ -28,7 +28,7 @@ export default function Tabou2SuiviOpAccord({ initialItem, programme, operation,
         type: "combo",
         apiLabel: "libelle",
         filter: false,
-        api: `${layer === "layerPA" ? "programmes" : "operations"}/${initialItem.id}/etapes`,
+        api: `${layer === "layerPA" ? "programmes" : "operations"}/${initialItem.id}/etapes?orderBy=id&asc=true`,
         source: values?.etape ? values : initialItem,
         readOnly: false
     }, {

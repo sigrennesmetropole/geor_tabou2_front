@@ -242,7 +242,7 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                                             filter="contains"
                                             textField={item.apiLabel}
                                             valueField={item.apiField}
-                                            distinct={has(item, "distinct") ? item.distinct : true}
+                                            distinct={has(item, "distinct") ? item.distinct : false}
                                             onLoad={(r) => {
                                                 let dataItem = r?.elements || r;
                                                 // used to keep info and send  nature id to the api instead of name return by layer

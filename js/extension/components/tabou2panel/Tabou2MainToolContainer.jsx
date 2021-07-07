@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useRef } from 'react';
 import { connect } from 'react-redux';
 import { keys, isEmpty } from 'lodash';
 import Message from "@mapstore/components/I18N/Message";
@@ -13,7 +13,8 @@ import {
     getAuthInfos,
     getSelectedCfgLayer,
     getFicheInfos,
-    identifyLoading
+    identifyLoading,
+    getIdentifyInfos
 } from '@ext/selectors/tabou2';
 
 import Tabou2SearchPanel from '../tabou2SearchPanel/Tabou2SearchPanel';
@@ -36,34 +37,36 @@ import {
     printProgInfos,
     searchIds,
     createFeature,
-    changeFeature
+    changeFeature,
+    setIdentifyInfos
 } from "@ext/actions/tabou2";
 
 function toolContainer({data, ...props }) {
-    const [selectionInfos, setSelection] = useState({feature: {}, id: null, layer: ""});
-    const isTaboufeature = useRef(false);
+    let isTabouFeature = false;
     const searchValues = useRef({});
 
-    const handleSelect = (feature, id, selectedLayer) => {
-        let selection = {
+    const handleSelect = (feature, id, selectedLayer, layerIdx, featureIdx) => {
+        let identifyInfos = {
             feature: feature,
             id: id,
             layer: keys(props.pluginCfg.layersCfg).filter(k => props.pluginCfg.layersCfg[k].nom === selectedLayer)[0] || "",
-            tocLayer: selectedLayer
+            tocLayer: selectedLayer,
+            layerIdx, featureIdx
         };
-        setSelection(selection);
-        props.setFeature(selection);
+        props.setIdentifyInfos(identifyInfos);
+        props.setFeature(identifyInfos);
         props.setLayer(selectedLayer);
-        isTaboufeature.current = feature?.properties?.id_tabou ? true : false;
     };
 
     let showAddPanel = props.authentInfos.isReferent || props.authentInfos.isContrib;
 
-    if (isEmpty(data)) isTaboufeature.current = false;
+    if (isEmpty(data)) isTabouFeature = false;
 
     const changeSearch = (vals) => {
         searchValues.current = vals;
     };
+
+    isTabouFeature = isEmpty(data) || !props.identifyInfos.feature?.properties.id_tabou ? false : true;
 
     return (
         <>
@@ -80,11 +83,11 @@ function toolContainer({data, ...props }) {
             }
             {
                 // display add panel
-                props.currentTab === "add" && showAddPanel && !isTaboufeature.current ? (
+                props.currentTab === "add" && showAddPanel && !isTabouFeature ? (
                     <Tabou2AddPanel
-                        feature={isEmpty(data) ? {} : selectionInfos.feature}
-                        featureId={ isEmpty(data) ? null : selectionInfos?.id}
-                        layer={isEmpty(data) ? "" : selectionInfos.layer}
+                        feature={isEmpty(data) ? {} : props.identifyInfos.feature}
+                        featureId={ isEmpty(data) ? null : props.identifyInfos?.id}
+                        layer={isEmpty(data) ? "" : props.identifyInfos.layer}
                         queryData={data}
                         {...props} />)
                     : null
@@ -100,7 +103,7 @@ function toolContainer({data, ...props }) {
                 ) : null
             }
             {
-                props.currentTab === "add" && isTaboufeature.current && showAddPanel && !isEmpty(data) ? (
+                props.currentTab === "add" && isTabouFeature && showAddPanel && !isEmpty(data) ? (
                     <Tabou2AddPanel
                         feature={{}}
                         featureId={null}
@@ -140,7 +143,8 @@ export default connect(
         selectedCfgLayer: getSelectedCfgLayer(state),
         tabouInfos: getFicheInfos(state),
         identifyLoading: identifyLoading(state),
-        authentInfos: getAuthInfos(state)
+        authentInfos: getAuthInfos(state),
+        identifyInfos: getIdentifyInfos(state)
     }), {
         setTab: setMainActiveTab,
         setFeature: setSelectedFeature,
@@ -157,6 +161,7 @@ export default connect(
         printProgInfos: printProgInfos,
         searchIds: searchIds,
         createFeature: createFeature,
-        changeFeature: changeFeature
+        changeFeature: changeFeature,
+        setIdentifyInfos: setIdentifyInfos
     }
 )(toolContainer);

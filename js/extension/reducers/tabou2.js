@@ -16,7 +16,9 @@ import {
     LOAD_EVENTS,
     LOAD_TIERS,
     LOADING,
-    LOAD_FICHE_INFOS
+    DISPLAY_FEATURE,
+    LOAD_FICHE_INFOS,
+    SET_IDENTIFY_INFOS
 } from '@ext/actions/tabou2';
 
 const initialState = {
@@ -32,7 +34,9 @@ const initialState = {
     selectedLayer: "",
     events: [],
     tiers: [],
-    ficheInfos: {}
+    ficheInfos: {},
+    featureAdded: {},
+    identifyInfos: {}
 };
 
 export default function tabou2(state = initialState, action) {
@@ -93,6 +97,12 @@ export default function tabou2(state = initialState, action) {
         // anyway sets loading to true
         return set(action.name === "loading" ? "loading" : `loadFlags.${action.name}`, newValue, state);
     }
+    case SET_IDENTIFY_INFOS: {
+        return set('identifyInfos', action.infos, state);
+    }
+    case DISPLAY_FEATURE:
+        const { featureAdded } = action;
+        return set('featureAdded', featureAdded, state);
     default:
         return state;
     }
