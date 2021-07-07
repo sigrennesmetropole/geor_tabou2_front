@@ -6,7 +6,11 @@
         "failIdentify": "La récupération des informations à échouée",
         "failApi": "Erreur API",
         "error": "Erreur",
-        "failFilter": "Echec de la création du filtre"
+        "failFilter": "Echec de la création du filtre",
+        "failAddFeature": "L'emprise n'a pas pu être crée",
+        "successAddFeature": "L'emprise à bien été ajoutée !",
+        "successApi": "Sauvegarde",
+        "successSaveInfos": "Informations sauvegardées !"
       },
       "load": "Chargement...",
       "save": "Enregistrer",
