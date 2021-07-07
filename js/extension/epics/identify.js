@@ -5,7 +5,8 @@ import { get, pickBy, find, isEmpty } from 'lodash';
 
 import { generalInfoFormatSelector } from '@mapstore/selectors/mapInfo';
 import { updateUserPlugin } from '@mapstore/actions/context';
-
+import { error, success } from "@mapstore/actions/notifications";
+import {getMessageById} from "@mapstore/utils/LocaleUtils";
 import {
     LOAD_FEATURE_INFO,
     FEATURE_INFO_CLICK,
@@ -14,9 +15,9 @@ import {
 } from "@mapstore/actions/mapInfo";
 import { TOGGLE_CONTROL } from '@mapstore/actions/controls';
 import { isTabou2Activate, defaultInfoFormat, getTabouResponse, getPluginCfg } from '@ext/selectors/tabou2';
-import { loadTabouFeatureInfo, setDefaultInfoFormat, setMainActiveTab, PRINT_PROGRAMME_INFOS } from '@ext/actions/tabou2';
+import { loadTabouFeatureInfo, setDefaultInfoFormat, setMainActiveTab, PRINT_PROGRAMME_INFOS,
+    CHANGE_FEATURE } from '@ext/actions/tabou2';
 import { getPDFProgramme, putRequestApi } from '@ext/api/search';
-import { CHANGE_FEATURE } from '../actions/tabou2';
 
 /**
  * Catch GFI response on identify load event and close identify if Tabou2 identify tabs is selected
@@ -145,14 +146,27 @@ export function printProgramme(action$, store) {
 export function createChangeFeature(action$, store) {
     return action$.ofType(CHANGE_FEATURE)
         .switchMap( action => {
+            let messages = store.getState()?.locale.messages;
             return Rx.Observable.defer( () => putRequestApi(`${get(URL_ADD, action.params.layer)}`, getPluginCfg(store.getState()).apiCfg, action.params.feature))
                 .catch(e => {
                     console.log("Error to save feature change or feature creation");
                     console.log(e);
-                    return Rx.Observable.empty();
+                    return Rx.Observable.of(e);
                 })
-                .switchMap(()=>{
-                    return Rx.Observable.empty();
+                .switchMap((el)=> {
+                    return el?.status !== 200 ? Rx.Observable.of(
+                        // fail message
+                        error({
+                            title: getMessageById(messages, "tabou2.infos.failApi"),
+                            message: getMessageById(messages, "tabou2.infos.failAddFeature")
+                        })
+                    ) : Rx.Observable.of(
+                        // success message
+                        success({
+                            title: getMessageById(messages, "tabou2.infos.successApi"),
+                            message: getMessageById(messages, "tabou2.infos.successSaveInfos")
+                        })
+                    );
                 });
         });
 }
