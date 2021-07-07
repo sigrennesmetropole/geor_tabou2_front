@@ -1,7 +1,9 @@
 import * as Rx from 'rxjs';
-import { get, keys, find } from 'lodash';
-import { loadEvents, loadTiers, RELOAD_LAYER, CREATE_FEATURE, SELECT_FEATURE, ADD_FEATURE_EVENT, DELETE_FEATURE_EVENT, CHANGE_FEATURE_EVENT, ADD_FEATURE_TIER,
-    ASSOCIATE_TIER, DELETE_FEATURE_TIER, CHANGE_FEATURE_TIER, INACTIVATE_TIER, loadFicheInfos, loading, MAP_TIERS, mapTiers, reloadLayer
+import { get, keys, find, isEmpty } from 'lodash';
+import { loadEvents, loadTiers, RELOAD_LAYER, CREATE_FEATURE, SELECT_FEATURE,
+    ADD_FEATURE_EVENT, DELETE_FEATURE_EVENT, CHANGE_FEATURE_EVENT, ADD_FEATURE_TIER,
+    ASSOCIATE_TIER, DELETE_FEATURE_TIER, CHANGE_FEATURE_TIER, INACTIVATE_TIER,
+    loadFicheInfos, loading, MAP_TIERS, mapTiers, reloadLayer, displayFeature
 } from '@ext/actions/tabou2';
 import {getMessageById} from "@mapstore/utils/LocaleUtils";
 
@@ -30,7 +32,7 @@ import {
 import { getSelection, getLayer, getPluginCfg, isTabou2Activate } from '@ext/selectors/tabou2';
 import { URL_ADD } from '@ext/constants';
 import { wrapStartStop } from "@mapstore/observables/epics";
-import { error } from "@mapstore/actions/notifications";
+import { error, success } from "@mapstore/actions/notifications";
 import { refreshLayers } from "@mapstore/actions/layers";
 import { layersSelector } from '@mapstore/selectors/layers';
 
@@ -96,7 +98,6 @@ export function getSelectionInfos(action$, store) {
         .filter((action) => isTabou2Activate(store.getState()) && get(action?.selectedFeature?.feature, "properties.id_tabou"))
         .switchMap((action) => {
             let messages = store.getState()?.locale.messages;
-
             // get infos from layer's feature directly
             const idTabou = get(action.selectedFeature.feature, "properties.id_tabou");
             let tiers = [];
@@ -132,8 +133,7 @@ export function getSelectionInfos(action$, store) {
                             tiers: tiers,
                             mapFeature: mapFeature};
                         return Rx.Observable.of(loadFicheInfos(infos));
-                    }
-                    );
+                    });
             } else {
                 secondObservable$ = Rx.Observable.defer(() => getOperation(searchItem.operationId))
                     .catch(e => {
@@ -194,6 +194,15 @@ export function getSelectionInfos(action$, store) {
                         })
                     // GET OA, PA or SA clicked Feature
                         .switchMap((response) => {
+                            if (isEmpty(response.data.length)) {
+                                return Rx.Observable.of(
+                                    // error message
+                                    error({
+                                        title: getMessageById(messages, "tabou2.infos.failApi"),
+                                        message: getMessageById(messages, "tabou2.infos.apiGETError")
+                                    })
+                                );
+                            }
                             searchItem = response.data;
                             return secondObservable$;
                         })
@@ -364,14 +373,30 @@ export function createTabouFeature(action$, store) {
     return action$.ofType(CREATE_FEATURE)
         .switchMap( action => {
             let infos = getInfos(store.getState());
+            let messages = store.getState()?.locale.messages;
+            // return Rx.Observable.of(displayFeature({feature: {}, layer: infos.layer}));
             return Rx.Observable.defer( () => createNewTabouFeature(infos.layerUrl, action.params))
                 .catch(e => {
                     console.log("Error to save feature change or feature creation");
                     console.log(e);
-                    return Rx.Observable.empty();
+                    return Rx.Observable.of(e);
                 })
-                .switchMap(()=>{
-                    return Rx.Observable.of(reloadLayer(infos.layer));
+                .switchMap((el)=> {
+                    return el?.status !== 200 ? Rx.Observable.of(
+                        // fail message
+                        error({
+                            title: getMessageById(messages, "tabou2.infos.failApi"),
+                            message: getMessageById(messages, "tabou2.infos.failAddFeature")
+                        })
+                    ) : Rx.Observable.of(
+                        // success message
+                        success({
+                            title: getMessageById(messages, "tabou2.infos.successApi"),
+                            message: getMessageById(messages, "tabou2.infos.successAddFeature")
+                        }),
+                        reloadLayer(infos.layer),
+                        displayFeature({feature: el.data, layer: infos.layer})
+                    );
                 });
         });
 }

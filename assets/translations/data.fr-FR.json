@@ -10,7 +10,8 @@
         "failAddFeature": "L'emprise n'a pas pu être crée",
         "successAddFeature": "L'emprise à bien été ajoutée !",
         "successApi": "Sauvegarde",
-        "successSaveInfos": "Informations sauvegardées !"
+        "successSaveInfos": "Informations sauvegardées !",
+        "apiGETError": "Erreur à la récupération des informations."
       },
       "load": "Chargement...",
       "save": "Enregistrer",
