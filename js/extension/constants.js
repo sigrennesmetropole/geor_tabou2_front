@@ -113,13 +113,13 @@ export const SEARCH_ITEMS = [{
 }, {
     name: "etapesoa",
     placeholder: 'tabou2.search.allEtapesOA',
-    api: "operations/etapes",
+    api: "operations/etapes?orderBy=id&asc=true",
     type: 'string',
     disabled: false,
     group: 3
 }, {
     name: "etapespa",
-    api: "programmes/etapes",
+    api: "programmes/etapes?orderBy=id&asc=true",
     placeholder: 'tabou2.search.allEtapesPA',
     disabled: false,
     type: 'string',
@@ -351,7 +351,7 @@ export const ADD_OA_FORM = [{
     label: "tabou2.add.step",
     apiField: "code",
     apiLabel: "libelle",
-    api: "operations/etapes",
+    api: "operations/etapes?orderBy=id&asc=true",
     name: "etape",
     placeholder: "Sélectionner une étape",
     required: true,
@@ -411,7 +411,7 @@ export const ADD_PA_FORM = [ {
     label: "tabou2.add.step",
     apiField: "code",
     apiLabel: "libelle",
-    api: "programmes/etapes",
+    api: "programmes/etapes?orderBy=id&asc=true",
     distinct: false,
     name: "etape",
     placeholder: "Sélectionner une étape",
