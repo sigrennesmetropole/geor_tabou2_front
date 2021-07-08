@@ -188,13 +188,13 @@ export function getSelectionInfos(action$, store) {
                 .concat(
                     Rx.Observable.defer(() => resetFeatureBylayer[layerCfg](idTabou))
                         .catch(e => {
-                            console.log("Error on get selected tabou infos");
+                            console.log("Fail to get selected tabou feature infos");
                             console.log(e);
-                            return Rx.Observable.of({data: []});
+                            return Rx.Observable.of(e);
                         })
                     // GET OA, PA or SA clicked Feature
                         .switchMap((response) => {
-                            if (isEmpty(response.data.length)) {
+                            if (isEmpty(response?.data)) {
                                 return Rx.Observable.of(
                                     // error message
                                     error({

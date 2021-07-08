@@ -1,6 +1,6 @@
 import axios from "@mapstore/libs/ajax";
 import { API_BASE_URL } from "@ext/constants";
-import { keys, find } from "lodash";
+import { keys } from "lodash";
 
 let baseURL = "/tabou2";
 
@@ -153,14 +153,8 @@ export function getOperation(id) {
 }
 
 export function getSecteur(id) {
-    return axios.get(`${baseURL}/operations`)
-        .catch(error => console.log(error))
-        .then(response => (
-            {
-                ...response,
-                data: find(response.data.elements, ["id", id])
-            }
-        ));
+    // secteur is an operation with attribute secteur = true
+    return getOperation(id);
 }
 
 // CREATE TABOU ENTITY FROM FEATURE
