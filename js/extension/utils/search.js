@@ -127,7 +127,7 @@ export function getIdsToCql(ids, field) {
  * @param {*} value to apply
  * @returns
  */
- export function getCQL(type, field, value) {
+export function getCQL(type, field, value) {
     if (type === "date" && (value.start || value.end)) {
         let vals = [
             value.start ? `"${field}" >='${value.start}'` : "",
