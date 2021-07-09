@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { keys, get, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
 import { Checkbox, Col, Row, ControlLabel, FormGroup, Grid, Panel } from 'react-bootstrap';
-import { DateTimePicker } from 'react-widgets';
 import { currentActiveTabSelector, currentTabouFilters, getLayerFilterObj, searchLoading } from '../../selectors/tabou2';
 import Tabou2SearchToolbar from './Tabou2SearchToolbar';
 import Tabou2Combo from '../form/Tabou2Combo';
@@ -11,6 +10,11 @@ import { setTabouFilterObj, setTabouFilters, resetSearchFilters, resetCqlFilters
 import { getNewFilter, getSpatialCQL, getCQL, getTabouLayersInfos } from '../../utils/search';
 import { SEARCH_ITEMS, SEARCH_CALENDARS } from '@ext/constants';
 import Message from "@mapstore/components/I18N/Message";
+
+import moment from 'moment';
+import momentLocalizer from 'react-widgets/lib/localizers/moment';
+momentLocalizer(moment);
+import { DateTimePicker } from 'react-widgets';
 
 function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, changeFiltersObj, changeFilters, currentFilters, ...props }) {
     if (currentTab !== 'search') return null;

@@ -6,6 +6,10 @@ import utcDateWrapper from '@mapstore/components/misc/enhancers/utcDateWrapper';
 import "@ext/css/identify.css";
 import Message from "@mapstore/components/I18N/Message";
 
+import moment from 'moment';
+import momentLocalizer from 'react-widgets/lib/localizers/moment';
+momentLocalizer(moment);
+
 const UTCDateTimePicker = utcDateWrapper({
     dateProp: "value",
     dateTypeProp: "type",
