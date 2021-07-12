@@ -12,7 +12,7 @@ Accès à la configuration
 * Vous devez détenir les droits suffisants pour modifier un contexte MpaStore2-geOrchestra.
 * Le plugin doit être installé (voir section "généralité technique")
 
-La configuration du plugin Tabou2 est accessible comme pour tous les autres plugins. 
+La configuration du plugin Tabou2 est accessible comme pour tous les autres plugins.
 
 1. Vous devez passer le contexte en mode édition
 2. Naviguez jusqu'à la section des plugins et voir les **plugins activés**
@@ -36,6 +36,7 @@ Voici la liste des paramètres et les explications correspondantes.
 .. csv-table:: Paramètres Tabou2
         :header: "Paramètre", "Exemple", "Description"
 
+        "limite","150","Limite du nombre de résultats pour la recherche. Permet d'afficher un message afin d'inviter l'utilisateur à restreindre sa recherche"
         "geoserverURL","/geoserver","URL du geoserver contenant les données cartographiques du contexte Tabou2"
         "showIdentify","false", "Permet de garder le volet natif d'identification au clic sur la carte ou de le masquer"
         "layersCfg","","Groupe de paramètres généraux des couches opération, programme et secteur"
@@ -126,7 +127,7 @@ Une fois les IDs récupérés, le plugin applique un filtre attributaire MapStor
 L'utilisateur peut sélectionner une date et filtrer les couches programme, secteur, opération selon la date de début et de fin sélectionnée.
 La difficulté est que seule la couche programme contient cette information.
 
-A la sélection d'une date, nous souhaitons donc donc : 
+A la sélection d'une date, nous souhaitons donc donc :
 
 a. Récupérer les entités de la couche programme qui correspondent à ces dates
 
@@ -139,7 +140,7 @@ c. filtrer dans MapStore2 les couches selon les IDs récupérés par l'intersect
 
 .. code-block:: json
        :linenos:
-        
+
         "doc": {
             "layer": "app:tabou_v_oa_programme",
             "geom": "shape",
@@ -164,7 +165,7 @@ c. filtrer dans MapStore2 les couches selon les IDs récupérés par l'intersect
 Exemple complet
 ===============
 
-Voici un exemple de configuration : 
+Voici un exemple de configuration :
 
 .. code-block:: json
        :linenos:
@@ -194,6 +195,7 @@ Voici un exemple de configuration :
                     }
                 },
                 "searchCfg": {
+                    "limit": 150
                     "communes": {
                         "layer": "ladm_terri:commune_emprise",
                         "geom": "shape",

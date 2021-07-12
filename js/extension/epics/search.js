@@ -87,7 +87,9 @@ export function tabouGetSearchIds(action$, store) {
                         let layer = filter.layer;
                         let ids = [0];
                         let idsCql = "";
-                        if (response?.totalFeatures && response.features.length < 150) {
+                        let searchLimit = getPluginCfg(store.getState()).searchCfg?.limit || 150;
+                        // Force limit to be sur TOC WMS request is not to huge and could be realize
+                        if (response?.totalFeatures && response.features.length < searchLimit) {
                             ids = response.features.map(feature => feature.properties.objectid || '');
                             ids = ids.filter(id => id);
                             let correctIds = filter.idType === 'string' ? ids.map(i => `'${i}'`) : (ids.length ? ids : [0]);

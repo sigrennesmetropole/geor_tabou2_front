@@ -373,6 +373,7 @@
             }
           },
           "searchCfg": {
+            "limit": 150,
             "communes": {
               "layer": "tabou2:commune_emprise",
               "geom": "the_geom",
