@@ -9,9 +9,11 @@
         "failFilter": "Echec de la création du filtre",
         "failAddFeature": "L'emprise n'a pas pu être crée",
         "successAddFeature": "L'emprise à bien été ajoutée !",
-        "successApi": "Sauvegarde",
+        "successApi": "Opération réussie !",
         "successSaveInfos": "Informations sauvegardées !",
-        "apiGETError": "Erreur à la récupération des informations."
+        "apiGETError": "Erreur à la récupération des informations.",
+        "failPrint": "Le téléchargement de la fiche de suivi a échoué",
+        "successPrint": "Document téléchargé !"
       },
       "load": "Chargement...",
       "save": "Enregistrer",

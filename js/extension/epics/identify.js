@@ -114,20 +114,23 @@ export function printProgramme(action$, store) {
     return action$.ofType(PRINT_PROGRAMME_INFOS)
         .filter(() => isTabou2Activate(store.getState()))
         .switchMap((action) => {
-            return Rx.Observable.defer(() => getPDFProgramme("programme", action.id))
+            let messages = store.getState()?.locale.messages;
+            let feature = getSelection(store.getState())?.feature.properties;
+            return Rx.Observable.defer(() => getPDFProgramme(action.id))
                 .catch(e => {
                     console.log("Error on get PDF request");
                     console.log(e);
-                    return Rx.Observable.of({data: []});
+                    // fail message
+                    return Rx.Observable.of({...e, data: null});
                 })
                 .switchMap( response => {
-                    if (!isEmpty(response.data)) {
+                    if (response?.status === 200 && response?.data) {
                         const blob = new Blob([response.data], { type: response.data.type || 'application/pdf' });
                         const url = window.URL.createObjectURL(blob);
                         const link = document.createElement('a');
                         link.href = url;
                         const contentDisposition = response.headers['content-disposition'];
-                        let name = `fiche-suivi-${action.id}`;
+                        let name = `fiche-suivi-${action.id}-${feature.code}-${feature.nomopa.replace(" ", "-")}`;
                         if (contentDisposition) {
                             const fileNameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
                             if (fileNameMatch.length > 2 && fileNameMatch[1]) {
@@ -139,8 +142,19 @@ export function printProgramme(action$, store) {
                         link.click();
                         link.remove();
                         window.URL.revokeObjectURL(url);
+                        return Rx.Observable.of(
+                            success({
+                                title: getMessageById(messages, "tabou2.infos.successApi"),
+                                message: getMessageById(messages, "tabou2.infos.successPrint")
+                            })
+                        );
                     }
-                    return Rx.Observable.empty();
+                    return Rx.Observable.of(
+                        error({
+                            title: getMessageById(messages, "tabou2.infos.failApi"),
+                            message: getMessageById(messages, "tabou2.infos.failPrint")
+                        })
+                    );
                 });
         });
 }

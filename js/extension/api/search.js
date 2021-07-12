@@ -125,8 +125,8 @@ export function inactivateTier(tierId) {
 /**
  * PRINT TABOU FEATURE INFOS
  */
-export function getPDFProgramme(type, id) {
-    return axios.get(`${baseURL}/${type}/${id}/fiche-suivi`, {responseType: 'arraybuffer'});
+export function getPDFProgramme(id) {
+    return axios.get(`${baseURL}/programmes/${id}/fiche-suivi`, {responseType: 'arraybuffer'});
 }
 
 /**
