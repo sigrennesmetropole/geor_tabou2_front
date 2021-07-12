@@ -31,7 +31,7 @@ export default function Tabou2SearchToolbar({ ...props }) {
                     glyph: 'ok',
                     tooltip: 'Appliquer',
                     loading: props.searchLoading,
-                    disabled: props.searchLoading,
+                    disabled: props.searchLoading || props.getTabouErrors.filter,
                     onClick: search
                 },
                 {
