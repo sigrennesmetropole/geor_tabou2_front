@@ -18,7 +18,8 @@ import {
     LOADING,
     DISPLAY_FEATURE,
     LOAD_FICHE_INFOS,
-    SET_IDENTIFY_INFOS
+    SET_IDENTIFY_INFOS,
+    SET_TABOU_ERROR
 } from '@ext/actions/tabou2';
 
 const initialState = {
@@ -36,7 +37,8 @@ const initialState = {
     tiers: [],
     ficheInfos: {},
     featureAdded: {},
-    identifyInfos: {}
+    identifyInfos: {},
+    errors: {}
 };
 
 export default function tabou2(state = initialState, action) {
@@ -103,6 +105,8 @@ export default function tabou2(state = initialState, action) {
     case DISPLAY_FEATURE:
         const { featureAdded } = action;
         return set('featureAdded', featureAdded, state);
+    case SET_TABOU_ERROR:
+        return set(`errors.${action.name}`, action.value, state);
     default:
         return state;
     }

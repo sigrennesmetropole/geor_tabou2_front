@@ -1,6 +1,6 @@
 import * as Rx from 'rxjs';
 import { keys } from 'lodash';
-import { RESET_SEARCH_FILTERS, UPDATE_LAYER_PARAMS, SEARCH_IDS, setTabouFilterObj, loading } from '../actions/tabou2';
+import { RESET_SEARCH_FILTERS, UPDATE_LAYER_PARAMS, SEARCH_IDS, setTabouFilterObj, loading, setTabouErrors } from '../actions/tabou2';
 import { layersSelector } from '@mapstore/selectors/layers';
 import { currentTabouFilters, getLayerFilterObj, isTabou2Activate, getPluginCfg } from '../selectors/tabou2';
 import { changeLayerParams, changeLayerProperties } from "@mapstore/actions/layers";
@@ -28,12 +28,12 @@ export function tabouApplyFilter(action$, store) {
             }
             filterObj = filterObj[action.layerToFilter];
             layer = layer[0];
-
-
             filterObj.filterFields = filterObj?.filterFields || [];
             filterObj.crossLayerFilter = filterObj?.crossLayerFilter || null;
             filterObj.spatialField = filterObj?.spatialField || null;
-            return Rx.Observable.of(changeLayerProperties(layer.id, { layerFilter: filterObj.tocFilter }));
+            return Rx.Observable.of(
+                changeLayerProperties(layer.id, { layerFilter: filterObj.tocFilter })
+            );
         });
 }
 
@@ -50,10 +50,12 @@ export function tabouResetFilter(action$, store) {
             const layers = keys(currentTabouFilters(store.getState()));
             const tocLayers = layersSelector(store.getState()) ?? [];
             const layersId = tocLayers.filter(layer => layers.indexOf(layer.name) > -1).map(layer => layer.id);
-
             return Rx.Observable.from((layersId)).mergeMap(id => {
-                return Rx.Observable.of(changeLayerParams(id, { cql_filter: undefined }))
-                    .concat(Rx.Observable.of(changeLayerProperties(id, { layerFilter: undefined })));
+                return Rx.Observable.of(
+                    changeLayerParams(id, { cql_filter: undefined }),
+                    changeLayerProperties(id, { layerFilter: undefined }),
+                    setTabouErrors(false, "filter")
+                );
             });
         });
 }
@@ -85,12 +87,14 @@ export function tabouGetSearchIds(action$, store) {
                         let layer = filter.layer;
                         let ids = [0];
                         let idsCql = "";
-                        if (response?.totalFeatures) {
+                        if (response?.totalFeatures && response.features.length < 150) {
                             ids = response.features.map(feature => feature.properties.objectid || '');
                             ids = ids.filter(id => id);
                             let correctIds = filter.idType === 'string' ? ids.map(i => `'${i}'`) : (ids.length ? ids : [0]);
                             // create entire filter string
                             idsCql = correctIds.map(id => `${filter.idField} = ${id}`).join(' OR ');
+                        } else {
+                            return Rx.Observable.of(setTabouErrors(true, "filter"));
                         }
                         // create toc filter
                         let newFilter = getNewFilter(layer, null, [], null);
@@ -113,15 +117,13 @@ export function tabouGetSearchIds(action$, store) {
                             layerToFilter: layer,
                             tocFilter: newFilter
                         };
-
                         // affect filter
                         return Rx.Observable.of(setTabouFilterObj(filters));
                     });
             });
-
             return observable$.let(
                 wrapStartStop(
-                    [loading(true, "search")],
+                    [loading(true, "search"), setTabouErrors(false, "filter")],
                     loading(false, "search"),
                     () => {
                         return Rx.Observable.of(

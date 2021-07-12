@@ -34,6 +34,7 @@ export const RELOAD_LAYER = "RELOAD_LAYER";
 export const DISPLAY_FEATURE = "DISPLAY_FEATURE";
 export const SET_GFI_REQUEST = "SET_GFI_REQUEST";
 export const SET_IDENTIFY_INFOS = "SET_IDENTIFY_INFOS";
+export const SET_TABOU_ERROR = "SET_ERROR";
 
 export const reloadLayer = (layer) => ({
     type: MAP_TIERS,
@@ -212,4 +213,10 @@ export const displayFeature = infos => ({
 export const setIdentifyInfos = infos => ({
     type: SET_IDENTIFY_INFOS,
     infos
+});
+
+export const setTabouErrors = (value, name) => ({
+    type: SET_TABOU_ERROR,
+    value,
+    name
 });

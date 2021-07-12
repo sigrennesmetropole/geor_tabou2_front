@@ -94,3 +94,7 @@ export function getFeatureAdded(state) {
 export function getIdentifyInfos(state) {
     return state?.tabou2?.identifyInfos;
 }
+
+export function getTabouErrors(state) {
+    return state?.tabou2?.errors;
+}

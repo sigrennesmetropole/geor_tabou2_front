@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { keys, get, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
-import { Checkbox, Col, Row, ControlLabel, FormGroup, Grid, Panel } from 'react-bootstrap';
-import { currentActiveTabSelector, currentTabouFilters, getLayerFilterObj, searchLoading } from '../../selectors/tabou2';
+import { Checkbox, Col, Row, ControlLabel, FormGroup, Grid, Panel, Glyphicon, Alert } from 'react-bootstrap';
+import { currentActiveTabSelector, currentTabouFilters, getLayerFilterObj, searchLoading, getTabouErrors } from '../../selectors/tabou2';
 import Tabou2SearchToolbar from './Tabou2SearchToolbar';
 import Tabou2Combo from '../form/Tabou2Combo';
 import { getRequestApi } from '../../api/search';
@@ -10,7 +10,6 @@ import { setTabouFilterObj, setTabouFilters, resetSearchFilters, resetCqlFilters
 import { getNewFilter, getSpatialCQL, getCQL, getTabouLayersInfos } from '../../utils/search';
 import { SEARCH_ITEMS, SEARCH_CALENDARS } from '@ext/constants';
 import Message from "@mapstore/components/I18N/Message";
-
 import moment from 'moment';
 import momentLocalizer from 'react-widgets/lib/localizers/moment';
 momentLocalizer(moment);
@@ -240,6 +239,12 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
                 <div id="tabou2-tbar-container" className="text-center">
                     <Tabou2SearchToolbar {...props} filters={getFiltersObj} apply={props.applyFilterObj} reset={reset}/>
                 </div>
+                { props.getTabouErrors.filter ? (
+                    <Alert className="alert-danger">
+                        <Glyphicon glyph="filter" />
+                        <Message msgId={" Trop de résultats : Veuillez ajouter un filtre supplémentaire !"}/>
+                    </Alert>) : null
+                }
                 <Row>
                     <Panel
                         header={(
@@ -314,7 +319,8 @@ export default connect((state) => ({
     currentTab: currentActiveTabSelector(state),
     currentFilters: currentTabouFilters(state),
     getFiltersObj: getLayerFilterObj(state),
-    searchLoading: searchLoading(state)
+    searchLoading: searchLoading(state),
+    getTabouErrors: getTabouErrors(state)
 }), {
     /* PASS EVT AND METHODS HERE*/
     changeFilters: setTabouFilters,
