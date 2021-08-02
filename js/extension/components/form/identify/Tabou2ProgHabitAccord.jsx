@@ -30,6 +30,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
         label: "tabou2.identify.accordions.logementPlan",
         field: "nbLogementsPrevu",
         type: "number",
+        min: 0,
         source: values?.nbLogementsPrevu ? values : operation,
         readOnly: false
     }, {
@@ -38,6 +39,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
         label: "tabou2.identify.accordions.plhPlan",
         field: "plhLogementsPrevus",
         type: "number",
+        min: 0,
         source: values?.plhLogementsPrevus ? values : operation,
         readOnly: false
     }, {
@@ -46,6 +48,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
         label: "tabou2.identify.accordions.plhLiv",
         field: "plhLogementsLivres",
         type: "number",
+        min: 0,
         source: values?.plhLogementsLivres ? values : operation,
         readOnly: false
     }, // PROGRAMME
@@ -55,6 +58,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
         field: "attributionFonciereAnnee",
         layers: ["layerPA"],
         type: "number",
+        min: 0,
         source: has(values, "attributionFonciereAnnee") ? values : programme,
         readOnly: false
     }, {
@@ -79,6 +83,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
         field: "logementsTotal",
         layers: ["layerPA"],
         type: "number",
+        min: 0,
         source: has(values, "logementsTotal") ? values : programme,
         readOnly: false
     }, {
@@ -87,6 +92,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
         field: "logementsAccessAidePrevu",
         layers: ["layerPA"],
         type: "number",
+        min: 0,
         source: has(values, "logementsAccessAidePrevu") ? values : programme,
         readOnly: false
     }, {
@@ -95,6 +101,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
         field: "logementsAccessLibrePrevu",
         layers: ["layerPA"],
         type: "number",
+        min: 0,
         source: has(values, "logementsAccessLibrePrevu") ? values : programme,
         readOnly: false
     }, {
@@ -103,6 +110,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
         field: "logementsAccessMaitrisePrevu",
         layers: ["layerPA"],
         type: "number",
+        min: 0,
         source: has(values, "logementsAccessMaitrisePrevu") ? values : programme,
         readOnly: false
     }, {
@@ -111,6 +119,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
         field: "logementsLocatifAidePrevu",
         layers: ["layerPA"],
         type: "number",
+        min: 0,
         source: has(values, "logementsLocatifAidePrevu") ? values : programme,
         readOnly: false
     }, {
@@ -119,6 +128,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
         field: "logementsLocatifReguleHlmPrevu",
         layers: ["layerPA"],
         type: "number",
+        min: 0,
         source: has(values, "logementsLocatifReguleHlmPrevu") ? values : programme,
         readOnly: false
     }, {
@@ -127,6 +137,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
         field: "logementsLocatifRegulePrivePrevu",
         layers: ["layerPA"],
         type: "number",
+        min: 0,
         source: has(values, "logementsLocatifRegulePrivePrevu") ? values : programme,
         readOnly: false
     }, {
@@ -221,6 +232,8 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
                                 item.type === "text" || item.type === "number" ?
                                     (<FormControl
                                         type={item.type}
+                                        min={item?.min}
+                                        max={item?.max}
                                         placeholder={props.i18n(props.messages, item?.label || "")}
                                         value={getValue(item) || ""}
                                         readOnly={!allowChange || item.readOnly}
