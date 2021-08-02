@@ -45,8 +45,9 @@ export default function Tabou2IdentifyPanel({
         if (!isEqual(queryData, response) || layerIndex.current !== props.identifyInfos?.layerIdx || featureIndex.current !== props.identifyInfos?.featureIdx) {
             setResponse(queryData);
             layersData.current = createOptions(keys(queryData).map(e => queryData[e]));
-            changeLayer(layersData.current[props.identifyInfos?.layerIdx || 0]);
-            layerIndex.current = props.identifyInfos?.layerIdx;
+            let defaultIdxSelected = layersData.current[props.identifyInfos?.layerIdx] ? props.identifyInfos?.layerIdx || 0 : 0;
+            changeLayer(layersData.current[defaultIdxSelected]);
+            layerIndex.current = defaultIdxSelected;
         }
     }, [queryData, props.identifyInfos?.featureIdx, props.identifyInfos?.layerIdx]);
 
