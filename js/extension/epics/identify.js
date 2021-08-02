@@ -129,14 +129,8 @@ export function printProgramme(action$, store) {
                         const url = window.URL.createObjectURL(blob);
                         const link = document.createElement('a');
                         link.href = url;
-                        const contentDisposition = response.headers['content-disposition'];
-                        let name = `fiche-suivi-${action.id}-${feature.code}-${feature.nomopa.replace(" ", "-")}`;
-                        if (contentDisposition) {
-                            const fileNameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
-                            if (fileNameMatch.length > 2 && fileNameMatch[1]) {
-                                name = fileNameMatch[1];
-                            }
-                        }
+                        let name = `fiche-suivi-${action.id}-${feature.code}-${feature.nomopa.split(" ")
+                            .map(e => e[0].toUpperCase() + e.slice(1)).join('')}`;
                         link.setAttribute('download', name);
                         document.body.appendChild(link);
                         link.click();
