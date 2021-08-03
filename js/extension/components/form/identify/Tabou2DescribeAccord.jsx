@@ -63,7 +63,6 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
         field: "surfaceTotale",
         label: "tabou2.identify.accordions.totalSpace",
         type: "number",
-        min: 0,
         step: 0.1,
         layers: ["layerSA", "layerOA"],
         source: values
@@ -123,12 +122,11 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
                                         placeholder={props.i18n(props.messages, item?.placeholder || item.label)}
                                         style={{height: item.isArea ? "100px" : "auto"}}
                                         type={item.type}
-                                        min={item?.min}
-                                        max={item?.max}
+                                        min="0"
                                         step={item?.step}
                                         value={getValue(item) || ""}
                                         readOnly={item.readOnly || !allowChange}
-                                        onChange={(v) => changeInfos({[item.name]: v.target.value})}
+                                        onChange={(v) => changeInfos({[item.name]: v.target.value < 0 ? 0 : v.target.value })}
                                     />) : null
                             }{
                                 item.type === "combo" ? (
