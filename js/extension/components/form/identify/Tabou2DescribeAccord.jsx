@@ -64,6 +64,7 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
         label: "tabou2.identify.accordions.totalSpace",
         type: "number",
         min: 0,
+        step: 0.1,
         layers: ["layerSA", "layerOA"],
         source: values
     }, {
@@ -124,6 +125,7 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
                                         type={item.type}
                                         min={item?.min}
                                         max={item?.max}
+                                        step={item?.step}
                                         value={getValue(item) || ""}
                                         readOnly={item.readOnly || !allowChange}
                                         onChange={(v) => changeInfos({[item.name]: v.target.value})}
