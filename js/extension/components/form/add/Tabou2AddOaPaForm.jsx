@@ -8,18 +8,19 @@ import Toolbar from '@mapstore/components/misc/toolbar/Toolbar';
 import { OA_SCHEMA, PA_SCHEMA, ADD_FIELDS, ADD_OA_FORM, ADD_PA_FORM } from '@ext/constants';
 import { DropdownList} from 'react-widgets';
 import Message from "@mapstore/components/I18N/Message";
-
 export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...props}) {
     const emptyInfos = {
         code: "",
         nom: "",
         etape: "",
         idEmprise: "",
+        nomEmprise: "",
         nature: "",
         secteur: false,
         parentoa: null,
-        limitPa: true
+        limitPa: false
     };
+
     const [infos, setInfos] = useState(emptyInfos);
     const [childs, setChilds] = useState([]);
 
@@ -36,11 +37,15 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
     // Return invalid or valid if some keys are empty - cant save if not valid
     const getInvalides = (obj) => {
         let keysToFilter = [];
+        // only kee fields expected by API
         if ( type === "layerPA") {
-            keysToFilter = keys(obj).filter(name => name !== "secteur" && name !== "nature");
+            // to create PA object
+            keysToFilter = keys(obj).filter(name => !["nomEmprise", "secteur", "nature", "limitPa"].includes(name));
         } else {
-            keysToFilter = keys(obj).filter(name => name !== "secteur" && name !== "parentoa");
+            // to create OA or SA object
+            keysToFilter = keys(obj).filter(name => !["nomEmprise", "secteur", "limitPa", "parentoa"].includes(name));
         }
+        // return empty fields
         return keysToFilter.filter(n => !get(obj, n));
     };
 
@@ -48,29 +53,32 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
     const changeState = (combo, selection) => {
         let formElement = {};
         let apiElement = {};
-        let value;
+        let value = !selection ? selection : selection[combo?.apiLabel] || selection[combo?.apiField] || selection;
         if (combo.type === "checkbox") {
             formElement[combo.name] = !infos[combo.name];
-        } else {
-            // temporary fix for https://github.com/sigrennesmetropole/geor_tabou2_front/issues/82
-            value = !selection ? selection : selection[combo?.apiLabel] || selection[combo?.apiField] || selection;
+        } else if (combo.name !== "emprise") {
             formElement[combo.name] = value;
-            apiElement[combo.name] = ["etape", "nature"].includes(combo.name) ? {
-                id: selection?.id
-            } : selection?.id || selection;
         }
+
+        if (["etape", "nature"].includes(combo.name)) {
+            apiElement[combo.name] = {
+                id: selection?.id
+            };
+        } else if (combo.name !== "emprise") {
+            apiElement[combo.name] = selection?.id || selection;
+        }
+
         let newInfos = {...infos, ...formElement};
         let newFeatureObj = {...newFeature, ...apiElement};
 
-        if (combo.name === "idEmprise") {
-            newFeatureObj = {...newFeatureObj, nom: value};
-            newInfos = {...newInfos, nom: value};
+        if (combo.name === "emprise") {
+            newFeatureObj = {...newFeatureObj, nom: value, idEmprise: selection?.id, nomEmprise: selection.nom};
+            newInfos = {...newInfos, nom: value, idEmprise: selection?.id, nomEmprise: selection.nom};
         }
         if (combo.name === "parentoa") {
             newFeatureObj = {...newFeatureObj, operationId: selection?.id };
             newInfos = {...newInfos, operationId: selection?.id };
         }
-
         if (combo.name === "nature") {
             natureId.current = selection.id;
             newInfos.natureId = selection.id;
@@ -133,8 +141,11 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
     const setInitialInfos = (defaultData = {}) => {
         setType(layer);
         let fProp = feature?.properties;
+        // var newInfos will be used to display UI
+
         let newInfos = {
             idEmprise: get(fProp, ADD_FIELDS.idEmprise[layer]) || infos.idEmprise,
+            nomEmprise: get(fProp, ADD_FIELDS.nomEmprise[layer]) || infos.nomEmprise,
             nature: get(fProp, ADD_FIELDS.nature[layer]) || infos.nature,
             secteur: layer === "layerSA",
             nom: get(fProp, ADD_FIELDS.nom[layer]) || infos.nom,
@@ -142,8 +153,8 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
             etape: get(fProp, ADD_FIELDS.etape[layer]) || get(fProp, "avancement") || infos.code,
             natureId: 1
         };
-        let newObject = {...newInfos, idEmprise: get(fProp, "id_emprise") || get(fProp, "objectid")};
-        // FIX : need nature id !
+        // var newObject contains obj to send to API
+        let newObject = {...newInfos, idEmprise: newInfos.id};
         if (!isEqual(newInfos, infos)) {
             setInfos({...infos, ...newInfos, ...defaultData});
             setNewFeature({...newFeature, ...newObject, ...defaultData});
@@ -152,7 +163,9 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
 
     // restore default form state
     const reset = () => {
-        isEmpty(feature) ? setInfos(emptyInfos) : setInitialInfos({code: "", etape: ""});
+        isEmpty(feature) ? setInfos(emptyInfos) : setInitialInfos({
+            code: "", etape: "", nom: "", parentoa: null, limitPa: false
+        });
     };
 
     // Refresh to change form items according to selected layer or feature
@@ -189,7 +202,9 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                         {
                             items.map(item => {
                                 let el;
-                                if (item.name === "idEmprise" && !isEmpty(feature)) item.type = "text";
+                                if (item.name === "emprise" && !isEmpty(feature)) {
+                                    item.type = "text";
+                                }
                                 switch (item.type) {
                                 case "checkbox":
                                     el = (
@@ -213,9 +228,14 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                                     break;
                                 case "text":
                                     let isReadOnly = false;
-                                    // name combo stay editable
-                                    if (item.name !== "nom") {
-                                        isReadOnly = !isEmpty(feature) && infos[item.name] && item.name !== "code" ? true : item.parent ? getActivate(item) : false;
+                                    if (item.name === "code") {
+                                        isReadOnly = item.parent ? getActivate(item) : false;
+                                    }
+                                    if (item.name === "emprise") {
+                                        // need to be compare to fix case with null initial emprise name
+                                        let initialVal = get(feature, `properties.nom`) || "";
+                                        isReadOnly = !isEmpty(feature) && initialVal === infos.nomEmprise ?
+                                            true : item.parent ? getActivate(item) : false;
                                     }
                                     el = (
                                         <FormControl

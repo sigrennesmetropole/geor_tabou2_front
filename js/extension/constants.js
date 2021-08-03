@@ -276,10 +276,15 @@ export const ADD_FIELDS = {
         layerPA: "secteur",
         layerSA: "secteur"
     },
-    idEmprise: {
+    nomEmprise: {
         layerOA: "nom",
         layerPA: "nom",
         layerSA: "nom"
+    },
+    idEmprise: {
+        layerOA: "id_emprise",
+        layerPA: "id_emprise",
+        layerSA: "id_emprise"
     },
     nom: {
         layerOA: "nom",
@@ -328,7 +333,7 @@ export const ADD_OA_FORM = [{
     type: "combo"
 }, {
     label: "tabou2.add.emprise",
-    name: "idEmprise",
+    name: "emprise",
     group: 1,
     api: "operations/emprises",
     apiField: "id",
@@ -388,7 +393,7 @@ export const ADD_PA_FORM = [ {
     api: "programmes/emprises",
     group: 1,
     parent: (i) => !i.parentoa ? true : {operationId: i.operationId, nomopa: i.parentoa},
-    name: "idEmprise",
+    name: "emprise",
     apiLabel: "nom",
     apiField: "id",
     placeholder: "Selectionner une emprise",
