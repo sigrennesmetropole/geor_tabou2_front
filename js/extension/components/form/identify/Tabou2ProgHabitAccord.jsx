@@ -1,6 +1,6 @@
 import React, {useEffect, useState } from "react";
 import { isEmpty, isEqual, pick, has, get, capitalize } from "lodash";
-import { Col, Row, Table, FormControl, Grid, ControlLabel } from "react-bootstrap";
+import { Col, Row, Table, FormControl, Grid, ControlLabel, Alert, Glyphicon } from "react-bootstrap";
 import { DateTimePicker } from "react-widgets";
 import utcDateWrapper from '@mapstore/components/misc/enhancers/utcDateWrapper';
 import "@ext/css/identify.css";
@@ -58,8 +58,14 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
         field: "attributionFonciereAnnee",
         layers: ["layerPA"],
         type: "number",
-        min: 0,
+        min: 1950,
+        max: 2100,
+        step: 10,
         source: has(values, "attributionFonciereAnnee") ? values : programme,
+        valid: (v) => {
+            return v > 1000;
+        },
+        errorMsg: "tabou2.identify.accordions.errorFormatYear",
         readOnly: false
     }, {
         name: "attributionDate",
@@ -206,10 +212,17 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
             {
                 fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(item => (
                     <Row className="attributeInfos">
-                        <Col xs={4}>
+                        {
+                            has(item, "valid") && getValue(item) && !item.valid(getValue(item)) ? (
+                                <Alert className="alert-danger">
+                                    <Glyphicon glyph="warning-sign" />
+                                    <Message msgId={props.i18n(props.messages, item?.errorMsg || "")}/>
+                                </Alert>) : null
+                        }
+                        <Col xs={5}>
                             <ControlLabel><Message msgId={item.label}/></ControlLabel>
                         </Col>
-                        <Col xs={8}>
+                        <Col xs={7}>
                             {
                                 item.type === "date" ? (
                                     <UTCDateTimePicker
@@ -234,10 +247,19 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
                                         type={item.type}
                                         min={item?.min}
                                         max={item?.max}
+                                        step={item?.step}
                                         placeholder={props.i18n(props.messages, item?.label || "")}
                                         value={getValue(item) || ""}
                                         readOnly={!allowChange || item.readOnly}
                                         onChange={(v) => changeInfos({[item.name]: v.target.value})}
+                                        onKeyDown={(v) => {
+                                            if (item.type !== "number") return;
+                                            // only keep numeric and special key control as "Delete" or "Backspace"
+                                            if (!new RegExp('^[0-9]+$').test(v.key) && v.key.length < 2 && v.key !== ",") {
+                                                v.returnValue = false;
+                                                if (v.preventDefault) v.preventDefault();
+                                            }
+                                        }}
                                     />) : null
                             }
                         </Col>

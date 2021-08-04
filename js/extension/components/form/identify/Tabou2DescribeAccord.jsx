@@ -132,6 +132,7 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
                                             });
                                         }}
                                         onKeyDown={(v) => {
+                                            if (item.type !== "number") return;
                                             // only keep numeric and special key control as "Delete" or "Backspace"
                                             if (!new RegExp('^[0-9]+$').test(v.key) && v.key.length < 2 && v.key !== ",") {
                                                 v.returnValue = false;
