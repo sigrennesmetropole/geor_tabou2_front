@@ -126,7 +126,18 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
                                         step={item?.step}
                                         value={getValue(item) || ""}
                                         readOnly={item.readOnly || !allowChange}
-                                        onChange={(v) => changeInfos({[item.name]: v.target.value < 0 ? 0 : v.target.value })}
+                                        onChange={(v) => {
+                                            return changeInfos({
+                                                [item.name]: item.type === "number" && v.target.value < 0 ? "" : v.target.value
+                                            });
+                                        }}
+                                        onKeyDown={(v) => {
+                                            // only keep numeric and special key control as "Delete" or "Backspace"
+                                            if (!new RegExp('^[0-9]+$').test(v.key) && v.key.length < 2 && v.key !== ".") {
+                                                v.returnValue = false;
+                                                if (v.preventDefault) v.preventDefault();
+                                            }
+                                        }}
                                     />) : null
                             }{
                                 item.type === "combo" ? (
