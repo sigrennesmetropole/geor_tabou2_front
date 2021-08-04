@@ -29,7 +29,8 @@ export default function Tabou2IdentifyContent({
 }) {
     const [cssLoaded, setCss] = useState(false);
     const [accordions, setAccordions] = useState([]);
-    const [openedAccordions, setOpened] = useState({});
+    // first accordions will be open
+    const [openedAccordions, setOpened] = useState({0: true});
     const [operation, setOperation] = useState({});
     const [mapFeature, setMapFeature] = useState({});
     const [infos, setInfos] = useState({});
