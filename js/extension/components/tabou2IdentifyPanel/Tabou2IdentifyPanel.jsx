@@ -13,7 +13,6 @@ import Tabou2Information from "@ext/components/common/Tabou2Information";
  * @returns component
  */
 export default function Tabou2IdentifyPanel({
-    queryData,
     onSelect,
     ...props
 }) {
@@ -23,54 +22,59 @@ export default function Tabou2IdentifyPanel({
     const [selectedFeatures, setSelectedFeatures] = useState([]);
     const [feature, setFeature] = useState("");
     const response = useRef({});
-    let lyrsOptions = createOptions(keys(queryData).map(e => queryData[e]));
-    let layerIdx = lyrsOptions[props.identifyInfos?.layerIdx] ? props.identifyInfos?.layerIdx || 0 : 0;
+    const lyrsOptions = () => createOptions(keys(props.queryData).map(e => props.queryData[e]));
+    let layerIdx = lyrsOptions()[props.identifyInfos?.layerIdx] ? props.identifyInfos?.layerIdx || 0 : 0;
 
     // Event to trigger when user click on dropdown option
-    const changeLayer = (option) => {
-        let actualLayer = option.name;
-        let actualFeatures = queryData[actualLayer]?.data?.features || [];
+    const changeLayer = (option = {}, idx = 0, title = "") => {
+        let selectionVal = option;
+        if (isEmpty(selectionVal)) {
+            // display correct value if given index is base on query data index and not from list value order
+            selectionVal = find(lyrsOptions(), {label: title || props.queryData[keys(props.queryData)[idx]].layer.title});
+        }
+        let actualLayer = title || selectionVal?.name;
+        let actualFeatures = props.queryData[actualLayer]?.data?.features || [];
         let selectedFeature = actualFeatures[props.identifyInfos?.featureIdx || 0];
-        let configName = keys(props.layersCfg).filter(k => actualLayer === props.layersCfg[k].nom)[layerIdx || 0];
+        let configName = keys(props.layersCfg).filter(k => actualLayer === props.layersCfg[k].nom)[0];
         setConfigLayer(configName);
         setSelectedLayer(actualLayer);
         setSelectedFeatures(actualFeatures);
         setFeature(selectedFeature);
-        onSelect(selectedFeature, get(selectedFeature, find(LAYER_FIELD_OPTION, ["name", configName])?.id), actualLayer, option.value, props.identifyInfos?.featureIdx || 0);
+        onSelect(selectedFeature, get(selectedFeature, find(LAYER_FIELD_OPTION, ["name", configName])?.id), actualLayer, selectionVal.value, props.identifyInfos?.featureIdx || 0);
     };
 
     // hooks to refresh only if query data changed
     useEffect(() => {
-        let needUpdate = !isEqual(queryData, response.current) || layerIdx !== props.identifyInfos?.layerIdx;
+        let needUpdate = !isEqual(props.responseLyr, response.current) || layerIdx !== props.identifyInfos?.layerIdx;
         if (needUpdate) {
-            changeLayer(lyrsOptions[layerIdx]);
-            response.current = queryData;
+            changeLayer(null, props.identifyInfos?.layerIdx);
+            response.current = props.responseLyr;
         }
-    }, [queryData, props.identifyInfos?.featureIdx, props.identifyInfos?.layerIdx]);
+    }, [props.responseLyr, props.identifyInfos?.featureIdx, props.identifyInfos?.layerIdx]);
     return (
         <>
             <IdentifyDropDown
                 i18n={props.i18n}
                 messages={props.messages}
                 disabled={false}
-                value={lyrsOptions[layerIdx]}
+                value={find(lyrsOptions(), {name: selectedLayer})}
                 visible
-                data={lyrsOptions}
+                data={lyrsOptions()}
                 valueField={'value'}
                 textField={'label'}
                 icon="glyphicon-1-layer"
                 onChange={(i) => changeLayer(i)}
             />
             {
-                isEmpty(queryData) ? null :
-                    keys(queryData).map(l => (
+                isEmpty(props.queryData) ? null :
+                    keys(props.queryData).map(l => (
                         <IdentifyDropDown
                             i18n={props.i18n}
                             messages={props.messages}
                             disabled={false}
-                            visible={queryData[l].data.features.length > 1 && selectedLayer === l}
-                            data={getFeaturesOptions(queryData[l].data.features, keys(props.layersCfg).filter(k => l === props.layersCfg[k].nom)[0])}
-                            value = {getFeaturesOptions(queryData[l].data.features, keys(props.layersCfg).filter(k => l === props.layersCfg[k].nom)[0])[props.identifyInfos?.featureIdx || 0]}
+                            visible={props.queryData[l].data.features.length > 1 && selectedLayer === l}
+                            data={getFeaturesOptions(props.queryData[l].data.features, keys(props.layersCfg).filter(k => l === props.layersCfg[k].nom)[0])}
+                            value = {getFeaturesOptions(props.queryData[l].data.features, keys(props.layersCfg).filter(k => l === props.layersCfg[k].nom)[0])[props.identifyInfos?.featureIdx || 0]}
                             textField={"label"}
                             valueField={"idx"}
                             icon="glyphicon-list"
@@ -82,13 +86,13 @@ export default function Tabou2IdentifyPanel({
                     ))
             }
             {
-                !isEmpty(queryData) && feature && feature.properties.id_tabou ?
+                !isEmpty(props.queryData) && feature && feature.properties.id_tabou ?
                     (
                         <>
                             <Tabou2IdentifyContent
                                 feature={feature}
                                 featureId={get(feature, find(LAYER_FIELD_OPTION, ["name", configLayer])?.id)}
-                                response={queryData[selectedLayer]}
+                                response={props.queryData[selectedLayer]}
                                 tabouLayer={configLayer}
                                 {...props}
                             />

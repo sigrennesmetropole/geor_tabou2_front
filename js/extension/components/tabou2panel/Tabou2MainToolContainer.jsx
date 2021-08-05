@@ -41,7 +41,7 @@ import {
     setIdentifyInfos
 } from "@ext/actions/tabou2";
 
-function toolContainer({data, ...props }) {
+function toolContainer({...props }) {
     let isTabouFeature = false;
     const searchValues = useRef({});
 
@@ -60,13 +60,13 @@ function toolContainer({data, ...props }) {
 
     let showAddPanel = props.authentInfos.isReferent || props.authentInfos.isContrib;
 
-    if (isEmpty(data)) isTabouFeature = false;
+    if (isEmpty(props.queryData)) isTabouFeature = false;
 
     const changeSearch = (vals) => {
         searchValues.current = vals;
     };
 
-    isTabouFeature = isEmpty(data) || !props.identifyInfos.feature?.properties.id_tabou ? false : true;
+    isTabouFeature = isEmpty(props.queryData) || !props.identifyInfos.feature?.properties.id_tabou ? false : true;
 
     return (
         <>
@@ -77,7 +77,7 @@ function toolContainer({data, ...props }) {
                         searchState={searchValues.current}
                         currentTab={props.currentTab}
                         allIndex={props.allIndex}
-                        queryData={data}
+                        queryData={props.queryData}
                         {...props} />)
                     : null
             }
@@ -85,10 +85,10 @@ function toolContainer({data, ...props }) {
                 // display add panel
                 props.currentTab === "add" && showAddPanel && !isTabouFeature ? (
                     <Tabou2AddPanel
-                        feature={isEmpty(data) ? {} : props.identifyInfos.feature}
-                        featureId={ isEmpty(data) ? null : props.identifyInfos?.id}
-                        layer={isEmpty(data) ? "" : props.identifyInfos.layer}
-                        queryData={data}
+                        feature={isEmpty(props.queryData) ? {} : props.identifyInfos.feature}
+                        featureId={ isEmpty(props.queryData) ? null : props.identifyInfos?.id}
+                        layer={isEmpty(props.queryData) ? "" : props.identifyInfos.layer}
+                        queryData={props.queryData}
                         {...props} />)
                     : null
             }
@@ -103,7 +103,7 @@ function toolContainer({data, ...props }) {
                 ) : null
             }
             {
-                props.currentTab === "add" && isTabouFeature && showAddPanel && !isEmpty(data) ? (
+                props.currentTab === "add" && isTabouFeature && showAddPanel && !isEmpty(props.queryData) ? (
                     <Tabou2AddPanel
                         feature={{}}
                         featureId={null}
@@ -113,14 +113,14 @@ function toolContainer({data, ...props }) {
             }
             {
                 // Identify panel
-                props.currentTab === "identify" && !isEmpty(data) && keys(data).length ?
-                    (<Tabou2IdentifyPanel authent={props.authentInfos} queryData={data} {...props} onSelect={handleSelect}/>) : null
+                props.currentTab === "identify" && !isEmpty(props.queryData) && keys(props.queryData).length ?
+                    (<Tabou2IdentifyPanel authent={props.authentInfos} responseLyr={keys(props.queryData)} {...props} onSelect={handleSelect}/>) : null
             }
             {
                 // Identify info message if no results or no clicked realized
-                props.currentTab === "identify" && isEmpty(data) ?
+                props.currentTab === "identify" && isEmpty(props.queryData) ?
                     (<Tabou2Information
-                        isVisible={isEmpty(data)}
+                        isVisible={isEmpty(props.queryData)}
                         glyph="info-sign"
                         message={<Message msgId="tabou2.identify.selectFeatureMsg"/>}
                         title={<Message msgId="tabou2.identify.selectFeatureTitle"/>}/>
@@ -134,7 +134,7 @@ function toolContainer({data, ...props }) {
 export default connect(
     (state) => ({
         currentTab: currentActiveTabSelector(state),
-        data: getTabouResponse(state),
+        queryData: getTabouResponse(state),
         allIndex: getTabouIndexSelectors(state),
         events: getEvents(state),
         tiers: getTiers(state),

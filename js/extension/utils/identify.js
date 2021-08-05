@@ -1,5 +1,5 @@
 import { LAYER_FIELD_OPTION } from "@ext/constants";
-import { get } from 'lodash';
+import { get, find } from 'lodash';
 
 /**
  * Create data to display into layer identify selector - combobox.
@@ -13,7 +13,12 @@ export function createOptions(response) {
         let label = opt?.layerMetadata?.title;
         return { label: label, value: idx, name: opt?.layer.name };
     });
-    return data.filter(v => v);
+    let orderedData = [
+        find(data, {label: "Operations"}),
+        find(data, {label: "Secteurs"}),
+        find(data, {label: "Programmes"})
+    ];
+    return orderedData.filter(v => v);
 }
 
 /**
