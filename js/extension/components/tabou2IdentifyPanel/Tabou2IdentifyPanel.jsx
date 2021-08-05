@@ -47,7 +47,7 @@ export default function Tabou2IdentifyPanel({
     useEffect(() => {
         let needUpdate = !isEqual(props.responseLyr, response.current) || layerIdx !== props.identifyInfos?.layerIdx;
         if (needUpdate) {
-            changeLayer(null, props.identifyInfos?.layerIdx);
+            changeLayer(null, layerIdx);
             response.current = props.responseLyr;
         }
     }, [props.responseLyr, props.identifyInfos?.featureIdx, props.identifyInfos?.layerIdx]);
