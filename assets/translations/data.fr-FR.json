@@ -77,7 +77,7 @@
           "progHabitat": "Programmation habitat",
           "progActivity": "Programmation activités",
           "dds": "Instruction Droit des Sols",
-          "secProg": "Secteurs et programmes liés",
+          "secProg": "Liste des programmes",
           "spaceEmpty": "Consommation espace...",
           "space": "Consommation espace",
           "vocationEmpty": "Vocations...",
@@ -132,7 +132,8 @@
           "dateLiv": "Date de livraison",
           "dateAuth": "Date d'autorisation",
           "dateStart": "Date de démarrage",
-          "dateClose": "Date de clôture"
+          "dateClose": "Date de clôture",
+          "errorFormatYear": " Année incorrecte ! (ex: 2010)"
         },
 
         "selectFeatureTitle": "Identifier",
