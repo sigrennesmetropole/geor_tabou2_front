@@ -60,7 +60,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
         type: "number",
         min: 1950,
         max: 2100,
-        step: 10,
+        step: 1,
         source: has(values, "attributionFonciereAnnee") ? values : programme,
         valid: (v) => {
             return v > 1000;
