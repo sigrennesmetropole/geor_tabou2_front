@@ -1,5 +1,5 @@
 import React, {useEffect, useState } from "react";
-import { isEmpty, isEqual, pick, get } from "lodash";
+import { isEmpty, isEqual, pick, get, has } from "lodash";
 import { Col, Row, FormControl, Grid, ControlLabel } from "react-bootstrap";
 import { Multiselect } from "react-widgets";
 import { getRequestApi } from "@ext/api/search";
@@ -55,7 +55,7 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
         name: "operationId",
         label: "tabou2.identify.accordions.operation",
         field: "operationId",
-        value: () => values.operationName || operation.nom,
+        value: () => has(values, "operationName") ? values.operationName : operation.nom,
         select: (v) => changeInfos({operationId: v.id, operationName: v.nom}),
         change: (v) => !v ? changeInfos({operationId: "", operationName: ""}) : null,
         type: "combo",
