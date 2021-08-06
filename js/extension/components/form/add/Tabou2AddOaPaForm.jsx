@@ -23,7 +23,6 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
 
     const [infos, setInfos] = useState(emptyInfos);
     const [childs, setChilds] = useState([]);
-
     const [newFeature, setNewFeature] = useState(["layerOA", "layerSA"].includes(layer) ? OA_SCHEMA : PA_SCHEMA);
     const [invalides, setInvalides] = useState([]);
     const naturesInfos = useRef([]);
@@ -202,8 +201,8 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                         {
                             items.map(item => {
                                 let el;
-                                if (item.name === "emprise" && !isEmpty(feature)) {
-                                    item.type = "text";
+                                if (item.name === "emprise") {
+                                    item.type =  !isEmpty(feature) ? "text" : "combo";
                                 }
                                 switch (item.type) {
                                 case "checkbox":
