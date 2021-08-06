@@ -463,12 +463,12 @@ export const PA_SCHEMA = {
     "diffusionRestreinte": false,
     "code": "",
     "nom": "",
-    "description": "nc",
-    "programme": "nc",
+    "description": "",
+    "programme": "",
     "etape": {
         "id": 0
     },
-    "numAds": "nc"
+    "numAds": ""
 };
 
 export const LOG_SCHEMA = {

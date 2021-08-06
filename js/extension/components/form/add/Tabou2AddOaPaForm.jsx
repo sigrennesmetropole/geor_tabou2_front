@@ -116,6 +116,7 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
     const handleSubmit = () => {
         let params = {};
         if (type === "layerPA") {
+
             params = {
                 ...PA_SCHEMA,
                 ...newFeature,
@@ -141,7 +142,6 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
         setType(layer);
         let fProp = feature?.properties;
         // var newInfos will be used to display UI
-
         let newInfos = {
             idEmprise: get(fProp, ADD_FIELDS.idEmprise[layer]) || infos.idEmprise,
             nomEmprise: get(fProp, ADD_FIELDS.nomEmprise[layer]) || infos.nomEmprise,
@@ -153,7 +153,7 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
             natureId: 1
         };
         // var newObject contains obj to send to API
-        let newObject = {...newInfos, idEmprise: newInfos.id};
+        let newObject = {...newInfos};
         if (!isEqual(newInfos, infos)) {
             setInfos({...infos, ...newInfos, ...defaultData});
             setNewFeature({...newFeature, ...newObject, ...defaultData});
