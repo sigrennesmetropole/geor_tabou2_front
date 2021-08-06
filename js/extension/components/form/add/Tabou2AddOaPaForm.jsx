@@ -102,7 +102,7 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
     // return param to complete API request according to selected parent's value
     const getParams = (combo) => {
         // get programme/emprises need only nature param
-        let params = infos.nature && natureId.current && type ? {natureId: natureId.current, nature: encodeURI(infos.nature)}  : {};
+        let params = infos.nature && natureId.current && type ? {natureId: natureId.current, nature: infos.nature}  : {};
         if (["layerOA", "layerSA"].includes(type)) {
             // need nature and secteur to request API get operation/emprises
             params =  has(infos, "secteur") && infos.nature ? {...params, estSecteur: infos.secteur} : {};
@@ -169,7 +169,11 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
     // Refresh to change form items according to selected layer or feature
     useEffect(() => {
         if (layer !== type) {
-            setInitialInfos();
+            if (isEmpty(feature)) {
+                setInitialInfos(emptyInfos);
+            } else {
+                setInitialInfos();
+            }
             switch (layer) {
             case "layerPA":
                 setChilds(ADD_PA_FORM);
@@ -226,6 +230,7 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                                     break;
                                 case "text":
                                     let isReadOnly = false;
+                                    let displayValue = get(infos, item.name);
                                     if (item.name === "code") {
                                         isReadOnly = item.parent ? getActivate(item) : false;
                                     }
@@ -234,13 +239,14 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                                         let initialVal = get(feature, `properties.nom`) || "";
                                         isReadOnly = !isEmpty(feature) && initialVal === infos.nomEmprise ?
                                             true : item.parent ? getActivate(item) : false;
+                                        displayValue = isReadOnly ? initialVal : displayValue;
                                     }
                                     el = (
                                         <FormControl
                                             style={{ marginTop: comboMarginTop, borderColor: isInvalidStyle(item.name) }}
                                             readOnly={isReadOnly}
                                             type={item.type}
-                                            value={get(infos, item.name)}
+                                            value={displayValue}
                                             required={item?.required}
                                             placeholder={props.i18n(props.messages, item?.placeholder || item?.label)}
                                             onChange={(t) => changeState(item, t.target.value.toLowerCase())}

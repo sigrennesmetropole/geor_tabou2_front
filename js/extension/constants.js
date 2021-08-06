@@ -381,7 +381,7 @@ export const ADD_PA_FORM = [ {
     variant: "info"
 }, {
     label: "tabou2.add.selectPaParent",
-    api: "operations",
+    api: "operations?estSecteur=false&asc=true",
     name: "parentoa",
     apiLabel: "nom",
     apiField: "nom",
