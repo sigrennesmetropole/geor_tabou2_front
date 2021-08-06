@@ -116,7 +116,6 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
     const handleSubmit = () => {
         let params = {};
         if (type === "layerPA") {
-
             params = {
                 ...PA_SCHEMA,
                 ...newFeature,
