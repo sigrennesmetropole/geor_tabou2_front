@@ -22,7 +22,7 @@ export default function Tabou2IdentifyPanel({
     const [selectedFeatures, setSelectedFeatures] = useState([]);
     const [feature, setFeature] = useState("");
     const response = useRef({});
-    const lyrsOptions = () => createOptions(keys(props.queryData).map(e => props.queryData[e]));
+    const lyrsOptions = () => createOptions(keys(props.queryData).map(e => props.queryData[e]), props.pluginCfg?.layersOrder);
     let layerIdx = lyrsOptions()[props.identifyInfos?.layerIdx] ? props.identifyInfos?.layerIdx || 0 : 0;
 
     // Event to trigger when user click on dropdown option
@@ -30,7 +30,7 @@ export default function Tabou2IdentifyPanel({
         let selectionVal = option;
         if (isEmpty(selectionVal)) {
             // display correct value if given index is base on query data index and not from list value order
-            selectionVal = find(lyrsOptions(), {label: title || props.queryData[keys(props.queryData)[idx]].layer.title});
+            selectionVal = find(lyrsOptions(), {label: title || props.queryData[keys(props.queryData)[idx]]?.layer?.title});
         }
         let actualLayer = title || selectionVal?.name;
         let actualFeatures = props.queryData[actualLayer]?.data?.features || [];
@@ -40,7 +40,7 @@ export default function Tabou2IdentifyPanel({
         setSelectedLayer(actualLayer);
         setSelectedFeatures(actualFeatures);
         setFeature(selectedFeature);
-        onSelect(selectedFeature, get(selectedFeature, find(LAYER_FIELD_OPTION, ["name", configName])?.id), actualLayer, selectionVal.value, props.identifyInfos?.featureIdx || 0);
+        onSelect(selectedFeature, get(selectedFeature, find(LAYER_FIELD_OPTION, ["name", configName])?.id), actualLayer, selectionVal?.value || 0, props.identifyInfos?.featureIdx || 0);
     };
 
     // hooks to refresh only if query data changed

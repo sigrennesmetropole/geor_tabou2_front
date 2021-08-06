@@ -7,17 +7,14 @@ import { get, find } from 'lodash';
  * @param {*} response
  * @returns
  */
-export function createOptions(response) {
+export function createOptions(response, layersOrder) {
     let data = response.filter(r => r?.data?.features?.length || false);
     data = data.map((opt, idx) => {
         let label = opt?.layerMetadata?.title;
         return { label: label, value: idx, name: opt?.layer.name };
     });
-    let orderedData = [
-        find(data, {label: "Operations"}),
-        find(data, {label: "Secteurs"}),
-        find(data, {label: "Programmes"})
-    ];
+    // keep order from config or keep TOC layer order by default
+    let orderedData = layersOrder ? layersOrder.map(name => find(data, {label: name})) : data;
     return orderedData.filter(v => v);
 }
 
