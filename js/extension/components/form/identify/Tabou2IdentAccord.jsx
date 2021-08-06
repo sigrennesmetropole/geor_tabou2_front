@@ -60,7 +60,7 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
         change: (v) => !v ? changeInfos({operationId: "", operationName: ""}) : null,
         type: "combo",
         apiLabel: "nom",
-        api: "operations",
+        api: "operations?estSecteur=false&asc=true",
         source: operation,
         readOnly: false
     }, {
