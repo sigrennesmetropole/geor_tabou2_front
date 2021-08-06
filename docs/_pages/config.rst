@@ -39,6 +39,7 @@ Voici la liste des paramètres et les explications correspondantes.
         "limite","150","Limite du nombre de résultats pour la recherche. Permet d'afficher un message afin d'inviter l'utilisateur à restreindre sa recherche"
         "geoserverURL","/geoserver","URL du geoserver contenant les données cartographiques du contexte Tabou2"
         "showIdentify","false", "Permet de garder le volet natif d'identification au clic sur la carte ou de le masquer"
+        "layersOrder","["Opérations", "Secteurs", "Programmes"]","Ordre à afficher dans la liste des couches de l'onglet Identifier"
         "layersCfg","","Groupe de paramètres généraux des couches opération, programme et secteur"
         "layerPA","","Groupe de paramètres de la couche programme"
         "layerOA","", "Groupe de paramètres de la couche opération"
@@ -174,6 +175,7 @@ Voici un exemple de configuration :
             "cfg": {
                 "geoserverURL": "/geoserver",
                 "showIdentify": false,
+                "layersOrder": ["Opérations", "Secteurs", "Programmes"],
                 "layersCfg": {
                     "layerPA": {
                         "nom": "app:tabou_v_oa_programme",
