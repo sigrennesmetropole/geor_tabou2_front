@@ -325,7 +325,7 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                         }, {
                             glyph: "remove",
                             tooltip: props.i18n(props.messages, "tabou2.add.cancelAll"),
-                            id: "cancel",
+                            id: "cancelAddForm",
                             onClick: () => reset()
                         }]}
                     />
