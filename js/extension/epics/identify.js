@@ -100,6 +100,7 @@ export function purgeTabou(action$, store) {
     return action$.ofType(FEATURE_INFO_CLICK)
         .filter(() => isTabou2Activate(store.getState()))
         .switchMap(() => {
+            document.getElementById('cancelAddForm')[0]?.click();
             return Rx.Observable.of(loadTabouFeatureInfo({}));
         });
 }
