@@ -5,7 +5,8 @@ export const TABS = [{
 }, {
     id: 'add',
     tooltip: 'tabou2.tabs.add',
-    glyph: 'plus'
+    glyph: 'plus',
+    roles: ["isReferent"]
 }, {
     id: 'identify',
     tooltip: 'tabou2.tabs.identify',
