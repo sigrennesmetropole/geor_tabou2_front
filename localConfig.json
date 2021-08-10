@@ -352,6 +352,7 @@
         "cfg": {
           "geoserverURL": "https://gis.jdev.fr/geoserver",
           "showIdentify": false,
+          "layersOrder": ["Opérations", "Secteurs", "Programmes"],
           "layersCfg": {
             "layerPA": {
               "nom": "tabou2:tabou_v_oa_programme",
