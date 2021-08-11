@@ -196,7 +196,6 @@ export function createChangeFeature(action$, store) {
  * @param {any} store
  * @returns empty
  *
- * TODO : Finish by direct open identify combobox with saved infos
  */
 export function displayFeatureInfos(action$, store) {
     return action$.ofType(DISPLAY_FEATURE)
