@@ -105,17 +105,20 @@ export default function Tabou2IdentifyPanel({
                 glyph="eye-close"
                 content={
                     <div>
-                        <Button
-                            tooltip={props.i18n(props.messages, "tabou2.identify.fromSelection")}
-                            onClick={() => props.setTab("add") }
-                            bsStyle="primary"
-                            bsSize="lg"
-                            style={{marginTop: "10%"}}>
-                            <Glyphicon glyph="pencil-add"/>
-                        </Button>
+                        { props.authentInfos.isReferent ? (
+                            <Button
+                                tooltip={props.i18n(props.messages, "tabou2.identify.fromSelection")}
+                                onClick={() => props.setTab("add") }
+                                bsStyle="primary"
+                                bsSize="lg"
+                                style={{marginTop: "10%"}}>
+                                <Glyphicon glyph="pencil-add"/>
+                            </Button>) : null
+                        }
                     </div>
                 }
-                message={props.i18n(props.messages, "tabou2.identify.msgCreateEmprise")}
+                message={props.i18n(props.messages, props.authentInfos.isReferent ?
+                    "tabou2.identify.msgCreateEmprise" : "tabou2.identify.msgNeedCreateEmprise")}
                 title={props.i18n(props.messages, "tabou2.identify.titleCreateEmprise")}/>
         </>
     );
