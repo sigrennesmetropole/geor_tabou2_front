@@ -154,7 +154,6 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
         labels: [
             "tabou2.identify.accordions.progYear",
             "tabou2.identify.accordions.numFolder",
-            "tabou2.identify.accordions.numFolder",
             "tabou2.identify.accordions.locHelpTitle",
             "tabou2.identify.accordions.locRegHlm",
             "tabou2.identify.accordions.locRegPriv",
@@ -211,7 +210,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
         <Grid style={{ width: "100%" }} className={""}>
             {
                 fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(item => (
-                    <Row className="attributeInfos">
+                    <Row className = {`attributeInfos ${item.type === "table" ? "tableInfos" : ""}`}>
                         {
                             has(item, "valid") && getValue(item) && !item.valid(getValue(item)) ? (
                                 <Alert className="alert-danger">
@@ -263,9 +262,9 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
                                     />) : null
                             }
                         </Col>
-                        <Col xs={12}>
-                            {
-                                item.type === "table" ? (
+                        {
+                            item.type === "table" ? (
+                                <Col xs={12} style={{maxHeight: "100%", overflow: "auto"}}>
                                     <Table striped bordered condensed hover>
                                         <thead>
                                             <tr>
@@ -290,9 +289,9 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
                                             }
                                         </tbody>
                                     </Table>
-                                ) : null
-                            }
-                        </Col>
+                                </Col>
+                            ) : null
+                        }
                     </Row>
                 ))
             }

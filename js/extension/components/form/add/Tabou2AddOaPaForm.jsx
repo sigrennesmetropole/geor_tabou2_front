@@ -120,7 +120,7 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                 ...PA_SCHEMA,
                 ...newFeature,
                 code: infos.code,
-                numAds: "nc",
+                numAds: "",
                 etape: isObject(newFeature.etape) ? newFeature.etape : find(etapesInfos.current, ['libelle', newFeature.etape])
             };
         } else {

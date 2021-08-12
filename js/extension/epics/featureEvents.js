@@ -159,7 +159,7 @@ export function getSelectionInfos(action$, store) {
                                     .switchMap( permis => {
                                     // store data
                                         let infos = {...selectInfos,
-                                            agapeo: agapeo.elements,
+                                            agapeo: agapeo.data.elements,
                                             programme: searchItem,
                                             permis: permis.data,
                                             tiers: tiers,
@@ -374,7 +374,6 @@ export function createTabouFeature(action$, store) {
         .switchMap( action => {
             let infos = getInfos(store.getState());
             let messages = store.getState()?.locale.messages;
-            // return Rx.Observable.of(displayFeature({feature: {}, layer: infos.layer}));
             return Rx.Observable.defer( () => createNewTabouFeature(infos.layerUrl, action.params))
                 .catch(e => {
                     console.log("Error to save feature change or feature creation");
