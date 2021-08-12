@@ -7,6 +7,7 @@
         "failApi": "Erreur API",
         "error": "Erreur",
         "failFilter": "Echec de la création du filtre",
+        "failChangeFeature": "Echec de la sauvegarde",
         "failAddFeature": "L'emprise n'a pas pu être crée",
         "successAddFeature": "L'emprise à bien été ajoutée !",
         "successApi": "Opération réussie !",

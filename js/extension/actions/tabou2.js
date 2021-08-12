@@ -37,7 +37,7 @@ export const SET_IDENTIFY_INFOS = "SET_IDENTIFY_INFOS";
 export const SET_TABOU_ERROR = "SET_ERROR";
 
 export const reloadLayer = (layer) => ({
-    type: MAP_TIERS,
+    type: RELOAD_LAYER,
     layer
 });
 

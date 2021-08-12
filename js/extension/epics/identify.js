@@ -1,7 +1,7 @@
 import * as Rx from 'rxjs';
 import { CONTROL_NAME, URL_ADD } from '../constants';
 
-import { get, pickBy, find, isEmpty } from 'lodash';
+import { get, pickBy, find, isEmpty, has } from 'lodash';
 
 import { generalInfoFormatSelector, identifyOptionsSelector, clickPointSelector } from '@mapstore/selectors/mapInfo';
 import uuid from 'uuid';
@@ -22,7 +22,7 @@ import {
 import { TOGGLE_CONTROL } from '@mapstore/actions/controls';
 import { isTabou2Activate, defaultInfoFormat, getTabouResponse, getPluginCfg, getSelection } from '@ext/selectors/tabou2';
 import { loadTabouFeatureInfo, setDefaultInfoFormat, setMainActiveTab, PRINT_PROGRAMME_INFOS,
-    CHANGE_FEATURE, DISPLAY_FEATURE } from '@ext/actions/tabou2';
+    CHANGE_FEATURE, DISPLAY_FEATURE, reloadLayer, displayFeature } from '@ext/actions/tabou2';
 import { getPDFProgramme, putRequestApi } from '@ext/api/search';
 
 import { getFeatureInfo } from "@mapstore/api/identify";
@@ -164,6 +164,7 @@ export function createChangeFeature(action$, store) {
     return action$.ofType(CHANGE_FEATURE)
         .switchMap( action => {
             let messages = store.getState()?.locale.messages;
+            let layersToc = find(getPluginCfg(store.getState()).layersCfg, (o, i) => i === action.params.layer);
             return Rx.Observable.defer( () => putRequestApi(`${get(URL_ADD, action.params.layer)}`, getPluginCfg(store.getState()).apiCfg, action.params.feature))
                 .catch(e => {
                     console.log("Error to save feature change or feature creation");
@@ -171,11 +172,11 @@ export function createChangeFeature(action$, store) {
                     return Rx.Observable.of(e);
                 })
                 .switchMap((el)=> {
-                    return el?.status !== 200 ? Rx.Observable.of(
+                    return has(el, "status") && el.status !== 200 ? Rx.Observable.of(
                         // fail message
                         error({
                             title: getMessageById(messages, "tabou2.infos.failApi"),
-                            message: getMessageById(messages, "tabou2.infos.failAddFeature")
+                            message: getMessageById(messages, "tabou2.infos.failChangeFeature")
                         })
                     ) : Rx.Observable.of(
                         // success message
@@ -184,7 +185,9 @@ export function createChangeFeature(action$, store) {
                             message: getMessageById(messages, "tabou2.infos.successSaveInfos")
                         }),
                         // we just update last GFI request to refresh panel
-                        updateFeatureInfoClickPoint(clickPointSelector(store.getState()))
+                        reloadLayer(layersToc.nom),
+                        displayFeature({feature: action.params.feature, layer: layersToc.nom})
+
                     );
                 });
         });
@@ -204,24 +207,29 @@ export function displayFeatureInfos(action$, store) {
             let env = localizedLayerStylesEnvSelector(store.getState());
             let { url, request, metadata } = buildIdentifyRequest(tocLayer, {...identifyOptionsSelector(store.getState()), env});
             request.cql_filter = `id_tabou = ${action.infos.feature.id}`;
-            return Rx.Observable.defer(() =>
-                // call geoserver feature
-                getFeatureInfo(url, request, tocLayer)
-            ).switchMap(response => {
-                // control this feature is the selected feature from identify tab
-                let selected = !isEmpty(getSelection(store.getState())) ? getSelection(store.getState())?.feature : null;
-                let isSelected = selected && selected.properties?.objectid === response.features[0]?.properties?.objectid;
-                // if not we load the entire response to trigger fake map click response and display response into indentify panel
-                if (!isSelected) {
+            request.info_format = "application/json";
+            return Rx.Observable.defer(() => getFeatureInfo(url, request, tocLayer, {}))
+                .catch(e => {
+                    console.log("Error to retrieve feature from GFI");
+                    console.log(e);
+                    return Rx.Observable.of({});
+                })
+                .switchMap(response => {
+                    if (isEmpty(response)) return Rx.Observable.empty();
+                    // control this feature is the selected feature from identify tab
+                    let selected = !isEmpty(getSelection(store.getState())) ? getSelection(store.getState())?.feature : null;
+                    let isSelected = selected && selected.properties?.objectid === response.features[0]?.properties?.objectid;
+                    // if not we load the entire response to trigger fake map click response and display response into indentify panel
+                    if (!isSelected) {
+                        return Rx.Observable.of(
+                            loadTabouFeatureInfo({}),
+                            loadFeatureInfo(uuid.v1(), response.data, request, { ...metadata, features: response.features, featuresCrs: response.featuresCrs }, tocLayer)
+                        );
+                    }
+                    // if same we just update last GFI request
                     return Rx.Observable.of(
-                        loadTabouFeatureInfo({}),
-                        loadFeatureInfo(uuid.v1(), response.data, request, { ...metadata, features: response.features, featuresCrs: response.featuresCrs }, tocLayer)
+                        updateFeatureInfoClickPoint(clickPointSelector(store.getState()))
                     );
-                }
-                // if same we just update last GFI request
-                return Rx.Observable.of(
-                    updateFeatureInfoClickPoint(clickPointSelector(store.getState()))
-                );
-            });
+                });
         });
 }
