@@ -4,19 +4,12 @@ import { Col, Row, Grid, ControlLabel } from "react-bootstrap";
 import Tabou2Combo from '@ext/components/form/Tabou2Combo';
 import { getRequestApi } from "@ext/api/search";
 import { Multiselect, DateTimePicker } from "react-widgets";
-import utcDateWrapper from '@mapstore/components/misc/enhancers/utcDateWrapper';
 import "@ext/css/identify.css";
 import Message from "@mapstore/components/I18N/Message";
 
 import moment from 'moment';
 import momentLocalizer from 'react-widgets/lib/localizers/moment';
 momentLocalizer(moment);
-
-const UTCDateTimePicker = utcDateWrapper({
-    dateProp: "value",
-    dateTypeProp: "type",
-    setDateProp: "onChange"
-})(DateTimePicker);
 
 export default function Tabou2SuiviOpAccord({ initialItem, programme, operation, mapFeature, ...props }) {
     let layer = props?.selection?.layer;
@@ -88,6 +81,7 @@ export default function Tabou2SuiviOpAccord({ initialItem, programme, operation,
     };
 
     const allowChange = props.authent.isContrib || props.authent.isReferent;
+    console.log(values);
     return (
         <Grid style={{ width: "100%" }} className={""}>
             {
@@ -128,7 +122,7 @@ export default function Tabou2SuiviOpAccord({ initialItem, programme, operation,
                                 ) : null
                             }{
                                 item.type === "date" ? (
-                                    <UTCDateTimePicker
+                                    <DateTimePicker
                                         type="date"
                                         className="identifyDate"
                                         inline
@@ -141,7 +135,7 @@ export default function Tabou2SuiviOpAccord({ initialItem, programme, operation,
                                         value={get(values, item.name) ? new Date(get(values, item.name)) : null}
                                         format="DD/MM/YYYY"
                                         onSelect={(v) => changeInfos({[item.name]: new Date(v).toISOString()})}
-                                        onChange={(v) => !v ? changeInfos({[item.name]: new Date(v).toISOString()}) : null} />
+                                        onChange={(v) => !v ? changeInfos({[item.name]: ""}) : null} />
                                 ) : null
                             }
                         </Col>

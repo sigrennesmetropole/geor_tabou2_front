@@ -2,19 +2,12 @@ import React, { useEffect, useState } from "react";
 import { isEmpty, isEqual, pick, has, get, capitalize } from "lodash";
 import { Col, Row, Grid, ControlLabel, Table } from "react-bootstrap";
 import { DateTimePicker } from "react-widgets";
-import utcDateWrapper from '@mapstore/components/misc/enhancers/utcDateWrapper';
 import "@ext/css/identify.css";
 import Message from "@mapstore/components/I18N/Message";
 
 import moment from 'moment';
 import momentLocalizer from 'react-widgets/lib/localizers/moment';
 momentLocalizer(moment);
-
-const UTCDateTimePicker = utcDateWrapper({
-    dateProp: "value",
-    dateTypeProp: "type",
-    setDateProp: "onChange"
-})(DateTimePicker);
 
 /**
  * Accordion to display info for DDS panel section - only for feature linked with id tabou
@@ -134,7 +127,7 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
                         {
                             item.type === "date" ? (
                                 <Col xs={8}>
-                                    <UTCDateTimePicker
+                                    <DateTimePicker
                                         type="date"
                                         className="identifyDate"
                                         inline
@@ -147,7 +140,7 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
                                         value={get(values, item.name) ? new Date(get(values, item.name)) : null}
                                         format="DD/MM/YYYY"
                                         onSelect={(v) => changeInfos({[item.name]: new Date(v).toISOString()})}
-                                        onChange={(v) => !v ? changeInfos({[item.name]: null}) : null} />
+                                        onChange={(v) => !v ? changeInfos({[item.name]: ""}) : null} />
                                 </Col>
                             ) : null
                         }{

@@ -2,19 +2,12 @@ import React, {useEffect, useState } from "react";
 import { isEmpty, isEqual, pick, has, get, capitalize } from "lodash";
 import { Col, Row, Table, FormControl, Grid, ControlLabel, Alert, Glyphicon } from "react-bootstrap";
 import { DateTimePicker } from "react-widgets";
-import utcDateWrapper from '@mapstore/components/misc/enhancers/utcDateWrapper';
 import "@ext/css/identify.css";
 import Message from "@mapstore/components/I18N/Message";
 
 import moment from 'moment';
 import momentLocalizer from 'react-widgets/lib/localizers/moment';
 momentLocalizer(moment);
-
-const UTCDateTimePicker = utcDateWrapper({
-    dateProp: "value",
-    dateTypeProp: "type",
-    setDateProp: "onChange"
-})(DateTimePicker);
 
 export default function Tabou2ProgHabitatAccord({ initialItem, programme, operation, mapFeature, ...props }) {
     let layer = props?.selection?.layer;
@@ -224,7 +217,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
                         <Col xs={7}>
                             {
                                 item.type === "date" ? (
-                                    <UTCDateTimePicker
+                                    <DateTimePicker
                                         type="date"
                                         className="identifyDate"
                                         inline
@@ -237,7 +230,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
                                         value={get(values, item.name) ? new Date(get(values, item.name)) : null}
                                         format="DD/MM/YYYY"
                                         onSelect={(v) => changeInfos({[item.name]: new Date(v).toISOString()})}
-                                        onChange={(v) => !v ? changeInfos({[item.name]: null}) : null} />
+                                        onChange={(v) => !v ? changeInfos({[item.name]: ""}) : null} />
                                 ) : null
                             }
                             {
