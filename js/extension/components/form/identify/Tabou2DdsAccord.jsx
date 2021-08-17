@@ -111,6 +111,12 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
 
     const allowChange = props.authent.isContrib || props.authent.isReferent;
 
+    const changeDate = (field, str) => {
+        // TODO : valid with moment like that
+        // let isValid = moment(str, "DD/MM/YYYY", true);
+        changeInfos({[field.name]: str ? new Date(str).toISOString() : ""});
+    };
+
     /**
      * COMPONENT
      */
@@ -139,8 +145,9 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
                                         culture="fr"
                                         value={get(values, item.name) ? new Date(get(values, item.name)) : null}
                                         format="DD/MM/YYYY"
-                                        onSelect={(v) => changeInfos({[item.name]: new Date(v).toISOString()})}
-                                        onChange={(v) => !v ? changeInfos({[item.name]: ""}) : null} />
+                                        onSelect={(v) => changeDate(item, v)}
+                                        onChange={(v) => changeDate(item, v)}
+                                    />
                                 </Col>
                             ) : null
                         }{

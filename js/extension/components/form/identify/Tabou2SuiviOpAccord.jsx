@@ -80,8 +80,14 @@ export default function Tabou2SuiviOpAccord({ initialItem, programme, operation,
         props.change(accordValues, pick(accordValues, required));
     };
 
+    const changeDate = (field, str) => {
+        // TODO : valid with moment like that
+        // let isValid = moment(str, "DD/MM/YYYY", true);
+        changeInfos({[field.name]: str ? new Date(str).toISOString() : ""});
+    };
+
     const allowChange = props.authent.isContrib || props.authent.isReferent;
-    console.log(values);
+
     return (
         <Grid style={{ width: "100%" }} className={""}>
             {
@@ -134,8 +140,9 @@ export default function Tabou2SuiviOpAccord({ initialItem, programme, operation,
                                         culture="fr"
                                         value={get(values, item.name) ? new Date(get(values, item.name)) : null}
                                         format="DD/MM/YYYY"
-                                        onSelect={(v) => changeInfos({[item.name]: new Date(v).toISOString()})}
-                                        onChange={(v) => !v ? changeInfos({[item.name]: ""}) : null} />
+                                        onSelect={(v) => changeDate(item, v)}
+                                        onChange={(v) => changeDate(item, v)}
+                                    />
                                 ) : null
                             }
                         </Col>
