@@ -21,6 +21,8 @@ export function getRequestApi(name, apiCfg, params) {
     let requestParams = {
         params: params || {}
     };
+    // always order by asc
+    requestParams.params.asc = true;
     if (apiCfg?.authent) {
         requestParams.headers = {
             Authorization: `Basic ${btoa(apiCfg.authent)}`
@@ -160,4 +162,9 @@ export function getSecteur(id) {
 // CREATE TABOU ENTITY FROM FEATURE
 export function createNewTabouFeature(layer, params) {
     return axios.post(`${baseURL}/${layer}`, params);
+}
+
+// AUTOCOMPLETION
+export function searchPlui(text) {
+    return axios.get(`${baseURL}/plui`, { params: {libelle: `${text}*`, asc: true}}).then(({ data }) => data);
 }

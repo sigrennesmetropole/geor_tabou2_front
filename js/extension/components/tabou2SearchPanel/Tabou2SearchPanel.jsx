@@ -4,8 +4,9 @@ import { connect } from 'react-redux';
 import { Checkbox, Col, Row, ControlLabel, FormGroup, Grid, Panel, Glyphicon, Alert } from 'react-bootstrap';
 import { currentActiveTabSelector, currentTabouFilters, getLayerFilterObj, searchLoading, getTabouErrors } from '../../selectors/tabou2';
 import Tabou2SearchToolbar from './Tabou2SearchToolbar';
+import SearchCombo from '@js/extension/components/form/SearchCombo';
 import Tabou2Combo from '../form/Tabou2Combo';
-import { getRequestApi } from '../../api/search';
+import { getRequestApi, searchPlui } from '../../api/search';
 import { setTabouFilterObj, setTabouFilters, resetSearchFilters, resetCqlFilters } from '../../actions/tabou2';
 import { getNewFilter, getSpatialCQL, getCQL, getTabouLayersInfos } from '../../utils/search';
 import { SEARCH_ITEMS, SEARCH_CALENDARS } from '@ext/constants';
@@ -23,14 +24,6 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
 
     const [comboValues, setComboValues] = useState({});
     const [parents, setParents] = useState({});
-    const [val, setVal] = useState("");
-    const [reloadVal, setReloadVal] = useState("");
-
-    useEffect(() => {
-        if (val !== reloadVal) {
-            setReloadVal(val);
-        }
-    }, [val]);
 
     useEffect(() => {
         if (!isEmpty(searchState) && isEmpty(comboValues)) {
@@ -46,7 +39,6 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
         props.resetFiltersCql();
         setComboValues({});
         change({});
-        setVal("");
     };
 
     /**
@@ -125,8 +117,7 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
     };
 
     // trigger on filter action
-    const changeFilter = (item, value) => {
-        setVal(value[get(config, `${item.name}.apiField`)]);
+    const changeFilter = (item, value = "") => {
         setComboValues({...comboValues, [item.name]: value});
         change({...comboValues, [item.name]: value});
         changeCqlFilter(get(item, "type"), item.name, value[get(config, `${item.name}.apiField`)], config[item.name]);
@@ -134,7 +125,6 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
 
     // if date was changed
     const changeDate = (calendar, value) => {
-        setVal(value);
         let valDate = {
             ...comboValues,
             [calendar.name]: {
@@ -150,7 +140,6 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
     // if checkbox change
     const changeChecked = (name) => {
         let isChecked = !comboValues[name];
-        setVal(isChecked);
         setComboValues({...comboValues, [name]: isChecked});
         change({...comboValues, [name]: isChecked});
         changeCqlFilter("boolean", name, isChecked, config[name]);
@@ -180,24 +169,43 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
         return (
             <Col xs={6}>
                 <FormGroup>
-                    <Tabou2Combo
-                        style={{ marginTop: comboMarginTop }}
-                        load={() => getRequestApi(get(combo, "api") || get(combo, "name"), props.pluginCfg.apiCfg, urlParams)}
-                        disabled={isDisabled(combo, urlParams)}
-                        placeholder={props.i18n(props.messages, combo.placeholder)}
-                        parentValue={parentValue}
-                        textField={get(config, `${combo.name}.apiLabel`)}
-                        valueField={get(config, `${combo.name}.apiField`)}
-                        onLoad={(r) => r?.elements || r}
-                        name={combo.name}
-                        value={comboValues[combo.name]}
-                        onSelect={v => changeFilter(combo, v)}
-                        onChange={(v) => !v ? changeFilter(combo, v) : null}
-                        messages={{
-                            emptyList: "Liste vide",
-                            openCombobox: "Afficher la liste"
-                        }}
-                    />
+                    {
+                        combo?.autocomplete ? (
+                            <SearchCombo
+                                minLength={1}
+                                textField={get(config, `${combo.name}.apiLabel`)}
+                                valueField={get(config, `${combo.name}.apiField`)}
+                                value={comboValues[combo.name]}
+                                search={
+                                    text => searchPlui(text)
+                                        .then(results =>
+                                            results.elements.map(v => v)
+                                        )
+                                }
+                                onSelect={v => changeFilter(combo, v)}
+                                style={{ marginTop: comboMarginTop }}
+                                name={combo.name}
+                                placeholder={props.i18n(props.messages, combo.placeholder)}
+                            />)
+                            : (<Tabou2Combo
+                                style={{ marginTop: comboMarginTop }}
+                                load={() => getRequestApi(get(combo, "api") || get(combo, "name"), props.pluginCfg.apiCfg, urlParams)}
+                                disabled={isDisabled(combo, urlParams)}
+                                placeholder={props.i18n(props.messages, combo.placeholder)}
+                                parentValue={parentValue}
+                                textField={get(config, `${combo.name}.apiLabel`)}
+                                valueField={get(config, `${combo.name}.apiField`)}
+                                onLoad={(r) => r?.elements || r}
+                                name={combo.name}
+                                value={comboValues[combo.name]}
+                                onSelect={v => changeFilter(combo, v)}
+                                onChange={(v) => !v ? changeFilter(combo, v) : null}
+                                messages={{
+                                    emptyList: props.i18n(props.messages, "tabou2.emptyList"),
+                                    emptyFilter: props.i18n(props.messages, "tabou2.nodata")
+                                }}
+                            />)
+                    }
                 </FormGroup>
             </Col>
         );
@@ -252,7 +260,7 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
                         )}
                     >
                         <Row>
-                            { SEARCH_ITEMS.filter(f => f.group === 1).map((cb, i) => getCombo(cb, i, 2)) }
+                            { SEARCH_ITEMS.filter(f => f.group === 1).map((cb) => getCombo(cb)) }
                         </Row>
                         <Checkbox
                             checked={get(comboValues, "pbil") || false}

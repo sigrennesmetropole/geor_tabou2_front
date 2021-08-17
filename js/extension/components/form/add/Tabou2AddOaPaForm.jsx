@@ -8,6 +8,7 @@ import Toolbar from '@mapstore/components/misc/toolbar/Toolbar';
 import { OA_SCHEMA, PA_SCHEMA, ADD_FIELDS, ADD_OA_FORM, ADD_PA_FORM } from '@ext/constants';
 import { DropdownList} from 'react-widgets';
 import Message from "@mapstore/components/I18N/Message";
+import SearchCombo from '@js/extension/components/form/SearchCombo';
 export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...props}) {
     const emptyInfos = {
         code: "",
@@ -49,13 +50,13 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
     };
 
     // manage input modification to change added feature's state
-    const changeState = (combo, selection) => {
+    const changeState = (combo, selection = "") => {
         let formElement = {};
         let apiElement = {};
         let value = !selection ? selection : selection[combo?.apiLabel] || selection[combo?.apiField] || selection;
         if (combo.type === "checkbox") {
             formElement[combo.name] = !infos[combo.name];
-        } else if (combo.name !== "emprise") {
+        } else if (combo.name !== "nomEmprise") {
             formElement[combo.name] = value;
         }
 
@@ -63,14 +64,14 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
             apiElement[combo.name] = {
                 id: selection?.id
             };
-        } else if (combo.name !== "emprise") {
+        } else if (combo.name !== "nomEmprise") {
             apiElement[combo.name] = selection?.id || selection;
         }
 
         let newInfos = {...infos, ...formElement};
         let newFeatureObj = {...newFeature, ...apiElement};
 
-        if (combo.name === "emprise") {
+        if (combo.name === "nomEmprise") {
             newFeatureObj = {...newFeatureObj, nom: value, idEmprise: selection?.id, nomEmprise: selection.nom};
             newInfos = {...newInfos, nom: value, idEmprise: selection?.id, nomEmprise: selection.nom};
         }
@@ -100,9 +101,12 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
     };
 
     // return param to complete API request according to selected parent's value
-    const getParams = (combo) => {
+    const getParams = (combo, text) => {
         // get programme/emprises need only nature param
         let params = infos.nature && natureId.current && type ? {natureId: natureId.current, nature: infos.nature}  : {};
+        if (has(combo, "autocomplete")) {
+            params[combo.autocomplete] = `${text}*`;
+        }
         if (["layerOA", "layerSA"].includes(type)) {
             // need nature and secteur to request API get operation/emprises
             params =  has(infos, "secteur") && infos.nature ? {...params, estSecteur: infos.secteur} : {};
@@ -204,7 +208,7 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                         {
                             items.map(item => {
                                 let el;
-                                if (item.name === "emprise") {
+                                if (item.name === "nomEmprise") {
                                     item.type =  !isEmpty(feature) ? "text" : "combo";
                                 }
                                 switch (item.type) {
@@ -234,7 +238,7 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                                     if (item.name === "code") {
                                         isReadOnly = item.parent ? getActivate(item) : false;
                                     }
-                                    if (item.name === "emprise") {
+                                    if (item.name === "nomEmprise") {
                                         // need to be compare to fix case with null initial emprise name
                                         let initialVal = get(feature, `properties.nom`) || "";
                                         isReadOnly = !isEmpty(feature) && initialVal === infos.nomEmprise ?
@@ -254,7 +258,25 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                                     );
                                     break;
                                 case "combo":
-                                    el = (
+                                    el = item?.autocomplete ? (
+                                        <SearchCombo
+                                            minLength={has(item, "min") ? item.min : 3}
+                                            textField={item.apiLabel}
+                                            valueField={item.apiField}
+                                            value={get(infos, item.name)}
+                                            disabled={item.parent ? isEmpty(item.parent(infos)) : item?.disabled || false}
+                                            search={
+                                                text => getRequestApi(get(item, "api"), pluginCfg.apiCfg, getParams(item, text))
+                                                    .then(results =>
+                                                        results.elements.map(v => v)
+                                                    )
+                                            }
+                                            onSelect={t => changeState(item, t)}
+                                            onChange={t => changeState(item, t)}
+                                            style={{ marginTop: comboMarginTop }}
+                                            name={item.name}
+                                            placeholder={props.i18n(props.messages, item?.placeholder || item?.label)}
+                                        />) : (
                                         <Tabou2Combo
                                             style={{ marginTop: comboMarginTop, borderColor: isInvalidStyle(item.name) }}
                                             load={() => {
@@ -283,8 +305,8 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                                             onSelect={(t) => changeState(item, t)}
                                             onChange={(t) => !t ? changeState(item, t) : null}
                                             messages={{
-                                                emptyList: 'La liste est vide.',
-                                                openCombobox: 'Ouvrir la liste'
+                                                emptyList: props.i18n(props.messages, "tabou2.emptyList"),
+                                                emptyFilter: props.i18n(props.messages, "tabou2.nodata")
                                             }}
                                         />
                                     );

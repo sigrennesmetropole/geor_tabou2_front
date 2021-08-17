@@ -79,6 +79,7 @@ export const SEARCH_ITEMS = [{
     disabled: false,
     placeholder: 'tabou2.search.allPlui',
     type: 'string',
+    autocomplete: true,
     group: 1
 }, {
     name: 'types-financements',
@@ -334,8 +335,9 @@ export const ADD_OA_FORM = [{
     type: "combo"
 }, {
     label: "tabou2.add.emprise",
-    name: "emprise",
+    name: "nomEmprise",
     group: 1,
+    autocomplete: "nom",
     api: "operations/emprises",
     apiField: "id",
     apiLabel: "nom",
@@ -384,6 +386,8 @@ export const ADD_PA_FORM = [ {
     label: "tabou2.add.selectPaParent",
     api: "operations?estSecteur=false&asc=true",
     name: "parentoa",
+    autocomplete: "nom",
+    min: 3,
     apiLabel: "nom",
     apiField: "nom",
     parent: null,
@@ -394,8 +398,10 @@ export const ADD_PA_FORM = [ {
     api: "programmes/emprises",
     group: 1,
     parent: (i) => !i.parentoa ? true : {operationId: i.operationId, nomopa: i.parentoa},
-    name: "emprise",
+    name: "nomEmprise",
     apiLabel: "nom",
+    min: 2,
+    autocomplete: "nom",
     apiField: "id",
     placeholder: "Selectionner une emprise",
     type: "combo"

@@ -5,7 +5,7 @@ import { Multiselect } from "react-widgets";
 import { getRequestApi } from "@ext/api/search";
 import "@ext/css/identify.css";
 import Message from "@mapstore/components/I18N/Message";
-import Tabou2Combo from '@ext/components/form/Tabou2Combo';
+import SearchCombo from '@js/extension/components/form/SearchCombo';
 /**
  * Accordion to display info for Identity panel section - only for feature linked with id tabou
  * @param {any} param
@@ -56,8 +56,9 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
         label: "tabou2.identify.accordions.operation",
         field: "operationId",
         value: () => has(values, "operationName") ? values.operationName : operation.nom,
-        select: (v) => changeInfos({operationId: v.id, operationName: v.nom}),
-        change: (v) => !v ? changeInfos({operationId: "", operationName: ""}) : null,
+        select: (v) => changeInfos({operationId: v?.id || "", operationName: v?.nom || v}),
+        change: (v) => changeInfos({operationId: v?.id || "", operationName: v?.nom || v}),
+        autocomplete: "nom",
         type: "combo",
         apiLabel: "nom",
         api: "operations?estSecteur=false&asc=true",
@@ -120,23 +121,21 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
                         <Col xs={8}>
                             {
                                 item.type === "combo" ? (
-                                    <Tabou2Combo
-                                        load={() => getRequestApi(item.api, props.pluginCfg.apiCfg, {})}
-                                        placeholder={props.i18n(props.messages, item?.label || "")}
-                                        filter="contains"
+                                    <SearchCombo
+                                        minLength={3}
                                         textField={item.apiLabel}
-                                        disabled={item?.readOnly || !allowChange}
-                                        onLoad={(r) => {
-                                            return r?.elements || r;
-                                        }}
-                                        name={item.name}
+                                        valueField={item.apiField}
                                         value={item.value()}
+                                        search={
+                                            text => getRequestApi(item.api, props.pluginCfg.apiCfg, {[item.autocomplete]: `${text}*`})
+                                                .then(results =>
+                                                    results.elements.map(v => v)
+                                                )
+                                        }
                                         onSelect={item.select}
                                         onChange={item.change}
-                                        messages={{
-                                            emptyList: props.i18n(props.messages, "tabou2.emptyList"),
-                                            openCombobox: props.i18n(props.messages, "tabou2.displayList")
-                                        }}
+                                        name={item.name}
+                                        placeholder={props.i18n(props.messages, item?.label || "")}
                                     />
                                 ) : null
                             }
