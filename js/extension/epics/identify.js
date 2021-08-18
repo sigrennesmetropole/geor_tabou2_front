@@ -130,7 +130,7 @@ export function printProgramme(action$, store) {
                         const url = window.URL.createObjectURL(blob);
                         const link = document.createElement('a');
                         link.href = url;
-                        let name = `FicheSuivi-${action.id}_${feature.code}_${feature.nomopa.split(" ")
+                        let name = `FicheSuivi_${action.id}_${feature.code}_${feature.nomopa.split(" ")
                             .map(e => e[0].toUpperCase() + e.slice(1)).join('')}`;
                         link.setAttribute('download', name);
                         document.body.appendChild(link);
