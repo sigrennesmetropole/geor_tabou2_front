@@ -253,7 +253,7 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                                             value={displayValue}
                                             required={item?.required}
                                             placeholder={props.i18n(props.messages, item?.placeholder || item?.label)}
-                                            onChange={(t) => changeState(item, t.target.value.toLowerCase())}
+                                            onChange={(t) => changeState(item, t.target.value)}
                                         />
                                     );
                                     break;
