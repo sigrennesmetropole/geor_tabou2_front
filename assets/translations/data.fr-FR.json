@@ -144,7 +144,7 @@
           "tiers": "Tiers",
           "docs": "Documents",
           "logs": "Journal de bord",
-          "print": "Impression du suivi",
+          "print": "Editer la fiche de suivi",
           "save": "Enregistrer",
           "notValid": "Saisie incomplète",
           "cancel": "Annuler"
