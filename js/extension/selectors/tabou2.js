@@ -1,6 +1,6 @@
 import { CONTROL_NAME } from '@ext/constants';
 import { keys, pickBy } from 'lodash';
-import { userGroupSecuritySelector } from '@mapstore/selectors/security';
+import { userGroupSecuritySelector, userSelector } from '@mapstore/selectors/security';
 
 export function currentActiveTabSelector(state) {
     return state?.tabou2.activeTab;
@@ -70,6 +70,7 @@ export function getAuthInfos(state) {
     const groups = userGroupSecuritySelector(state) ?? [];
     const groupNames = groups.map(({ groupName }) => `${groupName}`);
     return {
+        user: userSelector(state) ?? "",
         isAdmin: groupNames.includes("MAPSTORE_ADMIN"),
         isReferent: groupNames.includes("EL_APPLIS_TABOU_REFERENT"),
         isContrib: groupNames.includes("EL_APPLIS_TABOU_CONTRIB"),

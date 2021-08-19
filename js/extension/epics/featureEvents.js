@@ -3,7 +3,7 @@ import { get, keys, find, isEmpty } from 'lodash';
 import { loadEvents, loadTiers, RELOAD_LAYER, CREATE_FEATURE, SELECT_FEATURE,
     ADD_FEATURE_EVENT, DELETE_FEATURE_EVENT, CHANGE_FEATURE_EVENT, ADD_FEATURE_TIER,
     ASSOCIATE_TIER, DELETE_FEATURE_TIER, CHANGE_FEATURE_TIER, INACTIVATE_TIER,
-    loadFicheInfos, loading, MAP_TIERS, mapTiers, reloadLayer, displayFeature
+    loadFicheInfos, loading, MAP_TIERS, mapTiers, reloadLayer, displayFeature, getApiEvents, GET_EVENTS
 } from '@ext/actions/tabou2';
 import {getMessageById} from "@mapstore/utils/LocaleUtils";
 
@@ -237,7 +237,6 @@ export function updateTabou2Logs(action$, store) {
         .switchMap((action) => {
             let {featureId, layerUrl} = getInfos(store.getState());
             let toDoOnUpdate = get(actionOnUpdate, action.type);
-
             // get events from API
             return Rx.Observable.defer(() => toDoOnUpdate(layerUrl, featureId, action.event))
                 .catch(e => {
@@ -246,7 +245,7 @@ export function updateTabou2Logs(action$, store) {
                     return Rx.Observable.of({data: []});
                 })
             // refresh tiers
-                .switchMap(() => Rx.Observable.of(mapTiers()));
+                .switchMap(() => Rx.Observable.of(getApiEvents()));
         });
 }
 
@@ -357,6 +356,27 @@ export function getTiersElements(action$, store) {
                                 }
                                 return Rx.Observable.empty();
                             });
+                    }
+                    return Rx.Observable.empty();
+                });
+        });
+}
+
+/**
+ * Epics to reload features events
+ * @param {any} action$
+ * @param {any} store
+ * @returns action
+ */
+ export function getEventsElements(action$, store) {
+    return action$.ofType(GET_EVENTS)
+        .filter(() => isTabou2Activate(store.getState()))
+        .switchMap(() => {
+            let {featureId, layerUrl} = getInfos(store.getState());
+            return Rx.Observable.defer(() => getFeatureEvents(layerUrl, featureId))
+                .switchMap( response => {
+                    if (response?.data?.elements) {
+                        return Rx.Observable.of(loadEvents(response?.data?.elements || []));
                     }
                     return Rx.Observable.empty();
                 });

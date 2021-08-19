@@ -68,7 +68,7 @@ export function addFeatureEvent(type, id, event) {
 }
 
 export function changeFeatureEvent(type, id, event) {
-    return axios.post(`${baseURL}/${type}/${id}/evenements`, event);
+    return axios.put(`${baseURL}/${type}/${id}/evenements`, event);
 }
 
 export function deleteFeatureEvent(type, id, eventId) {

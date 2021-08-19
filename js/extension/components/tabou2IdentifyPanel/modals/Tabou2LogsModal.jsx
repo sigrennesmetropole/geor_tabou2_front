@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react';
 import ResizableModal from '@mapstore/components/misc/ResizableModal';
 import { Grid, Col, Table, Glyphicon, Row } from 'react-bootstrap';
-import { isEqual, orderBy, find, isEmpty } from 'lodash';
+import { isEqual, orderBy, find, isEmpty, maxBy, omit } from 'lodash';
 import Tabou2Combo from '@ext/components/form/Tabou2Combo';
 import Tabou2TextForm from '@ext/components/form/Tabou2TextForm';
 import { LOG_SCHEMA } from '@ext/constants';
@@ -45,15 +45,15 @@ export default function Tabou2LogsModal({
     // save log
     const saveEvent = (log) => {
         // call action to add log
+        let logToSend = omit(log, ["new", "id"]);
         if (!props.events.map(e => e.id).includes(log.id)) {
             // new
-            props.addEvent(log);
+            props.addEvent(logToSend);
         } else {
-            props.changeEvent(log);
+            props.changeEvent(logToSend);
         }
         disabledAdd.current = false;
         editionActivate.current = false;
-        changeLog({...log, edit: false});
         if (log.new) {
             // delete log to get log from API with correct ID
             setLogs([...logs.filter(lo => lo.id !== log.id)]);
@@ -120,7 +120,7 @@ export default function Tabou2LogsModal({
         },
         disabled: disabledAdd.current,
         tooltip: props.i18n(props.messages, "tabou2.logsModal.createEvent"),
-        onClick: () => insertNewLog({id: 0})
+        onClick: () => insertNewLog({id: maxBy(logs, "id").id + 1, eventDate: new Date().toISOString()})
     }];
 
     const readOnly = props?.authent?.isReferent || props?.authent?.isContrib ? false : true;
@@ -150,9 +150,6 @@ export default function Tabou2LogsModal({
                                         }
                                     </th>
                                     <th className="col-xs-2" style={getStyle("idType")}><Message msgId="tabou2.logsModal.type"/>
-                                        {
-                                            getSortIcon("idType")
-                                        }
                                     </th>
                                     <th><Message msgId="tabou2.logsModal.editor"/></th>
                                     <th><Message msgId="tabou2.logsModal.note"/></th>
@@ -168,12 +165,12 @@ export default function Tabou2LogsModal({
                                             <tr>
                                                 <td>
                                                     {
-                                                        !log.new ? new Date(log.eventDate).toLocaleDateString() : null
+                                                        new Date(log.eventDate).toLocaleDateString()
                                                     }
                                                 </td>
                                                 <td>
                                                     {
-                                                        !log.new ? log.createUser : null
+                                                        !log.new ? log.createUser : props?.authent?.user || ""
                                                     }
                                                 </td>
                                                 <td>
@@ -210,9 +207,11 @@ export default function Tabou2LogsModal({
                                                         log.new || log.edit ? (
                                                             <Tabou2TextForm
                                                                 type="text"
-                                                                defaultValue={log.description}
+                                                                value={log.description}
                                                                 style={{borderRadius: "4px"}}
-                                                                onBlur={(e) => changeLog({...log, description: e.target.value})}
+                                                                onChange={(e) => {
+                                                                    changeLog({...log, description: e.target.value});
+                                                                }}
                                                                 placeholder={log.description || props.i18n(props.messages, "tabou2.logsModal.notePlaceholder")} />
 
                                                         ) : log.description

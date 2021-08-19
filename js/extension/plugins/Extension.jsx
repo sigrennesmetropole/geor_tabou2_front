@@ -20,7 +20,7 @@ import { tabouApplyFilter, tabouResetFilter, tabouGetSearchIds } from '@ext/epic
 import { tabouLoadIdentifyContent, tabouSetGFIFormat, purgeTabou, printProgramme, createChangeFeature,
     displayFeatureInfos } from '@ext/epics/identify';
 import { getSelectionInfos, updateTabou2Logs, updateTabou2Tier, addCreateTabou2Tier, getTiersElements,
-    associateTabou2Tier, createTabouFeature, onLayerReload } from '@ext/epics/featureEvents';
+    associateTabou2Tier, createTabouFeature, onLayerReload, getEventsElements } from '@ext/epics/featureEvents';
 import { setTbarPosition } from '@ext/epics/setup';
 
 import { CONTROL_NAME } from '@ext/constants';
@@ -97,7 +97,8 @@ export default {
         associateTabou2Tier: associateTabou2Tier,
         createTabouFeature: createTabouFeature,
         onLayerReload: onLayerReload,
-        displayFeatureInfos: displayFeatureInfos
+        displayFeatureInfos: displayFeatureInfos,
+        getEventsElements: getEventsElements
     },
     containers: {
         Toolbar: {

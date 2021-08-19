@@ -35,6 +35,7 @@ export const DISPLAY_FEATURE = "DISPLAY_FEATURE";
 export const SET_GFI_REQUEST = "SET_GFI_REQUEST";
 export const SET_IDENTIFY_INFOS = "SET_IDENTIFY_INFOS";
 export const SET_TABOU_ERROR = "SET_ERROR";
+export const GET_EVENTS = "GET_EVENTS";
 
 export const reloadLayer = (layer) => ({
     type: RELOAD_LAYER,
@@ -43,6 +44,11 @@ export const reloadLayer = (layer) => ({
 
 export const mapTiers = (params) => ({
     type: MAP_TIERS,
+    params
+});
+
+export const getApiEvents = (params) => ({
+    type: GET_EVENTS,
     params
 });
 
