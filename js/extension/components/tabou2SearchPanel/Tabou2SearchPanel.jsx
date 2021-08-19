@@ -183,6 +183,7 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
                                         )
                                 }
                                 onSelect={v => changeFilter(combo, v)}
+                                onChange={v => changeFilter(combo, v)}
                                 style={{ marginTop: comboMarginTop }}
                                 name={combo.name}
                                 placeholder={props.i18n(props.messages, combo.placeholder)}

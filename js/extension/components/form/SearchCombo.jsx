@@ -88,8 +88,8 @@ export default ({
 
             }}
             onClick={() => {
-                setText('');
                 onSelect(undefined);
+                setText('');
             }}/> : null}
     </div>);
 };

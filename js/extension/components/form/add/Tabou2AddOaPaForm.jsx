@@ -72,8 +72,8 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
         let newFeatureObj = {...newFeature, ...apiElement};
 
         if (combo.name === "nomEmprise") {
-            newFeatureObj = {...newFeatureObj, nom: value, idEmprise: selection?.id, nomEmprise: selection.nom};
-            newInfos = {...newInfos, nom: value, idEmprise: selection?.id, nomEmprise: selection.nom};
+            newFeatureObj = {...newFeatureObj, nom: value, idEmprise: selection?.id, nomEmprise: value};
+            newInfos = {...newInfos, nom: value, idEmprise: selection?.id, nomEmprise: value};
         }
         if (combo.name === "parentoa") {
             newFeatureObj = {...newFeatureObj, operationId: selection?.id };
