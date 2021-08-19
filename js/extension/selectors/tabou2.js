@@ -70,7 +70,7 @@ export function getAuthInfos(state) {
     const groups = userGroupSecuritySelector(state) ?? [];
     const groupNames = groups.map(({ groupName }) => `${groupName}`);
     return {
-        user: userSelector(state) ?? "",
+        user: userSelector(state)?.name ?? "",
         isAdmin: groupNames.includes("MAPSTORE_ADMIN"),
         isReferent: groupNames.includes("EL_APPLIS_TABOU_REFERENT"),
         isContrib: groupNames.includes("EL_APPLIS_TABOU_CONTRIB"),

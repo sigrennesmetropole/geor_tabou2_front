@@ -188,7 +188,7 @@ export default function Tabou2TiersModal({
                         </Row>
                     ) : null
                 }
-                <Row key={`${filterText}-${new Date().getTime()}`}>
+                <Row key={`${filterText}}`}>
                     <Col xs={12}>
                         {
                             !displayForm ?

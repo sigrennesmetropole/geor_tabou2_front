@@ -26,6 +26,7 @@
       "btnTooltip": "Accéder à Tabou2",
       "windowTitle": "Tabou2",
       "noData": "Aucune données...",
+      "all": "Tous",
       "tabs": {
         "search": "Chercher une entité",
         "add": "Ajouter une entité",
