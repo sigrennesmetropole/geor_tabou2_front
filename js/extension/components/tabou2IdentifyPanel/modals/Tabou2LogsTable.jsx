@@ -64,7 +64,7 @@ export default function Tabou2LogsTable({
                         </thead>
                         <tbody style={{overflow: "auto"}}>
                             {
-                                orderBy(logs, sortField[0], sortField[1]).map(log => !isEmpty(log)).map((log, i) => (
+                                orderBy(logs, sortField[0], sortField[1]).filter(log => !isEmpty(log)).map((log, i) => (
                                     <>
                                         <tr>
                                             <td>
