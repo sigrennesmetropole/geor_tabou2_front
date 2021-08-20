@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Row, Col } from 'react-bootstrap';
 import Message from "@mapstore/components/I18N/Message";
-import DockablePanel from '@mapstore/components/misc/panels/DockablePanel';
+import DockPanel from '@mapstore/components/misc/panels/DockablePanel';
 import { toggleControl } from "@mapstore/actions/controls";
 import Tabou2MainTabs from './Tabou2MainTabs';
 import Tabou2MainToolContainer from './Tabou2MainToolContainer';
@@ -22,8 +22,8 @@ function Tabou2MainPanel({
     if (!enabled) return null;
     return (
         <span className="ms-tabou2-panel">
-            <DockablePanel
-                open={true}
+            <DockPanel
+                open
                 glyph="th"
                 bsStyle="primary"
                 title={<Message msgId="tabou2.windowTitle"/>}
@@ -31,9 +31,10 @@ function Tabou2MainPanel({
                 draggable={false}
                 onClose={onClose}
                 size={size}
-                dock={true}
-                style={dockStyle}
-                fade={true}
+                dock
+                style={{dockStyle}}
+                fade
+                zIndex={1000}
                 clickOutEnabled={false}
                 position={'right'}
                 header={
@@ -44,7 +45,7 @@ function Tabou2MainPanel({
                     </Row>
                 }>
                 <Tabou2MainToolContainer {...props} />
-            </DockablePanel>
+            </DockPanel>
         </span>
     );
 }

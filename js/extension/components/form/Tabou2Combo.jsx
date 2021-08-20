@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Combobox } from 'react-widgets';
-import { uniqBy, get } from 'lodash';
+import { uniqBy, get, has } from 'lodash';
 
 /**
  * Extend combobox to create async combo connected to API service.
@@ -34,7 +34,9 @@ function Tabou2Combo({
                 response = onLoad(result);
             }
             if (firstItem) response.unshift(firstItem);
-            response = uniqBy(response, textField);
+            if (props?.distinct) {
+                response = uniqBy(response, textField);
+            }
             setData(response);
         });
     };
@@ -67,11 +69,10 @@ function Tabou2Combo({
         value={text}
         textField={textField}
         valueField={valueField}
-        className="toto"
         style={style}
         data={data}
         defaultValue={props.defaultValue}
-        filter="contains"
+        filter={has(props, "filter") ? props.filter : "contains"}
         placeholder={placeholder}
         disabled={disabled}
         onSelect={v => changeText(v, props.onSelect)}

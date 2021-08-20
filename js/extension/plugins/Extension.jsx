@@ -17,8 +17,10 @@ import tabou2 from '@ext/reducers/tabou2';
 import init from '@ext/utils/init';
 
 import { tabouApplyFilter, tabouResetFilter, tabouGetSearchIds } from '@ext/epics/search';
-import { tabouLoadIdentifyContent, tabouSetGFIFormat, purgeTabou, printProgramme, createChangeFeature } from '@ext/epics/identify';
-import { getSelectionInfos, updateTabou2Logs, updateTabou2Tier, addCreateTabou2Tier, getTiersElements, associateTabou2Tier } from '@ext/epics/featureEvents';
+import { tabouLoadIdentifyContent, tabouSetGFIFormat, purgeTabou, printProgramme, createChangeFeature,
+    displayFeatureInfos } from '@ext/epics/identify';
+import { getSelectionInfos, updateTabou2Logs, updateTabou2Tier, addCreateTabou2Tier, getTiersElements,
+    associateTabou2Tier, createTabouFeature, onLayerReload, getEventsElements } from '@ext/epics/featureEvents';
 import { setTbarPosition } from '@ext/epics/setup';
 
 import { CONTROL_NAME } from '@ext/constants';
@@ -90,9 +92,13 @@ export default {
         addCreateTabou2Tier: addCreateTabou2Tier,
         printProgramme: printProgramme,
         tabouGetSearchIds: tabouGetSearchIds,
-        createChangeFeature:createChangeFeature,
+        createChangeFeature: createChangeFeature,
         getTiersElements: getTiersElements,
         associateTabou2Tier: associateTabou2Tier,
+        createTabouFeature: createTabouFeature,
+        onLayerReload: onLayerReload,
+        displayFeatureInfos: displayFeatureInfos,
+        getEventsElements: getEventsElements
     },
     containers: {
         Toolbar: {

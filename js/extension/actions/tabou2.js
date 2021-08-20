@@ -30,9 +30,25 @@ export const LOAD_FICHE_INFOS = "LOAD_FICHE_INFOS";
 export const CHANGE_FEATURE = "CHANGE_FEATURE";
 export const CREATE_FEATURE = "CREATE_FEATURE";
 export const MAP_TIERS = "MAP_TIERS";
+export const RELOAD_LAYER = "RELOAD_LAYER";
+export const DISPLAY_FEATURE = "DISPLAY_FEATURE";
+export const SET_GFI_REQUEST = "SET_GFI_REQUEST";
+export const SET_IDENTIFY_INFOS = "SET_IDENTIFY_INFOS";
+export const SET_TABOU_ERROR = "SET_ERROR";
+export const GET_EVENTS = "GET_EVENTS";
+
+export const reloadLayer = (layer) => ({
+    type: RELOAD_LAYER,
+    layer
+});
 
 export const mapTiers = (params) => ({
     type: MAP_TIERS,
+    params
+});
+
+export const getApiEvents = (params) => ({
+    type: GET_EVENTS,
     params
 });
 
@@ -62,9 +78,10 @@ export const tearDown = () => ({
     type: TEAR_DOWN
 });
 
-export const setMainActiveTab = (activeTab) => ({
+export const setMainActiveTab = (activeTab, params = {}) => ({
     type: SET_MAIN_ACTIVE_TAB,
-    activeTab
+    activeTab,
+    params
 });
 
 export const applySearchQuery = () => ({
@@ -92,9 +109,10 @@ export const setDefaultInfoFormat = (infoFormat) => ({
 
 export const loadTabouFeatureInfo = (response) => {
     return ({
-    type: LOAD_TABOU_FEATURE_INFO,
-    response
-})};
+        type: LOAD_TABOU_FEATURE_INFO,
+        response
+    });
+};
 
 export const setSelectorIndex = (selectorsIndex) => ({
     type: SET_SELECTOR_INDEX,
@@ -191,4 +209,20 @@ export const loading = (value, name, mode) => ({
     value,
     name,
     mode
+});
+
+export const displayFeature = infos => ({
+    type: DISPLAY_FEATURE,
+    infos
+});
+
+export const setIdentifyInfos = infos => ({
+    type: SET_IDENTIFY_INFOS,
+    infos
+});
+
+export const setTabouErrors = (value, name) => ({
+    type: SET_TABOU_ERROR,
+    value,
+    name
 });

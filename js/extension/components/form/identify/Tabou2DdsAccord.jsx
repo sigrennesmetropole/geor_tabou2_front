@@ -2,15 +2,12 @@ import React, { useEffect, useState } from "react";
 import { isEmpty, isEqual, pick, has, get, capitalize } from "lodash";
 import { Col, Row, Grid, ControlLabel, Table } from "react-bootstrap";
 import { DateTimePicker } from "react-widgets";
-import utcDateWrapper from '@mapstore/components/misc/enhancers/utcDateWrapper';
 import "@ext/css/identify.css";
 import Message from "@mapstore/components/I18N/Message";
 
-const UTCDateTimePicker = utcDateWrapper({
-    dateProp: "value",
-    dateTypeProp: "type",
-    setDateProp: "onChange"
-})(DateTimePicker);
+import moment from 'moment';
+import momentLocalizer from 'react-widgets/lib/localizers/moment';
+momentLocalizer(moment);
 
 /**
  * Accordion to display info for DDS panel section - only for feature linked with id tabou
@@ -33,7 +30,7 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
         label: "tabou2.identify.accordions.adsDate",
         field: "adsDate",
         type: "date",
-        layers:["layerPA"],
+        layers: ["layerPA"],
         source: has(values, "adsDate") ? values : programme,
         readOnly: false
     }, {
@@ -41,7 +38,7 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
         label: "tabou2.identify.accordions.docDate",
         field: "docDate",
         type: "date",
-        layers:["layerPA"],
+        layers: ["layerPA"],
         source: has(values, "docDate") ? values : programme,
         readOnly: false
     }, {
@@ -49,7 +46,7 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
         label: "tabou2.identify.accordions.daactDate",
         field: "datDate",
         type: "date",
-        layers:["layerPA"],
+        layers: ["layerPA"],
         source: has(values, "datDate") ? values : programme,
         readOnly: false
     }, {
@@ -63,7 +60,7 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
             "tabou2.identify.accordions.docDate",
             "tabou2.identify.accordions.daactDate"
         ],
-        layers:["layerPA"],
+        layers: ["layerPA"],
         source: props?.tabouInfos?.permis?.elements || [],
         readOnly: true
     }].filter(el => el?.layers?.includes(layer) || !el?.layers);
@@ -83,26 +80,26 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
 
     /**
      * Get a value to display inside table cell according to a field
-     * @param {string} field 
-     * @param {any} val 
+     * @param {string} field
+     * @param {any} val
      * @returns any
      */
     const getValueByField = (field, val) => {
         let fieldVal;
         switch (field) {
-            case "dateLiv":
-                fieldVal = val ? new Date(val).toLocaleDateString() : val;
-                break;
-            default:
-                fieldVal = val;
-                break;
+        case "dateLiv":
+            fieldVal = val ? new Date(val).toLocaleDateString() : val;
+            break;
+        default:
+            fieldVal = val;
+            break;
         }
         return fieldVal;
-    }
+    };
 
     /**
      * Manage info modification
-     * @param {Array} item 
+     * @param {Array} item
      */
     const changeInfos = (item) => {
         let newValues = {...values, ...item};
@@ -110,9 +107,15 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
         // send to parent to save
         let accordValues = pick(newValues, getFields().filter(f => !f.readOnly).map(f => f.name));
         props.change(accordValues, pick(accordValues, required));
-    }
+    };
 
     const allowChange = props.authent.isContrib || props.authent.isReferent;
+
+    const changeDate = (field, str) => {
+        // TODO : valid with moment like that
+        // let isValid = moment(str, "DD/MM/YYYY", true);
+        changeInfos({[field.name]: str ? new Date(str).toISOString() : ""});
+    };
 
     /**
      * COMPONENT
@@ -123,54 +126,55 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
                 fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(item => (
                     <Row className="attributeInfos">
                         <Col xs={4}>
-                        {
-                            item.type !== "boolean" ? <ControlLabel><Message msgId={item.label}/></ControlLabel> :  null
-                        }
+                            {
+                                item.type !== "boolean" ? <ControlLabel><Message msgId={item.label}/></ControlLabel> :  null
+                            }
                         </Col>
                         {
                             item.type === "date" ? (
                                 <Col xs={8}>
-                                <UTCDateTimePicker
-                                    type="date"
-                                    className="identifyDate"
-                                    inline
-                                    dropUp
-                                    disabled={!allowChange}
-                                    placeholder={props.i18n(props.messages, item?.placeholder || item?.label)}
-                                    calendar={true}
-                                    time={false}
-                                    culture="fr"
-                                    value={get(values, item.name) ? new Date(get(values, item.name)) : null}
-                                    format="DD/MM/YYYY"
-                                    onSelect={(v) => changeInfos({[item.name]: new Date(v).toISOString()})}
-                                    onChange={(v) => !v ? changeInfos({[item.name]: null}) : null} />
+                                    <DateTimePicker
+                                        type="date"
+                                        className="identifyDate"
+                                        inline
+                                        dropUp
+                                        disabled={!allowChange}
+                                        placeholder={props.i18n(props.messages, item?.placeholder || item?.label)}
+                                        calendar
+                                        time={false}
+                                        culture="fr"
+                                        value={get(values, item.name) ? new Date(get(values, item.name)) : null}
+                                        format="DD/MM/YYYY"
+                                        onSelect={(v) => changeDate(item, v)}
+                                        onChange={(v) => changeDate(item, v)}
+                                    />
                                 </Col>
                             ) : null
                         }{
                             item.type === "table" ? (
                                 <Col xs={12}>
-                                <Table striped bordered condensed hover>
-                                    <thead>
-                                        <tr>
-                                            {item.fields.map((fieldName,i) => (
-                                                <th>{capitalize(props.i18n(props.messages, item.labels[i]))}</th>)
-                                            )}
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {
-                                            item.source.map(programme => (
-                                                <tr>
-                                                    {item.fields.map(field => (
-                                                        <>
-                                                            <td>{getValueByField(field, get(programme, field))}</td>
-                                                        </>
-                                                    ))}
-                                                </tr>
-                                            ))
-                                        }
-                                    </tbody>
-                                </Table>
+                                    <Table striped bordered condensed hover>
+                                        <thead>
+                                            <tr>
+                                                {item.fields.map((fieldName, i) => (
+                                                    <th>{capitalize(props.i18n(props.messages, item.labels[i]))}</th>)
+                                                )}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {
+                                                item.source.map(programmeItem => (
+                                                    <tr>
+                                                        {item.fields.map(field => (
+                                                            <>
+                                                                <td>{getValueByField(field, get(programmeItem, field))}</td>
+                                                            </>
+                                                        ))}
+                                                    </tr>
+                                                ))
+                                            }
+                                        </tbody>
+                                    </Table>
                                 </Col>
                             ) : null
                         }

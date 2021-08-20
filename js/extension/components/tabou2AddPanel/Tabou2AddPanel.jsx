@@ -30,7 +30,7 @@ export default function Tabou2AddPanel({feature, featureId, layer, ...props}) {
     });
     return (
         <Grid className={"col-xs-12"}>
-                <Tabou2AddOaPaForm options={ddOptions} change={(v) => setType(v.value)}select={(v) => setType(v.value)} layer={type} feature={selectedFeature} {...props} pluginCfg={props.pluginCfg} />
+            <Tabou2AddOaPaForm options={ddOptions} change={(v) => setType(v.value)}select={(v) => setType(v.value)} layer={type} feature={selectedFeature} {...props} pluginCfg={props.pluginCfg} />
         </Grid >
     );
 }

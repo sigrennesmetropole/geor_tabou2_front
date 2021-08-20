@@ -32,7 +32,7 @@ export default function Tabou2TextForm({
         readOnly={props.readOnly}
         style={props.style}
         required={props.required}
-        value={text}
+        value={text || ''}
         onBlur={(evt) => {
             triggerBlur(evt);
         }}

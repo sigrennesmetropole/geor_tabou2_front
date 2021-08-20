@@ -1,5 +1,5 @@
 import { set } from '@mapstore/utils/ImmutableUtils';
-import { get } from 'lodash';
+import { get, isNumber } from 'lodash';
 import {
     SETUP,
     SET_MAIN_ACTIVE_TAB,
@@ -16,7 +16,10 @@ import {
     LOAD_EVENTS,
     LOAD_TIERS,
     LOADING,
-    LOAD_FICHE_INFOS
+    DISPLAY_FEATURE,
+    LOAD_FICHE_INFOS,
+    SET_IDENTIFY_INFOS,
+    SET_TABOU_ERROR
 } from '@ext/actions/tabou2';
 
 const initialState = {
@@ -32,7 +35,10 @@ const initialState = {
     selectedLayer: "",
     events: [],
     tiers: [],
-    ficheInfos: {}
+    ficheInfos: {},
+    featureAdded: {},
+    identifyInfos: {},
+    errors: {}
 };
 
 export default function tabou2(state = initialState, action) {
@@ -93,6 +99,14 @@ export default function tabou2(state = initialState, action) {
         // anyway sets loading to true
         return set(action.name === "loading" ? "loading" : `loadFlags.${action.name}`, newValue, state);
     }
+    case SET_IDENTIFY_INFOS: {
+        return set('identifyInfos', action.infos, state);
+    }
+    case DISPLAY_FEATURE:
+        const { featureAdded } = action;
+        return set('featureAdded', featureAdded, state);
+    case SET_TABOU_ERROR:
+        return set(`errors.${action.name}`, action.value, state);
     default:
         return state;
     }

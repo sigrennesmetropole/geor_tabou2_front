@@ -31,7 +31,7 @@ export default function Tabou2IdentifyToolbar({ response, isValid, ...props }) {
             tooltip: props.i18n(props.messages, "tabou2.identify.toolbar.logs"),
             id: "logs",
             onClick: () => setIsOpenLogs(true)
-        },
+        }
     ];
 
     // display print button only for programme feature

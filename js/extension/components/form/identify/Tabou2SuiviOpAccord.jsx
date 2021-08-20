@@ -1,18 +1,15 @@
 import React, {useEffect, useState } from "react";
-import { isEmpty, isEqual, pick, get } from "lodash";
-import { Checkbox, Col, Row, FormControl, Grid, ControlLabel } from "react-bootstrap";
+import { isEmpty, isEqual, pick, get, has } from "lodash";
+import { Col, Row, Grid, ControlLabel } from "react-bootstrap";
 import Tabou2Combo from '@ext/components/form/Tabou2Combo';
 import { getRequestApi } from "@ext/api/search";
 import { Multiselect, DateTimePicker } from "react-widgets";
-import utcDateWrapper from '@mapstore/components/misc/enhancers/utcDateWrapper';
 import "@ext/css/identify.css";
 import Message from "@mapstore/components/I18N/Message";
 
-const UTCDateTimePicker = utcDateWrapper({
-    dateProp: "value",
-    dateTypeProp: "type",
-    setDateProp: "onChange"
-})(DateTimePicker);
+import moment from 'moment';
+import momentLocalizer from 'react-widgets/lib/localizers/moment';
+momentLocalizer(moment);
 
 export default function Tabou2SuiviOpAccord({ initialItem, programme, operation, mapFeature, ...props }) {
     let layer = props?.selection?.layer;
@@ -27,21 +24,22 @@ export default function Tabou2SuiviOpAccord({ initialItem, programme, operation,
         field: "etape.libelle",
         type: "combo",
         apiLabel: "libelle",
-        api: `${layer === "layerPA" ? "programmes":"operations"}/${initialItem.id}/etapes`,
+        filter: false,
+        api: `${layer === "layerPA" ? "programmes" : "operations"}/${initialItem.id}/etapes?orderBy=id&asc=true`,
         source: values?.etape ? values : initialItem,
         readOnly: false
     }, {
         name: "livraisonDate",
         label: "tabou2.identify.accordions.dateLiv",
         field: "livraisonDate",
-        layers:["layerPA"],
+        layers: ["layerPA"],
         type: "date",
         source: values?.livraisonDate ? values : operation,
         readOnly: false
     }, {
         name: "autorisationDate",
         label: "tabou2.identify.accordions.dateAuth",
-        layers:["layerSA", "layerOA"],
+        layers: ["layerSA", "layerOA"],
         type: "date",
         source: values?.autorisationDate ? values : operation,
         readOnly: false
@@ -49,7 +47,7 @@ export default function Tabou2SuiviOpAccord({ initialItem, programme, operation,
         name: "operationnelDate",
         label: "tabou2.identify.accordions.dateStart",
         field: "operationnelDate",
-        layers:["layerSA", "layerOA"],
+        layers: ["layerSA", "layerOA"],
         type: "date",
         source: values?.operationnelDate ? values : operation,
         readOnly: false
@@ -80,9 +78,16 @@ export default function Tabou2SuiviOpAccord({ initialItem, programme, operation,
         // send to parent to save
         let accordValues = pick(newValues, getFields().filter(f => !f.readOnly).map(f => f.name));
         props.change(accordValues, pick(accordValues, required));
-    }
+    };
+
+    const changeDate = (field, str) => {
+        // TODO : valid with moment like that
+        // let isValid = moment(str, "DD/MM/YYYY", true);
+        changeInfos({[field.name]: str ? new Date(str).toISOString() : ""});
+    };
 
     const allowChange = props.authent.isContrib || props.authent.isReferent;
+
     return (
         <Grid style={{ width: "100%" }} className={""}>
             {
@@ -92,52 +97,54 @@ export default function Tabou2SuiviOpAccord({ initialItem, programme, operation,
                             <ControlLabel><Message msgId={item.label}/></ControlLabel>
                         </Col>
                         <Col xs={8}>
-                        {
-                            item.type === "combo" ? (
-                                <Tabou2Combo
-                                    load={() => getRequestApi(item.api, props.pluginCfg.apiCfg, {})}
-                                    disabled={item?.readOnly || !allowChange}
-                                    placeholder={props.i18n(props.messages, item?.label || "")}
-                                    textField={item.apiLabel}
-                                    onLoad={(r) => r?.elements || r}
-                                    name={item.name}
-                                    readOnly={item.readOnly || !allowChange}
-                                    defaultValue={get(values, item.name)}
-                                    onSelect={(v) => changeInfos({[item.name]: v})}
-                                    onChange={(v) => !v ? changeInfos({[item.name]: v}) : null}
-                                    messages={{
-                                        emptyList: props.i18n(props.messages, "tabou2.emptyList"),
-                                        openCombobox: props.i18n(props.messages, "tabou2.displayList")
-                                    }}
-                                />
-                            ) : null
-                        }{
-                            item.type === "multi" ? (
-                                <Multiselect
-                                    readOnly={item.readOnly || !allowChange}
-                                    value={item.data}
-                                    className={ item.readOnly ? "tagColor noClick" : "tagColor"}
-                                    placeholder={props.i18n(props.messages, item?.label || "")}
-                                />
-                            ) : null
-                        }{
-                            item.type === "date" ? (
-                                <UTCDateTimePicker
-                                    type="date"
-                                    className="identifyDate"
-                                    inline
-                                    dropUp
-                                    placeholder={props.i18n(props.messages, item?.label || "")}
-                                    readOnly={item.readOnly || !allowChange}
-                                    calendar={true}
-                                    time={false}
-                                    culture="fr"
-                                    value={get(values, item.name) ? new Date(get(values, item.name)) : null}
-                                    format="DD/MM/YYYY"
-                                    onSelect={(v) => changeInfos({[item.name]: new Date(v).toISOString()})}
-                                    onChange={(v) => !v ? changeInfos({[item.name]: new Date(v).toISOString()}) : null} />
-                            ) : null
-                        }
+                            {
+                                item.type === "combo" ? (
+                                    <Tabou2Combo
+                                        load={() => getRequestApi(item.api, props.pluginCfg.apiCfg, {})}
+                                        disabled={item?.readOnly || !allowChange}
+                                        placeholder={props.i18n(props.messages, item?.label || "")}
+                                        textField={item.apiLabel}
+                                        onLoad={(r) => r?.elements || r}
+                                        name={item.name}
+                                        filter={has(item, "filter") ? item.filter : "contains"}
+                                        readOnly={item.readOnly || !allowChange}
+                                        defaultValue={get(values, item.name)}
+                                        onSelect={(v) => changeInfos({[item.name]: v})}
+                                        onChange={(v) => !v ? changeInfos({[item.name]: v}) : null}
+                                        messages={{
+                                            emptyList: props.i18n(props.messages, "tabou2.emptyList"),
+                                            openCombobox: props.i18n(props.messages, "tabou2.displayList")
+                                        }}
+                                    />
+                                ) : null
+                            }{
+                                item.type === "multi" ? (
+                                    <Multiselect
+                                        readOnly={item.readOnly || !allowChange}
+                                        value={item.data}
+                                        className={ item.readOnly ? "tagColor noClick" : "tagColor"}
+                                        placeholder={props.i18n(props.messages, item?.label || "")}
+                                    />
+                                ) : null
+                            }{
+                                item.type === "date" ? (
+                                    <DateTimePicker
+                                        type="date"
+                                        className="identifyDate"
+                                        inline
+                                        dropUp
+                                        placeholder={props.i18n(props.messages, item?.label || "")}
+                                        readOnly={item.readOnly || !allowChange}
+                                        calendar
+                                        time={false}
+                                        culture="fr"
+                                        value={get(values, item.name) ? new Date(get(values, item.name)) : null}
+                                        format="DD/MM/YYYY"
+                                        onSelect={(v) => changeDate(item, v)}
+                                        onChange={(v) => changeDate(item, v)}
+                                    />
+                                ) : null
+                            }
                         </Col>
                     </Row>
                 ))

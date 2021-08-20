@@ -29,7 +29,8 @@ export default function Tabou2IdentifyContent({
 }) {
     const [cssLoaded, setCss] = useState(false);
     const [accordions, setAccordions] = useState([]);
-    const [openedAccordions, setOpened] = useState({});
+    // first accordions will be open
+    const [openedAccordions, setOpened] = useState({0: true});
     const [operation, setOperation] = useState({});
     const [mapFeature, setMapFeature] = useState({});
     const [infos, setInfos] = useState({});
@@ -57,7 +58,7 @@ export default function Tabou2IdentifyContent({
     // hooks to refresh if necessary if user change selected layer or if response change
     useEffect(() => {
         setAccordions(ACCORDIONS.filter(acc => !acc.layers || acc?.layers.indexOf(tabouLayer) > -1));
-        if(!isEmpty(props?.tabouInfos)) {
+        if (!isEmpty(props?.tabouInfos)) {
             let selected = props?.tabouInfos?.programme || props?.tabouInfos?.operation;
             if (!isEqual(props?.tabouInfos?.operation, operation) || !isEqual(infos, selected)) {
                 setInfos(selected);
@@ -70,35 +71,35 @@ export default function Tabou2IdentifyContent({
     const onChange = (values, required) => {
         mandatory.current = {...mandatory.current, ...required};
         setInfos({...infos, ...values});
-    }
+    };
 
     const save = () => {
         props.changeFeature({
             feature: infos,
             layer: props.selection.layer
         });
-    }
+    };
 
     const restore = () => {
         setInfos(props?.tabouInfos?.programme || props?.tabouInfos?.operation);
-    }
+    };
     if (props.identifyLoading) {
         let size = 100;
         return (
             <>
-            <Tabou2Information 
-                isVisible={true} 
-                glyph="" 
-                message={<Message msgId="tabou2.identify.getInfos"/>} 
-                title={<Message msgId="tabou2.load"/>}/>
-            <Loader size={size} style={{ padding: size / 10, margin: "auto", display: "flex" }} />
+                <Tabou2Information
+                    isVisible
+                    glyph=""
+                    message={<Message msgId="tabou2.identify.getInfos"/>}
+                    title={<Message msgId="tabou2.load"/>}/>
+                <Loader size={size} style={{ padding: size / 10, margin: "auto", display: "flex" }} />
             </>
-        )
+        );
     }
     return (
         <>
             <Row className="tabou-idToolbar-row text-center" style={{ display: "flex", margin: "auto", justifyContent: "center" }}>
-                <Tabou2IdentifyToolbar 
+                <Tabou2IdentifyToolbar
                     response={response}
                     isValid={!some(mandatory.current, isEmpty)}
                     save={save}

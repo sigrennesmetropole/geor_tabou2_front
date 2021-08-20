@@ -1,6 +1,6 @@
 import { CONTROL_NAME } from '@ext/constants';
 import { keys, pickBy } from 'lodash';
-import { userGroupSecuritySelector, userRoleSelector, userSelector, userParamsSelector } from '@mapstore/selectors/security';
+import { userGroupSecuritySelector, userSelector } from '@mapstore/selectors/security';
 
 export function currentActiveTabSelector(state) {
     return state?.tabou2.activeTab;
@@ -63,18 +63,19 @@ export function getTiers(state) {
 
 /**
  * Get security infos.
- * @param {any} state 
- * @returns 
+ * @param {any} state
+ * @returns
  */
 export function getAuthInfos(state) {
     const groups = userGroupSecuritySelector(state) ?? [];
     const groupNames = groups.map(({ groupName }) => `${groupName}`);
     return {
+        user: userSelector(state)?.name ?? "",
         isAdmin: groupNames.includes("MAPSTORE_ADMIN"),
         isReferent: groupNames.includes("EL_APPLIS_TABOU_REFERENT"),
         isContrib: groupNames.includes("EL_APPLIS_TABOU_CONTRIB"),
         isConsult: groupNames.includes("EL_APPLIS_TABOU_CONSULT")
-    }
+    };
 }
 
 // loading of search
@@ -85,4 +86,16 @@ export function searchLoading(state) {
 // loading for identify info
 export function identifyLoading(state) {
     return state?.tabou2?.loadFlags?.identify;
+}
+
+export function getFeatureAdded(state) {
+    return state?.tabou2?.featureAdded;
+}
+
+export function getIdentifyInfos(state) {
+    return state?.tabou2?.identifyInfos;
+}
+
+export function getTabouErrors(state) {
+    return state?.tabou2?.errors;
 }

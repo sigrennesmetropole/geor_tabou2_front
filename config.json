@@ -337,10 +337,10 @@
                 "url": "https://gis.jdev.fr/geoserver/wfs",
                 "type": "wfs"
             },
-            "name": "tabou2:tabou_v_oa_operation0",
+            "name": "tabou2:tabou_v_oa_operation",
             "opacity": 1,
             "description": "tabou_v_oa_operation",
-            "title": "Operations",
+            "title": "Opérations",
             "type": "wms",
             "url": "https://gis.jdev.fr/geoserver/wms",
             "bbox": {
@@ -409,9 +409,9 @@
                 "url": "https://gis.jdev.fr/geoserver/ows",
                 "type": "wfs"
             },
-            "name": "tabou2:tabou_v_oa_programme0",
+            "name": "tabou2:tabou_v_oa_programme",
             "opacity": 1,
-            "description": "tabou2:tabou_v_oa_programme0",
+            "description": "tabou2:tabou_v_oa_programme",
             "title": "Programmes",
             "type": "wms",
             "url": "https://gis.jdev.fr/geoserver/wms",

@@ -1,8 +1,10 @@
 import * as Rx from 'rxjs';
-import { get, keys, find } from 'lodash';
-import { loadEvents, loadTiers, SELECT_FEATURE, ADD_FEATURE_EVENT, DELETE_FEATURE_EVENT, CHANGE_FEATURE_EVENT, ADD_FEATURE_TIER,
-    ASSOCIATE_TIER, DELETE_FEATURE_TIER, CHANGE_FEATURE_TIER, INACTIVATE_TIER, loadFicheInfos, loading, MAP_TIERS, mapTiers
- } from '@ext/actions/tabou2';
+import { get, keys, find, isEmpty } from 'lodash';
+import { loadEvents, loadTiers, RELOAD_LAYER, CREATE_FEATURE, SELECT_FEATURE,
+    ADD_FEATURE_EVENT, DELETE_FEATURE_EVENT, CHANGE_FEATURE_EVENT, ADD_FEATURE_TIER,
+    ASSOCIATE_TIER, DELETE_FEATURE_TIER, CHANGE_FEATURE_TIER, INACTIVATE_TIER,
+    loadFicheInfos, loading, MAP_TIERS, mapTiers, reloadLayer, displayFeature, getApiEvents, GET_EVENTS
+} from '@ext/actions/tabou2';
 import {getMessageById} from "@mapstore/utils/LocaleUtils";
 
 import {
@@ -23,13 +25,16 @@ import {
     getOperationProgrammes,
     getSecteur,
     getProgrammeAgapeo,
-    changeFeatureTierAssociation
+    changeFeatureTierAssociation,
+    createNewTabouFeature
 } from '@ext/api/search';
 
-import { getSelection, getLayer, getPluginCfg, isTabou2Activate, } from '@ext/selectors/tabou2';
+import { getSelection, getLayer, getPluginCfg, isTabou2Activate } from '@ext/selectors/tabou2';
 import { URL_ADD } from '@ext/constants';
 import { wrapStartStop } from "@mapstore/observables/epics";
-import { error } from "@mapstore/actions/notifications";
+import { error, success } from "@mapstore/actions/notifications";
+import { refreshLayers } from "@mapstore/actions/layers";
+import { layersSelector } from '@mapstore/selectors/layers';
 
 // get service to request according to action type
 const actionOnUpdate = {
@@ -39,7 +44,7 @@ const actionOnUpdate = {
     "ASSOCIATE_TIER": (layer, idFeature, tier) => associateFeatureTier(layer, idFeature, tier),
     "DELETE_FEATURE_TIER": (layer, idFeature, tier) => dissociateFeatureTier(layer, idFeature, tier.id),
     "CHANGE_FEATURE_TIER": (layer, idFeature, tier) => changeFeatureTier(tier),
-    "INACTIVATE_TIER": (layer, idFeature, tier) => inactivateTier(layer, idFeature, tier.id),
+    "INACTIVATE_TIER": (layer, idFeature, tier) => inactivateTier(layer, idFeature, tier.id)
 };
 
 // get feature from API according to selected layer feature
@@ -47,11 +52,11 @@ const resetFeatureBylayer = {
     "layerOA": (id) => getOperation(id),
     "layerPA": (id) => getProgramme(id),
     "layerSA": (id) => getSecteur(id)
-}
+};
 
 /**
  * Get infos from store
- * @param {any} state 
+ * @param {any} state
  * @returns object
  */
 const getInfos = (state) => {
@@ -70,8 +75,8 @@ const getInfos = (state) => {
         layerUrl: layerUrl,
         layer: layer,
         layerCfg: configName
-    }
-}
+    };
+};
 
 const selectInfos = {
     operation: null,
@@ -79,13 +84,13 @@ const selectInfos = {
     programmes: null,
     tiers: null,
     permis: null
-}
+};
 
 /**
  * Process to get all info from selected feature.
  * Many services was called, and some infos was keep from clicked map feature.
- * @param {any} action$ 
- * @param {any} store 
+ * @param {any} action$
+ * @param {any} store
  * @returns action
  */
 export function getSelectionInfos(action$, store) {
@@ -93,7 +98,6 @@ export function getSelectionInfos(action$, store) {
         .filter((action) => isTabou2Activate(store.getState()) && get(action?.selectedFeature?.feature, "properties.id_tabou"))
         .switchMap((action) => {
             let messages = store.getState()?.locale.messages;
-
             // get infos from layer's feature directly
             const idTabou = get(action.selectedFeature.feature, "properties.id_tabou");
             let tiers = [];
@@ -101,34 +105,35 @@ export function getSelectionInfos(action$, store) {
             let layerUrl = get(URL_ADD, layerCfg);
             let searchItem = null;
             let mapFeature = action.selectedFeature.feature;
-            layerUrl = "operations";
 
             // get events from API
             /**
              * TODO
              * - dynamic type layer
              * - dynamic idTabou
+             *
+             * WARNING
+             * - API GET operations/{id}/programmes not works for SA layer
              */
             let secondObservable$ = Rx.Observable.empty();
-            if(layerCfg === "layerOA" || layerCfg === "layerSA") {
+            if (layerCfg === "layerOA" || layerCfg === "layerSA") {
                 // GET operation's programmes
                 secondObservable$ = Rx.Observable.defer(() => getOperationProgrammes(searchItem?.id))
-                .catch(e => {
-                    console.log("Error retrieving on OA or SA programmes request");
-                    console.log(e);
-                    return Rx.Observable.of({data: []});
-                })
-                .switchMap( programmes => {
+                    .catch(e => {
+                        console.log("Error retrieving on OA or SA programmes request");
+                        console.log(e);
+                        return Rx.Observable.of({data: []});
+                    })
+                    .switchMap( programmes => {
                         // store data
                         let infos = {
                             ...selectInfos,
                             programmes: programmes.data,
                             operation: searchItem,
                             tiers: tiers,
-                            mapFeature:mapFeature};
+                            mapFeature: mapFeature};
                         return Rx.Observable.of(loadFicheInfos(infos));
-                    }
-                )
+                    });
             } else {
                 secondObservable$ = Rx.Observable.defer(() => getOperation(searchItem.operationId))
                     .catch(e => {
@@ -146,26 +151,26 @@ export function getSelectionInfos(action$, store) {
                             })
                             .switchMap( agapeo => {
                                 return Rx.Observable.defer(() => getProgrammePermis(searchItem?.id))
-                                .catch(e => {
-                                    console.log("Error retrieving PA permis request");
-                                    console.log(e);
-                                    return Rx.Observable.of({data: []});
-                                })
-                                .switchMap( permis => {
+                                    .catch(e => {
+                                        console.log("Error retrieving PA permis request");
+                                        console.log(e);
+                                        return Rx.Observable.of({data: []});
+                                    })
+                                    .switchMap( permis => {
                                     // store data
-                                    let infos = {...selectInfos, 
-                                        agapeo: agapeo.elements,
-                                        programme: searchItem,
-                                        permis: permis.data,
-                                        tiers: tiers,
-                                        operation: operation?.data,
-                                        mapFeature: mapFeature
-                                    };
-                                    return Rx.Observable.of(loadFicheInfos(infos))
-                                }
-                            )
-                        })
-                    })
+                                        let infos = {...selectInfos,
+                                            agapeo: agapeo.data.elements,
+                                            programme: searchItem,
+                                            permis: permis.data,
+                                            tiers: tiers,
+                                            operation: operation?.data,
+                                            mapFeature: mapFeature
+                                        };
+                                        return Rx.Observable.of(loadFicheInfos(infos));
+                                    }
+                                    );
+                            });
+                    });
             }
 
             let firstObservable$ = Rx.Observable.empty();
@@ -177,44 +182,53 @@ export function getSelectionInfos(action$, store) {
                 })
                 .switchMap( response => {
                     // GET Feature's Events
-                    return Rx.Observable.of(loadEvents(response?.data?.elements || []))
+                    return Rx.Observable.of(loadEvents(response?.data?.elements || []));
                 })
                 .concat(Rx.Observable.of(mapTiers()))
                 .concat(
                     Rx.Observable.defer(() => resetFeatureBylayer[layerCfg](idTabou))
-                    .catch(e => {
-                        console.log("Error on get selected tabou infos");
-                        console.log(e);
-                        return Rx.Observable.of({data: []});
-                    })
+                        .catch(e => {
+                            console.log("Fail to get selected tabou feature infos");
+                            console.log(e);
+                            return Rx.Observable.of(e);
+                        })
                     // GET OA, PA or SA clicked Feature
-                    .switchMap((response) => {
-                        searchItem = response.data;
-                        return secondObservable$
-                    })
+                        .switchMap((response) => {
+                            if (isEmpty(response?.data)) {
+                                return Rx.Observable.of(
+                                    // error message
+                                    error({
+                                        title: getMessageById(messages, "tabou2.infos.failApi"),
+                                        message: getMessageById(messages, "tabou2.infos.apiGETError")
+                                    })
+                                );
+                            }
+                            searchItem = response.data;
+                            return secondObservable$;
+                        })
                 );
-                return firstObservable$.let(
-                    wrapStartStop(
-                        [loading(true, "identify")],
-                        loading(false, "identify"),
-                        () => {
-                            return Rx.Observable.of(
-                                error({
-                                    title: getMessageById(messages, "tabou2.infos.failApi"),
-                                    message: getMessageById(messages, "tabou2.infos.failIdentify")
-                                }),
-                                loading(false, "identify")
-                            );
-                        }
-                    )
+            return firstObservable$.let(
+                wrapStartStop(
+                    [loading(true, "identify")],
+                    loading(false, "identify"),
+                    () => {
+                        return Rx.Observable.of(
+                            error({
+                                title: getMessageById(messages, "tabou2.infos.failApi"),
+                                message: getMessageById(messages, "tabou2.infos.failIdentify")
+                            }),
+                            loading(false, "identify")
+                        );
+                    }
                 )
-        })
+            );
+        });
 }
 
 /**
  * Add, change, delete events from feature diary
- * @param {any} action$ 
- * @param {any} store 
+ * @param {any} action$
+ * @param {any} store
  * @returns action
  */
 export function updateTabou2Logs(action$, store) {
@@ -222,33 +236,31 @@ export function updateTabou2Logs(action$, store) {
         .filter(() => isTabou2Activate(store.getState()))
         .switchMap((action) => {
             let {featureId, layerUrl} = getInfos(store.getState());
-            layerUrl = "operations";
             let toDoOnUpdate = get(actionOnUpdate, action.type);
-
             // get events from API
             return Rx.Observable.defer(() => toDoOnUpdate(layerUrl, featureId, action.event))
-            .catch(e => {
-                console.log("Error retrieving log's info");
-                console.log(e);
-                return Rx.Observable.of({data: []});
-            })
+                .catch(e => {
+                    console.log("Error retrieving log's info");
+                    console.log(e);
+                    return Rx.Observable.of({data: []});
+                })
             // refresh tiers
-            .switchMap(() => Rx.Observable.of(mapTiers()));
+                .switchMap(() => Rx.Observable.of(getApiEvents()));
         });
 }
 
 /**
  * New tier creation. Will associate the created tier next.
  * TODO: trigger ASSOCIATE_TIER action istead of same behavior.
- * @param {any} action$ 
- * @param {any} store 
+ * @param {any} action$
+ * @param {any} store
  * @returns action
  */
 export function addCreateTabou2Tier(action$, store) {
     return action$.ofType(ADD_FEATURE_TIER)
         .filter(() => isTabou2Activate(store.getState()))
         .switchMap((action) => {
-            //const idTabou = action?.selectedFeature?.properties?.id_tabou || action?.selectedFeature?.properties?.id_tabou;
+            // const idTabou = action?.selectedFeature?.properties?.id_tabou || action?.selectedFeature?.properties?.id_tabou;
             // selected feature and selected layer
             let {featureId, layerUrl} = getInfos(store.getState());
             // create tier first
@@ -256,21 +268,21 @@ export function addCreateTabou2Tier(action$, store) {
                 .switchMap((tier) => {
                     // Now we associate this tier to element
                     return Rx.Observable.defer(() => associateFeatureTier(layerUrl, featureId, tier?.data?.id, action.tier.type.id))
-                    .catch(e => {
-                        console.log("Error to create association between feature and tier");
-                        console.log(e);
-                        return Rx.Observable.of({data: []});
-                    })
+                        .catch(e => {
+                            console.log("Error to create association between feature and tier");
+                            console.log(e);
+                            return Rx.Observable.of({data: []});
+                        })
                     // refresh tiers
-                    .switchMap(() => Rx.Observable.of(mapTiers()));
-                })
+                        .switchMap(() => Rx.Observable.of(mapTiers()));
+                });
         });
-};
+}
 
 /**
  * Tier assiciation
- * @param {any} action$ 
- * @param {any} store 
+ * @param {any} action$
+ * @param {any} store
  * @returns action
  */
 export function associateTabou2Tier(action$, store) {
@@ -280,22 +292,22 @@ export function associateTabou2Tier(action$, store) {
             // selected feature and selected layer
             let {featureId, layerUrl} = getInfos(store.getState());
             return Rx.Observable.defer(() => getTiers({nom: action.tier.tier.nom}))
-            .switchMap(tier => {
-                return Rx.Observable.defer(() => associateFeatureTier(layerUrl, featureId, tier?.data?.elements[0]?.id, action.tier.type.id))
-                .catch(e => {
-                    console.log("Error on tier association");
-                    console.log(e);
-                    return Rx.Observable.of({data: []});
+                .switchMap(tier => {
+                    return Rx.Observable.defer(() => associateFeatureTier(layerUrl, featureId, tier?.data?.elements[0]?.id, action.tier.type.id))
+                        .catch(e => {
+                            console.log("Error on tier association");
+                            console.log(e);
+                            return Rx.Observable.of({data: []});
+                        });
                 })
-            })
-            .switchMap(() => Rx.Observable.of(mapTiers()));
+                .switchMap(() => Rx.Observable.of(mapTiers()));
         });
-};
+}
 
 /**
  * Trigger when user delete, change or inactivate a tier. Will refresh all tiers next.
- * @param {any} action$ 
- * @param {any} store 
+ * @param {any} action$
+ * @param {any} store
  * @returns action
  */
 export function updateTabou2Tier(action$, store) {
@@ -303,49 +315,121 @@ export function updateTabou2Tier(action$, store) {
      * TODO : use id association (not available yet from API) to change feature association
      */
     return action$.ofType(DELETE_FEATURE_TIER, CHANGE_FEATURE_TIER, INACTIVATE_TIER)
-        .filter(() => isTabou2Activate(store.getState()))        
+        .filter(() => isTabou2Activate(store.getState()))
         .switchMap((action) => {
             // selected feature and selected layer
             let toDoOnUpdate = get(actionOnUpdate, action.type);
             let {featureId, layerUrl} = getInfos(store.getState());
             return Rx.Observable.defer(() => toDoOnUpdate(layerUrl, featureId, action.tier))
-            .switchMap(() => {
-                return Rx.Observable.defer(() => changeFeatureTierAssociation(layerUrl, featureId, action.tier.id, action.tier.type.id))
-                .catch(e => {
-                    console.log("Error on change feature tier association");
-                    console.log(e);
-                    return Rx.Observable.of({data: []});
+                .switchMap(() => {
+                    return Rx.Observable.defer(() => changeFeatureTierAssociation(layerUrl, featureId, action.tier.id, action.tier.type.id))
+                        .catch(e => {
+                            console.log("Error on change feature tier association");
+                            console.log(e);
+                            return Rx.Observable.of({data: []});
+                        });
                 })
-            })
             // refresh tiers
-            .switchMap(() => Rx.Observable.of(mapTiers()));
+                .switchMap(() => Rx.Observable.of(mapTiers()));
         });
 }
 
 /**
  * Epics to match tiers with tiers type and return only one object to store
- * @param {any} action$ 
- * @param {any} store 
+ * @param {any} action$
+ * @param {any} store
  * @returns action
  */
 export function getTiersElements(action$, store) {
     return action$.ofType(MAP_TIERS)
-    .filter(() => isTabou2Activate(store.getState()))
-    .switchMap( action => {
-        let {featureId, layerUrl} = getInfos(store.getState());
-        return Rx.Observable.defer(() => getTiers())
-        .switchMap( tiers => {
-            if (tiers?.data?.elements) {
-                return Rx.Observable.defer(() => getFeatureTiers(layerUrl, featureId))
-                .switchMap( featureTiers => {
-                    if (featureTiers?.data?.elements) {
-                        let allTiers = featureTiers.data.elements.map(t => ({...find(tiers.data.elements, ["nom", t.nom]), ...t}));
-                        return Rx.Observable.of(loadTiers(allTiers))
+        .filter(() => isTabou2Activate(store.getState()))
+        .switchMap(() => {
+            let {featureId, layerUrl} = getInfos(store.getState());
+            return Rx.Observable.defer(() => getTiers())
+                .switchMap( tiers => {
+                    if (tiers?.data?.elements) {
+                        return Rx.Observable.defer(() => getFeatureTiers(layerUrl, featureId))
+                            .switchMap( featureTiers => {
+                                if (featureTiers?.data?.elements) {
+                                    let allTiers = featureTiers.data.elements.map(t => ({...find(tiers.data.elements, ["nom", t.nom]), ...t}));
+                                    return Rx.Observable.of(loadTiers(allTiers));
+                                }
+                                return Rx.Observable.empty();
+                            });
                     }
                     return Rx.Observable.empty();
+                });
+        });
+}
+
+/**
+ * Epics to reload features events
+ * @param {any} action$
+ * @param {any} store
+ * @returns action
+ */
+ export function getEventsElements(action$, store) {
+    return action$.ofType(GET_EVENTS)
+        .filter(() => isTabou2Activate(store.getState()))
+        .switchMap(() => {
+            let {featureId, layerUrl} = getInfos(store.getState());
+            return Rx.Observable.defer(() => getFeatureEvents(layerUrl, featureId))
+                .switchMap( response => {
+                    if (response?.data?.elements) {
+                        return Rx.Observable.of(loadEvents(response?.data?.elements || []));
+                    }
+                    return Rx.Observable.empty();
+                });
+        });
+}
+
+/**
+ * Epic to create PA, OA, SA Feature. This action will create new Tabou feature from selected geom.
+ * @param {any} action$
+ * @param {any} store
+ * @returns empty
+ */
+export function createTabouFeature(action$, store) {
+    return action$.ofType(CREATE_FEATURE)
+        .switchMap( action => {
+            let infos = getInfos(store.getState());
+            let messages = store.getState()?.locale.messages;
+            return Rx.Observable.defer( () => createNewTabouFeature(infos.layerUrl, action.params))
+                .catch(e => {
+                    console.log("Error to save feature change or feature creation");
+                    console.log(e);
+                    return Rx.Observable.of(e);
                 })
-            }
-            return Rx.Observable.empty();
-        })
-    })
+                .switchMap((el)=> {
+                    return el?.status !== 200 ? Rx.Observable.of(
+                        // fail message
+                        error({
+                            title: getMessageById(messages, "tabou2.infos.failApi"),
+                            message: getMessageById(messages, "tabou2.infos.failAddFeature")
+                        })
+                    ) : Rx.Observable.of(
+                        // success message
+                        success({
+                            title: getMessageById(messages, "tabou2.infos.successApi"),
+                            message: getMessageById(messages, "tabou2.infos.successAddFeature")
+                        }),
+                        reloadLayer(infos.layer),
+                        displayFeature({feature: el.data, layer: infos.layer})
+                    );
+                });
+        });
+}
+
+/**
+ * Epic force refresh layer
+ * @param {any} action$
+ * @param {any} store
+ * @returns empty
+ */
+export function onLayerReload(action$, store) {
+    return action$.ofType(RELOAD_LAYER)
+        .switchMap( action => {
+            let layer = layersSelector(store.getState()).filter(lyr => lyr.name === action.layer);
+            return Rx.Observable.of(refreshLayers([layer[0]], {}));
+        });
 }

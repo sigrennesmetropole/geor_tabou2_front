@@ -13,7 +13,7 @@ export default function Tabou2TiersActions({ ...props }) {
     const style = {
         backgroundColor: "transparent",
         borderColor: "rgba(0,0,0,0)"
-    }
+    };
 
     const simpleMode = !props.editionActivate && !props.tierVisible;
     const simpleModeActivate = !props.tier.dateInactif && simpleMode;
@@ -55,7 +55,7 @@ export default function Tabou2TiersActions({ ...props }) {
             glyph: "ok",
             style: {...style, color: "rgb(40, 167, 69)"},
             tooltip: notValid ? props.i18n(props.messages, "tabou2.tiersModal.notValid") : props.i18n(props.messages, "tabou2.save"),
-            readOnly:notValid,
+            readOnly: notValid,
             disabled: notValid,
             showCondition: () => (props.tier.edit || props.tier.new) && !props.tier.dateInactif,
             id: "saveTier",

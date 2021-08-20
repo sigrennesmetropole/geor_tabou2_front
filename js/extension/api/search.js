@@ -1,6 +1,6 @@
 import axios from "@mapstore/libs/ajax";
 import { API_BASE_URL } from "@ext/constants";
-import { keys, find } from "lodash";
+import { keys } from "lodash";
 
 let baseURL = "/tabou2";
 
@@ -21,6 +21,8 @@ export function getRequestApi(name, apiCfg, params) {
     let requestParams = {
         params: params || {}
     };
+    // always order by asc
+    requestParams.params.asc = true;
     if (apiCfg?.authent) {
         requestParams.headers = {
             Authorization: `Basic ${btoa(apiCfg.authent)}`
@@ -66,7 +68,7 @@ export function addFeatureEvent(type, id, event) {
 }
 
 export function changeFeatureEvent(type, id, event) {
-    return axios.post(`${baseURL}/${type}/${id}/evenements`, event);
+    return axios.put(`${baseURL}/${type}/${id}/evenements`, event);
 }
 
 export function deleteFeatureEvent(type, id, eventId) {
@@ -86,7 +88,7 @@ export function getTiers(params = {}) {
 }
 
 export function getFeatureTiers(type, id) {
-    return axios.get(`${baseURL}/${type}/${id}/tiers?asc=true`, null, {})
+    return axios.get(`${baseURL}/${type}/${id}/tiers?asc=true`, null, {});
 }
 
 export function getTypesTiers() {
@@ -125,8 +127,8 @@ export function inactivateTier(tierId) {
 /**
  * PRINT TABOU FEATURE INFOS
  */
-export function getPDFProgramme(type, id) {
-    return axios.get(`${baseURL}/${type}/${id}/fiche-suivi`, {responseType: 'arraybuffer'});
+export function getPDFProgramme(id) {
+    return axios.get(`${baseURL}/programmes/${id}/fiche-suivi`, {responseType: 'arraybuffer'});
 }
 
 /**
@@ -153,12 +155,16 @@ export function getOperation(id) {
 }
 
 export function getSecteur(id) {
-    return axios.get(`${baseURL}/operations`)
-    .catch(error => {})
-    .then(response => (
-        {
-            ...response,
-            data: find(response.data.elements, ["id", id])
-        }
-    ));
+    // secteur is an operation with attribute secteur = true
+    return getOperation(id);
+}
+
+// CREATE TABOU ENTITY FROM FEATURE
+export function createNewTabouFeature(layer, params) {
+    return axios.post(`${baseURL}/${layer}`, params);
+}
+
+// AUTOCOMPLETION
+export function searchPlui(text) {
+    return axios.get(`${baseURL}/plui`, { params: {libelle: `${text}*`, asc: true}}).then(({ data }) => data);
 }

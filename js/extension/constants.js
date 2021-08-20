@@ -5,7 +5,8 @@ export const TABS = [{
 }, {
     id: 'add',
     tooltip: 'tabou2.tabs.add',
-    glyph: 'plus'
+    glyph: 'plus',
+    roles: ["isReferent"]
 }, {
     id: 'identify',
     tooltip: 'tabou2.tabs.identify',
@@ -37,7 +38,7 @@ export const URL_TIERS = {
     "tabou2:oa_secteur": "operations"
 };
 
-export const REQUIRED_TIER = ["adresseRue", "nom","adresseCp","adresseVille", "email", "libelle"];
+export const REQUIRED_TIER = ["adresseRue", "nom", "adresseCp", "adresseVille", "email", "libelle"];
 export const TIERS_SCHEMA = {
     "id": 0,
     "nom": "",
@@ -78,6 +79,7 @@ export const SEARCH_ITEMS = [{
     disabled: false,
     placeholder: 'tabou2.search.allPlui',
     type: 'string',
+    autocomplete: true,
     group: 1
 }, {
     name: 'types-financements',
@@ -113,13 +115,13 @@ export const SEARCH_ITEMS = [{
 }, {
     name: "etapesoa",
     placeholder: 'tabou2.search.allEtapesOA',
-    api: "operations/etapes",
+    api: "operations/etapes?orderBy=id&asc=true",
     type: 'string',
     disabled: false,
     group: 3
 }, {
     name: "etapespa",
-    api: "programmes/etapes",
+    api: "programmes/etapes?orderBy=id&asc=true",
     placeholder: 'tabou2.search.allEtapesPA',
     disabled: false,
     type: 'string',
@@ -135,7 +137,7 @@ export const SEARCH_CALENDARS = [{
     {
         label: "tabou2.search.dateTo",
         isStart: false,
-        name: "doc",
+        name: "doc"
     }]
 }, {
     items: [{
@@ -174,7 +176,7 @@ export const ACCORDIONS = [
 
 export const LAYER_FIELD_OPTION = [
     {
-        //name: "urba_proj:v_oa_programme",
+        // name: "urba_proj:v_oa_programme",
         name: "layerPA",
         field: "properties.nom",
         id: "properties.id_tabou"
@@ -272,36 +274,41 @@ export const ACC_ATTRIBUTE_DESCRIBE = [{
 
 export const ADD_FIELDS = {
     secteur: {
-        layerOA : "secteur",
-        layerPA : "secteur",
-        layerSA : "secteur"
+        layerOA: "secteur",
+        layerPA: "secteur",
+        layerSA: "secteur"
+    },
+    nomEmprise: {
+        layerOA: "nom",
+        layerPA: "nom",
+        layerSA: "nom"
     },
     idEmprise: {
-        layerOA : "nom",
-        layerPA : "nom",
-        layerSA : "nom"
+        layerOA: "id_emprise",
+        layerPA: "id_emprise",
+        layerSA: "id_emprise"
     },
     nom: {
-        layerOA : "nom",
-        layerPA : "nom",
-        layerSA : "nom"
+        layerOA: "nom",
+        layerPA: "nom",
+        layerSA: "nom"
     },
     etape: {
-        layerOA : "etape",
-        layerPA : "etape",
-        layerSA : "etape"
+        layerOA: "etape",
+        layerPA: "etape",
+        layerSA: "etape"
     },
     nature: {
-        layerOA : "nature",
-        layerPA : "nature",
-        layerSA : "nature"
+        layerOA: "nature",
+        layerPA: "nature",
+        layerSA: "nature"
     },
     code: {
-        layerOA : "code",
-        layerPA : "code",
-        layerSA : "code"
+        layerOA: "code",
+        layerPA: "code",
+        layerSA: "code"
     }
-}
+};
 
 export const ADD_OA_FORM = [{
     label: "tabou2.add.checkSector",
@@ -314,7 +321,6 @@ export const ADD_OA_FORM = [{
     label: "tabou2.add.sector",
     name: "secteur",
     apiField: "",
-    // parent: (infos) => infos.emprise, // to activate secteur only if emprise name formControl is selected
     required: true,
     group: 1,
     type: "checkbox"
@@ -329,8 +335,9 @@ export const ADD_OA_FORM = [{
     type: "combo"
 }, {
     label: "tabou2.add.emprise",
-    name: "idEmprise",
+    name: "nomEmprise",
     group: 1,
+    autocomplete: "nom",
     api: "operations/emprises",
     apiField: "id",
     apiLabel: "nom",
@@ -340,25 +347,23 @@ export const ADD_OA_FORM = [{
     label: "tabou2.add.name",
     apiField: "",
     name: "nom",
-    // parent: () => emprise, // to activate nom only if emprise name formControl is selected
     required: true,
     type: "text"
 }, {
     label: "tabou2.add.code",
     apiField: "",
     name: "code",
-    // parent: (infos) => infos.emprise, // to activate code only if emprise name formControl is selected
     required: true,
     type: "text"
 }, {
     label: "tabou2.add.step",
     apiField: "code",
     apiLabel: "libelle",
-    api: "operations/etapes",
+    api: "operations/etapes?orderBy=id&asc=true",
     name: "etape",
-    // parent: (infos) => infos.emprise, // to activate etape only if emprise name formControl is selected
     placeholder: "Sélectionner une étape",
     required: true,
+    distinct: false,
     type: "combo"
 }];
 
@@ -379,8 +384,10 @@ export const ADD_PA_FORM = [ {
     variant: "info"
 }, {
     label: "tabou2.add.selectPaParent",
-    api: "operations",
+    api: "operations?estSecteur=false&asc=true",
     name: "parentoa",
+    autocomplete: "nom",
+    min: 3,
     apiLabel: "nom",
     apiField: "nom",
     parent: null,
@@ -391,8 +398,10 @@ export const ADD_PA_FORM = [ {
     api: "programmes/emprises",
     group: 1,
     parent: (i) => !i.parentoa ? true : {operationId: i.operationId, nomopa: i.parentoa},
-    name: "idEmprise",
+    name: "nomEmprise",
     apiLabel: "nom",
+    min: 2,
+    autocomplete: "nom",
     apiField: "id",
     placeholder: "Selectionner une emprise",
     type: "combo"
@@ -401,7 +410,6 @@ export const ADD_PA_FORM = [ {
     apiField: "",
     name: "nom",
     placeholder: "Saisir un nom",
-    // parent: () => emprise, // to activate nom only if emprise name formControl is selected
     required: true,
     type: "text"
 }, {
@@ -409,16 +417,15 @@ export const ADD_PA_FORM = [ {
     apiField: "",
     name: "code",
     placeholder: "Saisir un code",
-    // parent: (infos) => infos.emprise, // to activate code only if emprise name formControl is selected
     required: true,
     type: "text"
 }, {
     label: "tabou2.add.step",
     apiField: "code",
     apiLabel: "libelle",
-    api: "operations/etapes",
+    api: "programmes/etapes?orderBy=id&asc=true",
+    distinct: false,
     name: "etape",
-    // parent: (infos) => infos.emprise, // to activate etape only if emprise name formControl is selected
     placeholder: "Sélectionner une étape",
     required: true,
     type: "combo"
@@ -427,7 +434,7 @@ export const ADD_PA_FORM = [ {
 export const OA_SCHEMA = {
     "diffusionRestreinte": false,
     "nature": {
-      "id": 1
+        "id": 1
     },
     "idEmprise": 0,
     "code": "",
@@ -437,25 +444,25 @@ export const OA_SCHEMA = {
     "nbLogementsPrevu": 0,
     "secteur": false,
     "surfaceTotale": 0,
-    "consommationEspace": {  
-      "id": 1
+    "consommationEspace": {
+        "id": 1
     },
-    "decision": {  
-      "id": 1
+    "decision": {
+        "id": 1
     },
-    "etape": {  
-      "id": 1
+    "etape": {
+        "id": 1
     },
-    "maitriseOuvrage": {  
-      "id": 1
+    "maitriseOuvrage": {
+        "id": 1
     },
     "modeAmenagement": {
-      "id": 1
+        "id": 1
     },
     "vocation": {
-      "id": 1
+        "id": 1
     }
-  };
+};
 
 export const PA_SCHEMA = {
     "operationId": 0,
@@ -463,12 +470,12 @@ export const PA_SCHEMA = {
     "diffusionRestreinte": false,
     "code": "",
     "nom": "",
-    "description": "nc",
-    "programme": "nc",
+    "description": "",
+    "programme": "",
     "etape": {
-      "id": 0  
+        "id": 0
     },
-    "numAds": "nc"
+    "numAds": ""
 };
 
 export const LOG_SCHEMA = {
@@ -476,5 +483,5 @@ export const LOG_SCHEMA = {
     eventDate: "2021-04-21T14:39:54.176Z",
     id: 0,
     idType: 3,
-    new: true
-}
+    "new": true
+};
