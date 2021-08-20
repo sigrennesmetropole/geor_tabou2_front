@@ -118,6 +118,7 @@ export default function Tabou2IdentifyPanel({
                             <Button
                                 tooltip={props.i18n(props.messages, "tabou2.identify.sendMail")}
                                 onClick={() => {
+                                    if (!props?.pluginCfg?.consultHelpMail) return;
                                     let a = document.createElement('a');
                                     a.href = `mailto:${props.pluginCfg.consultHelpMail}`;
                                     a.click();
