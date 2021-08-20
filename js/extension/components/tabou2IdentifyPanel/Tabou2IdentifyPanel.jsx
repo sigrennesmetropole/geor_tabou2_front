@@ -113,8 +113,22 @@ export default function Tabou2IdentifyPanel({
                                 bsSize="lg"
                                 style={{marginTop: "10%"}}>
                                 <Glyphicon glyph="pencil-add"/>
-                            </Button>) : null
-                        }
+                            </Button>
+                        ) : (
+                            <Button
+                                tooltip={props.i18n(props.messages, "tabou2.identify.sendMail")}
+                                onClick={() => {
+                                    let a = document.createElement('a');
+                                    a.href = `mailto:${props.pluginCfg.consultHelpMail}`;
+                                    a.click();
+                                    a.remove();
+                                }}
+                                bsStyle="primary"
+                                bsSize="lg"
+                                style={{marginTop: "10%"}}>
+                                <Glyphicon glyph="envelope"/>
+                            </Button>
+                        )}
                     </div>
                 }
                 message={props.i18n(props.messages, props.authentInfos.isReferent ?

@@ -350,6 +350,7 @@
       {
         "name": "Tabou2",
         "cfg": {
+          "consultHelpMail": "d.cottencin@rennesmetropole.fr",
           "geoserverURL": "https://gis.jdev.fr/geoserver",
           "showIdentify": false,
           "layersOrder": ["Opérations", "Secteurs", "Programmes"],
