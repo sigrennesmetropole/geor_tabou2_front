@@ -263,6 +263,7 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                                             minLength={has(item, "min") ? item.min : 3}
                                             textField={item.apiLabel}
                                             valueField={item.apiField}
+                                            forceSelection
                                             value={get(infos, item.name)}
                                             disabled={item.parent ? isEmpty(item.parent(infos)) : item?.disabled || false}
                                             search={

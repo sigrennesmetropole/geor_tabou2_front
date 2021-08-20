@@ -1,7 +1,7 @@
 import React, {useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
-import { find, isObject } from 'lodash';
+import { find, isObject, isEmpty } from 'lodash';
 import { Combobox as CB } from 'react-widgets';
 import { Glyphicon } from "react-bootstrap";
 import localizedProps from '@mapstore/components/misc/enhancers/localizedProps';
@@ -24,7 +24,6 @@ const localizeMessages = compose(
 );
 const Combobox = localizedProps('placeholder')(localizeMessages(CB));
 
-
 /**
  * A utility combo for search.
  * @params search
@@ -33,6 +32,7 @@ export default ({
     value = {},
     valueField,
     minLength,
+    forceSelection = false,
     onChange = () => {},
     search = () => {},
     onSelect = () => {},
@@ -55,6 +55,12 @@ export default ({
             });
         }
     }, [text]);
+
+    const clearData = () => {
+        onSelect(undefined);
+        setText('');
+    };
+
     return (<div style={{position: "relative", ...additionalStyle}}>
         <Combobox
             dropUp={dropUp}
@@ -66,6 +72,14 @@ export default ({
             onSelect={(v) => {
                 onSelect(find(data, {[valueField]: v}) ?? v);
             }}
+            onBlur={
+                () => {
+                    if (!forceSelection) return;
+                    if (!data.length || isEmpty(find(data, text))) {
+                        clearData();
+                    }
+                }
+            }
             onChange={
                 t => {
                     onChange(t);
@@ -87,9 +101,6 @@ export default ({
                 cursor: "pointer"
 
             }}
-            onClick={() => {
-                onSelect(undefined);
-                setText('');
-            }}/> : null}
+            onClick={clearData}/> : null}
     </div>);
 };

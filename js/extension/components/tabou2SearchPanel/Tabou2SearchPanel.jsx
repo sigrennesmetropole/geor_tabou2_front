@@ -176,6 +176,7 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
                                 textField={get(config, `${combo.name}.apiLabel`)}
                                 valueField={get(config, `${combo.name}.apiField`)}
                                 value={comboValues[combo.name]}
+                                forceSelection
                                 search={
                                     text => searchPlui(text)
                                         .then(results =>

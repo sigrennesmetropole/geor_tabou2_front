@@ -125,6 +125,7 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
                                         minLength={3}
                                         textField={item.apiLabel}
                                         valueField={item.apiField}
+                                        forceSelection
                                         value={item.value()}
                                         search={
                                             text => getRequestApi(item.api, props.pluginCfg.apiCfg, {[item.autocomplete]: `${text}*`})
