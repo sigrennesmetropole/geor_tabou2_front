@@ -152,7 +152,7 @@ export default function Tabou2LogsTable({
                                                             ) : null
                                                         }
                                                         {
-                                                            !log.new && !log.edit && !editionActivate.current ? (
+                                                            !log.systeme && !log.new && !log.edit && !editionActivate.current ? (
                                                                 <Button
                                                                     tooltip={props.i18n(props.messages, "tabou2.change")}
                                                                     style={{ borderColor: "rgba(0,0,0,0)"}}
