@@ -35,6 +35,8 @@
         "identify": "Identifier une entité"
       },
       "search": {
+        "yes": "oui",
+        "no": "non",
         "selectDate": "Choisir une date",
         "apply": "Appliquer les filtres",
         "restore": "Supprimer tous les filtres",
