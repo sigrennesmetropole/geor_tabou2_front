@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react';
 import ResizableModal from '@mapstore/components/misc/ResizableModal';
-import { isEqual, find, maxBy, omit } from 'lodash';
+import { isEqual, find, maxBy, omit, isEmpty } from 'lodash';
 import { LOG_SCHEMA } from '@ext/constants';
 import Message from "@mapstore/components/I18N/Message";
 import Tabou2LogsTable from './Tabou2LogsTable';
@@ -97,7 +97,7 @@ export default function Tabou2LogsModal({
         },
         disabled: disabledAdd.current,
         tooltip: props.i18n(props.messages, "tabou2.logsModal.createEvent"),
-        onClick: () => insertNewLog({id: maxBy(logs, "id").id + 1, eventDate: new Date().toISOString()})
+        onClick: () => insertNewLog({id: isEmpty(logs) ? 1 : maxBy(logs, "id")?.id + 1, eventDate: new Date().toISOString()})
     }];
 
     const readOnly = props?.authent?.isReferent || props?.authent?.isContrib ? false : true;

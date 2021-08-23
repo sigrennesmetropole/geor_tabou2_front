@@ -55,15 +55,15 @@ export default function Tabou2LogsTable({
                                 </th>
                                 <th className="col-xs-2" style={getStyle("idType")}><Message msgId="tabou2.logsModal.type"/>
                                 </th>
-                                <th className="col-xs-6"><Message msgId="tabou2.logsModal.note"/></th>
-                                {
-                                    readOnly ? null : (<th><Message msgId="tabou2.logsModal.actions"/></th>)
-                                }
+                                <th><Message msgId="tabou2.logsModal.note"/></th>
                                 <th style={getStyle("modifUser")}><Message msgId="tabou2.logsModal.owner"/>
                                     {
                                         getSortIcon("modifUser")
                                     }
                                 </th>
+                                {
+                                    readOnly ? null : (<th><Message msgId="tabou2.logsModal.actions"/></th>)
+                                }
                             </tr>
                         </thead>
                         <tbody style={{overflow: "auto"}}>
@@ -135,7 +135,7 @@ export default function Tabou2LogsTable({
                                                 }
                                             </td>
                                             {
-                                                readOnly ? null :
+                                                readOnly || log.systeme ? null :
                                                     (<td>
                                                         {log.new || log.edit ? (
                                                             <Button
