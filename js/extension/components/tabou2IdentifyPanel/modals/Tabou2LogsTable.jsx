@@ -135,7 +135,7 @@ export default function Tabou2LogsTable({
                                                 }
                                             </td>
                                             {
-                                                readOnly || log.systeme ? null :
+                                                readOnly ? null :
                                                     (<td>
                                                         {log.new || log.edit ? (
                                                             <Button
