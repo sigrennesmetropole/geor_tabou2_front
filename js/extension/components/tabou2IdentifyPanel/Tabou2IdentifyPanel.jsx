@@ -5,8 +5,13 @@ import Tabou2IdentifyContent from './Tabou2IdentifyContent';
 import { LAYER_FIELD_OPTION } from '@ext/constants';
 import { createOptions, getFeaturesOptions } from '@ext/utils/identify';
 import IdentifyDropDown from "./IdentifyDropDown";
-import { Button, Glyphicon } from 'react-bootstrap';
+import { Glyphicon } from 'react-bootstrap';
 import Tabou2Information from "@ext/components/common/Tabou2Information";
+import ButtonRB from '@mapstore/components/misc/Button';
+import tooltip from '@mapstore/components/misc/enhancers/tooltip';
+const Button = tooltip(ButtonRB);
+
+
 /**
  * Parent identify panel
  * @param {any} param
@@ -115,25 +120,42 @@ export default function Tabou2IdentifyPanel({
                                 <Glyphicon glyph="pencil-add"/>
                             </Button>
                         ) : (
-                            <Button
-                                tooltip={props.i18n(props.messages, "tabou2.identify.sendMail")}
-                                onClick={() => {
-                                    if (!props?.pluginCfg?.consultHelpMail) return;
-                                    let a = document.createElement('a');
-                                    a.href = `mailto:${props.pluginCfg.consultHelpMail}`;
-                                    a.click();
-                                    a.remove();
-                                }}
-                                bsStyle="primary"
-                                bsSize="lg"
-                                style={{marginTop: "10%"}}>
-                                <Glyphicon glyph="envelope"/>
-                            </Button>
+                            <>
+                                <Button
+                                    tooltip={props.i18n(props.messages, "tabou2.identify.sendMail")}
+                                    onClick={() => {
+                                        if (!props?.pluginCfg?.consultHelpMail) return;
+                                        let a = document.createElement('a');
+                                        a.href = `mailto:${props.pluginCfg.consultHelpMail}`;
+                                        a.click();
+                                        a.remove();
+                                    }}
+                                    bsStyle="primary"
+                                    bsSize="lg"
+                                    style={{marginTop: "10%", marginBottom: "10px"}}>
+                                    <Glyphicon glyph="envelope"/>
+                                </Button><br></br>
+                                <a
+                                    title={props.i18n(props.messages, "tabou2.identify.copyMailTitle")}
+                                    style={{cursor: "pointer"}}
+                                    onClick={() => {
+                                        navigator.clipboard.writeText(props.pluginCfg.consultHelpMail);
+                                        props.displayMsg("warning", "tabou2.copy", "tabou2.copyAddress");
+                                    }}>
+                                    {props.i18n(props.messages, "tabou2.identify.copyMail")}
+                                </a>
+                            </>
                         )}
                     </div>
                 }
-                message={props.i18n(props.messages, props.authentInfos.isReferent ?
-                    "tabou2.identify.msgCreateEmprise" : "tabou2.identify.msgNeedCreateEmprise")}
+                message={
+                    <div>
+                        {
+                            props.i18n(props.messages, props.authentInfos.isReferent ?
+                                "tabou2.identify.msgCreateEmprise" : "tabou2.identify.msgNeedCreateEmprise")
+                        }
+                    </div>
+                }
                 title={props.i18n(props.messages, "tabou2.identify.titleCreateEmprise")}/>
         </>
     );

@@ -38,7 +38,8 @@ import {
     searchIds,
     createFeature,
     changeFeature,
-    setIdentifyInfos
+    setIdentifyInfos,
+    displayMsg
 } from "@ext/actions/tabou2";
 
 function toolContainer({...props }) {
@@ -162,6 +163,7 @@ export default connect(
         searchIds: searchIds,
         createFeature: createFeature,
         changeFeature: changeFeature,
-        setIdentifyInfos: setIdentifyInfos
+        setIdentifyInfos: setIdentifyInfos,
+        displayMsg: displayMsg
     }
 )(toolContainer);

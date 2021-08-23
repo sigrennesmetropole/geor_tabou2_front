@@ -2,6 +2,8 @@
   "locale": "fr-FR",
   "messages": {
     "tabou2": {
+      "copy": "Copier / coller",
+      "copyAddress": "L'adresse a été copiée dans le Presse-papiers",
       "infos": {
         "failIdentify": "La récupération des informations à échouée",
         "failApi": "Erreur API",
@@ -60,13 +62,16 @@
         "partFour": "4 - Définir les critères liés aux programmes"
       },
       "identify": {
+        "copyMailTitle": "Copier l'adresse pour réaliser un copier / coller",
+        "sendMail": "Envoyer un mail",
+        "copyMail": "Copier l'adresse e-mail",
         "getInfos": "Récupération des informations",
         "noData": "Aucune données...",
         "documents": "Documents",
         "logs": "Journal de bord",
         "fromSelection": "Saisir à partir de la sélection",
         "msgCreateEmprise": "Pour saisir les informations de cette emprise, cliquez sur l'onglet Ajouter ou cliquez directement sur ce bouton",
-        "msgNeedCreateEmprise": "Cette entité ne fait pas l'objet d'un suivi dans Tabou et n'est donc pas disponible. Pour en savoir plus et activer le suivi, merci de contacter le service SPEU/UCUF par mail.",
+        "msgNeedCreateEmprise": "Cette entité ne fait pas l'objet d'un suivi dans Tabou et n'est donc pas disponible. Pour en savoir plus et activer le suivi, merci de contacter le service SPEU/UCUF via l'e-mail ci-dessous.",
         "titleCreateEmprise": "Entité non suivie",
         "tiers": {
           "title": "Tiers associés",
@@ -179,6 +184,7 @@
         "title": "Documents associés"
       },
       "logsModal": {
+        "isSystem": "Système",
         "createEvent": "Créer un événement",
         "title": "Journal des événements",
         "date": "Date",
