@@ -1,12 +1,14 @@
 import React from 'react';
-import { Table, Glyphicon, Grid, Row, Col } from 'react-bootstrap';
-import { orderBy, isEmpty } from 'lodash';
+import { Table, Glyphicon, Grid, Row, Col, Checkbox } from 'react-bootstrap';
+import { orderBy, isEmpty, find } from 'lodash';
 import ButtonRB from '@mapstore/components/misc/Button';
 import Tabou2Combo from '@ext/components/form/Tabou2Combo';
 import Tabou2TextForm from '@ext/components/form/Tabou2TextForm';
 import { getTypesEvents } from "@ext/api/search";
 import tooltip from '@mapstore/components/misc/enhancers/tooltip';
 import Message from "@mapstore/components/I18N/Message";
+import moment from 'moment';
+
 const Button = tooltip(ButtonRB);
 
 export default function Tabou2LogsTable({
@@ -32,7 +34,7 @@ export default function Tabou2LogsTable({
         return (<Glyphicon onClick={() => changeSort(name) } glyph={icon} style={{marginLeft: "5px"}}/>);
     };
 
-    // TODO : fix this
+    // manage sort style
     const getStyle = (name) => {
         return find(sortField, [0, name]) ? {color: "darkcyan"} : {color: "rgb(51, 51, 51)"};
     };
@@ -43,23 +45,25 @@ export default function Tabou2LogsTable({
                     <Table>
                         <thead>
                             <tr>
-                                <th className="col-xs-2" style={getStyle("eventDate")}><Message msgId="tabou2.logsModal.date"/>
+                                <th className="col-xs-1">
+                                    <Message msgId="tabou2.logsModal.isSystem"/>
+                                </th>
+                                <th className="col-xs-1" style={getStyle("eventDate")}><Message msgId="tabou2.logsModal.date"/>
                                     {
                                         getSortIcon("eventDate")
                                     }
                                 </th>
-                                <th className="col-xs-2" style={getStyle("modifUser")}><Message msgId="tabou2.logsModal.owner"/>
+                                <th className="col-xs-2" style={getStyle("idType")}><Message msgId="tabou2.logsModal.type"/>
+                                </th>
+                                <th className="col-xs-6"><Message msgId="tabou2.logsModal.note"/></th>
+                                {
+                                    readOnly ? null : (<th><Message msgId="tabou2.logsModal.actions"/></th>)
+                                }
+                                <th style={getStyle("modifUser")}><Message msgId="tabou2.logsModal.owner"/>
                                     {
                                         getSortIcon("modifUser")
                                     }
                                 </th>
-                                <th className="col-xs-2" style={getStyle("idType")}><Message msgId="tabou2.logsModal.type"/>
-                                </th>
-                                <th><Message msgId="tabou2.logsModal.editor"/></th>
-                                <th><Message msgId="tabou2.logsModal.note"/></th>
-                                {
-                                    readOnly ? null : (<th><Message msgId="tabou2.logsModal.actions"/></th>)
-                                }
                             </tr>
                         </thead>
                         <tbody style={{overflow: "auto"}}>
@@ -68,13 +72,18 @@ export default function Tabou2LogsTable({
                                     <>
                                         <tr>
                                             <td>
-                                                {
-                                                    new Date(log.eventDate).toLocaleDateString()
-                                                }
+                                                <Checkbox
+                                                    style={{marginTop: "0px"}}
+                                                    checked={log.systeme}
+                                                    disabled
+                                                    id={`${log.id}-system-`}
+                                                >
+                                                    <Message msgId={`tabou2.search.${log.systeme ? "yes" : "no"}`}/>
+                                                </Checkbox>
                                             </td>
                                             <td>
                                                 {
-                                                    !log.new ? log.createUser : props?.authent?.user || ""
+                                                    new Date(log.eventDate).toLocaleDateString()
                                                 }
                                             </td>
                                             <td>
@@ -101,11 +110,6 @@ export default function Tabou2LogsTable({
                                                     ) : log.typeEvenement?.libelle
                                                 }
                                             </td>
-                                            <td>
-                                                {
-                                                    !log.new ? log.modifUser : null
-                                                }
-                                            </td>
                                             <td style={{
                                                 wordBreak: "break-word",
                                                 overflow: "auto",
@@ -123,6 +127,11 @@ export default function Tabou2LogsTable({
                                                             placeholder={log.description || props.i18n(props.messages, "tabou2.logsModal.notePlaceholder")} />
 
                                                     ) : log.description
+                                                }
+                                            </td>
+                                            <td>
+                                                {
+                                                    !log.new ? `${log.modifUser} le ${moment(log.modifDate).format("DD/MM/YYYY")}` : null
                                                 }
                                             </td>
                                             {
