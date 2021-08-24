@@ -73,13 +73,9 @@ export default function Tabou2LogsTable({
                                         <tr>
                                             <td>
                                                 <Checkbox
-                                                    style={{marginTop: "0px"}}
+                                                    style={{marginTop: "0px", textAlign: "center"}}
                                                     checked={log.systeme}
-                                                    disabled
-                                                    id={`${log.id}-system-`}
-                                                >
-                                                    <Message msgId={`tabou2.search.${log.systeme ? "yes" : "no"}`}/>
-                                                </Checkbox>
+                                                />
                                             </td>
                                             <td>
                                                 {
