@@ -53,12 +53,13 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
         name: "ddc",
         label: "tabou2.identify.accordions.ddcData",
         type: "table",
-        fields: ["nom", "promoteur", "etape", "dateLiv"],
+        fields: ["numAds", "decisionDossier"/* , "surfCommerce", "surfEquipe"*/],
         labels: [
             "tabou2.identify.accordions.numAds",
-            "tabou2.identify.accordions.adsDate",
+            "tabou2.identify.accordions.adsDate"
+            /* ,
             "tabou2.identify.accordions.docDate",
-            "tabou2.identify.accordions.daactDate"
+            "tabou2.identify.accordions.daactDate"*/
         ],
         layers: ["layerPA"],
         source: props?.tabouInfos?.permis?.elements || [],
