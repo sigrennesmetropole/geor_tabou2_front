@@ -125,7 +125,7 @@ export default function Tabou2IdentifyContent({
                                 )}
                                 eventKey={index.toString()}>
                                 {item.id === "ident" ? <Tabou2IdentAccord operation={operation} mapFeature={mapFeature} initialItem={infos} change={onChange} {...props}/> : null}
-                                {item.id === "describe" ? <Tabou2DescribeAccord operation={operation} mapFeature={mapFeature} initialItem={infos} change={onChange} {...props}/> : null}
+                                {item.id === "describe" ? <Tabou2DescribeAccord programme={props.tabouInfos.programme} operation={operation} mapFeature={mapFeature} initialItem={infos} change={onChange} {...props}/> : null}
                                 {item.id === "gouvernance" ? <Tabou2GouvernanceAccord operation={operation} mapFeature={mapFeature} initialItem={infos} change={onChange} {...props}/> : null}
                                 {item.id === "suivi" ? <Tabou2SuiviOpAccord operation={operation} mapFeature={mapFeature} initialItem={infos} change={onChange} {...props}/> : null}
                                 {item.id === "dds" ? <Tabou2DdsAccord operation={operation} mapFeature={mapFeature} initialItem={infos} change={onChange} {...props}/> : null}

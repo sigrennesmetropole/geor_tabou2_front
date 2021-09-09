@@ -72,8 +72,9 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
         label: "tabou2.identify.accordions.programme",
         type: "text",
         layers: ["layerPA"],
-        source: programme,
-        readOnly: false
+        source: has(values, "programme") ? values : programme,
+        readOnly: false,
+        isArea: true
     }].filter(el => el?.layers?.includes(layer) || !el?.layers);
 
     /**
