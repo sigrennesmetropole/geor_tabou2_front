@@ -33,7 +33,7 @@ import { getSelection, getLayer, getPluginCfg, isTabou2Activate } from '@ext/sel
 import { URL_ADD } from '@ext/constants';
 import { wrapStartStop } from "@mapstore/observables/epics";
 import { error, success } from "@mapstore/actions/notifications";
-import { refreshLayers } from "@mapstore/actions/layers";
+import { refreshLayerVersion } from "@mapstore/actions/layers";
 import { layersSelector } from '@mapstore/selectors/layers';
 
 // get service to request according to action type
@@ -430,6 +430,6 @@ export function onLayerReload(action$, store) {
     return action$.ofType(RELOAD_LAYER)
         .switchMap( action => {
             let layer = layersSelector(store.getState()).filter(lyr => lyr.name === action.layer);
-            return Rx.Observable.of(refreshLayers([layer[0]], {}));
+            return Rx.Observable.of(refreshLayerVersion(layer[0].id));
         });
 }
