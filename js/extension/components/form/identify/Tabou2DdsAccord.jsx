@@ -21,7 +21,6 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
     const [fields, setFields] = useState([]);
     const [required, setRequired] = useState({});
 
-    console.log(programme);
     /**
      * Create fields to display into table
      * @returns Array of fields
