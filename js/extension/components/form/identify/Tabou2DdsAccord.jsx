@@ -21,33 +21,34 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
     const [fields, setFields] = useState([]);
     const [required, setRequired] = useState({});
 
+    console.log(programme);
     /**
      * Create fields to display into table
      * @returns Array of fields
      */
     const getFields = () => [{
-        name: "adsDate",
+        name: "adsDatePrevu",
         label: "tabou2.identify.accordions.adsDate",
-        field: "adsDate",
+        field: "adsDatePrevu",
         type: "date",
         layers: ["layerPA"],
-        source: has(values, "adsDate") ? values : programme,
+        source: has(values, "adsDatePrevu") ? values : programme,
         readOnly: false
     }, {
-        name: "docDate",
+        name: "docDatePrevu",
         label: "tabou2.identify.accordions.docDate",
-        field: "docDate",
+        field: "docDatePrevu",
         type: "date",
         layers: ["layerPA"],
-        source: has(values, "docDate") ? values : programme,
+        source: has(values, "docDatePrevu") ? values : programme,
         readOnly: false
     }, {
         name: "datDate",
         label: "tabou2.identify.accordions.daactDate",
-        field: "datDate",
+        field: "datDatePrevu",
         type: "date",
         layers: ["layerPA"],
-        source: has(values, "datDate") ? values : programme,
+        source: has(values, "datDatePrevu") ? values : programme,
         readOnly: false
     }, {
         name: "ddc",
