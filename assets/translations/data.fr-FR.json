@@ -61,7 +61,9 @@
         "partOne": "1 - Définir les éléments du référentiel cartographique",
         "partTwo": "2 - Définir les critères liés aux secteurs",
         "partThree": "3 - Définir les critères liés aux opérations",
-        "partFour": "4 - Définir les critères liés aux programmes"
+        "partFour": "4 - Définir les critères liés aux programmes",
+        "maxSearchLimit": " Trop de résultats : Veuillez ajouter un filtre supplémentaire !",
+        "noResultLayer": " Une ou plusieurs couche ne retournent aucun résultat à filtrer"
       },
       "identify": {
         "copyMailTitle": "Copier l'adresse pour réaliser un copier / coller",

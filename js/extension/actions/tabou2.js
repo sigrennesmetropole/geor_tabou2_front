@@ -230,8 +230,10 @@ export const setIdentifyInfos = infos => ({
     infos
 });
 
-export const setTabouErrors = (value, name) => ({
+export const setTabouErrors = (value, name, typeMsg = "", msg = "") => ({
     type: SET_TABOU_ERROR,
     value,
-    name
+    name,
+    typeMsg,
+    msg
 });
