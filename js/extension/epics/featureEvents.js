@@ -368,7 +368,7 @@ export function getTiersElements(action$, store) {
  * @param {any} store
  * @returns action
  */
- export function getEventsElements(action$, store) {
+export function getEventsElements(action$, store) {
     return action$.ofType(GET_EVENTS)
         .filter(() => isTabou2Activate(store.getState()))
         .switchMap(() => {
