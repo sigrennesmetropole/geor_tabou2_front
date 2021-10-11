@@ -95,6 +95,7 @@ export default function Tabou2TiersModal({
     // cancel edition, association, creation
     const cancelChange = (tier) => {
         editionActivate.current = false;
+        if (!tier) return;
         if (tier.associate || tier.new) {
             setTiers([...tiers.filter(t => t.id !== tier.id)]);
             setOpened(-1);
