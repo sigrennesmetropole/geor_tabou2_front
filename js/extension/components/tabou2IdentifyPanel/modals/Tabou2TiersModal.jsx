@@ -105,7 +105,6 @@ export default function Tabou2TiersModal({
 
     // associate new tiers from combobox
     const changeTier = (newTier, oldTier) => {
-        console.log("change");
         if (newTier.associate) {
             setTiers([...tiers.filter(t => t.id !== newTier.id), newTier]);
         } else {
