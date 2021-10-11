@@ -6,7 +6,7 @@ import Tabou2Combo from '@ext/components/form/Tabou2Combo';
 import Tabou2TextForm from '@ext/components/form/Tabou2TextForm';
 import Tabou2TiersActions from "@js/extension/components/tabou2IdentifyPanel/modals/Tabou2TiersActions";
 import Tabou2TiersForm from '@ext/components/form/Tabou2TiersForm';
-import { TIERS_SCHEMA, REQUIRED_TIER } from '@ext/constants';
+import { TIERS_SCHEMA, REQUIRED_TIERS } from '@ext/constants';
 import { getRequestApi } from "@ext/api/search";
 import "@ext/css/identify.css";
 import Message from "@mapstore/components/I18N/Message";
@@ -62,10 +62,10 @@ export default function Tabou2TiersModal({
 
     // return boolean - true if some info missing
     const getEmpty = (tier) => {
-        // return REQUIRED_TIER.map(r => get(tier,r)).filter(a => !a)
-        let isInvalid = some(REQUIRED_TIER.map(r => tier[r]), isEmpty);
-        if (tier.associate && (!isEmpty(associateTier.type) && !isEmpty(associateTier.tier))) {
-            if (tier.libelle) isInvalid = false;
+        if (isEmpty(tier)) return true;
+        let isInvalid = some(REQUIRED_TIERS.map(r => tier.tiers[r]), isEmpty);
+        if (tier.associate && (!isEmpty(associateTier.typeTiers) && !isEmpty(associateTier.tiers))) {
+            if (tier.typeTiers.libelle) isInvalid = false;
         }
         return isInvalid;
     };
@@ -105,6 +105,7 @@ export default function Tabou2TiersModal({
 
     // associate new tiers from combobox
     const changeTier = (newTier, oldTier) => {
+        console.log("change");
         if (newTier.associate) {
             setTiers([...tiers.filter(t => t.id !== newTier.id), newTier]);
         } else {
@@ -171,7 +172,10 @@ export default function Tabou2TiersModal({
             show={visible}
             showClose
             buttons={readOnly ? [] : buttons}
-            onClose={onClick}
+            onClose={() => {
+                cancelChange(find(tiers, ["edit", true]));
+                return onClick();
+            }}
             size="lg">
             <Grid fluid style={{overflow: "auto", height: "100%"}}>
                 {
@@ -210,7 +214,7 @@ export default function Tabou2TiersModal({
                                                         <tr>
                                                             <td>
                                                                 <Checkbox
-                                                                    checked={!tier.dateInactif}
+                                                                    checked={!tier.tiers.dateInactif}
                                                                     disabled
                                                                     inline
                                                                     id={`${tier.id}-${new Date().getTime()}}`}
@@ -219,12 +223,12 @@ export default function Tabou2TiersModal({
                                                             </td>
                                                             <td>
                                                                 <Checkbox
-                                                                    checked={tier.estPrive}
+                                                                    checked={tier.tiers.estPrive}
                                                                     disabled={tier.dateInactif || opened !== tier.id ? true : false}
                                                                     inline
                                                                     id={`${tier.id}-${new Date().getTime()}}`}
                                                                     onChange={() => {
-                                                                        changeTier({...tier, estPrive: !tier.estPrive});
+                                                                        changeTier({...tier, estPrive: !tier.tiers.estPrive});
                                                                     }}
                                                                     className="col-xs-2"
                                                                     change
@@ -234,19 +238,20 @@ export default function Tabou2TiersModal({
                                                                 {tier.associate ? (
                                                                     <Tabou2Combo
                                                                         load={() => getRequestApi("types-tiers?asc=true", props.pluginCfg.apiCfg, {})}
-                                                                        defaultValue={tier.libelle}
+                                                                        defaultValue={tier.typeTiers.libelle}
                                                                         placeholder={getMessageById(props.messages, "tabou2.tiersModal.typePlaceholder")}
                                                                         textField={"libelle"}
-                                                                        value={associateTier?.type?.libelle}
+                                                                        filter={false}
+                                                                        value={associateTier?.typeTiers?.libelle}
                                                                         onLoad={(r) => r?.elements || r}
                                                                         disabled={false}
                                                                         onSelect={(t) =>  {
-                                                                            changeTier({...tier, libelle: t.libelle});
-                                                                            setAssociateTier({...associateTier, type: t});
+                                                                            changeTier({...tier, typeTiers: {...tier.typeTiers, ...t}});
+                                                                            setAssociateTier({...associateTier, typeTiers: t});
                                                                         }}
                                                                         onChange={(t) => {
                                                                             if (!t) {
-                                                                                changeTier({...tier, libelle: ""});
+                                                                                changeTier({...tier, typeTiers: {...tier.typeTiers, libelle: ""}});
                                                                                 setAssociateTier({...associateTier, type: t});
                                                                             }
                                                                         }
@@ -256,10 +261,10 @@ export default function Tabou2TiersModal({
                                                                             openCombobox: getMessageById(props.messages, "tabou2.displaylist")
                                                                         }}
                                                                     />
-                                                                ) : tier.libelle}
+                                                                ) : tier.typeTiers.libelle}
                                                             </td>
                                                             <td>
-                                                                {tier.nom}
+                                                                {tier.tiers.nom}
                                                                 {
                                                                     tier.associate ?
                                                                         (
@@ -268,11 +273,11 @@ export default function Tabou2TiersModal({
                                                                                 valueField={"id"}
                                                                                 placeholder={getMessageById(props.messages, "tabou2.tiersModal.tierPlaceholder")}
                                                                                 textField={"nom"}
-                                                                                value={associateTier?.tier?.nom}
+                                                                                value={associateTier?.tiers?.nom}
                                                                                 onLoad={(r) => (r?.elements || r).filter(t => !t.dateInactif && !props.tiers.map(item => item.id).includes(t.id))}
                                                                                 disabled={false}
-                                                                                onSelect={(t) =>  setAssociateTier({...associateTier, tier: t})}
-                                                                                onChange={(t) => !t ? setAssociateTier(omit(associateTier, ["tier"])) : null}
+                                                                                onSelect={(t) =>  setAssociateTier({...associateTier, tiers: t})}
+                                                                                onChange={(t) => !t ? setAssociateTier(omit(associateTier, ["tiers"])) : null}
                                                                                 messages={{
                                                                                     emptyList: getMessageById(props.messages, "tabou2.emptyList"),
                                                                                     openCombobox: getMessageById(props.messages, "tabou2.displaylist")

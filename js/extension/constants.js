@@ -38,22 +38,30 @@ export const URL_TIERS = {
     "tabou2:oa_secteur": "operations"
 };
 
-export const REQUIRED_TIER = ["adresseRue", "nom", "adresseCp", "adresseVille", "email", "libelle"];
+export const REQUIRED_TIERS = ["adresseRue", "nom", "adresseCp", "adresseVille", "email"];
 export const TIERS_SCHEMA = {
-    "id": 0,
-    "nom": "",
-    "libelle": "",
-    "adresseNum": "",
-    "adresseRue": "",
-    "adresseCp": "",
-    "adresseVille": "",
-    "telephone": "",
-    "telecopie": "",
-    "email": "",
-    "siteWeb": "",
-    "contact": "",
-    "estPrive": false,
-    "dateInactif": null
+    id: 0,
+    tiers: {
+        nom: "",
+        adresseNum: "",
+        adresseRue: "",
+        adresseCp: "",
+        adresseVille: "",
+        telephone: "",
+        telecopie: "",
+        email: "",
+        siteWeb: "",
+        contact: "",
+        estPrive: false,
+        dateInactif: null
+    },
+    typeTiers: {
+        libelle: "",
+        createDate: "",
+        createUser: "",
+        dateInactif: "",
+        id: 0
+    }
 };
 
 export const SEARCH_ITEMS = [{

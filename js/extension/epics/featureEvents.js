@@ -41,10 +41,10 @@ const actionOnUpdate = {
     "ADD_FEATURE_EVENT": (layer, idFeature, event) => addFeatureEvent(layer, idFeature, event),
     "DELETE_FEATURE_EVENT": (layer, idFeature, event) => deleteFeatureEvent(layer, idFeature, event.id),
     "CHANGE_FEATURE_EVENT": (layer, idFeature, event) => changeFeatureEvent(layer, idFeature, event),
-    "ASSOCIATE_TIER": (layer, idFeature, tier) => associateFeatureTier(layer, idFeature, tier),
-    "DELETE_FEATURE_TIER": (layer, idFeature, tier) => dissociateFeatureTier(layer, idFeature, tier.id),
-    "CHANGE_FEATURE_TIER": (layer, idFeature, tier) => changeFeatureTier(tier),
-    "INACTIVATE_TIER": (layer, idFeature, tier) => inactivateTier(layer, idFeature, tier.id)
+    "ASSOCIATE_TIER": (layer, idFeature, tiers) => associateFeatureTier(layer, idFeature, tiers),
+    "DELETE_FEATURE_TIER": (layer, idFeature, tiers) => dissociateFeatureTier(layer, idFeature, tiers.id),
+    "CHANGE_FEATURE_TIER": (layer, idFeature, tiers) => changeFeatureTier(tiers.tiers),
+    "INACTIVATE_TIER": (layer, idFeature, tiers) => inactivateTier(tiers.tiers.id)
 };
 
 // get feature from API according to selected layer feature
@@ -291,9 +291,9 @@ export function associateTabou2Tier(action$, store) {
         .switchMap((action) => {
             // selected feature and selected layer
             let {featureId, layerUrl} = getInfos(store.getState());
-            return Rx.Observable.defer(() => getTiers({nom: action.tier.tier.nom}))
-                .switchMap(tier => {
-                    return Rx.Observable.defer(() => associateFeatureTier(layerUrl, featureId, tier?.data?.elements[0]?.id, action.tier.type.id))
+            return Rx.Observable.defer(() => getTiers({nom: action.tier.tiers.nom}))
+                .switchMap(tiers => {
+                    return Rx.Observable.defer(() => associateFeatureTier(layerUrl, featureId, tiers?.data?.elements[0]?.id, action.tier.typeTiers.id))
                         .catch(e => {
                             console.log("Error on tier association");
                             console.log(e);
@@ -322,7 +322,7 @@ export function updateTabou2Tier(action$, store) {
             let {featureId, layerUrl} = getInfos(store.getState());
             return Rx.Observable.defer(() => toDoOnUpdate(layerUrl, featureId, action.tier))
                 .switchMap(() => {
-                    return Rx.Observable.defer(() => changeFeatureTierAssociation(layerUrl, featureId, action.tier.id, action.tier.type.id))
+                    return Rx.Observable.defer(() => changeFeatureTierAssociation(layerUrl, featureId, action.tier.tiers.id, action.tier.typeTiers.id))
                         .catch(e => {
                             console.log("Error on change feature tier association");
                             console.log(e);
@@ -351,7 +351,7 @@ export function getTiersElements(action$, store) {
                         return Rx.Observable.defer(() => getFeatureTiers(layerUrl, featureId))
                             .switchMap( featureTiers => {
                                 if (featureTiers?.data?.elements) {
-                                    let allTiers = featureTiers.data.elements.map(t => ({...find(tiers.data.elements, ["nom", t.nom]), ...t}));
+                                    let allTiers = featureTiers.data.elements.map(t => ({...find(tiers.data.elements, ["tiers.nom", t.tiers.nom]), ...t}));
                                     return Rx.Observable.of(loadTiers(allTiers));
                                 }
                                 return Rx.Observable.empty();

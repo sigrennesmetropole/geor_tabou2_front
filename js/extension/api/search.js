@@ -111,17 +111,17 @@ export function changeFeatureTierAssociation(type, id, idTier, idType) {
     });
 }
 
-export function createTier(tier) {
-    return axios.post(`${baseURL}/tiers`, tier);
+export function createTier(tiers) {
+    return axios.post(`${baseURL}/tiers`, tiers.tiers);
 }
-export function changeFeatureTier(tier) {
-    return axios.put(`${baseURL}/tiers`, tier);
+export function changeFeatureTier(tiers) {
+    return axios.put(`${baseURL}/tiers`, tiers);
 }
 export function dissociateFeatureTier(type, id, associationId) {
     return axios.delete(`${baseURL}/${type}/${id}/tiers/${associationId}`);
 }
-export function inactivateTier(tierId) {
-    return axios.put(`${baseURL}/tiers/${tierId}/inactivate`, {});
+export function inactivateTier(tiersId) {
+    return axios.put(`${baseURL}/tiers/${tiersId}/inactivate`, {});
 }
 
 /**
