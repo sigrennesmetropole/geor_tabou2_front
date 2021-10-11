@@ -104,8 +104,8 @@ export function associateFeatureTier(type, id, idTier, idType) {
 }
 
 // change association type
-export function changeFeatureTierAssociation(type, id, idTier, idType) {
-    return axios.put(`${baseURL}/${type}/${id}/tiers/${idTier}`, {
+export function changeFeatureTierAssociation(type, id, idTier, idType, associationId) {
+    return axios.put(`${baseURL}/${type}/${id}/tiers/${associationId}`, {
         tiersId: idTier,
         typeTiersId: idType
     });

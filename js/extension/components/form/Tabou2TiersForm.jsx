@@ -32,7 +32,7 @@ export default function Tabou2TiersForm({...props}) {
         {
             apiField: "typeTiers.libelle",
             textField: "libelle",
-            targetField: "type",
+            targetField: "typeTiers",
             label: "tabou2.tiersModal.type",
             type: "combo",
             required: true
@@ -157,6 +157,7 @@ export default function Tabou2TiersForm({...props}) {
                                             load={() => getRequestApi("types-tiers?asc=true", props.pluginCfg.apiCfg, {})}
                                             defaultValue={get(thisTier, f.apiField)}
                                             placeholder={props.i18n(props.messages, f.label)}
+                                            filter={false}
                                             textField={f.textField}
                                             onLoad={(r) => r?.elements || r}
                                             disabled={false}
