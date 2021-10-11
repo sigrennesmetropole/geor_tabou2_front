@@ -263,7 +263,6 @@ export default function Tabou2TiersModal({
                                                                 ) : tier.typeTiers.libelle}
                                                             </td>
                                                             <td>
-                                                                {tier.tiers.nom}
                                                                 {
                                                                     tier.associate ?
                                                                         (
@@ -283,7 +282,7 @@ export default function Tabou2TiersModal({
                                                                                 }}
                                                                             />
 
-                                                                        ) : null
+                                                                        ) : tier.tiers.nom
                                                                 }
                                                             </td>
                                                             <td>
