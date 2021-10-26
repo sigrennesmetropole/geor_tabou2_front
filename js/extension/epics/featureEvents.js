@@ -394,7 +394,8 @@ export function createTabouFeature(action$, store) {
         .switchMap( action => {
             let infos = getInfos(store.getState());
             let messages = store.getState()?.locale.messages;
-            return Rx.Observable.defer( () => createNewTabouFeature(infos.layerUrl, action.params))
+            let layerUrl = infos?.layerUrl || get(URL_ADD, action.layer);
+            return Rx.Observable.defer( () => createNewTabouFeature(layerUrl, action.params))
                 .catch(e => {
                     console.log("Error to save feature change or feature creation");
                     console.log(e);

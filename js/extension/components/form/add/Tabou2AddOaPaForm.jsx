@@ -137,7 +137,7 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                 nature: natureIdValue
             };
         }
-        props.createFeature(params);
+        props.createFeature(params, type);
     };
 
     // Default info from selected feature
@@ -258,7 +258,11 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                                     );
                                     break;
                                 case "combo":
-                                    el = item?.autocomplete ? (
+                                    let isSearchCombo = item?.autocomplete;
+                                    if (infos.limitPa && item.name === "nomEmprise") {
+                                        isSearchCombo = false;
+                                    }
+                                    el = isSearchCombo ? (
                                         <SearchCombo
                                             minLength={has(item, "min") ? item.min : 3}
                                             textField={item.apiLabel}
@@ -387,7 +391,10 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                             header={(
                                 <>
                                     <label style={{marginRight: "2px"}}><Message msgId="tabou2.add.addSecond"/></label>
-                                    <ControlledPopover text={props.i18n(props.messages, "tabou2.add.checkSector")} />
+                                    {
+                                        layer !== "layerPA" ? (<ControlledPopover text={props.i18n(props.messages, "tabou2.add.checkSector")} />) : null
+                                    }
+
                                 </>
                             )}
                         >

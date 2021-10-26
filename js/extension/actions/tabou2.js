@@ -66,9 +66,10 @@ export const changeFeature = (params) => ({
     params
 });
 
-export const createFeature = (params) => ({
+export const createFeature = (params, layer) => ({
     type: CREATE_FEATURE,
-    params
+    params,
+    layer
 });
 
 export const searchIds = (params) => ({
