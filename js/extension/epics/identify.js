@@ -204,6 +204,10 @@ export function createChangeFeature(action$, store) {
 export function displayFeatureInfos(action$, store) {
     return action$.ofType(DISPLAY_FEATURE)
         .switchMap( action => {
+
+            // only if user create tabou feature from clicked map feature
+            if (!action?.infos || !action.infos?.feature) return Rx.Observable.isEmpty();
+
             let tocLayer = layersSelector(store.getState()).filter(lyr => lyr.name === action.infos.layer)[0];
             let env = localizedLayerStylesEnvSelector(store.getState());
             let { url, request, metadata } = buildIdentifyRequest(tocLayer, {...identifyOptionsSelector(store.getState()), env});
