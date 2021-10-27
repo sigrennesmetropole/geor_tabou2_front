@@ -451,7 +451,10 @@ export const OA_SCHEMA = {
     "description": "",
     "nbLogementsPrevu": 0,
     "secteur": false,
-    "surfaceTotale": 0
+    "surfaceTotale": 0,
+    "etape": {
+        "id": 0
+    }
 };
 
 export const PA_SCHEMA = {
