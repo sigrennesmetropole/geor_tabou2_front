@@ -451,25 +451,7 @@ export const OA_SCHEMA = {
     "description": "",
     "nbLogementsPrevu": 0,
     "secteur": false,
-    "surfaceTotale": 0,
-    "consommationEspace": {
-        "id": 1
-    },
-    "decision": {
-        "id": 1
-    },
-    "etape": {
-        "id": 1
-    },
-    "maitriseOuvrage": {
-        "id": 1
-    },
-    "modeAmenagement": {
-        "id": 1
-    },
-    "vocation": {
-        "id": 1
-    }
+    "surfaceTotale": 0
 };
 
 export const PA_SCHEMA = {
