@@ -218,7 +218,7 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                                     el = (
                                         <Checkbox
                                             checked={layer === "layerSA" ? true :  infos[item.name] || false}
-                                            disabled={!isEmpty(feature) && ["layerOA", "layerSA"].includes(layer) ? true : false}
+                                            disabled={!isEmpty(feature)}
                                             onChange={() => changeState(item)}
                                             inline
                                             id={item.name + new Date().getTime()}>
