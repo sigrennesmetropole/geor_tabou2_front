@@ -411,7 +411,7 @@ export const ADD_PA_FORM = [ {
     min: 2,
     autocomplete: "nom",
     apiField: "id",
-    placeholder: "Selectionner une emprise",
+    placeholder: "Saisir un nom d'emprise",
     type: "combo"
 }, {
     label: "tabou2.add.name",
