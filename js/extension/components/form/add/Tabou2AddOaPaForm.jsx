@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Row, Col, FormGroup, Checkbox, FormControl, Panel, Alert, Glyphicon } from 'react-bootstrap';
 import Tabou2Combo from '@ext/components/form/Tabou2Combo';
-import { get, has, isEmpty, keys, isEqual, isObject, find } from 'lodash';
+import { get, has, isEmpty, keys, isEqual, isObject, find, omit } from 'lodash';
 import { getRequestApi } from '@ext/api/search';
 import ControlledPopover from '@mapstore/components/widgets/widget/ControlledPopover';
 import Toolbar from '@mapstore/components/misc/toolbar/Toolbar';
@@ -118,12 +118,15 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
 
     // Send request to save new OA, PA, SA
     const handleSubmit = () => {
-        let params = {};
+        let dataSchema = type === "layerPA" ? PA_SCHEMA : OA_SCHEMA;
+        let params = {
+            ...dataSchema,
+            ...newFeature,
+            code: infos.code
+        };
         if (type === "layerPA") {
             params = {
-                ...PA_SCHEMA,
-                ...newFeature,
-                code: infos.code,
+                ...params,
                 numAds: "",
                 etape: isObject(newFeature.etape) ? newFeature.etape : find(etapesInfos.current, ['libelle', newFeature.etape])
             };
@@ -131,13 +134,12 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
             // newFeature = {...OA_SCHEMA, ...newFeature, secteur: infos.secteur};
             let natureIdValue = isObject(newFeature.nature) ? newFeature.nature : {id: find(naturesInfos.current, ['libelle', newFeature.nature])?.id};
             params = {
-                ...OA_SCHEMA,
-                ...newFeature,
-                code: infos.code,
+                ...params,
                 nature: natureIdValue
             };
         }
-        props.createFeature(params);
+        params = omit(params, keys(params).filter(k => !keys(dataSchema).includes(k)));
+        props.createFeature(params, find(props.options, {value: type}));
     };
 
     // Default info from selected feature
@@ -216,7 +218,7 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                                     el = (
                                         <Checkbox
                                             checked={layer === "layerSA" ? true :  infos[item.name] || false}
-                                            disabled={!isEmpty(feature) && ["layerOA", "layerSA"].includes(layer) ? true : false}
+                                            disabled={!isEmpty(feature)}
                                             onChange={() => changeState(item)}
                                             inline
                                             id={item.name + new Date().getTime()}>
@@ -258,7 +260,11 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                                     );
                                     break;
                                 case "combo":
-                                    el = item?.autocomplete ? (
+                                    let isSearchCombo = item?.autocomplete;
+                                    if (infos.limitPa && item.name === "nomEmprise") {
+                                        isSearchCombo = false;
+                                    }
+                                    el = isSearchCombo ? (
                                         <SearchCombo
                                             minLength={has(item, "min") ? item.min : 3}
                                             textField={item.apiLabel}
@@ -387,7 +393,10 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                             header={(
                                 <>
                                     <label style={{marginRight: "2px"}}><Message msgId="tabou2.add.addSecond"/></label>
-                                    <ControlledPopover text={props.i18n(props.messages, "tabou2.add.checkSector")} />
+                                    {
+                                        layer !== "layerPA" ? (<ControlledPopover text={props.i18n(props.messages, "tabou2.add.checkSector")} />) : null
+                                    }
+
                                 </>
                             )}
                         >

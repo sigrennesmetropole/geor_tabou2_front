@@ -21,6 +21,7 @@ import { tabouLoadIdentifyContent, tabouSetGFIFormat, purgeTabou, printProgramme
     displayFeatureInfos } from '@ext/epics/identify';
 import { getSelectionInfos, updateTabou2Logs, updateTabou2Tier, addCreateTabou2Tier, getTiersElements,
     associateTabou2Tier, createTabouFeature, onLayerReload, getEventsElements } from '@ext/epics/featureEvents';
+import { showNotification } from "@ext/epics/common";
 import { setTbarPosition } from '@ext/epics/setup';
 
 import { CONTROL_NAME } from '@ext/constants';
@@ -98,7 +99,8 @@ export default {
         createTabouFeature: createTabouFeature,
         onLayerReload: onLayerReload,
         displayFeatureInfos: displayFeatureInfos,
-        getEventsElements: getEventsElements
+        getEventsElements: getEventsElements,
+        showNotification: showNotification
     },
     containers: {
         Toolbar: {

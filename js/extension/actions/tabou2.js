@@ -36,6 +36,15 @@ export const SET_GFI_REQUEST = "SET_GFI_REQUEST";
 export const SET_IDENTIFY_INFOS = "SET_IDENTIFY_INFOS";
 export const SET_TABOU_ERROR = "SET_ERROR";
 export const GET_EVENTS = "GET_EVENTS";
+export const DISPLAY_MSG = "DISPLAY_MSG";
+
+export const displayMsg = (level, title, message) => ({
+    type: DISPLAY_MSG,
+    level,
+    title,
+    message
+});
+
 
 export const reloadLayer = (layer) => ({
     type: RELOAD_LAYER,
@@ -57,9 +66,10 @@ export const changeFeature = (params) => ({
     params
 });
 
-export const createFeature = (params) => ({
+export const createFeature = (params, layer) => ({
     type: CREATE_FEATURE,
-    params
+    params,
+    layer
 });
 
 export const searchIds = (params) => ({
@@ -221,8 +231,10 @@ export const setIdentifyInfos = infos => ({
     infos
 });
 
-export const setTabouErrors = (value, name) => ({
+export const setTabouErrors = (value, name, typeMsg = "", msg = "") => ({
     type: SET_TABOU_ERROR,
     value,
-    name
+    name,
+    typeMsg,
+    msg
 });

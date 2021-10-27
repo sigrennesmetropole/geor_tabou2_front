@@ -36,6 +36,7 @@ Voici la liste des paramètres et les explications correspondantes.
 .. csv-table:: Paramètres Tabou2
         :header: "Paramètre", "Exemple", "Description"
 
+        "consultHelpMail", "test@rennesmetropole.fr", "Adresse mail de contact pour les utilisateur en consultation uniquement",
         "limite","150","Limite du nombre de résultats pour la recherche. Permet d'afficher un message afin d'inviter l'utilisateur à restreindre sa recherche"
         "geoserverURL","/geoserver","URL du geoserver contenant les données cartographiques du contexte Tabou2"
         "showIdentify","false", "Permet de garder le volet natif d'identification au clic sur la carte ou de le masquer"
@@ -173,6 +174,7 @@ Voici un exemple de configuration :
 
         {
             "cfg": {
+                "consultHelpMail": "test@rennesmetropole.fr",
                 "geoserverURL": "/geoserver",
                 "showIdentify": false,
                 "layersOrder": ["Opérations", "Secteurs", "Programmes"],

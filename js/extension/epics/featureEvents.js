@@ -33,7 +33,7 @@ import { getSelection, getLayer, getPluginCfg, isTabou2Activate } from '@ext/sel
 import { URL_ADD } from '@ext/constants';
 import { wrapStartStop } from "@mapstore/observables/epics";
 import { error, success } from "@mapstore/actions/notifications";
-import { refreshLayers } from "@mapstore/actions/layers";
+import { refreshLayerVersion } from "@mapstore/actions/layers";
 import { layersSelector } from '@mapstore/selectors/layers';
 
 // get service to request according to action type
@@ -41,10 +41,10 @@ const actionOnUpdate = {
     "ADD_FEATURE_EVENT": (layer, idFeature, event) => addFeatureEvent(layer, idFeature, event),
     "DELETE_FEATURE_EVENT": (layer, idFeature, event) => deleteFeatureEvent(layer, idFeature, event.id),
     "CHANGE_FEATURE_EVENT": (layer, idFeature, event) => changeFeatureEvent(layer, idFeature, event),
-    "ASSOCIATE_TIER": (layer, idFeature, tier) => associateFeatureTier(layer, idFeature, tier),
-    "DELETE_FEATURE_TIER": (layer, idFeature, tier) => dissociateFeatureTier(layer, idFeature, tier.id),
-    "CHANGE_FEATURE_TIER": (layer, idFeature, tier) => changeFeatureTier(tier),
-    "INACTIVATE_TIER": (layer, idFeature, tier) => inactivateTier(layer, idFeature, tier.id)
+    "ASSOCIATE_TIER": (layer, idFeature, tiers) => associateFeatureTier(layer, idFeature, tiers),
+    "DELETE_FEATURE_TIER": (layer, idFeature, tiers) => dissociateFeatureTier(layer, idFeature, tiers.id),
+    "CHANGE_FEATURE_TIER": (layer, idFeature, tiers) => changeFeatureTier(tiers.tiers),
+    "INACTIVATE_TIER": (layer, idFeature, tiers) => inactivateTier(tiers.tiers.id)
 };
 
 // get feature from API according to selected layer feature
@@ -291,9 +291,9 @@ export function associateTabou2Tier(action$, store) {
         .switchMap((action) => {
             // selected feature and selected layer
             let {featureId, layerUrl} = getInfos(store.getState());
-            return Rx.Observable.defer(() => getTiers({nom: action.tier.tier.nom}))
-                .switchMap(tier => {
-                    return Rx.Observable.defer(() => associateFeatureTier(layerUrl, featureId, tier?.data?.elements[0]?.id, action.tier.type.id))
+            return Rx.Observable.defer(() => getTiers({nom: action.tier.tiers.nom}))
+                .switchMap(tiers => {
+                    return Rx.Observable.defer(() => associateFeatureTier(layerUrl, featureId, tiers?.data?.elements[0]?.id, action.tier.typeTiers.id))
                         .catch(e => {
                             console.log("Error on tier association");
                             console.log(e);
@@ -322,7 +322,7 @@ export function updateTabou2Tier(action$, store) {
             let {featureId, layerUrl} = getInfos(store.getState());
             return Rx.Observable.defer(() => toDoOnUpdate(layerUrl, featureId, action.tier))
                 .switchMap(() => {
-                    return Rx.Observable.defer(() => changeFeatureTierAssociation(layerUrl, featureId, action.tier.id, action.tier.type.id))
+                    return Rx.Observable.defer(() => changeFeatureTierAssociation(layerUrl, featureId, action.tier.tiers.id, action.tier.typeTiers.id, action.tier.id))
                         .catch(e => {
                             console.log("Error on change feature tier association");
                             console.log(e);
@@ -351,7 +351,7 @@ export function getTiersElements(action$, store) {
                         return Rx.Observable.defer(() => getFeatureTiers(layerUrl, featureId))
                             .switchMap( featureTiers => {
                                 if (featureTiers?.data?.elements) {
-                                    let allTiers = featureTiers.data.elements.map(t => ({...find(tiers.data.elements, ["nom", t.nom]), ...t}));
+                                    let allTiers = featureTiers.data.elements.map(t => ({...find(tiers.data.elements, ["tiers.nom", t.tiers.nom]), ...t}));
                                     return Rx.Observable.of(loadTiers(allTiers));
                                 }
                                 return Rx.Observable.empty();
@@ -368,7 +368,7 @@ export function getTiersElements(action$, store) {
  * @param {any} store
  * @returns action
  */
- export function getEventsElements(action$, store) {
+export function getEventsElements(action$, store) {
     return action$.ofType(GET_EVENTS)
         .filter(() => isTabou2Activate(store.getState()))
         .switchMap(() => {
@@ -394,7 +394,9 @@ export function createTabouFeature(action$, store) {
         .switchMap( action => {
             let infos = getInfos(store.getState());
             let messages = store.getState()?.locale.messages;
-            return Rx.Observable.defer( () => createNewTabouFeature(infos.layerUrl, action.params))
+            let layerUrl = infos?.layerUrl || get(URL_ADD, action.layer.value);
+            let layer = infos.layer || action.layer.name;
+            return Rx.Observable.defer( () => createNewTabouFeature(layerUrl, action.params))
                 .catch(e => {
                     console.log("Error to save feature change or feature creation");
                     console.log(e);
@@ -413,8 +415,8 @@ export function createTabouFeature(action$, store) {
                             title: getMessageById(messages, "tabou2.infos.successApi"),
                             message: getMessageById(messages, "tabou2.infos.successAddFeature")
                         }),
-                        reloadLayer(infos.layer),
-                        displayFeature({feature: el.data, layer: infos.layer})
+                        reloadLayer(layer),
+                        displayFeature({feature: el.data, layer: layer})
                     );
                 });
         });
@@ -430,6 +432,6 @@ export function onLayerReload(action$, store) {
     return action$.ofType(RELOAD_LAYER)
         .switchMap( action => {
             let layer = layersSelector(store.getState()).filter(lyr => lyr.name === action.layer);
-            return Rx.Observable.of(refreshLayers([layer[0]], {}));
+            return Rx.Observable.of(refreshLayerVersion(layer[0].id));
         });
 }

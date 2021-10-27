@@ -106,7 +106,7 @@ export default function tabou2(state = initialState, action) {
         const { featureAdded } = action;
         return set('featureAdded', featureAdded, state);
     case SET_TABOU_ERROR:
-        return set(`errors.${action.name}`, action.value, state);
+        return set('errors', action, state);
     default:
         return state;
     }

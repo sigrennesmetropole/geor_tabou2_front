@@ -249,10 +249,10 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
                 <div id="tabou2-tbar-container" className="text-center">
                     <Tabou2SearchToolbar {...props} filters={getFiltersObj} apply={props.applyFilterObj} reset={reset}/>
                 </div>
-                { props.getTabouErrors.filter ? (
-                    <Alert className="alert-danger">
+                { props.getTabouErrors.msg ? (
+                    <Alert className={"alert-" + props.getTabouErrors.typeMsg}>
                         <Glyphicon glyph="filter" />
-                        <Message msgId={" Trop de résultats : Veuillez ajouter un filtre supplémentaire !"}/>
+                        <Message msgId={props.i18n(props.messages, props.getTabouErrors?.msg || " ")}/>
                     </Alert>) : null
                 }
                 <Row>

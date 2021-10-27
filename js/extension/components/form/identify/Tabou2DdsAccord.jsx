@@ -26,39 +26,40 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
      * @returns Array of fields
      */
     const getFields = () => [{
-        name: "adsDate",
+        name: "adsDatePrevu",
         label: "tabou2.identify.accordions.adsDate",
-        field: "adsDate",
+        field: "adsDatePrevu",
         type: "date",
         layers: ["layerPA"],
-        source: has(values, "adsDate") ? values : programme,
+        source: has(values, "adsDatePrevu") ? values : programme,
         readOnly: false
     }, {
-        name: "docDate",
+        name: "docDatePrevu",
         label: "tabou2.identify.accordions.docDate",
-        field: "docDate",
+        field: "docDatePrevu",
         type: "date",
         layers: ["layerPA"],
-        source: has(values, "docDate") ? values : programme,
+        source: has(values, "docDatePrevu") ? values : programme,
         readOnly: false
     }, {
         name: "datDate",
         label: "tabou2.identify.accordions.daactDate",
-        field: "datDate",
+        field: "datDatePrevu",
         type: "date",
         layers: ["layerPA"],
-        source: has(values, "datDate") ? values : programme,
+        source: has(values, "datDatePrevu") ? values : programme,
         readOnly: false
     }, {
         name: "ddc",
         label: "tabou2.identify.accordions.ddcData",
         type: "table",
-        fields: ["nom", "promoteur", "etape", "dateLiv"],
+        fields: ["numAds", "decisionDossier"/* , "surfCommerce", "surfEquipe"*/],
         labels: [
             "tabou2.identify.accordions.numAds",
-            "tabou2.identify.accordions.adsDate",
+            "tabou2.identify.accordions.adsDate"
+            /* ,
             "tabou2.identify.accordions.docDate",
-            "tabou2.identify.accordions.daactDate"
+            "tabou2.identify.accordions.daactDate"*/
         ],
         layers: ["layerPA"],
         source: props?.tabouInfos?.permis?.elements || [],

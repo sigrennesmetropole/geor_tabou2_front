@@ -2,6 +2,8 @@
   "locale": "fr-FR",
   "messages": {
     "tabou2": {
+      "copy": "Copier / coller",
+      "copyAddress": "L'adresse a été copiée dans le Presse-papiers",
       "infos": {
         "failIdentify": "La récupération des informations à échouée",
         "failApi": "Erreur API",
@@ -33,6 +35,8 @@
         "identify": "Identifier une entité"
       },
       "search": {
+        "yes": "oui",
+        "no": "non",
         "selectDate": "Choisir une date",
         "apply": "Appliquer les filtres",
         "restore": "Supprimer tous les filtres",
@@ -57,16 +61,21 @@
         "partOne": "1 - Définir les éléments du référentiel cartographique",
         "partTwo": "2 - Définir les critères liés aux secteurs",
         "partThree": "3 - Définir les critères liés aux opérations",
-        "partFour": "4 - Définir les critères liés aux programmes"
+        "partFour": "4 - Définir les critères liés aux programmes",
+        "maxSearchLimit": " Trop de résultats : Veuillez ajouter un filtre supplémentaire !",
+        "noResultLayer": " Une ou plusieurs couche ne retournent aucun résultat à filtrer"
       },
       "identify": {
+        "copyMailTitle": "Copier l'adresse pour réaliser un copier / coller",
+        "sendMail": "Envoyer un mail",
+        "copyMail": "Copier l'adresse e-mail",
         "getInfos": "Récupération des informations",
         "noData": "Aucune données...",
         "documents": "Documents",
         "logs": "Journal de bord",
         "fromSelection": "Saisir à partir de la sélection",
         "msgCreateEmprise": "Pour saisir les informations de cette emprise, cliquez sur l'onglet Ajouter ou cliquez directement sur ce bouton",
-        "msgNeedCreateEmprise": "Cette entité ne fait pas l'objet d'un suivi dans Tabou et n'est donc pas disponible. Pour en savoir plus et activer le suivi, merci de contacter le service SPEU/UCUF par mail.",
+        "msgNeedCreateEmprise": "Cette entité ne fait pas l'objet d'un suivi dans Tabou et n'est donc pas disponible. Pour en savoir plus et activer le suivi, merci de contacter le service SPEU/UCUF via l'e-mail ci-dessous.",
         "titleCreateEmprise": "Entité non suivie",
         "tiers": {
           "title": "Tiers associés",
@@ -88,7 +97,7 @@
           "operation": "Operation",
           "totalSpace": "Surface totale (ha)",
           "programme": "Programme",
-          "adsDate": "Date ADS",
+          "adsDate": "Date décision",
           "docDate": "Date DOC",
           "daactDate": "Date DAACT",
           "ddcData": "Données DDC",
@@ -162,12 +171,12 @@
         "code": "Code",
         "step": "Etape",
         "limiteEmprise": "Limiter les emprises selon l'opération",
-        "msgStartPa": "Commencez par choisir l'opération parente",
-        "selectPaParent": "Sélectionner l'opération parente :",
+        "msgStartPa": " Commencez par saisir le nom de l'opération parente",
+        "selectPaParent": "Sélectionner l'opération parente",
         "selectLayer": "Choisir un type opération ou programme...",
         "checkSector": " Pour saisir un secteur, cocher la case 'secteur' d'une opération",
         "needAllFields": "Tous les champs sont obligatoires",
-        "cancelAll": "Annuler les saisies",
+        "cancelAll": "Annuler la saisie",
         "reset": "Informations par défaut",
         "save": "Sauvegarder",
         "missingFields": "Veuillez compléter tous les champs !",
@@ -179,6 +188,7 @@
         "title": "Documents associés"
       },
       "logsModal": {
+        "isSystem": "Système",
         "createEvent": "Créer un événement",
         "title": "Journal des événements",
         "date": "Date",

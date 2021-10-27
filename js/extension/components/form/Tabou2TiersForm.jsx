@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from "react";
 import { Col, FormGroup, FormControl, ControlLabel, Row, Checkbox } from "react-bootstrap";
-import { get, has } from "lodash";
+import { get, has, set, clone } from "lodash";
 import { getRequestApi } from "@ext/api/search";
 import Tabou2Combo from '@ext/components/form/Tabou2Combo';
 import Toolbar from '@mapstore/components/misc/toolbar/Toolbar';
@@ -22,80 +22,82 @@ export default function Tabou2TiersForm({...props}) {
 
     // manage props change
     const changeProps = (field, val) => {
-        setThisTier({...thisTier, [field]: val});
+        let copyTiers = clone(thisTier);
+        set(copyTiers, field, val);
+        setThisTier(copyTiers);
     };
 
     // forms will be construct from this array
     const TIERS_FORMS = [
         {
-            apiField: "libelle",
+            apiField: "typeTiers.libelle",
             textField: "libelle",
-            targetField: "type",
+            targetField: "typeTiers",
             label: "tabou2.tiersModal.type",
             type: "combo",
             required: true
         }, {
-            apiField: "nom",
+            apiField: "tiers.nom",
             label: "tabou2.tiersModal.name",
             type: "text",
             required: true,
             pattern: "^[0-9]*$"
         }, {
-            apiField: "adresseCp",
+            apiField: "tiers.adresseCp",
             label: "tabou2.tiersModal.cp",
             type: "text",
             required: true,
             pattern: "^[0-9]*$"
         }, {
-            apiField: "adresseNum",
+            apiField: "tiers.adresseNum",
             label: "tabou2.tiersModal.numAd",
             type: "text",
             required: false,
             pattern: "^[0-9]*$"
         }, {
-            apiField: "adresseRue",
+            apiField: "tiers.adresseRue",
             label: "tabou2.tiersModal.street",
             type: "text",
             required: true,
             pattern: ""
         }, {
-            apiField: "adresseVille",
+            apiField: "tiers.adresseVille",
             label: "tabou2.tiersModal.city",
             type: "text",
             required: true,
             pattern: ""
         }, {
-            apiField: "contact",
+            apiField: "tiers.contact",
             label: "tabou2.tiersModal.contact",
             type: "text",
             required: true,
             pattern: ""
         }, {
-            apiField: "email",
+            apiField: "tiers.email",
             label: "tabou2.tiersModal.email",
             type: "email",
             required: true,
             pattern: ""
         }, {
-            apiField: "siteWeb",
+            apiField: "tiers.siteWeb",
             label: "tabou2.tiersModal.website",
             type: "text",
             required: false,
             pattern: ""
         }, {
-            apiField: "telecopie",
+            apiField: "tiers.telecopie",
             label: "tabou2.tiersModal.fax",
             type: "text",
             required: false,
             pattern: "^[0-9]*$"
         }, {
-            apiField: "telephone",
+            apiField: "tiers.telephone",
             label: "tabou2.tiersModal.tel",
             type: "text",
             required: true,
             pattern: "^[0-9]*$"
         }, {
-            apiField: "estPrive",
+            apiField: "tiers.estPrive",
             label: "tabou2.tiersModal.isPrivate",
             type: "checkbox",
             required: false
@@ -153,8 +155,9 @@ export default function Tabou2TiersForm({...props}) {
                                         <Tabou2Combo
                                             style={{ border: "1px solid red !important" }}
                                             load={() => getRequestApi("types-tiers?asc=true", props.pluginCfg.apiCfg, {})}
-                                            defaultValue={props.tier.libelle}
+                                            defaultValue={get(thisTier, f.apiField)}
                                             placeholder={props.i18n(props.messages, f.label)}
+                                            filter={false}
                                             textField={f.textField}
                                             onLoad={(r) => r?.elements || r}
                                             disabled={false}
@@ -175,7 +178,7 @@ export default function Tabou2TiersForm({...props}) {
                                             style={{marginBottom: "10px"}}
                                             id={`${props.tier.id}-priv-${new Date().getTime()}}`}
                                             onChange={() => {
-                                                changeProps("estPrive", !thisTier.estPrive);
+                                                changeProps("estPrive", !thisTier.tiers.estPrive);
                                             }}
                                             className="col-xs-2"
                                             change

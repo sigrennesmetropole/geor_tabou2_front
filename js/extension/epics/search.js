@@ -54,7 +54,7 @@ export function tabouResetFilter(action$, store) {
                 return Rx.Observable.of(
                     changeLayerParams(id, { cql_filter: undefined }),
                     changeLayerProperties(id, { layerFilter: undefined }),
-                    setTabouErrors(false, "filter")
+                    setTabouErrors(false, "filter", "", "")
                 );
             });
         });
@@ -95,8 +95,12 @@ export function tabouGetSearchIds(action$, store) {
                             let correctIds = filter.idType === 'string' ? ids.map(i => `'${i}'`) : (ids.length ? ids : [0]);
                             // create entire filter string
                             idsCql = correctIds.map(id => `${filter.idField} = ${id}`).join(' OR ');
+                        } else if (response.features.length > searchLimit) {
+                            // reach CQL limit. Display message and avoid TOC filter layer error.
+                            return Rx.Observable.of(setTabouErrors(true, "filter", "danger", getMessageById(messages, "tabou2.search.maxSearchLimit")));
                         } else {
-                            return Rx.Observable.of(setTabouErrors(true, "filter"));
+                            // no result to filter
+                            return Rx.Observable.of(setTabouErrors(false, "filter", "warning", getMessageById(messages, "tabou2.search.noResultLayer")));
                         }
                         // create toc filter
                         let newFilter = getNewFilter(layer, null, [], null);

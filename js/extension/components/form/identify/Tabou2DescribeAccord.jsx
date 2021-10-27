@@ -28,6 +28,15 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
         readOnly: false,
         isArea: true
     }, {
+        name: "programme",
+        field: "programme",
+        label: "tabou2.identify.accordions.programme",
+        type: "text",
+        layers: ["layerPA"],
+        source: has(values, "programme") ? values : programme,
+        readOnly: false,
+        isArea: true
+    }, {
         name: "description",
         label: "tabou2.identify.accordions.describe",
         type: "text",
@@ -66,14 +75,6 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
         step: 0.1,
         layers: ["layerSA", "layerOA"],
         source: values
-    }, {
-        name: "programme",
-        field: "programme",
-        label: "tabou2.identify.accordions.programme",
-        type: "text",
-        layers: ["layerPA"],
-        source: programme,
-        readOnly: false
     }].filter(el => el?.layers?.includes(layer) || !el?.layers);
 
     /**

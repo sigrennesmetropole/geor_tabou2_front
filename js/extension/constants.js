@@ -38,22 +38,30 @@ export const URL_TIERS = {
     "tabou2:oa_secteur": "operations"
 };
 
-export const REQUIRED_TIER = ["adresseRue", "nom", "adresseCp", "adresseVille", "email", "libelle"];
+export const REQUIRED_TIERS = ["adresseRue", "nom", "adresseCp", "adresseVille", "email"];
 export const TIERS_SCHEMA = {
-    "id": 0,
-    "nom": "",
-    "libelle": "",
-    "adresseNum": "",
-    "adresseRue": "",
-    "adresseCp": "",
-    "adresseVille": "",
-    "telephone": "",
-    "telecopie": "",
-    "email": "",
-    "siteWeb": "",
-    "contact": "",
-    "estPrive": false,
-    "dateInactif": null
+    id: 0,
+    tiers: {
+        nom: "",
+        adresseNum: "",
+        adresseRue: "",
+        adresseCp: "",
+        adresseVille: "",
+        telephone: "",
+        telecopie: "",
+        email: "",
+        siteWeb: "",
+        contact: "",
+        estPrive: false,
+        dateInactif: null
+    },
+    typeTiers: {
+        libelle: "",
+        createDate: "",
+        createUser: "",
+        dateInactif: "",
+        id: 0
+    }
 };
 
 export const SEARCH_ITEMS = [{
@@ -403,7 +411,7 @@ export const ADD_PA_FORM = [ {
     min: 2,
     autocomplete: "nom",
     apiField: "id",
-    placeholder: "Selectionner une emprise",
+    placeholder: "Saisir un nom d'emprise",
     type: "combo"
 }, {
     label: "tabou2.add.name",
@@ -444,23 +452,8 @@ export const OA_SCHEMA = {
     "nbLogementsPrevu": 0,
     "secteur": false,
     "surfaceTotale": 0,
-    "consommationEspace": {
-        "id": 1
-    },
-    "decision": {
-        "id": 1
-    },
     "etape": {
-        "id": 1
-    },
-    "maitriseOuvrage": {
-        "id": 1
-    },
-    "modeAmenagement": {
-        "id": 1
-    },
-    "vocation": {
-        "id": 1
+        "id": 0
     }
 };
 
