@@ -1,0 +1,27 @@
+.tabou-help-link {
+    padding: 5px;
+    margin-left: 13px;
+}
+.tabou-help-link:hover {
+    text-decoration: none !important;
+}
+.tabou-main-panel .ms2-border-layout-content {
+    padding: 5px 15px !important;
+    padding-bottom: 10% !important;
+    margin-bottom: 0% !important;
+    overflow: auto;
+}
+.tabou-main-panel .ms2-border-layout-body {
+    overflow: auto !important;
+}
+.tabou-form-group {
+    margin-bottom: 0px !important;
+}
+
+.tabou-search-panel {
+    margin: 0px !important;
+}
+
+.tabou-search-combo {
+    margin-top: 5px;
+}

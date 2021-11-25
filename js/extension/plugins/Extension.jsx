@@ -24,7 +24,7 @@ import { getSelectionInfos, updateTabou2Logs, updateTabou2Tier, addCreateTabou2T
 import { showNotification } from "@ext/epics/common";
 import { setTbarPosition } from '@ext/epics/setup';
 
-import { CONTROL_NAME } from '@ext/constants';
+import { CONTROL_NAME, PANEL_SIZE } from '@ext/constants';
 
 const compose = (...functions) => args => functions.reduceRight((arg, fn) => fn(arg), args);
 
@@ -42,7 +42,7 @@ class Tabou2Panel extends React.Component {
         filterObj: {},
         toggleControl: () => { },
         tabs: [],
-        size: 500
+        size: PANEL_SIZE
     };
 
     render() {

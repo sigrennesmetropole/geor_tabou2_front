@@ -7,7 +7,7 @@ import { toggleControl } from "@mapstore/actions/controls";
 import Tabou2MainTabs from './Tabou2MainTabs';
 import Tabou2MainToolContainer from './Tabou2MainToolContainer';
 import { CONTROL_NAME, PANEL_SIZE } from '../../constants';
-import "@ext/css/mainpanel.css";
+import "@ext/css/tabou.css";
 /**
  * Main tabou2 plugin panel (parent on top)
  * @param {any} param
@@ -22,20 +22,17 @@ function Tabou2MainPanel({
 }) {
     if (!enabled) return null;
     const helpLink = props.help && props.help.url;
-    console.log(props);
     return (
-        <span className="ms-tabou2-panel">
+        <span className="tabou-main-panel">
             <DockPanel
                 open
                 glyph="th"
                 bsStyle="primary"
                 title={<Message msgId="tabou2.windowTitle"/>}
-                className={''}
                 draggable={false}
                 onClose={onClose}
                 size={size}
                 dock
-                style={{dockStyle}}
                 fade
                 zIndex={1000}
                 clickOutEnabled={false}

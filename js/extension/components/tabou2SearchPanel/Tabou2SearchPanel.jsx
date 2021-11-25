@@ -15,10 +15,10 @@ import moment from 'moment';
 import momentLocalizer from 'react-widgets/lib/localizers/moment';
 momentLocalizer(moment);
 import { DateTimePicker } from 'react-widgets';
+import "@ext/css/tabou.css";
 
 function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, changeFiltersObj, changeFilters, currentFilters, ...props }) {
     if (currentTab !== 'search') return null;
-    const comboMarginTop = '5px';
     const layersInfos = getTabouLayersInfos(props?.pluginCfg?.layersCfg || {});
     const config = props.pluginCfg.searchCfg;
 
@@ -168,7 +168,7 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
         }
         return (
             <Col xs={6}>
-                <FormGroup>
+                <FormGroup className="tabou-form-group">
                     {
                         combo?.autocomplete ? (
                             <SearchCombo
@@ -185,12 +185,12 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
                                 }
                                 onSelect={v => changeFilter(combo, v)}
                                 onChange={v => changeFilter(combo, v)}
-                                style={{ marginTop: comboMarginTop }}
+                                className="tabou-search-combo"
                                 name={combo.name}
                                 placeholder={props.i18n(props.messages, combo.placeholder)}
                             />)
                             : (<Tabou2Combo
-                                style={{ marginTop: comboMarginTop }}
+                                className="tabou-search-combo"
                                 load={() => getRequestApi(get(combo, "api") || get(combo, "name"), props.pluginCfg.apiCfg, urlParams)}
                                 disabled={isDisabled(combo, urlParams)}
                                 placeholder={props.i18n(props.messages, combo.placeholder)}
@@ -223,21 +223,20 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
         let defaultVal = get(comboValues, `${item.name}.${item.isStart ? "start" : "end"}`) || null;
         return (
             <Col xs={6}>
-                <FormGroup>
-                    <ControlLabel inline="true"> {<Message msgId={item?.placeholder || item.label}/>} :
-                        <DateTimePicker
-                            type="date"
-                            dropUp
-                            placeholder={props.i18n(props.messages, item.label)}
-                            calendar
-                            time={false}
-                            culture="fr"
-                            value={defaultVal ? new Date(defaultVal) : null}
-                            format="DD/MM/YYYY"
-                            onSelect={(e) => changeDate(item, new Date(e).toISOString(e))}
-                            onChange={(e) => !e ? changeDate(item, e) : null}
-                        />
-                    </ControlLabel>
+                <FormGroup className="tabou-form-group">
+                    <DateTimePicker
+                        type="date"
+                        className="tabou-search-combo"
+                        dropUp
+                        placeholder={props.i18n(props.messages, item.label)}
+                        calendar
+                        time={false}
+                        culture="fr"
+                        value={defaultVal ? new Date(defaultVal) : null}
+                        format="DD/MM/YYYY"
+                        onSelect={(e) => changeDate(item, new Date(e).toISOString(e))}
+                        onChange={(e) => !e ? changeDate(item, e) : null}
+                    />
                 </FormGroup>
             </Col>
         );
@@ -260,17 +259,19 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
                         header={(
                             <label><Message msgId="tabou2.search.partOne"/></label>
                         )}
+                        className="tabou-search-panel"
                     >
-                        <Row>
-                            { SEARCH_ITEMS.filter(f => f.group === 1).map((cb) => getCombo(cb)) }
-                        </Row>
-                        <Checkbox
-                            checked={get(comboValues, "pbil") || false}
-                            onChange={() => changeChecked("pbil")}
-                            inline
-                            id={"search-pbil" + new Date().getTime()}>
-                            <Message msgId="tabou2.search.pbil"/>
-                        </Checkbox>
+                        { SEARCH_ITEMS.filter(f => f.group === 1).map((cb) => getCombo(cb)) }
+                        <div className="col-xs-12">
+                            <Checkbox
+                                className="tabou-search-combo"
+                                checked={get(comboValues, "pbil") || false}
+                                onChange={() => changeChecked("pbil")}
+                                inline
+                                id={"search-pbil" + new Date().getTime()}>
+                                <Message msgId="tabou2.search.pbil"/>
+                            </Checkbox>
+                        </div>
                     </Panel>
                 </Row>
                 <Row>
@@ -278,6 +279,7 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
                         header={(
                             <label><Message msgId="tabou2.search.partTwo"/></label>
                         )}
+                        className="tabou-search-panel"
                     >
                         { SEARCH_ITEMS.filter(f => f.group === 2).map((cb, i) => getCombo(cb, i, 2)) }
                     </Panel>
@@ -287,6 +289,7 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
                         header={(
                             <label><Message msgId="tabou2.search.partThree"/></label>
                         )}
+                        className="tabou-search-panel"
                     >
                         { SEARCH_ITEMS.filter(f => f.group === 3).map((cb, i) => getCombo(cb, i, 1)) }
                     </Panel>
@@ -296,24 +299,25 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
                         header={(
                             <label><Message msgId="tabou2.search.partFour"/></label>
                         )}
+                        className="tabou-search-panel"
                     >
-                        <Checkbox inline><Message msgId="tabou2.search.isHelp"/></Checkbox>
-                        <Row>
-                            {
-                                SEARCH_ITEMS.filter(f => f.group === 4).map((el, i) =>  i < 1 ? getCombo(el, i) : null)
-                            }
-                            {
-                                SEARCH_ITEMS.filter(f => f.group === 4).map((el, i) =>  i > 0 ? getCombo(el, i) : null)
-                            }
-                        </Row>
+                        <div className="col-xs-12">
+                            <Checkbox inline><Message msgId="tabou2.search.isHelp"/></Checkbox>
+                        </div>
+                        {
+                            SEARCH_ITEMS.filter(f => f.group === 4).map((el, i) =>  i < 1 ? getCombo(el, i) : null)
+                        }
+                        {
+                            SEARCH_ITEMS.filter(f => f.group === 4).map((el, i) =>  i > 0 ? getCombo(el, i) : null)
+                        }
                         {
                             SEARCH_CALENDARS.filter((el, i) => i < 4 ).map(els => (
-                                <Row  style={{ marginTop: "5px" }}>{els.items.map(el => getDate(el))}</Row>
+                                els.items.map(el => getDate(el))
                             ))
                         }
                         {
                             SEARCH_CALENDARS.filter((el, i) => i > 3 ).map(els => (
-                                <Row  style={{ marginTop: "5px" }}>{els.items.map(el => getDate(el))}</Row>
+                                els.items.map(el => getDate(el))
                             ))
                         }
                     </Panel>

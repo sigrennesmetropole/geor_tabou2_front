@@ -23,7 +23,7 @@ export const GEOSERVER_WFS_URL = 'https://public.sig.rennesmetropole.fr/geoserve
 
 export const ID_SELECTOR = 'layerTabouId-selector';
 
-export const PANEL_SIZE = 500;
+export const PANEL_SIZE = 600;
 
 export const URL_ADD = {
     "tabou2": "",
