@@ -6,8 +6,12 @@
       "https://portail-test.sig.rennesmetropole.fr",
       "https://portail-test.sig.rennesmetropole.fr/geoserver",
       "https://jdev.stoplight.io/",
-      "http://localhost:3000",
+      "https://public.sig.rennesmetropole.fr/geonetwork/srv/fre/csw",
       "https://public.sig.rennesmetropole.fr",
+      "http://localhost:3000",
+      "https://ifl.francophonelibre.org",
+      "https://ifl.francophonelibre.org/llg",
+      "https://ifl.francophonelibre.org/cpmmunaute",
       "https://604732d49e5ab30017394597.mockapi.io/",
       "http://demo.geo-solutions.it/geoserver",
       "https://demo.geo-solutions.it:443/geoserver",
@@ -216,6 +220,172 @@
   "plugins": {
     "mobile": [
       {
+        "name": "Tabou2",
+        "cfg": {
+          "consultHelpMail": "d.cottencin@rennesmetropole.fr",
+          "geoserverURL": "https://gis.jdev.fr/geoserver",
+          "showIdentify": false,
+          "layersOrder": ["Opérations", "Secteurs", "Programmes"],
+          "help": {
+            "url": "https://public.sig.rennesmetropole.fr/ressources/app/georchestra/Portail%20web%20guide%20rapide%20de%20prise%20en%20main.pdf",
+            "contact": "d.cottencin@rennesmetropole.fr"
+          },
+          "layersCfg": {
+            "layerPA": {
+              "nom": "tabou2:tabou_v_oa_programme",
+              "geomField": "the_geom",
+              "idField": "objectid",
+              "idType": "number"
+            },
+            "layerOA": {
+              "nom": "tabou2:tabou_v_oa_operation",
+              "geomField": "the_geom",
+              "idField": "objectid",
+              "idType": "number"
+            },
+            "layerSA": {
+              "nom": "tabou2:tabou_v_oa_secteur",
+              "geomField": "the_geom",
+              "idField": "objectid",
+              "idType": "number"
+            }
+          },
+          "searchCfg": {
+            "limit": 150,
+            "communes": {
+              "layer": "tabou2:commune_emprise",
+              "geom": "the_geom",
+              "placeholder": "Communes",
+              "filterField": "code_insee",
+              "apiField": "codeInsee",
+              "apiLabel": "nom"
+            },
+            "quartiers": {
+              "layer": "tabou2:quartier",
+              "geom": "the_geom",
+              "placeholder": "Quartiers",
+              "filterField": "nuquart",
+              "apiField": "nuQuart",
+              "apiLabel": "nom"
+            },
+            "iris": {
+              "layer": "tabou2:iris",
+              "geom": "the_geom",
+              "placeholder": "Iris",
+              "filterField": "code_iris",
+              "apiField": "codeIris",
+              "apiLabel": "nmiris"
+            },
+            "etapesoa": {
+              "layer": "tabou2:tabou_v_oa_operation",
+              "geom": "the_geom",
+              "filterField": "etape",
+              "placeholder": "Etapes OA",
+              "apiField": "libelle",
+              "apiLabel": "libelle"
+            },
+            "etapespa": {
+              "layer": "tabou2:tabou_v_oa_programme",
+              "geom": "the_geom",
+              "filterField": "etape",
+              "apiLabel": "libelle",
+              "apiField": "libelle",
+              "type": "string",
+              "placeholder": "Etapes PA"
+            },
+            "secteurs-sam": {
+              "layer": "tabou2:v_chargedoperation_secteur",
+              "geom": "the_geom",
+              "filterField": "nom_secteu",
+              "apiLabel": "nomSecteur",
+              "apiField": "nomSecteur",
+              "placeholder": "Sec. SAM"
+            },
+            "secteurs-speu": {
+              "layer": "tabou2:v_referent_urbaniste_secteur",
+              "geom": "the_geom",
+              "filterField": "nom_secteu",
+              "apiLabel": "nomSecteur",
+              "apiField": "nomSecteur",
+              "placeholder": "Sec. SPEU"
+            },
+            "secteurs-sds": {
+              "layer": "tabou2:v_instructeur_secteur",
+              "geom": "the_geom",
+              "filterField": "secteur",
+              "apiField": "secteur",
+              "apiLabel": "secteur",
+              "placeholder": "Sec. SDS"
+            },
+            "secteurs-foncier": {
+              "layer": "tabou2:v_negociateurfoncier_secteur",
+              "geom": "the_geom",
+              "filterField": "negociateu",
+              "apiField": "negociateur",
+              "apiLabel": "negociateur",
+              "placeholder": "Sec. Foncier"
+            },
+            "natures": {
+              "layer": "tabou2:tabou_v_oa_operation",
+              "geom": "the_geom",
+              "service": "operations?nature",
+              "attribute": "layerOA",
+              "spatial": ["layerPA","layerSA"],
+              "filterField": "nature",
+              "apiField": "libelle",
+              "apiLabel": "libelle",
+              "placeholder": "Natures"
+            },
+            "amenageurOA": {},
+            "promoteurOA": {},
+            "types-financements": {
+              "filterField": "code",
+              "apiField": "code",
+              "apiLabel": "libelle",
+              "placeholder": "Type de financement"
+            },
+            "plui": {
+              "layer": "tabou2:plui_plan_zonage_simplifie",
+              "geom": "the_geom",
+              "filterField": "etiquette",
+              "apiField": "libelle",
+              "apiLabel": "libelle",
+              "placeholder": "Zonage PLUI"
+            },
+            "daact": {
+              "layer": "tabou2:tabou_v_oa_programme",
+              "geom": "the_geom",
+              "filterField": "daact_date",
+              "type": "date",
+              "placeholder": "Choisir une date"
+            },
+            "doc": {
+              "layer": "tabou2:tabou_v_oa_programme",
+              "geom": "the_geom",
+              "filterField": "doc_date",
+              "type": "date",
+              "placeholder": "Choisir une date"
+            },
+            "livraison": {
+              "layer": "tabou2:tabou_v_oa_programme",
+              "geom": "the_geom",
+              "filterField": "livraison_date",
+              "type": "date",
+              "placeholder": "Choisir une date"
+            },
+            "pbil": {
+              "layer": "tabou2:v_pbil0",
+              "geom": "the_geom"
+            }
+          },
+          "apiCfg": {
+            "apiURL": "/tabou2",
+            "extApiURL": "/tabou2",
+            "authent": ""
+          }
+        }
+      },
+      {
         "name": "Map",
         "cfg": {
           "mapOptions": {
@@ -357,6 +527,10 @@
           "geoserverURL": "https://gis.jdev.fr/geoserver",
           "showIdentify": false,
           "layersOrder": ["Opérations", "Secteurs", "Programmes"],
+          "help": {
+            "url": "https://public.sig.rennesmetropole.fr/ressources/app/georchestra/Portail%20web%20guide%20rapide%20de%20prise%20en%20main.pdf",
+            "contact": "d.cottencin@rennesmetropole.fr"
+          },
           "layersCfg": {
             "layerPA": {
               "nom": "tabou2:tabou_v_oa_programme",

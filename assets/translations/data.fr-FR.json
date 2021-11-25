@@ -2,6 +2,8 @@
   "locale": "fr-FR",
   "messages": {
     "tabou2": {
+      "helpTooltip": "Accéder à l'aide",
+      "help": "Aide",
       "copy": "Copier / coller",
       "copyAddress": "L'adresse a été copiée dans le Presse-papiers",
       "infos": {

@@ -124,9 +124,10 @@ export default function Tabou2IdentifyPanel({
                                 <Button
                                     tooltip={props.i18n(props.messages, "tabou2.identify.sendMail")}
                                     onClick={() => {
-                                        if (!props?.pluginCfg?.consultHelpMail) return;
+                                        let contact = props.pluginCfg?.help && props.pluginCfg.help?.contact;
+                                        if (contact) return;
                                         let a = document.createElement('a');
-                                        a.href = `mailto:${props.pluginCfg.consultHelpMail}`;
+                                        a.href = `mailto:${contact}`;
                                         a.click();
                                         a.remove();
                                     }}
@@ -139,7 +140,10 @@ export default function Tabou2IdentifyPanel({
                                     title={props.i18n(props.messages, "tabou2.identify.copyMailTitle")}
                                     style={{cursor: "pointer"}}
                                     onClick={() => {
-                                        navigator.clipboard.writeText(props.pluginCfg.consultHelpMail);
+                                        let contact = props.pluginCfg?.help && props.pluginCfg.help?.contact;
+                                        if (contact) {
+                                            navigator.clipboard.writeText(contact);
+                                        }
                                         props.displayMsg("warning", "tabou2.copy", "tabou2.copyAddress");
                                     }}>
                                     {props.i18n(props.messages, "tabou2.identify.copyMail")}

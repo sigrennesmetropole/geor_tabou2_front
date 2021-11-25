@@ -36,7 +36,7 @@ Voici la liste des paramètres et les explications correspondantes.
 .. csv-table:: Paramètres Tabou2
         :header: "Paramètre", "Exemple", "Description"
 
-        "consultHelpMail", "test@rennesmetropole.fr", "Adresse mail de contact pour les utilisateur en consultation uniquement",
+        "help", "{"url": "test.fr", "contact": "email@test.fr"}", "Email de contact et autres informations d'aide"
         "limite","150","Limite du nombre de résultats pour la recherche. Permet d'afficher un message afin d'inviter l'utilisateur à restreindre sa recherche"
         "geoserverURL","/geoserver","URL du geoserver contenant les données cartographiques du contexte Tabou2"
         "showIdentify","false", "Permet de garder le volet natif d'identification au clic sur la carte ou de le masquer"
@@ -174,6 +174,10 @@ Voici un exemple de configuration :
 
         {
             "cfg": {
+                "help": {
+                    "url": "https://public.sig.rennesmetropole.fr/ressources/app/georchestra/Portail%20web%20guide%20rapide%20de%20prise%20en%20main.pdf",
+                    "contact": "d.cottencin@rennesmetropole.fr"
+                },
                 "consultHelpMail": "test@rennesmetropole.fr",
                 "geoserverURL": "/geoserver",
                 "showIdentify": false,
