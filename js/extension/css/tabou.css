@@ -2,26 +2,42 @@
     padding: 5px;
     margin-left: 13px;
 }
+
 .tabou-help-link:hover {
     text-decoration: none !important;
 }
+
 .tabou-main-panel .ms2-border-layout-content {
     padding: 5px 15px !important;
     padding-bottom: 10% !important;
     margin-bottom: 0% !important;
     overflow: auto;
 }
+
 .tabou-main-panel .ms2-border-layout-body {
     overflow: auto !important;
 }
+
 .tabou-form-group {
     margin-bottom: 0px !important;
 }
 
-.tabou-search-panel {
+.tabou-panel {
     margin: 0px !important;
+}
+
+.tabou-panel .panel-body {
+    margin: 0px !important;
+    padding: 4px !important;
 }
 
 .tabou-search-combo {
     margin-top: 5px;
 }
+
+.idContentHeader .panel-heading{
+    border-radius:4px !important;
+    color: white !important;
+    background-color:#078aa3 !important;
+}
+
