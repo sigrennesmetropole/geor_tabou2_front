@@ -84,8 +84,8 @@ export default function Tabou2IdentifyContent({
         );
     }
     return (
-        <>
-            <Row className="tabou-idToolbar-row text-center" style={{ display: "flex", margin: "auto", justifyContent: "center" }}>
+        <div className="tabou-identify-panel">
+            <Row className="text-center tabou-tbar-panel">
                 <Tabou2IdentifyToolbar
                     response={response}
                     isValid={!some(mandatory.current, isEmpty)}
@@ -102,7 +102,7 @@ export default function Tabou2IdentifyContent({
                             onSelect={() => toggleAccordion(index)}
                             key={'panelgp-' + index} accordion>
                             <Panel
-                                className="idContentHeader"
+                                className="tabou-accordeon tabou-panel"
                                 header={(
                                     <span onClick={() => toggleAccordion(index)}>
                                         <label>
@@ -124,6 +124,6 @@ export default function Tabou2IdentifyContent({
                     ))
                 }
             </Grid>
-        </>
+        </div>
     );
 }

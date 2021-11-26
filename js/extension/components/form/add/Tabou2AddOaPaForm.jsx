@@ -9,6 +9,7 @@ import { OA_SCHEMA, PA_SCHEMA, ADD_FIELDS, ADD_OA_FORM, ADD_PA_FORM } from '@ext
 import { DropdownList} from 'react-widgets';
 import Message from "@mapstore/components/I18N/Message";
 import SearchCombo from '@js/extension/components/form/SearchCombo';
+import "@ext/css/tabou.css";
 export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...props}) {
     const emptyInfos = {
         code: "",
@@ -30,9 +31,6 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
     const natureId = useRef(-1);
     const etapesInfos = useRef([]);
     const [type, setType] = useState("");
-
-    const comboMarginTop = "10px";
-    const marginTop = "15px";
 
     // Return invalid or valid if some keys are empty - cant save if not valid
     const getInvalides = (obj) => {
@@ -203,138 +201,138 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
      */
     const constructForm = (items) => {
         return (
-            <Row style={{ marginTop: marginTop }} >
-                <Col xs={12} >
-                    {/* left combo box */}
-                    <FormGroup >
-                        {
-                            items.map(item => {
-                                let el;
+            <Col xs={12} >
+                {/* left combo box */}
+                <FormGroup className="tabou-form-group">
+                    {
+                        items.map(item => {
+                            let el;
+                            if (item.name === "nomEmprise") {
+                                item.type =  !isEmpty(feature) ? "text" : "combo";
+                            }
+                            switch (item.type) {
+                            case "checkbox":
+                                el = (
+                                    <Checkbox
+                                        checked={layer === "layerSA" ? true :  infos[item.name] || false}
+                                        disabled={!isEmpty(feature)}
+                                        onChange={() => changeState(item)}
+                                        inline
+                                        id={item.name + new Date().getTime()}>
+                                        <Message msgId={ item.label }/>
+                                    </Checkbox>
+                                );
+                                break;
+                            case "alert":
+                                el = !item.parent || (item.parent && item.parent(infos)) ? (
+                                    <Alert variant={item.variant}>
+                                        { item.icon ? (<Glyphicon glyph={item.icon} />) : null}
+                                        <Message msgId={item.label}/>
+                                    </Alert>
+                                ) : null;
+                                break;
+                            case "text":
+                                let isReadOnly = false;
+                                let displayValue = get(infos, item.name);
+                                if (item.name === "code") {
+                                    isReadOnly = item.parent ? getActivate(item) : false;
+                                }
                                 if (item.name === "nomEmprise") {
-                                    item.type =  !isEmpty(feature) ? "text" : "combo";
+                                    // need to be compare to fix case with null initial emprise name
+                                    let initialVal = get(feature, `properties.nom`) || "";
+                                    isReadOnly = !isEmpty(feature) && initialVal === infos.nomEmprise ?
+                                        true : item.parent ? getActivate(item) : false;
+                                    displayValue = isReadOnly ? initialVal : displayValue;
                                 }
-                                switch (item.type) {
-                                case "checkbox":
-                                    el = (
-                                        <Checkbox
-                                            checked={layer === "layerSA" ? true :  infos[item.name] || false}
-                                            disabled={!isEmpty(feature)}
-                                            onChange={() => changeState(item)}
-                                            inline
-                                            id={item.name + new Date().getTime()}>
-                                            <Message msgId={ item.label }/>
-                                        </Checkbox>
-                                    );
-                                    break;
-                                case "alert":
-                                    el = !item.parent || (item.parent && item.parent(infos)) ? (
-                                        <Alert variant={item.variant}>
-                                            { item.icon ? (<Glyphicon glyph={item.icon} />) : null}
-                                            <Message msgId={item.label}/>
-                                        </Alert>
-                                    ) : null;
-                                    break;
-                                case "text":
-                                    let isReadOnly = false;
-                                    let displayValue = get(infos, item.name);
-                                    if (item.name === "code") {
-                                        isReadOnly = item.parent ? getActivate(item) : false;
-                                    }
-                                    if (item.name === "nomEmprise") {
-                                        // need to be compare to fix case with null initial emprise name
-                                        let initialVal = get(feature, `properties.nom`) || "";
-                                        isReadOnly = !isEmpty(feature) && initialVal === infos.nomEmprise ?
-                                            true : item.parent ? getActivate(item) : false;
-                                        displayValue = isReadOnly ? initialVal : displayValue;
-                                    }
-                                    el = (
-                                        <FormControl
-                                            style={{ marginTop: comboMarginTop, borderColor: isInvalidStyle(item.name) }}
-                                            readOnly={isReadOnly}
-                                            type={item.type}
-                                            value={displayValue}
-                                            required={item?.required}
-                                            placeholder={props.i18n(props.messages, item?.placeholder || item?.label)}
-                                            onChange={(t) => changeState(item, t.target.value)}
-                                        />
-                                    );
-                                    break;
-                                case "combo":
-                                    let isSearchCombo = item?.autocomplete;
-                                    if (infos.limitPa && item.name === "nomEmprise") {
-                                        isSearchCombo = false;
-                                    }
-                                    el = isSearchCombo ? (
-                                        <SearchCombo
-                                            minLength={has(item, "min") ? item.min : 3}
-                                            textField={item.apiLabel}
-                                            valueField={item.apiField}
-                                            forceSelection
-                                            value={get(infos, item.name)}
-                                            disabled={item.parent ? isEmpty(item.parent(infos)) : item?.disabled || false}
-                                            search={
-                                                text => getRequestApi(get(item, "api"), pluginCfg.apiCfg, getParams(item, text))
-                                                    .then(results =>
-                                                        results.elements.map(v => v)
-                                                    )
+                                el = (
+                                    <FormControl
+                                        style={{ borderColor: isInvalidStyle(item.name) }}
+                                        className="tabou-search-combo"
+                                        readOnly={isReadOnly}
+                                        type={item.type}
+                                        value={displayValue}
+                                        required={item?.required}
+                                        placeholder={props.i18n(props.messages, item?.placeholder || item?.label)}
+                                        onChange={(t) => changeState(item, t.target.value)}
+                                    />
+                                );
+                                break;
+                            case "combo":
+                                let isSearchCombo = item?.autocomplete;
+                                if (infos.limitPa && item.name === "nomEmprise") {
+                                    isSearchCombo = false;
+                                }
+                                el = isSearchCombo ? (
+                                    <SearchCombo
+                                        minLength={has(item, "min") ? item.min : 3}
+                                        textField={item.apiLabel}
+                                        valueField={item.apiField}
+                                        forceSelection
+                                        value={get(infos, item.name)}
+                                        disabled={item.parent ? isEmpty(item.parent(infos)) : item?.disabled || false}
+                                        search={
+                                            text => getRequestApi(get(item, "api"), pluginCfg.apiCfg, getParams(item, text))
+                                                .then(results =>
+                                                    results.elements.map(v => v)
+                                                )
+                                        }
+                                        onSelect={t => changeState(item, t)}
+                                        onChange={t => changeState(item, t)}
+                                        className="tabou-search-combo"
+                                        name={item.name}
+                                        placeholder={props.i18n(props.messages, item?.placeholder || item?.label)}
+                                    />) : (
+                                    <Tabou2Combo
+                                        style={{ borderColor: isInvalidStyle(item.name) }}
+                                        className="tabou-search-combo"
+                                        load={() => {
+                                            return getRequestApi(get(item, "api"), pluginCfg.apiCfg, getParams(item));
+                                        }}
+                                        disabled={item.parent ? isEmpty(item.parent(infos)) : item?.disabled || false}
+                                        placeholder={props.i18n(props.messages, item?.placeholder || item?.label)}
+                                        parentValue={item.parent ? new URLSearchParams(item.parent(infos))?.toString() : ""}
+                                        filter="contains"
+                                        textField={item.apiLabel}
+                                        valueField={item.apiField}
+                                        distinct={has(item, "distinct") ? item.distinct : false}
+                                        onLoad={(r) => {
+                                            let dataItem = r?.elements || r;
+                                            // used to keep info and send  nature id to the api instead of name return by layer
+                                            // (need id not return by default)
+                                            if (item.name === "nature" && infos.nature) {
+                                                naturesInfos.current = dataItem;
+                                                natureId.current = find(dataItem, ["libelle", infos.nature])?.id;
                                             }
-                                            onSelect={t => changeState(item, t)}
-                                            onChange={t => changeState(item, t)}
-                                            style={{ marginTop: comboMarginTop }}
-                                            name={item.name}
-                                            placeholder={props.i18n(props.messages, item?.placeholder || item?.label)}
-                                        />) : (
-                                        <Tabou2Combo
-                                            style={{ marginTop: comboMarginTop, borderColor: isInvalidStyle(item.name) }}
-                                            load={() => {
-                                                return getRequestApi(get(item, "api"), pluginCfg.apiCfg, getParams(item));
-                                            }}
-                                            disabled={item.parent ? isEmpty(item.parent(infos)) : item?.disabled || false}
-                                            placeholder={props.i18n(props.messages, item?.placeholder || item?.label)}
-                                            parentValue={item.parent ? new URLSearchParams(item.parent(infos))?.toString() : ""}
-                                            filter="contains"
-                                            textField={item.apiLabel}
-                                            valueField={item.apiField}
-                                            distinct={has(item, "distinct") ? item.distinct : false}
-                                            onLoad={(r) => {
-                                                let dataItem = r?.elements || r;
-                                                // used to keep info and send  nature id to the api instead of name return by layer
-                                                // (need id not return by default)
-                                                if (item.name === "nature" && infos.nature) {
-                                                    naturesInfos.current = dataItem;
-                                                    natureId.current = find(dataItem, ["libelle", infos.nature])?.id;
-                                                }
-                                                if (item.name === "etape") etapesInfos.current = dataItem;
-                                                return dataItem;
-                                            }}
-                                            name={item.label}
-                                            value={get(infos, item.name)}
-                                            onSelect={(t) => changeState(item, t)}
-                                            onChange={(t) => !t ? changeState(item, t) : null}
-                                            messages={{
-                                                emptyList: props.i18n(props.messages, "tabou2.emptyList"),
-                                                emptyFilter: props.i18n(props.messages, "tabou2.nodata")
-                                            }}
-                                        />
-                                    );
-                                    break;
-                                default:
-                                    el = null;
-                                }
-                                return el;
-                            })
-                        }
-                    </FormGroup>
-                </Col>
-            </Row>
+                                            if (item.name === "etape") etapesInfos.current = dataItem;
+                                            return dataItem;
+                                        }}
+                                        name={item.label}
+                                        value={get(infos, item.name)}
+                                        onSelect={(t) => changeState(item, t)}
+                                        onChange={(t) => !t ? changeState(item, t) : null}
+                                        messages={{
+                                            emptyList: props.i18n(props.messages, "tabou2.emptyList"),
+                                            emptyFilter: props.i18n(props.messages, "tabou2.nodata")
+                                        }}
+                                    />
+                                );
+                                break;
+                            default:
+                                el = null;
+                            }
+                            return el;
+                        })
+                    }
+                </FormGroup>
+            </Col>
         );
     };
 
     // render component
     return (
-        <span key={`${type}`}>
+        <span key={`${type}`} className="tabou-add-panel">
             { type ?
-                (<Row className="tabou-idToolbar-row text-center" style={{ display: "flex", margin: "auto", justifyContent: "center" }}>
+                (<Row className="text-center tabou-tbar-panel">
                     <Toolbar
                         btnDefaultProps={{
                             className: "square-button-md",
@@ -363,28 +361,26 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
             <Panel
                 header={(
                     <>
-                        <label style={{marginRight: "2px"}}><Message msgId="tabou2.add.addFirst"/></label>
+                        <label><Message msgId="tabou2.add.addFirst"/></label>
                         <ControlledPopover text={<Message msgId="tabou2.add.needAllFields"/>} />
                     </>
                 )}
+                className="tabou-panel"
             >
-                <Row>
-                    <Col xs={12}>
-                        <FormGroup >
-                            <DropdownList
-                                style={{ marginTop: "10px" }}
-                                data = {props.options}
-                                valueField={"value"}
-                                disabled={!isEmpty(feature)}
-                                textField = {"label"}
-                                value = {type === "layerSA" ? "layerOA" : type}
-                                placeholder= {props.i18n(props.messages, "tabou2.add.selectLayer")}
-                                onSelect={props.select}
-                                onChange={props.change}
-                            />
-                        </FormGroup>
-                    </Col>
-                </Row>
+                <Col xs={12}>
+                    <FormGroup className="tabou-form-group">
+                        <DropdownList
+                            data = {props.options}
+                            valueField={"value"}
+                            disabled={!isEmpty(feature)}
+                            textField = {"label"}
+                            value = {type === "layerSA" ? "layerOA" : type}
+                            placeholder= {props.i18n(props.messages, "tabou2.add.selectLayer")}
+                            onSelect={props.select}
+                            onChange={props.change}
+                        />
+                    </FormGroup>
+                </Col>
             </Panel>
             {
                 type ? (
@@ -392,23 +388,27 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                         <Panel
                             header={(
                                 <>
-                                    <label style={{marginRight: "2px"}}><Message msgId="tabou2.add.addSecond"/></label>
+                                    <label><Message msgId="tabou2.add.addSecond"/></label>
                                     {
-                                        layer !== "layerPA" ? (<ControlledPopover text={props.i18n(props.messages, "tabou2.add.checkSector")} />) : null
+                                        layer !== "layerPA" ? (
+                                            <ControlledPopover text={props.i18n(props.messages, "tabou2.add.checkSector")} />
+                                        ) : null
                                     }
 
                                 </>
                             )}
+                            className="tabou-panel"
                         >
                             { constructForm(childs.filter(f => f.group === 1)) }
                         </Panel>
                         <Panel
                             header={(
                                 <>
-                                    <label style={{marginRight: "2px"}}><Message msgId="tabou2.add.addThird"/></label>
+                                    <label><Message msgId="tabou2.add.addThird"/></label>
                                     <ControlledPopover text={props.i18n(props.messages, "tabou2.add.needAllFields")} />
                                 </>
                             )}
+                            className="tabou-panel"
                         >
                             { constructForm(childs.filter(f => !f.group)) }
                         </Panel>

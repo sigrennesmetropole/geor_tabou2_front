@@ -13,8 +13,8 @@
     display: none;
 }
 
-.attributeInfos {
-    margin-bottom: 10px;
+.tableDisplay {
+    margin-bottom: 10px !important;
 }
 
 .tableInfos {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { keys, get, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
-import { Checkbox, Col, Row, ControlLabel, FormGroup, Grid, Panel, Glyphicon, Alert } from 'react-bootstrap';
+import { Checkbox, Col, Row, FormGroup, Grid, Panel, Glyphicon, Alert } from 'react-bootstrap';
 import { currentActiveTabSelector, currentTabouFilters, getLayerFilterObj, searchLoading, getTabouErrors } from '../../selectors/tabou2';
 import Tabou2SearchToolbar from './Tabou2SearchToolbar';
 import SearchCombo from '@js/extension/components/form/SearchCombo';
@@ -259,7 +259,7 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
                         header={(
                             <label><Message msgId="tabou2.search.partOne"/></label>
                         )}
-                        className="tabou-search-panel"
+                        className="tabou-panel"
                     >
                         { SEARCH_ITEMS.filter(f => f.group === 1).map((cb) => getCombo(cb)) }
                         <div className="col-xs-12">
@@ -279,7 +279,7 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
                         header={(
                             <label><Message msgId="tabou2.search.partTwo"/></label>
                         )}
-                        className="tabou-search-panel"
+                        className="tabou-panel"
                     >
                         { SEARCH_ITEMS.filter(f => f.group === 2).map((cb, i) => getCombo(cb, i, 2)) }
                     </Panel>
@@ -289,7 +289,7 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
                         header={(
                             <label><Message msgId="tabou2.search.partThree"/></label>
                         )}
-                        className="tabou-search-panel"
+                        className="tabou-panel"
                     >
                         { SEARCH_ITEMS.filter(f => f.group === 3).map((cb, i) => getCombo(cb, i, 1)) }
                     </Panel>
@@ -299,7 +299,7 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
                         header={(
                             <label><Message msgId="tabou2.search.partFour"/></label>
                         )}
-                        className="tabou-search-panel"
+                        className="tabou-panel"
                     >
                         <div className="col-xs-12">
                             <Checkbox inline><Message msgId="tabou2.search.isHelp"/></Checkbox>

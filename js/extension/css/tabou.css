@@ -31,13 +31,30 @@
     padding: 4px !important;
 }
 
+.tabou-accordeon .panel-heading{
+    border-radius:4px !important;
+    color: white !important;
+    background-color:#078aa3 !important;
+    margin: 0px;
+    padding: 2px 10px;
+}
+
 .tabou-search-combo {
     margin-top: 5px;
 }
 
-.idContentHeader .panel-heading{
-    border-radius:4px !important;
-    color: white !important;
-    background-color:#078aa3 !important;
+.tabou-tbar-panel {
+    display: flex;
+    margin: auto;
+    justify-content: center;
 }
 
+.tabou-identify-panel .panel-group, .tabou-identify-panel .panel-body .row {
+    margin-bottom: 5px;
+}
+
+
+.link-deactivate, .link-deactivate:hover, .link-deactivate:visited, .link-deactivate:active {
+    text-decoration: none;
+    padding-left:2px;
+}
