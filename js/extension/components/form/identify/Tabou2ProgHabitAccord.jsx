@@ -3,10 +3,12 @@ import { isEmpty, isEqual, pick, has, get, capitalize } from "lodash";
 import { Col, Row, Table, FormControl, Grid, ControlLabel, Alert, Glyphicon } from "react-bootstrap";
 import { DateTimePicker } from "react-widgets";
 import "@ext/css/identify.css";
+import "@ext/css/tabou.css";
 import Message from "@mapstore/components/I18N/Message";
 
 import moment from 'moment';
 import momentLocalizer from 'react-widgets/lib/localizers/moment';
+import ControlledPopover from '@mapstore/components/widgets/widget/ControlledPopover';
 momentLocalizer(moment);
 
 export default function Tabou2ProgHabitatAccord({ initialItem, programme, operation, mapFeature, ...props }) {
@@ -142,6 +144,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
     }, {
         name: "agapeo",
         label: "tabou2.identify.accordions.agapeoData",
+        msg: ["tabou2.getHelp", props.help.ads || props.help?.url || ""],
         type: "table",
         fields: ["anneeProg", "numDossier", "logementsLocatAide", "logementsLocatRegulHlm", "logementsLocatRegulPrive", "logementsAccessAide"],
         labels: [
@@ -209,7 +212,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
         <Grid style={{ width: "100%" }} className={""}>
             {
                 fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(item => (
-                    <Row className = {`attributeInfos ${item.type === "table" ? "tableInfos" : ""}`}>
+                    <Row className = {item.type === "table" ? "tableDisplay" : ""}>
                         {
                             has(item, "valid") && getValue(item) && !item.valid(getValue(item)) ? (
                                 <Alert className="alert-danger">
@@ -217,12 +220,21 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
                                     <Message msgId={props.i18n(props.messages, item?.errorMsg || "")}/>
                                 </Alert>) : null
                         }
-                        <Col xs={5}>
-                            <ControlLabel><Message msgId={item.label}/></ControlLabel>
+                        <Col xs={item.type === "table" ? 12 : 5}>
+                            <ControlLabel>
+                                <Message msgId={item.label}/>
+                                {
+                                    item.msg && (
+                                        <a href={item.msg[1]} className="link-deactivate" target="_blank">
+                                            <ControlledPopover text={<Message msgId={ item.msg[0] }/>} />
+                                        </a>
+                                    )
+                                } :
+                            </ControlLabel>
                         </Col>
                         <Col xs={7}>
                             {
-                                item.type === "date" ? (
+                                item.type === "date" && (
                                     <DateTimePicker
                                         type="date"
                                         className="identifyDate"
@@ -238,10 +250,10 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
                                         onSelect={(v) => changeDate(item, v)}
                                         onChange={(v) => changeDate(item, v)}
                                     />
-                                ) : null
+                                )
                             }
                             {
-                                item.type === "text" || item.type === "number" ?
+                                (item.type === "text" || item.type === "number") &&
                                     (<FormControl
                                         type={item.type}
                                         min={item?.min}
@@ -259,11 +271,11 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
                                                 if (v.preventDefault) v.preventDefault();
                                             }
                                         }}
-                                    />) : null
+                                    />)
                             }
                         </Col>
                         {
-                            item.type === "table" ? (
+                            item.type === "table" && (
                                 <Col xs={12} style={{maxHeight: "100%", overflow: "auto"}}>
                                     <Table striped bordered condensed hover>
                                         <thead>
@@ -290,7 +302,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
                                         </tbody>
                                     </Table>
                                 </Col>
-                            ) : null
+                            )
                         }
                     </Row>
                 ))

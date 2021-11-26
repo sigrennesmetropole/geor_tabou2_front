@@ -529,7 +529,9 @@
           "layersOrder": ["Opérations", "Secteurs", "Programmes"],
           "help": {
             "url": "https://public.sig.rennesmetropole.fr/ressources/app/georchestra/Portail%20web%20guide%20rapide%20de%20prise%20en%20main.pdf",
-            "contact": "d.cottencin@rennesmetropole.fr"
+            "contact": "d.cottencin@rennesmetropole.fr",
+            "ads": "https://public.sig.rennesmetropole.fr/ressources/app/georchestra/Portail%20web%20guide%20rapide%20de%20prise%20en%20main.pdf#15",
+            "ddc": "https://public.sig.rennesmetropole.fr/ressources/app/georchestra/Portail%20web%20guide%20rapide%20de%20prise%20en%20main.pdf"
           },
           "layersCfg": {
             "layerPA": {

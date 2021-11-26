@@ -4,6 +4,7 @@
     "tabou2": {
       "helpTooltip": "Accéder à l'aide",
       "help": "Aide",
+      "getHelp": "Cliquer pour obtenir plus d'informations",
       "copy": "Copier / coller",
       "copyAddress": "L'adresse a été copiée dans le Presse-papiers",
       "infos": {
@@ -101,8 +102,9 @@
           "programme": "Programme",
           "adsDate": "Date décision",
           "docDate": "Date DOC",
+          "depotDossier": "Date dépôt",
           "daactDate": "Date DAACT",
-          "ddcData": "Données DDC",
+          "ddcData": "Données du service Droit des Sols",
           "numAds": "N° ADS",
           "promoteur": "Promoteur",
           "decision": "Décision",
@@ -132,7 +134,7 @@
           "controlAccess":"Accession maitrisée",
           "controlAcces": "Accession maîtrisée",
           "privateLoc": "Locatif régulé privé",
-          "agapeoData": "Données AGAPEO",
+          "agapeoData": "Données du service Habitat (Agapéo)",
           "locHelp": "Locatif aidé",
           "locHlm": "Locatif régulé HLM",
           "progYear":"Année prog",
