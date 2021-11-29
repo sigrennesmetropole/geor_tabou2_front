@@ -42,8 +42,10 @@ import {
     setIdentifyInfos,
     displayMsg,
     displayPASAByOA,
-    resetSearchFilters
+    resetSearchFilters,
+    setTiersFilter
 } from "@ext/actions/tabou2";
+import { getTiersFilter } from '@js/extension/selectors/tabou2';
 
 function toolContainer({...props }) {
     let isTabouFeature = false;
@@ -149,7 +151,8 @@ export default connect(
         identifyLoading: identifyLoading(state),
         authentInfos: getAuthInfos(state),
         identifyInfos: getIdentifyInfos(state),
-        getLayersName: getLayersName(state)
+        getLayersName: getLayersName(state),
+        tiersFilter: getTiersFilter(state)
     }), {
         setTab: setMainActiveTab,
         setFeature: setSelectedFeature,
@@ -170,6 +173,7 @@ export default connect(
         setIdentifyInfos: setIdentifyInfos,
         displayMsg: displayMsg,
         displayPASAByOA: displayPASAByOA,
-        resetSearchFilters: resetSearchFilters
+        resetSearchFilters: resetSearchFilters,
+        setTiersFilter: setTiersFilter
     }
 )(toolContainer);

@@ -38,6 +38,7 @@ export const SET_TABOU_ERROR = "SET_ERROR";
 export const GET_EVENTS = "GET_EVENTS";
 export const DISPLAY_MSG = "DISPLAY_MSG";
 export const DISPLAY_PA_SA_BY_OA = "DISPLAY_PA_BY_OA";
+export const SET_TIERS_FILTER = "SET_TIERS_FILTER";
 
 export const displayMsg = (level, title, message) => ({
     type: DISPLAY_MSG,
@@ -244,4 +245,10 @@ export const setTabouErrors = (value, name, typeMsg = "", msg = "") => ({
 export const displayPASAByOA = (id) => ({
     type: DISPLAY_PA_SA_BY_OA,
     id: id
+});
+
+export const setTiersFilter = (id, filter) => ({
+    type: SET_TIERS_FILTER,
+    id,
+    filter
 });

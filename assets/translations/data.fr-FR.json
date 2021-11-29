@@ -85,6 +85,7 @@
           "tooltip": "Tiers"
         },
         "accordions": {
+          "tiersDetail": "Voir ces tiers",
           "identify": "Identification",
           "describe": "Descriptif",
           "gouv": "Gouvernance",

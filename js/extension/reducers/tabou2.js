@@ -19,17 +19,18 @@ import {
     DISPLAY_FEATURE,
     LOAD_FICHE_INFOS,
     SET_IDENTIFY_INFOS,
-    SET_TABOU_ERROR
+    SET_TABOU_ERROR,
+    SET_TIERS_FILTER
 } from '@ext/actions/tabou2';
 
 const initialState = {
-    activeTab: 'search',
-    infoFormat: 'text/plain',
+    activeTab: "search",
+    infoFormat: "text/plain",
     response: {},
     selectorsIndex: {},
     filterObj: {},
     layerFilterObj: {},
-    layerToFilter: '',
+    layerToFilter: "",
     pluginCfg: {},
     selectedFeature: {},
     selectedLayer: "",
@@ -38,7 +39,8 @@ const initialState = {
     ficheInfos: {},
     featureAdded: {},
     identifyInfos: {},
-    errors: {}
+    errors: {},
+    tiersFilter: ""
 };
 
 export default function tabou2(state = initialState, action) {
@@ -107,6 +109,8 @@ export default function tabou2(state = initialState, action) {
         return set('featureAdded', featureAdded, state);
     case SET_TABOU_ERROR:
         return set('errors', action, state);
+    case SET_TIERS_FILTER:
+        return set('tiersFilter', action, state);
     default:
         return state;
     }
