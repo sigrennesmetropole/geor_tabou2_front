@@ -7,7 +7,7 @@ import Tabou2SearchToolbar from './Tabou2SearchToolbar';
 import SearchCombo from '@js/extension/components/form/SearchCombo';
 import Tabou2Combo from '../form/Tabou2Combo';
 import { getRequestApi, searchPlui } from '../../api/search';
-import { setTabouFilterObj, setTabouFilters, resetSearchFilters, resetCqlFilters } from '../../actions/tabou2';
+import { setTabouFilterObj, setTabouFilters, resetSearchFilters } from '../../actions/tabou2';
 import { getNewFilter, getSpatialCQL, getCQL, getTabouLayersInfos } from '../../utils/search';
 import { SEARCH_ITEMS, SEARCH_CALENDARS } from '@ext/constants';
 import Message from "@mapstore/components/I18N/Message";
@@ -36,7 +36,6 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
      */
     const reset = () => {
         props.resetFiltersObj();
-        props.resetFiltersCql();
         setComboValues({});
         change({});
     };
@@ -246,7 +245,11 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
         <>
             <Grid className={"col-xs-12"}>
                 <div id="tabou2-tbar-container" className="text-center">
-                    <Tabou2SearchToolbar {...props} filters={getFiltersObj} apply={props.applyFilterObj} reset={reset}/>
+                    <Tabou2SearchToolbar
+                        {...props}
+                        filters={getFiltersObj}
+                        apply={props.applyFilterObj}
+                        reset={reset}/>
                 </div>
                 { props.getTabouErrors.msg ? (
                     <Alert className={"alert-" + props.getTabouErrors.typeMsg}>
@@ -339,6 +342,5 @@ export default connect((state) => ({
     /* PASS EVT AND METHODS HERE*/
     changeFilters: setTabouFilters,
     changeFiltersObj: setTabouFilterObj,
-    resetFiltersObj: resetSearchFilters,
-    resetFiltersCql: resetCqlFilters
+    resetFiltersObj: resetSearchFilters
 })(Tabou2SearchPanel);

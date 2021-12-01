@@ -155,6 +155,7 @@
         "selectFeatureTitle": "Identifier",
         "selectFeatureMsg": "Cliquer sur une emprise, programme, opération ou secteur visible sur la carte pour commencer",
         "toolbar": {
+          "displaySaPa": "Voir les secteurs et programmes liés sur la carte",
           "tiers": "Tiers",
           "docs": "Documents",
           "logs": "Journal de bord",

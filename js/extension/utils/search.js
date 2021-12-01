@@ -197,3 +197,35 @@ export function getTabouLayersInfos(config) {
 export function getGeoServerUrl(props) {
     return props?.pluginCfg?.geoserverURL || `https://${window.location.hostname}/geoserver`;
 }
+
+/**
+ * Create layer filter from list values
+ * @param {String} layer - layer typeName
+ * @param {Array} values - list of values to filter
+ * @param {String} field - field name to filterFields
+ * @param {String} cql - optional cql expression like list
+ * @returns filter object to apply as MapStore TOC filter
+ */
+export function newfilterLayerByList(layer, values, field, cql) {
+    let newFilter = getNewFilter(layer, null, [], null);
+    let valuesToCql = values.map(id => `${field} = ${id}`).join(' OR ');
+    newFilter.filterFields = values.map((id, idx) => ({
+        "rowId": new Date().getTime() + idx,
+        "groupId": 1,
+        "attribute": field,
+        "operator": "=",
+        "value": id,
+        "type": "number",
+        "fieldOptions": {
+            "valuesCount": 0,
+            "currentPage": 1
+        },
+        "exception": null
+    }));
+    // prepare filter
+    return {
+        cql: cql || valuesToCql,
+        layerToFilter: layer,
+        tocFilter: newFilter
+    };
+}

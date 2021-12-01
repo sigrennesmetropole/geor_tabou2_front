@@ -1,9 +1,10 @@
 import * as Rx from 'rxjs';
-import { CONTROL_NAME, URL_ADD } from '../constants';
+import { CONTROL_NAME, ID_TABOU, URL_ADD } from '../constants';
 
 import { get, pickBy, find, isEmpty, has } from 'lodash';
 
-import { generalInfoFormatSelector, identifyOptionsSelector, clickPointSelector } from '@mapstore/selectors/mapInfo';
+import {
+    generalInfoFormatSelector, identifyOptionsSelector, clickPointSelector } from '@mapstore/selectors/mapInfo';
 import uuid from 'uuid';
 import { localizedLayerStylesEnvSelector } from "@mapstore/selectors/localizedLayerStyles";
 import { updateUserPlugin } from '@mapstore/actions/context';
@@ -11,6 +12,7 @@ import { buildIdentifyRequest } from '@mapstore/utils/MapInfoUtils';
 import { layersSelector } from '@mapstore/selectors/layers';
 import { error, success } from "@mapstore/actions/notifications";
 import {getMessageById} from "@mapstore/utils/LocaleUtils";
+import { newfilterLayerByList } from '@js/extension/utils/search';
 import {
     LOAD_FEATURE_INFO,
     FEATURE_INFO_CLICK,
@@ -20,13 +22,30 @@ import {
     updateFeatureInfoClickPoint
 } from "@mapstore/actions/mapInfo";
 import { TOGGLE_CONTROL } from '@mapstore/actions/controls';
-import { isTabou2Activate, defaultInfoFormat, getTabouResponse, getPluginCfg, getSelection } from '@ext/selectors/tabou2';
-import { loadTabouFeatureInfo, setDefaultInfoFormat, setMainActiveTab, PRINT_PROGRAMME_INFOS,
-    CHANGE_FEATURE, DISPLAY_FEATURE, reloadLayer, displayFeature } from '@ext/actions/tabou2';
+import {
+    isTabou2Activate,
+    defaultInfoFormat,
+    getTabouResponse,
+    getPluginCfg,
+    getSelection,
+    getLayerFilterObj
+} from '@ext/selectors/tabou2';
+import {
+    loadTabouFeatureInfo,
+    setDefaultInfoFormat,
+    setMainActiveTab,
+    PRINT_PROGRAMME_INFOS,
+    CHANGE_FEATURE,
+    DISPLAY_FEATURE,
+    reloadLayer,
+    displayFeature,
+    DISPLAY_PA_SA_BY_OA,
+    setTabouFilterObj,
+    applyFilterObj
+} from '@ext/actions/tabou2';
 import { getPDFProgramme, putRequestApi } from '@ext/api/search';
 
 import { getFeatureInfo } from "@mapstore/api/identify";
-
 /**
  * Catch GFI response on identify load event and close identify if Tabou2 identify tabs is selected
  * TODO: take showIdentify pluginCfg param into account
@@ -211,7 +230,7 @@ export function displayFeatureInfos(action$, store) {
             let tocLayer = layersSelector(store.getState()).filter(lyr => lyr.name === action.infos.layer)[0];
             let env = localizedLayerStylesEnvSelector(store.getState());
             let { url, request, metadata } = buildIdentifyRequest(tocLayer, {...identifyOptionsSelector(store.getState()), env});
-            request.cql_filter = `id_tabou = ${action.infos.feature.id}`;
+            request.cql_filter = `${ID_TABOU} = ${action.infos.feature.id}`;
             request.info_format = "application/json";
             return Rx.Observable.defer(() => getFeatureInfo(url, request, tocLayer, {}))
                 .catch(e => {
@@ -236,5 +255,32 @@ export function displayFeatureInfos(action$, store) {
                         updateFeatureInfoClickPoint(clickPointSelector(store.getState()))
                     );
                 });
+        });
+}
+
+/**
+ * create and apply filter on SA, PA, OA according to clicked OA
+ * @param {*} action$
+ * @param {*} store
+ * @returns some actions
+ */
+export function dipslayPASAByOperation(action$, store) {
+    return action$.ofType(DISPLAY_PA_SA_BY_OA)
+        .switchMap( () => {
+            const idTabou = getSelection(store.getState()).id;
+            const idsPA = store.getState().tabou2.ficheInfos.programmes.elements.map(p => p.id);
+            let layerPA = "tabou2:tabou_v_oa_programme";
+            let layerOA = "tabou2:tabou_v_oa_operation";
+            // prepare filter
+            let filters = {
+                ...getLayerFilterObj(store.getState()),
+                [layerPA]: newfilterLayerByList(layerPA, idsPA, ID_TABOU),
+                [layerOA]: newfilterLayerByList(layerOA, [idTabou], ID_TABOU)
+            };
+            return Rx.Observable.of(
+                setTabouFilterObj(filters),
+                applyFilterObj(layerPA),
+                applyFilterObj(layerOA),
+            );
         });
 }
