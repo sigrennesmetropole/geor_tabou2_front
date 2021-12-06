@@ -8,7 +8,7 @@ import SearchCombo from '@js/extension/components/form/SearchCombo';
 import Tabou2Combo from '../form/Tabou2Combo';
 import { getRequestApi, searchPlui } from '../../api/search';
 import { setTabouFilterObj, setTabouFilters, resetSearchFilters } from '../../actions/tabou2';
-import { getNewFilter, getSpatialCQL, getCQL, getTabouLayersInfos } from '../../utils/search';
+import { getNewFilter, getSpatialCQL, getCQL, getTabouLayersInfos, createWfsPostRequest } from '../../utils/search';
 import { SEARCH_ITEMS, SEARCH_CALENDARS } from '@ext/constants';
 import Message from "@mapstore/components/I18N/Message";
 import moment from 'moment';
@@ -74,6 +74,7 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
                 cql = getCQL(type, filterConf.filterField, value);
             } else {
                 cql = getSpatialCQL(type, layersInfos[lyr].geom, filterConf.layer, filterConf.geom,  filterConf.filterField, value, layers.includes(filterConf.layer));
+                console.log(cql);
             }
             if (!currentFilters[lyr]) {
                 currentFilters[lyr] = {};
@@ -99,14 +100,7 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
             // To change TOC wms request params
             return filters.push({
                 layer: lyr,
-                params: {
-                    CQL_FILTER: CQLStr.join(' AND '),
-                    SERVICE: 'WFS',
-                    REQUEST: 'GetFeature',
-                    TYPENAME: lyr, // tabou2:iris
-                    OUTPUTFORMAT: 'application/json',
-                    VERSION: '1.0.0'
-                },
+                params: createWfsPostRequest(CQLStr.join(' AND '), lyr),
                 idField: layersInfos[lyr]?.id,
                 idType: layersInfos[lyr].type,
                 geomField: layersInfos[lyr].geom

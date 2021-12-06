@@ -12,7 +12,7 @@ import { buildIdentifyRequest } from '@mapstore/utils/MapInfoUtils';
 import { layersSelector } from '@mapstore/selectors/layers';
 import { error, success } from "@mapstore/actions/notifications";
 import {getMessageById} from "@mapstore/utils/LocaleUtils";
-import { newfilterLayerByList } from '@js/extension/utils/search';
+import { newfilterLayerByList, getSpatialCQL, getFilterField, getNewCrossLayerFilter } from '@js/extension/utils/search';
 import {
     LOAD_FEATURE_INFO,
     FEATURE_INFO_CLICK,
@@ -271,16 +271,25 @@ export function dipslayPASAByOperation(action$, store) {
             const idsPA = store.getState().tabou2.ficheInfos.programmes.elements.map(p => p.id);
             let layerPA = "tabou2:tabou_v_oa_programme";
             let layerOA = "tabou2:tabou_v_oa_operation";
+            let layerSA = "tabou2:tabou_v_oa_secteur";
+            // let cql = getSpatialCQL("", "the_geom", "tabou2:tabou_v_oa_operation", "the_geom", "id_tabou", idTabou);
+            // SA filter
+            // let filterFields = getFilterField(ID_TABOU, [idTabou], "number");
+            let crossLayerFilter = getNewCrossLayerFilter("INTERSECTS", "the_geom", "", [], "the_geom", layerOA);
             // prepare filter
             let filters = {
                 ...getLayerFilterObj(store.getState()),
                 [layerPA]: newfilterLayerByList(layerPA, idsPA, ID_TABOU),
-                [layerOA]: newfilterLayerByList(layerOA, [idTabou], ID_TABOU)
+                [layerOA]: newfilterLayerByList(layerOA, [idTabou], ID_TABOU),
+                [layerSA]: newfilterLayerByList(layerSA, [idTabou], ID_TABOU, "", crossLayerFilter)
             };
+            console.log(crossLayerFilter);
+            console.log(filters);
             return Rx.Observable.of(
                 setTabouFilterObj(filters),
                 applyFilterObj(layerPA),
                 applyFilterObj(layerOA),
+                applyFilterObj(layerSA),
             );
         });
 }

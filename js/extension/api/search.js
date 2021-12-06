@@ -6,6 +6,7 @@ let baseURL = "/tabou2";
 
 /** SEARCH - get ids from cross layer filter */
 export function getIdsFromSearch(params, geoserverURL) {
+    console.log(params);
     let paramsToStr = keys(params).map(k => `${k}=${params[k]}`);
     return axios.post(`${geoserverURL}/ows`, paramsToStr.join('&'), {
         timeout: 60000,
