@@ -1,4 +1,4 @@
-import { keys, get, filter } from 'lodash';
+import { keys, get } from 'lodash';
 
 /**
  * Utils to format string
