@@ -28,7 +28,7 @@ export default function Tabou2IdentifyToolbar({ response, isValid, ...props }) {
                 props.displayPASAByOA();
                 setClicked(true);
             },
-            visible: !wasClicked
+            visible: !wasClicked && props.selectedCfgLayer === "layerOA"
         },
         {
             glyph: "clear-filter",
@@ -41,7 +41,7 @@ export default function Tabou2IdentifyToolbar({ response, isValid, ...props }) {
                 setClicked(false);
                 props.resetSearchFilters(props.getLayersName);
             },
-            visible: wasClicked
+            visible: wasClicked && props.selectedCfgLayer === "layerOA"
         },
         {
             glyph: "user",

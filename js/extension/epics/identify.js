@@ -12,7 +12,7 @@ import { buildIdentifyRequest } from '@mapstore/utils/MapInfoUtils';
 import { layersSelector } from '@mapstore/selectors/layers';
 import { error, success } from "@mapstore/actions/notifications";
 import {getMessageById} from "@mapstore/utils/LocaleUtils";
-import { newfilterLayerByList, getSpatialCQL, getFilterField, getNewCrossLayerFilter } from '@js/extension/utils/search';
+import { newfilterLayerByList, getNewCrossLayerFilter } from '@js/extension/utils/search';
 import {
     LOAD_FEATURE_INFO,
     FEATURE_INFO_CLICK,
@@ -269,9 +269,10 @@ export function dipslayPASAByOperation(action$, store) {
         .switchMap( () => {
             const idTabou = getSelection(store.getState()).id;
             const idsPA = store.getState().tabou2.ficheInfos.programmes.elements.map(p => p.id);
-            let layerPA = "tabou2:tabou_v_oa_programme";
-            let layerOA = "tabou2:tabou_v_oa_operation";
-            let layerSA = "tabou2:tabou_v_oa_secteur";
+            let layers = getPluginCfg(store.getState()).layersCfg;
+            let layerPA = get(layers, "layerPA").nom;
+            let layerOA = get(layers, "layerOA").nom;
+            let layerSA = get(layers, "layerSA").nom;
             // SA filter
             let crossLayerFilter = getNewCrossLayerFilter("INTERSECTS", "the_geom", "", [], "the_geom", layerOA);
             // prepare filter
