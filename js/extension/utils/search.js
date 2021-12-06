@@ -64,18 +64,24 @@ export function getNewFilter(layerTypeName = '', spatialFilter = {}, textFilters
  * @returns cross layer filter object
  */
 export function getNewCrossLayerFilter(operation, geom, cqlFilter, filterFields, crossGeom, crossName) {
-    return {
+    let crossFilter =  {
         operation: operation || "INTERSECTS",
         attribute: geom,
         collectGeometries: {
             queryCollection: {
-                cqlFilter: cqlFilter,
                 filterFields: filterFields,
                 geometryName: crossGeom,
-                typeName: crossName
+                typeName: crossName,
+                groupFields: [{
+                    id: 1,
+                    logic: "OR",
+                    index: 0
+                }]
             }
         }
     };
+    if (cqlFilter) crossFilter.collectGeometries.queryCollection.cqlFilter = cqlFilter;
+    return crossFilter;
 }
 
 export function getFilterField(field, values, valueType, operator, groupId) {
@@ -201,7 +207,8 @@ export function newfilterLayerByList(layer, values, field, cql, crossLayer) {
         newFilter.filterFields = filterFields;
         newFilter.cql = cql || valuesToCql;
     }
-    return {...finalFilter, ... newFilter};
+    newFilter.tocFilter = newFilter;
+    return {...finalFilter, ...newFilter};
 }
 
 /**

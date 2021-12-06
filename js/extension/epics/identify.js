@@ -272,19 +272,19 @@ export function dipslayPASAByOperation(action$, store) {
             let layerPA = "tabou2:tabou_v_oa_programme";
             let layerOA = "tabou2:tabou_v_oa_operation";
             let layerSA = "tabou2:tabou_v_oa_secteur";
-            // let cql = getSpatialCQL("", "the_geom", "tabou2:tabou_v_oa_operation", "the_geom", "id_tabou", idTabou);
             // SA filter
-            // let filterFields = getFilterField(ID_TABOU, [idTabou], "number");
             let crossLayerFilter = getNewCrossLayerFilter("INTERSECTS", "the_geom", "", [], "the_geom", layerOA);
             // prepare filter
             let filters = {
                 ...getLayerFilterObj(store.getState()),
                 [layerPA]: newfilterLayerByList(layerPA, idsPA, ID_TABOU),
                 [layerOA]: newfilterLayerByList(layerOA, [idTabou], ID_TABOU),
-                [layerSA]: newfilterLayerByList(layerSA, [idTabou], ID_TABOU, "", crossLayerFilter)
+                [layerSA]: {
+                    ...newfilterLayerByList(layerSA, [idTabou], ID_TABOU, "", crossLayerFilter),
+                    groupLevels: 5,
+                    maxFeaturesWPS: 5
+                }
             };
-            console.log(crossLayerFilter);
-            console.log(filters);
             return Rx.Observable.of(
                 setTabouFilterObj(filters),
                 applyFilterObj(layerPA),

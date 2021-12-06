@@ -74,7 +74,6 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
                 cql = getCQL(type, filterConf.filterField, value);
             } else {
                 cql = getSpatialCQL(type, layersInfos[lyr].geom, filterConf.layer, filterConf.geom,  filterConf.filterField, value, layers.includes(filterConf.layer));
-                console.log(cql);
             }
             if (!currentFilters[lyr]) {
                 currentFilters[lyr] = {};
