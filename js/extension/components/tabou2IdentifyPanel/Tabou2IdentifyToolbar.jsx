@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import Toolbar from '@mapstore/components/misc/toolbar/Toolbar';
+import { has } from 'lodash';
 import Tabou2TiersModal from './modals/Tabou2TiersModal';
 import Tabou2DocsModal from './modals/Tabou2DocsModal';
 import Tabou2LogsModal from './modals/Tabou2LogsModal';
@@ -12,8 +13,36 @@ export default function Tabou2IdentifyToolbar({ response, isValid, ...props }) {
     const [isOpenTiers, setIsOpenTiers] = useState(false);
     const [isOpenDocs, setIsOpenDocs] = useState(false);
     const [isOpenLogs, setIsOpenLogs] = useState(false);
+    const [wasClicked, setClicked] = useState(false);
+
     // toolbar buttons
     let modalBtns = [
+        {
+            glyph: "map-filter",
+            style: {
+                marginRight: "15px"
+            },
+            tooltip: props.i18n(props.messages, "tabou2.identify.toolbar.displaySaPa"),
+            id: "filterSaPaByOa",
+            onClick: () => {
+                props.displayPASAByOA();
+                setClicked(true);
+            },
+            visible: !wasClicked
+        },
+        {
+            glyph: "clear-filter",
+            style: {
+                marginRight: "15px"
+            },
+            tooltip: props.i18n(props.messages, "tabou2.search.restore"),
+            id: "clearOAFilters",
+            onClick: () => {
+                setClicked(false);
+                props.resetSearchFilters(props.getLayersName);
+            },
+            visible: wasClicked
+        },
         {
             glyph: "user",
             tooltip: props.i18n(props.messages, "tabou2.identify.toolbar.tiers"),
@@ -78,7 +107,7 @@ export default function Tabou2IdentifyToolbar({ response, isValid, ...props }) {
                         margin: 10
                     }
                 }}
-                buttons={modalBtns}
+                buttons={modalBtns.filter(btn => btn.visible || !has(btn, "visible"))}
             />
             <Tabou2TiersModal visible={isOpenTiers} onClick={() => setIsOpenTiers(false)} {...props}/>
             <Tabou2DocsModal visible={isOpenDocs} onClick={() => setIsOpenDocs(false)} {...props} />

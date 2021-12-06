@@ -38,6 +38,11 @@ export function getPluginCfg(state) {
     return state?.tabou2.pluginCfg;
 }
 
+export function getLayersName(state) {
+    let layerCfg = getPluginCfg(state).layersCfg;
+    return keys(layerCfg).map(k => layerCfg[k].nom);
+}
+
 export function getSelection(state) {
     return state?.tabou2?.selectedFeature;
 }
@@ -72,7 +77,7 @@ export function getAuthInfos(state) {
     return {
         user: userSelector(state)?.name ?? "",
         isAdmin: groupNames.includes("MAPSTORE_ADMIN"),
-        isReferent: groupNames.includes("EL_APPLIS_TABOU_REFERENT"),
+        isReferent: true, // groupNames.includes("EL_APPLIS_TABOU_REFERENT"),
         isContrib: groupNames.includes("EL_APPLIS_TABOU_CONTRIB"),
         isConsult: groupNames.includes("EL_APPLIS_TABOU_CONSULT")
     };

@@ -1,13 +1,13 @@
 import * as Rx from 'rxjs';
 import { keys } from 'lodash';
-import { RESET_SEARCH_FILTERS, UPDATE_LAYER_PARAMS, SEARCH_IDS, setTabouFilterObj, loading, setTabouErrors } from '../actions/tabou2';
+import { resetCqlFilters, RESET_SEARCH_FILTERS, UPDATE_LAYER_PARAMS, SEARCH_IDS, setTabouFilterObj, loading, setTabouErrors } from '../actions/tabou2';
 import { layersSelector } from '@mapstore/selectors/layers';
 import { currentTabouFilters, getLayerFilterObj, isTabou2Activate, getPluginCfg } from '../selectors/tabou2';
 import { changeLayerParams, changeLayerProperties } from "@mapstore/actions/layers";
 import { wrapStartStop } from "@mapstore/observables/epics";
 import { error } from "@mapstore/actions/notifications";
 import {getMessageById} from "@mapstore/utils/LocaleUtils";
-import { getNewFilter } from "@ext/utils/search";
+import { newfilterLayerByList } from "@ext/utils/search";
 import { getIdsFromSearch } from "@ext/api/search";
 
 /**
@@ -46,12 +46,13 @@ export function tabouApplyFilter(action$, store) {
 export function tabouResetFilter(action$, store) {
     return action$.ofType(RESET_SEARCH_FILTERS)
         .filter(() => isTabou2Activate(store.getState()))
-        .switchMap(() => {
-            const layers = keys(currentTabouFilters(store.getState()));
+        .switchMap((action) => {
+            const layers = action.layers || keys(currentTabouFilters(store.getState()));
             const tocLayers = layersSelector(store.getState()) ?? [];
             const layersId = tocLayers.filter(layer => layers.indexOf(layer.name) > -1).map(layer => layer.id);
             return Rx.Observable.from((layersId)).mergeMap(id => {
                 return Rx.Observable.of(
+                    resetCqlFilters(),
                     changeLayerParams(id, { cql_filter: undefined }),
                     changeLayerProperties(id, { layerFilter: undefined }),
                     setTabouErrors(false, "filter", "", "")
@@ -83,7 +84,6 @@ export function tabouGetSearchIds(action$, store) {
                         if (response?.fail) {
                             return Rx.Observable.empty();
                         }
-                        let filters = getLayerFilterObj(store.getState());
                         let layer = filter.layer;
                         let ids = [0];
                         let idsCql = "";
@@ -102,29 +102,11 @@ export function tabouGetSearchIds(action$, store) {
                             // no result to filter
                             return Rx.Observable.of(setTabouErrors(false, "filter", "warning", getMessageById(messages, "tabou2.search.noResultLayer")));
                         }
-                        // create toc filter
-                        let newFilter = getNewFilter(layer, null, [], null);
-                        newFilter.filterFields = ids.map((id, idx) => ({
-                            "rowId": new Date().getTime() + idx,
-                            "groupId": 1,
-                            "attribute": "objectid",
-                            "operator": "=",
-                            "value": id,
-                            "type": "number",
-                            "fieldOptions": {
-                                "valuesCount": 0,
-                                "currentPage": 1
-                            },
-                            "exception": null
-                        }));
-                        // prepare filter
-                        filters[layer] = {
-                            cql: idsCql,
-                            layerToFilter: layer,
-                            tocFilter: newFilter
-                        };
                         // affect filter
-                        return Rx.Observable.of(setTabouFilterObj(filters));
+                        return Rx.Observable.of(setTabouFilterObj({
+                            ...getLayerFilterObj(store.getState()),
+                            [layer]: newfilterLayerByList(layer, ids, "objectid", idsCql)
+                        }));
                     });
             });
             return observable$.let(
