@@ -144,7 +144,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
     }, {
         name: "agapeo",
         label: "tabou2.identify.accordions.agapeoData",
-        msg: ["tabou2.getHelp", props.help.ads || props.help?.url || ""],
+        msg: ["tabou2.getHelp", props.help.agapeo || props.help?.url || ""],
         type: "table",
         fields: ["anneeProg", "numDossier", "logementsLocatAide", "logementsLocatRegulHlm", "logementsLocatRegulPrive", "logementsAccessAide"],
         labels: [
