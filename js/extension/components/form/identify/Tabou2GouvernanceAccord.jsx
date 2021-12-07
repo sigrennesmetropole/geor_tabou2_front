@@ -24,7 +24,7 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
 
     const getFields = () => [{
         name: "promoteur",
-        tooltip: "tabou2.identify.accordions.promoteur",
+        label: "tabou2.identify.accordions.promoteur",
         layers: ["layerPA"],
         type: "multi",
         data: props.tiers.filter(t => t.typeTiers.id === 1).map(t => t.tiers.nom),
@@ -71,7 +71,6 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
         name: "moe",
         label: "tabou2.identify.accordions.moe",
         type: "multi",
-        col: 6,
         data: props.tiers.filter(t => t.typeTiers.id === 2).map(t => t.tiers.nom),
         readOnly: true
     }].filter(el => el?.layers?.includes(layer) || !el?.layers);
