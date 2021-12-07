@@ -276,7 +276,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
                         </Col>
                         {
                             item.type === "table" && (
-                                <Col xs={12} style={{maxHeight: "100%", overflow: "auto"}}>
+                                <Col xs={12} className="table-accord">
                                     <Table striped bordered condensed hover>
                                         <thead>
                                             <tr>

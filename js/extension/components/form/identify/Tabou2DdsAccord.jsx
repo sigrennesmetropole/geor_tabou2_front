@@ -157,7 +157,7 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
                             )
                         }{
                             item.type === "table" && (
-                                <Col xs={12}>
+                                <Col xs={12} className={"table-accord"}>
                                     <Table striped bordered condensed hover>
                                         <thead>
                                             <tr>
