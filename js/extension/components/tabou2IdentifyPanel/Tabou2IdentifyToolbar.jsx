@@ -15,6 +15,12 @@ export default function Tabou2IdentifyToolbar({ response, isValid, ...props }) {
     const [isOpenLogs, setIsOpenLogs] = useState(false);
     const [wasClicked, setClicked] = useState(false);
 
+    // manage behavior on tiers modal close
+    const closeTiersModal = () => {
+        setIsOpenTiers(false);
+        props.setTiersFilter(null, null);
+    };
+
     // toolbar buttons
     let modalBtns = [
         {
@@ -108,7 +114,7 @@ export default function Tabou2IdentifyToolbar({ response, isValid, ...props }) {
                 }}
                 buttons={modalBtns.filter(btn => btn.visible || !has(btn, "visible"))}
             />
-            <Tabou2TiersModal visible={isOpenTiers} onClick={() => setIsOpenTiers(false)} {...props}/>
+            <Tabou2TiersModal visible={isOpenTiers} onClick={() => closeTiersModal()} {...props}/>
             <Tabou2DocsModal visible={isOpenDocs} onClick={() => setIsOpenDocs(false)} {...props} />
             <Tabou2LogsModal visible={isOpenLogs} onClick={() => setIsOpenLogs(false)} {...props}/>
         </>
