@@ -64,7 +64,6 @@ export default function Tabou2IdentifyToolbar({ response, isValid, ...props }) {
     ];
 
     // display print button only for programme feature
-    // TODO : need API fix to finish and work
     if (props.selectedCfgLayer === "layerPA") {
         let idTabou = props?.selection?.feature?.properties.id_tabou;
         modalBtns.push({

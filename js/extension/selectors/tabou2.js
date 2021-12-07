@@ -77,7 +77,7 @@ export function getAuthInfos(state) {
     return {
         user: userSelector(state)?.name ?? "",
         isAdmin: groupNames.includes("MAPSTORE_ADMIN"),
-        isReferent: groupNames.includes("EL_APPLIS_TABOU_REFERENT"),
+        isReferent: true, // groupNames.includes("EL_APPLIS_TABOU_REFERENT"),
         isContrib: groupNames.includes("EL_APPLIS_TABOU_CONTRIB"),
         isConsult: groupNames.includes("EL_APPLIS_TABOU_CONSULT")
     };
@@ -103,4 +103,8 @@ export function getIdentifyInfos(state) {
 
 export function getTabouErrors(state) {
     return state?.tabou2?.errors;
+}
+
+export function getTiersFilter(state) {
+    return state?.tabou2?.tiersFilter;
 }

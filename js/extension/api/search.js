@@ -97,7 +97,7 @@ export function getTypesTiers() {
 
 // associate tier
 export function associateFeatureTier(type, id, idTier, idType) {
-    return axios.post(`${baseURL}/${type}/${id}/tiers`, {
+    return axios.post(`${baseURL}/${type}/${id}/tiers?tiersId=${idTier}&typeTiersId=${idType}`, {
         tiersId: idTier,
         typeTiersId: idType
     });
