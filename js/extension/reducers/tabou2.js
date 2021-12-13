@@ -44,7 +44,11 @@ const initialState = {
     errors: {},
     tiersFilter: "",
     selectionType: undefined,
-    features: [],
+    features: [{
+        layerOA: [],
+        layerPA: [],
+        layerSA: []
+    }],
     featureSelected: undefined
 };
 
@@ -117,8 +121,8 @@ export default function tabou2(state = initialState, action) {
         return set('tiersFilter', action, state);
     case UPDATE_TABOU_SELECTION:
     {
-        console.log(isEmpty(action.features) ? [] : [...state.features, ...action.features]);
-        return set("features", [...state.features, ...action.features], state);
+        const {layer, features} = action;
+        return set(`features[0][${layer}]`, features, state);
     }
     case CLEAN_TABOU_SELECTION:
         return set("features", [], state);

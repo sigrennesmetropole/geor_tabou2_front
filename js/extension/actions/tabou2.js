@@ -45,6 +45,7 @@ export const UNSET_TABOU_SELECT_FEATUREE = "UNSET_SELECT_FEATURE";
 export const TOGGLE_TABOU_SELECTION = "TOGGLE_TABOU_SELECTION";
 export const CLOSE_TABOU = "CLOSE_TABOU";
 export const CLEAN_TABOU_SELECTION = "CLEAN_TABOU_SELECTION";
+export const LOAD_TABOU_INFO = "LOAD_TABOU_INFO";
 
 export const closeTabou = () => ({
     type: CLOSE_TABOU
@@ -268,8 +269,9 @@ export const toggleTabouSelectionTool = (selectionType) => ({
     selectionType
 });
 
-export const updateVectorTabouFeatures = (features) => ({
+export const updateVectorTabouFeatures = (layer, features) => ({
     type: UPDATE_TABOU_SELECTION,
+    layer,
     features
 });
 
@@ -284,4 +286,9 @@ export const unsetTabouSelectedFeature = () => ({
 
 export const cleanTabouSelection = () => ({
     type: CLEAN_TABOU_SELECTION
+});
+
+export const loadTabouInfos = (data) => ({
+    type: LOAD_TABOU_INFO,
+    data
 });

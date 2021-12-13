@@ -23,6 +23,7 @@ const getGeometry = (point, from, to) => {
     };
 };
 
+// TODO : set geom field from config
 export const createParams = (point, layer) => {
     const geometry = getGeometry(point, "EPSG:4326", "EPSG:3948");
     return {

@@ -216,14 +216,16 @@ export function getTabouVectorLayer(state) {
 }
 
 export function getCurrentTabouData(state) {
-    // const selectedStyle = getSelectedStyle(state);
-    // const defaultStyle = getDefaultStyle(state);
-    return tabouDataSelector(state).map(feature => ({
-        ...feature,
-        style: DEFAULT_STYLE
-    }));
+    const selected = {...tabouDataSelector(state)[0]};
+    keys(selected).map(lyr => {
+        selected[lyr] = selected[lyr].map(feature => ({
+            ...feature, style: DEFAULT_STYLE
+        }));
+    });
+    return selected;
 }
 
 export function getVectorTabouFeatures(state) {
-    return getCurrentTabouData(state);
+    const features = getCurrentTabouData(state);
+    return keys(features).map(k => features[k]).flat();
 }
