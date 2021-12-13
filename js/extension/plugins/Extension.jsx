@@ -16,13 +16,14 @@ import Tabou2MainPanel from '@ext/components/tabou2Panel/Tabou2MainPanel';
 import tabou2 from '@ext/reducers/tabou2';
 import init from '@ext/utils/init';
 
-import { tabouApplyFilter, tabouResetFilter, tabouGetSearchIds } from '@ext/epics/search';
+import { onTabouMapClick, onSelectionUpdate } from "@js/extension/epics/layer";
+import { tabouApplyFilter, tabouResetFilter, tabouGetSearchIds } from '@js/extension/epics/search';
 import { tabouLoadIdentifyContent, tabouSetGFIFormat, purgeTabou, printProgramme, createChangeFeature,
-    displayFeatureInfos, dipslayPASAByOperation } from '@ext/epics/identify';
+    displayFeatureInfos, dipslayPASAByOperation } from '@js/extension/epics/identify';
 import { getSelectionInfos, updateTabou2Logs, updateTabou2Tier, addCreateTabou2Tier, getTiersElements,
-    associateTabou2Tier, createTabouFeature, onLayerReload, getEventsElements } from '@ext/epics/featureEvents';
-import { showNotification } from "@ext/epics/common";
-import { setTbarPosition } from '@ext/epics/setup';
+    associateTabou2Tier, createTabouFeature, onLayerReload, getEventsElements } from '@js/extension/epics/featureEvents';
+import { showNotification } from "@js/extension/epics/common";
+import { setTbarPosition, initMap } from "@js/extension/epics/setup";
 
 import { CONTROL_NAME, PANEL_SIZE } from '@ext/constants';
 
@@ -101,7 +102,10 @@ export default {
         displayFeatureInfos: displayFeatureInfos,
         getEventsElements: getEventsElements,
         showNotification: showNotification,
-        dipslayPASAByOperation: dipslayPASAByOperation
+        dipslayPASAByOperation: dipslayPASAByOperation,
+        initMap: initMap,
+        onTabouMapClick: onTabouMapClick,
+        onSelectionUpdate: onSelectionUpdate
     },
     containers: {
         Toolbar: {

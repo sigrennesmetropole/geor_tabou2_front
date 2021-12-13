@@ -1,6 +1,8 @@
-import { CONTROL_NAME } from '@ext/constants';
+import { CONTROL_NAME, TABOU_VECTOR_ID } from '@ext/constants';
 import { keys, pickBy } from 'lodash';
 import { userGroupSecuritySelector, userSelector } from '@mapstore/selectors/security';
+import { additionalLayersSelector } from '@mapstore/selectors/additionallayers';
+import { DEFAULT_STYLE } from "../constants";
 /**
  * Get active tab id
  * @param {*} state
@@ -193,4 +195,35 @@ export function getTabouErrors(state) {
  */
 export function getTiersFilter(state) {
     return state?.tabou2?.tiersFilter;
+}
+
+export function tabouDataSelector(state) {
+    return state?.tabou2?.features;
+}
+
+export function layerStylesSelector(state) {
+    return state.tabou2?.styles;
+}
+export function getSelectedStyle(state) {
+    return layerStylesSelector(state)?.selected;
+}
+export function getDefaultStyle(state) {
+    return layerStylesSelector(state)?.default;
+}
+export function getTabouVectorLayer(state) {
+    const additionalLayers = additionalLayersSelector(state) ?? [];
+    return additionalLayers.filter(({ id }) => id === TABOU_VECTOR_ID)?.[0]?.options;
+}
+
+export function getCurrentTabouData(state) {
+    // const selectedStyle = getSelectedStyle(state);
+    // const defaultStyle = getDefaultStyle(state);
+    return tabouDataSelector(state).map(feature => ({
+        ...feature,
+        style: DEFAULT_STYLE
+    }));
+}
+
+export function getVectorTabouFeatures(state) {
+    return getCurrentTabouData(state);
 }

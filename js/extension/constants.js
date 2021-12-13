@@ -1,3 +1,6 @@
+export const TABOU_VECTOR_ID = "__OA_OVRLAY_LAYER__";
+export const TABOU_OWNER = "Tabou2";
+
 export const TABS = [{
     id: 'search',
     tooltip: 'tabou2.tabs.search',
@@ -477,4 +480,12 @@ export const LOG_SCHEMA = {
     id: 0,
     idType: 3,
     "new": true
+};
+
+export const DEFAULT_STYLE = {
+    fillColor: "orange",
+    opacity: 0.8,
+    fillOpacity: 0.2,
+    color: "orange",
+    weight: 2
 };

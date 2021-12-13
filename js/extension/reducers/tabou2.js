@@ -1,5 +1,5 @@
 import { set } from '@mapstore/utils/ImmutableUtils';
-import { get, isNumber } from 'lodash';
+import { get, isNumber, isEmpty } from 'lodash';
 import {
     SETUP,
     SET_MAIN_ACTIVE_TAB,
@@ -20,7 +20,9 @@ import {
     LOAD_FICHE_INFOS,
     SET_IDENTIFY_INFOS,
     SET_TABOU_ERROR,
-    SET_TIERS_FILTER
+    SET_TIERS_FILTER,
+    UPDATE_TABOU_SELECTION,
+    CLEAN_TABOU_SELECTION
 } from '@ext/actions/tabou2';
 
 const initialState = {
@@ -40,7 +42,10 @@ const initialState = {
     featureAdded: {},
     identifyInfos: {},
     errors: {},
-    tiersFilter: ""
+    tiersFilter: "",
+    selectionType: undefined,
+    features: [],
+    featureSelected: undefined
 };
 
 export default function tabou2(state = initialState, action) {
@@ -101,9 +106,8 @@ export default function tabou2(state = initialState, action) {
         // anyway sets loading to true
         return set(action.name === "loading" ? "loading" : `loadFlags.${action.name}`, newValue, state);
     }
-    case SET_IDENTIFY_INFOS: {
+    case SET_IDENTIFY_INFOS:
         return set('identifyInfos', action.infos, state);
-    }
     case DISPLAY_FEATURE:
         const { featureAdded } = action;
         return set('featureAdded', featureAdded, state);
@@ -111,6 +115,13 @@ export default function tabou2(state = initialState, action) {
         return set('errors', action, state);
     case SET_TIERS_FILTER:
         return set('tiersFilter', action, state);
+    case UPDATE_TABOU_SELECTION:
+    {
+        console.log(isEmpty(action.features) ? [] : [...state.features, ...action.features]);
+        return set("features", [...state.features, ...action.features], state);
+    }
+    case CLEAN_TABOU_SELECTION:
+        return set("features", [], state);
     default:
         return state;
     }

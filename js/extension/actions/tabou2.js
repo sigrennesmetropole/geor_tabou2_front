@@ -39,6 +39,16 @@ export const GET_EVENTS = "GET_EVENTS";
 export const DISPLAY_MSG = "DISPLAY_MSG";
 export const DISPLAY_PA_SA_BY_OA = "DISPLAY_PA_BY_OA";
 export const SET_TIERS_FILTER = "SET_TIERS_FILTER";
+export const UPDATE_TABOU_SELECTION = "UPDATE_FEATURES_SELECTION";
+export const SET_TABOU_SELECT_FEATURE = "SET_SELECT_FEATURE";
+export const UNSET_TABOU_SELECT_FEATUREE = "UNSET_SELECT_FEATURE";
+export const TOGGLE_TABOU_SELECTION = "TOGGLE_TABOU_SELECTION";
+export const CLOSE_TABOU = "CLOSE_TABOU";
+export const CLEAN_TABOU_SELECTION = "CLEAN_TABOU_SELECTION";
+
+export const closeTabou = () => ({
+    type: CLOSE_TABOU
+});
 
 export const displayMsg = (level, title, message) => ({
     type: DISPLAY_MSG,
@@ -251,4 +261,27 @@ export const setTiersFilter = (id, filter) => ({
     type: SET_TIERS_FILTER,
     id,
     filter
+});
+
+export const toggleTabouSelectionTool = (selectionType) => ({
+    type: TOGGLE_TABOU_SELECTION,
+    selectionType
+});
+
+export const updateVectorTabouFeatures = (features) => ({
+    type: UPDATE_TABOU_SELECTION,
+    features
+});
+
+export const setTabouSelectedFeature = (feature) => ({
+    type: SET_TABOU_SELECT_FEATURE,
+    feature
+});
+
+export const unsetTabouSelectedFeature = () => ({
+    type: UNSET_TABOU_SELECT_FEATUREE
+});
+
+export const cleanTabouSelection = () => ({
+    type: CLEAN_TABOU_SELECTION
 });
