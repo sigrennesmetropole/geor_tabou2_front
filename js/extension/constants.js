@@ -483,9 +483,16 @@ export const LOG_SCHEMA = {
 };
 
 export const DEFAULT_STYLE = {
-    fillColor: "orange",
+    fillColor: "#6f718e",
     opacity: 0.8,
     fillOpacity: 0.2,
     color: "orange",
+    weight: 2
+};
+export const SELECT_STYLE = {
+    fillColor: "red",
+    opacity: 1,
+    fillOpacity: 0.8,
+    color: "red",
     weight: 2
 };

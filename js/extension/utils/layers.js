@@ -36,3 +36,8 @@ export const createParams = (point, layer) => {
         SRSNAME: "EPSG:4326"
     };
 };
+
+export const createCqlPoint = (point) => {
+    const geometry = getGeometry(point, "EPSG:4326", "EPSG:3948");
+    return `INTERSECTS(the_geom,POINT(${geometry.coordinates[0] || geometry.coordinates.x} ${geometry.coordinates[1] || geometry.coordinates.y}))`;
+};

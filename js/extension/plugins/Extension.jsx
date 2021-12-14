@@ -11,7 +11,9 @@ import { layersSelector } from '@mapstore/selectors/layers';
 import { selectedLayerIdSelector } from '@mapstore/selectors/featuregrid';
 import {getMessageById} from "@mapstore/utils/LocaleUtils";
 
-import { setUp } from '@ext/actions/tabou2';
+
+import { isTabou2Activate } from "../selectors/tabou2";
+import { setUp, closeTabou } from "../actions/tabou2";
 import Tabou2MainPanel from '@ext/components/tabou2Panel/Tabou2MainPanel';
 import tabou2 from '@ext/reducers/tabou2';
 import init from '@ext/utils/init';
@@ -23,7 +25,7 @@ import { tabouLoadIdentifyContent, tabouSetGFIFormat, purgeTabou, printProgramme
 import { getSelectionInfos, updateTabou2Logs, updateTabou2Tier, addCreateTabou2Tier, getTiersElements,
     associateTabou2Tier, createTabouFeature, onLayerReload, getEventsElements } from '@js/extension/epics/featureEvents';
 import { showNotification } from "@js/extension/epics/common";
-import { setTbarPosition, initMap } from "@js/extension/epics/setup";
+import { setTbarPosition, initMap, closeTabouExt } from "@js/extension/epics/setup";
 
 import { CONTROL_NAME, PANEL_SIZE } from '@ext/constants';
 
@@ -56,6 +58,7 @@ class Tabou2Panel extends React.Component {
 const Tabou2Plugin = compose(
     connect((state) => ({
         active: () => (state.controls && state.controls[CONTROL_NAME] && state.controls[CONTROL_NAME].enabled) || (state[CONTROL_NAME] && state[CONTROL_NAME].closing) || false,
+        enabled: isTabou2Activate(state),
         tocLayers: layersSelector(state),
         selectedLayerId: selectedLayerIdSelector(state),
         messages: state?.locale.messages || {}
@@ -65,13 +68,13 @@ const Tabou2Plugin = compose(
         changeLayerProperties: changeLayerProperties,
         onSyncLayers: syncLayers,
         onSelectLayers: selectLayers,
-        onQuery: search,
-        setCfg: setUp
+        onQuery: search
     }),
     // setup and teardown due to open/close
     compose(
         connect( () => ({}), {
-            setUp
+            setUp,
+            closeTabou
         }),
         init()
     )
@@ -105,7 +108,8 @@ export default {
         dipslayPASAByOperation: dipslayPASAByOperation,
         initMap: initMap,
         onTabouMapClick: onTabouMapClick,
-        onSelectionUpdate: onSelectionUpdate
+        onSelectionUpdate: onSelectionUpdate,
+        closeTabouExt: closeTabouExt
     },
     containers: {
         Toolbar: {

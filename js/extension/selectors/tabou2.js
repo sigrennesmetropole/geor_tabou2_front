@@ -2,7 +2,7 @@ import { CONTROL_NAME, TABOU_VECTOR_ID } from '@ext/constants';
 import { keys, pickBy } from 'lodash';
 import { userGroupSecuritySelector, userSelector } from '@mapstore/selectors/security';
 import { additionalLayersSelector } from '@mapstore/selectors/additionallayers';
-import { DEFAULT_STYLE } from "../constants";
+import { DEFAULT_STYLE, SELECT_STYLE } from "../constants";
 /**
  * Get active tab id
  * @param {*} state
@@ -219,13 +219,14 @@ export function getCurrentTabouData(state) {
     const selected = {...tabouDataSelector(state)[0]};
     keys(selected).map(lyr => {
         selected[lyr] = selected[lyr].map(feature => ({
-            ...feature, style: DEFAULT_STYLE
+            ...feature,
+            style: feature.id === getSelection(state).feature.id ? SELECT_STYLE : DEFAULT_STYLE
         }));
     });
     return selected;
 }
 
 export function getVectorTabouFeatures(state) {
-    const features = getCurrentTabouData(state);
+    const features = getSelection(state).feature;
     return keys(features).map(k => features[k]).flat();
 }

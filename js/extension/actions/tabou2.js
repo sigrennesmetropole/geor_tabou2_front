@@ -1,5 +1,5 @@
 export const SETUP = "SETUP";
-export const TEAR_DOWN = "TEAR_DOWN";
+export const CLOSE_TABOU = "CLOSE_TABOU";
 export const SET_MAIN_ACTIVE_TAB = "SET_MAIN_ACTIVE_TAB";
 export const APPLY_SEARCH_QUERY = "APPLY_SEARCH_QUERY";
 export const RESET_SEARCH_FILTERS = "RESET_SEARCH_FILTERS";
@@ -43,12 +43,13 @@ export const UPDATE_TABOU_SELECTION = "UPDATE_FEATURES_SELECTION";
 export const SET_TABOU_SELECT_FEATURE = "SET_SELECT_FEATURE";
 export const UNSET_TABOU_SELECT_FEATUREE = "UNSET_SELECT_FEATURE";
 export const TOGGLE_TABOU_SELECTION = "TOGGLE_TABOU_SELECTION";
-export const CLOSE_TABOU = "CLOSE_TABOU";
 export const CLEAN_TABOU_SELECTION = "CLEAN_TABOU_SELECTION";
 export const LOAD_TABOU_INFO = "LOAD_TABOU_INFO";
+export const UPDATE_TABOU_STYLE = "UPDATE_TABOU_STYLE";
 
-export const closeTabou = () => ({
-    type: CLOSE_TABOU
+export const closeTabou = (pluginsCfg) => ({
+    type: CLOSE_TABOU,
+    pluginsCfg
 });
 
 export const displayMsg = (level, title, message) => ({
@@ -93,12 +94,6 @@ export const searchIds = (params) => ({
 export const setUp = (pluginCfg) => ({
     type: SETUP,
     pluginCfg
-});
-/**
- * Triggered when plugin is close
- */
-export const tearDown = () => ({
-    type: TEAR_DOWN
 });
 
 export const setMainActiveTab = (activeTab, params = {}) => ({
@@ -273,6 +268,10 @@ export const updateVectorTabouFeatures = (layer, features) => ({
     type: UPDATE_TABOU_SELECTION,
     layer,
     features
+});
+
+export const updateVectorTabouStyle = () => ({
+    type: UPDATE_TABOU_STYLE
 });
 
 export const setTabouSelectedFeature = (feature) => ({

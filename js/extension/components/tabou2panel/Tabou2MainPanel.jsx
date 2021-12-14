@@ -8,6 +8,7 @@ import Tabou2MainTabs from './Tabou2MainTabs';
 import Tabou2MainToolContainer from './Tabou2MainToolContainer';
 import { CONTROL_NAME, PANEL_SIZE } from '../../constants';
 import "@ext/css/tabou.css";
+import { updateVectorTabouStyle } from "../../actions/tabou2";
 /**
  * Main tabou2 plugin panel (parent on top)
  * @param {any} param
@@ -62,5 +63,6 @@ function Tabou2MainPanel({
 export default connect(state => ({
     enabled: state?.controls && state?.controls[CONTROL_NAME] && state?.controls[CONTROL_NAME].enabled || false
 }), {
-    onClose: toggleControl.bind(null, CONTROL_NAME, null)
+    onClose: toggleControl.bind(null, CONTROL_NAME, null),
+    updateVectorTabouStyle: updateVectorTabouStyle
 })(Tabou2MainPanel);

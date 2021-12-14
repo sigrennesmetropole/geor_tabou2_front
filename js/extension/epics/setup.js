@@ -69,8 +69,11 @@ export const initMap = (action$, store) =>
         });
     });
 
-export const closeTabou = (action$, {getState = ()=>{}}) =>
-    action$.ofType(CLOSE_TABOU).switchMap(() =>
-        Rx.Observable.from(
-            removeAdditionalLayer({id: TABOU_VECTOR_ID, owner: TABOU_OWNER}),
-        ).concat([...(!get(getState(), "mapInfo.enabled") ? [toggleMapInfoState()] : [])]));
+export const closeTabouExt = (action$, {getState = ()=>{}}) =>
+    action$.ofType(CLOSE_TABOU).switchMap(() => {
+        const mapInfoEnabled = get(getState(), "mapInfo.enabled");
+        return Rx.Observable.from([
+            removeAdditionalLayer({id: TABOU_VECTOR_ID, owner: TABOU_OWNER})
+        // enable click info right panel if needed
+        ]).concat([...(!mapInfoEnabled ? [toggleMapInfoState()] : [])]);
+    });

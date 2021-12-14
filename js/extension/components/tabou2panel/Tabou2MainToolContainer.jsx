@@ -62,6 +62,7 @@ function toolContainer({...props }) {
         props.setIdentifyInfos(identifyInfos);
         props.setFeature(identifyInfos);
         props.setLayer(selectedLayer);
+        props.updateVectorTabouStyle();
     };
 
     let showAddPanel = props.authentInfos.isReferent || props.authentInfos.isContrib;

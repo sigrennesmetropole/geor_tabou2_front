@@ -1,39 +1,46 @@
 import Rx from 'rxjs';
-import { endWith } from "rxjs";
+
 import { updateAdditionalLayer } from '@mapstore/actions/additionallayers';
 import { CLICK_ON_MAP } from '@mapstore/actions/map';
-import { get, keys } from "lodash";
-import { TABOU_VECTOR_ID, TABOU_OWNER } from '../constants';
-import { createOGCRequest } from '../api/search';
+import { get, keys, isEmpty } from "lodash";
+import { TABOU_VECTOR_ID, TABOU_OWNER, SELECT_STYLE } from '../constants';
 import { createParams } from '../utils/layers';
-
 import {
     UPDATE_TABOU_SELECTION,
-    SET_TABOU_SELECT_FEATURE,
-    UNSET_TABOU_SELECT_FEATUREE,
-    updateVectorTabouFeatures,
+    loadTabouFeatureInfo,
     cleanTabouSelection,
-    loadTabouInfos
+    UPDATE_TABOU_STYLE
 } from "../actions/tabou2";
+import uuid from 'uuid';
 
-import {
-    getPluginCfg
-} from '@ext/selectors/tabou2';
-import { getTabouVectorLayer, getVectorTabouFeatures, getCurrentTabouData } from "../selectors/tabou2";
+import { loadFeatureInfo } from "@mapstore/actions/mapInfo";
 
-export const syncLayerForPlots = (action$, {getState = () => {}})=>
-    action$.ofType(UPDATE_TABOU_SELECTION, SET_TABOU_SELECT_FEATURE, UNSET_TABOU_SELECT_FEATUREE) // actions that modify the layer, so it needs an update.
+import { layersSelector } from '@mapstore/selectors/layers';
+import { localizedLayerStylesEnvSelector } from "@mapstore/selectors/localizedLayerStyles";
+import { buildIdentifyRequest } from '@mapstore/utils/MapInfoUtils';
+import { identifyOptionsSelector } from '@mapstore/selectors/mapInfo';
+
+import { getFeatureInfo } from "@mapstore/api/identify";
+
+import { isTabou2Activate, getPluginCfg, getTabouVectorLayer, getSelection } from "../selectors/tabou2";
+
+export const onSelectionUpdate = (action$, {getState = () => {}}) =>
+    action$.ofType(UPDATE_TABOU_SELECTION, UPDATE_TABOU_STYLE)
+        .filter(() => isTabou2Activate(getState()))
         .switchMap(() => {
-            const features = getVectorTabouFeatures(getState());
+            const feature = getSelection(getState()).feature;
+            if (!isEmpty(feature)) {
+                feature.style = SELECT_STYLE;
+            }
             const options = getTabouVectorLayer(getState());
             return Rx.Observable.of(
                 updateAdditionalLayer(
                     TABOU_VECTOR_ID,
                     TABOU_OWNER,
-                    "overlay",
+                    "override",
                     {
                         ...options,
-                        features
+                        features: [feature]
                     }
                 )
             );
@@ -42,6 +49,7 @@ export const syncLayerForPlots = (action$, {getState = () => {}})=>
 export const onTabouMapClick = (action$, {getState = () => {}}) =>
     action$.ofType(CLICK_ON_MAP)
         .switchMap(({point}) =>{
+
             let layers = getPluginCfg(getState()).layersCfg;
             let list = keys(layers).map(l => ({
                 name: l,
@@ -51,38 +59,25 @@ export const onTabouMapClick = (action$, {getState = () => {}}) =>
                 // clean selection
                 Rx.Observable.of(cleanTabouSelection()),
                 // add features to selection
-                // endWith(loadTabouInfos(getCurrentTabouData(getState()))).
                 Rx.Observable.from(list)
-                    .concatMap(r =>
-                        Rx.Observable.defer(() => createOGCRequest(r.params, getPluginCfg(getState()).geoserverURL))
+                    .concatMap(r => {
+                        let env = localizedLayerStylesEnvSelector(getState());
+                        let tocLayer = layersSelector(getState()).filter(lyr => lyr.name === get(layers, r.name).nom)[0];
+                        if (!tocLayer.visibility) return Rx.Observable.empty();
+                        let { url, request, metadata } = buildIdentifyRequest(tocLayer, {...identifyOptionsSelector(getState()), env, point: point});
+                        request.info_format = "application/json";
+
+                        return Rx.Observable.defer(() => getFeatureInfo(url, request, tocLayer, {}))
                             .catch(e => {
                                 console.log("Error retrieving GFI from " + r.name);
                                 console.log(e);
                                 return Rx.Observable.of({data: []});
                             }).switchMap((response) => {
                                 return Rx.Observable.of(
-                                    updateVectorTabouFeatures(r.name, response.features)
+                                    loadTabouFeatureInfo({}),
+                                    loadFeatureInfo(uuid.v1(), response.data, request, { ...metadata, features: response.features, featuresCrs: response.featuresCrs }, tocLayer)
                                 );
-                            })
-                    )
+                            });
+                    })
             );
         });
-
-export const onSelectionUpdate = (action$, {getState = () => {}}) =>
-    action$.ofType(UPDATE_TABOU_SELECTION).switchMap(() => {
-        const features = getVectorTabouFeatures(getState());
-        const options = getTabouVectorLayer(getState());
-        return Rx.Observable.of(
-            updateAdditionalLayer(
-                TABOU_VECTOR_ID,
-                TABOU_OWNER,
-                "overlay",
-                {
-                    ...options,
-                    features
-                }
-            ),
-            loadTabouInfos(getCurrentTabouData(getState()))
-        );
-    });
-

@@ -41,7 +41,8 @@ import {
     displayFeature,
     DISPLAY_PA_SA_BY_OA,
     setTabouFilterObj,
-    applyFilterObj
+    applyFilterObj,
+    updateVectorTabouStyle
 } from '@ext/actions/tabou2';
 import { getPDFProgramme, putRequestApi } from '@ext/api/search';
 
@@ -73,10 +74,16 @@ export function tabouLoadIdentifyContent(action$, store) {
                     resp = {};
                 }
 
+                console.log(resp);
+
                 return Rx.Observable.of(setMainActiveTab("identify")).concat(
-                    Rx.Observable.of(loadTabouFeatureInfo(resp)).concat(
-                        Rx.Observable.of(closeIdentify())
+                    Rx.Observable.of(
+                        loadTabouFeatureInfo(resp),
+                        updateVectorTabouStyle()
                     )
+                        .concat(
+                            Rx.Observable.of(closeIdentify())
+                        )
                 );
             }
             return  Rx.Observable.of(closeIdentify());
