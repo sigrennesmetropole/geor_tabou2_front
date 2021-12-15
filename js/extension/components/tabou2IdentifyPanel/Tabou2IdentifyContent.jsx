@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { PanelGroup, Panel, Row, Grid } from 'react-bootstrap';
 import { some, isEmpty, isEqual } from 'lodash';
-import { CSS } from './tabou2Identify-css';
 import Tabou2IdentAccord from '@ext/components/form/identify/Tabou2IdentAccord';
 import Tabou2DescribeAccord from '@ext/components/form/identify/Tabou2DescribeAccord';
 import Tabou2GouvernanceAccord from '@ext/components/form/identify/Tabou2GouvernanceAccord';
@@ -15,6 +14,8 @@ import Tabou2IdentifyToolbar from './Tabou2IdentifyToolbar';
 import Loader from '@mapstore/components/misc/Loader';
 import Tabou2Information from '@ext/components/common/Tabou2Information';
 import Message from "@mapstore/components/I18N/Message";
+import "@ext/css/tabou.css";
+
 /**
  * Content of identify panel component - separate to be more readable
  * @param {any} param
@@ -27,7 +28,6 @@ export default function Tabou2IdentifyContent({
     featureId,
     ...props
 }) {
-    const [cssLoaded, setCss] = useState(false);
     const [accordions, setAccordions] = useState([]);
     // first accordions will be open
     const [openedAccordions, setOpened] = useState({0: true});
@@ -41,19 +41,6 @@ export default function Tabou2IdentifyContent({
         openedAccordions[idx] = openedAccordions[idx] ? false : true;
         setOpened(openedAccordions);
     };
-
-    /**
-     * load CSS
-     */
-    useEffect(() => {
-        if (!cssLoaded) {
-            let script = document.createElement('style');
-            let head = document.getElementsByTagName('head')[0];
-            script.innerHTML = CSS.join("\n");
-            head.appendChild(script);
-            setCss(true);
-        }
-    }, []);
 
     // hooks to refresh if necessary if user change selected layer or if response change
     useEffect(() => {
@@ -97,8 +84,8 @@ export default function Tabou2IdentifyContent({
         );
     }
     return (
-        <>
-            <Row className="tabou-idToolbar-row text-center" style={{ display: "flex", margin: "auto", justifyContent: "center" }}>
+        <div className="tabou-identify-panel">
+            <Row className="text-center tabou-tbar-panel">
                 <Tabou2IdentifyToolbar
                     response={response}
                     isValid={!some(mandatory.current, isEmpty)}
@@ -115,7 +102,7 @@ export default function Tabou2IdentifyContent({
                             onSelect={() => toggleAccordion(index)}
                             key={'panelgp-' + index} accordion>
                             <Panel
-                                className="idContentHeader"
+                                className="tabou-accordeon tabou-panel"
                                 header={(
                                     <span onClick={() => toggleAccordion(index)}>
                                         <label>
@@ -137,6 +124,6 @@ export default function Tabou2IdentifyContent({
                     ))
                 }
             </Grid>
-        </>
+        </div>
     );
 }

@@ -37,6 +37,8 @@ export const SET_IDENTIFY_INFOS = "SET_IDENTIFY_INFOS";
 export const SET_TABOU_ERROR = "SET_ERROR";
 export const GET_EVENTS = "GET_EVENTS";
 export const DISPLAY_MSG = "DISPLAY_MSG";
+export const DISPLAY_PA_SA_BY_OA = "DISPLAY_PA_BY_OA";
+export const SET_TIERS_FILTER = "SET_TIERS_FILTER";
 
 export const displayMsg = (level, title, message) => ({
     type: DISPLAY_MSG,
@@ -98,8 +100,9 @@ export const applySearchQuery = () => ({
     type: APPLY_SEARCH_QUERY
 });
 
-export const resetSearchFilters = () => ({
-    type: RESET_SEARCH_FILTERS
+export const resetSearchFilters = (layers) => ({
+    type: RESET_SEARCH_FILTERS,
+    layers
 });
 
 export const resetCqlFilters = () => ({
@@ -237,4 +240,15 @@ export const setTabouErrors = (value, name, typeMsg = "", msg = "") => ({
     name,
     typeMsg,
     msg
+});
+
+export const displayPASAByOA = (id) => ({
+    type: DISPLAY_PA_SA_BY_OA,
+    id: id
+});
+
+export const setTiersFilter = (id, filter) => ({
+    type: SET_TIERS_FILTER,
+    id,
+    filter
 });

@@ -5,6 +5,7 @@ import { getRequestApi } from "@ext/api/search";
 import Tabou2Combo from '@ext/components/form/Tabou2Combo';
 import Toolbar from '@mapstore/components/misc/toolbar/Toolbar';
 import Message from "@mapstore/components/I18N/Message";
+import "@ext/css/tabou.css";
 
 /**
  * Form to display when a tier is edit or created.
@@ -105,7 +106,7 @@ export default function Tabou2TiersForm({...props}) {
 
     return (
         <>
-            <Row className="tabou-idToolbar-row text-center" style={{ display: "flex", margin: "auto", marginBottom: "15px", justifyContent: "center" }}>
+            <Row className="text-center tabou-tbar-panel">
                 <Toolbar
                     btnDefaultProps={{
                         className: "square-button-lg",

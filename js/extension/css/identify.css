@@ -13,8 +13,9 @@
     display: none;
 }
 
-.attributeInfos {
-    margin-bottom: 10px;
+.tableDisplay {
+    margin-bottom: 20px !important;
+    margin-top: 15px !important;
 }
 
 .tableInfos {
@@ -23,4 +24,9 @@
 
 .searchTier {
     margin-top: 5px;
+}
+
+.table-accord {
+    max-height: 100% !important;
+    overflow: auto;
 }

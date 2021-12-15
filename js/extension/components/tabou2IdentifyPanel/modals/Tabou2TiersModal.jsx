@@ -156,6 +156,7 @@ export default function Tabou2TiersModal({
     }];
 
     const displayForm = editionActivate.current && !tiers.filter(t => t.associate).length;
+
     // return modal title
     const getTitle = () => {
         if (displayForm && tiers.filter(t => t.new).length) {
@@ -165,6 +166,14 @@ export default function Tabou2TiersModal({
         }
         return (<Message msgId="tabou2.tiersModal.title"/>);
     };
+
+    const isTypeDisplay = (tierItem) => {
+        if (props.tiersFilter && props.tiersFilter.filter) {
+            return props.tiersFilter.filter === tierItem.typeTiers.id;
+        }
+        return true;
+    };
+
     return (
         <ResizableModal
             title={getTitle()}
@@ -209,7 +218,7 @@ export default function Tabou2TiersModal({
                                         </thead>
                                         <tbody style={{overflow: "auto"}}>
                                             {
-                                                orderBy(filterText ? tiers.filter(t => includes(t.nom.toLowerCase(), filterText)) : tiers, sortField[0], sortField[1]).map((tier) => (
+                                                orderBy(filterText ? tiers.filter(t => includes(t.nom.toLowerCase(), filterText)) : tiers, sortField[0], sortField[1]).filter(t => isTypeDisplay(t)).map((tier) => (
                                                     <>
                                                         <tr>
                                                             <td>

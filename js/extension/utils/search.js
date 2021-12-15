@@ -34,7 +34,7 @@ export function containEmpty(obj) {
  * @param {object} crossLayer
  * @returns {object}
  */
-export function getNewFilter(layerTypeName = '', spatialFilter = {}, textFilters = [], crossLayer = null) {
+export function getNewFilter(layerTypeName = '', spatialFilter = {}, textFilters = [], crossLayerFilter = null) {
     return {
         featureTypeName: layerTypeName || '',
         groupFields: [{
@@ -48,77 +48,51 @@ export function getNewFilter(layerTypeName = '', spatialFilter = {}, textFilters
         filterType: "OGC",
         ogcVersion: "1.1.0",
         sortOptions: null,
-        crossLayerFilter: crossLayer || null,
+        crossLayerFilter: crossLayerFilter || null,
         hits: false
     };
 }
 
 /**
- * Return simple CQL Cross layer filter from complexe CQL expression.
- * * This structure is expected by MapStore2 TOC filter plugin to work together.
- * @param {object} props
- * @returns {object} as CQL filter's crossLayer param object.
+ * Create spatial filter to apply to TOC layer
+ * @param {*} operation - operation to realize between geoms
+ * @param {String} geom - geom field
+ * @param {String} cqlFilter - cql expression
+ * @param {Array} filterFields - list of filter fields object
+ * @param {String} crossGeom - geom field name of layer use to filter
+ * @param {String} crossName - typeName of layer use to filter
+ * @returns cross layer filter object
  */
-export function getNewCrossLayerFilter(props) {
-    if (containEmpty(props)) return null;
-    return {
-        operation: "INTERSECTS",
-        attribute: props.mapLayerGeom,
+export function getNewCrossLayerFilter(operation, geom, cqlFilter, filterFields, crossGeom, crossName) {
+    let crossFilter =  {
+        operation: operation || "INTERSECTS",
+        attribute: geom,
         collectGeometries: {
             queryCollection: {
-                cqlFilter: props.cqlFilter,
-                filterFields: [{
-                    attribute: props.attribute,
-                    exception: null,
-                    fieldOptions: {
-                        currentPage: 1,
-                        valuesCount: 0
-                    },
-                    groupId: 1,
-                    operator: props.operator,
-                    rowId: new Date().getTime(),
-                    type: props.type,
-                    value: props.value
-                }],
-                geometryName: props.crossGeom,
-                typeName: props.crossName
+                filterFields: filterFields,
+                geometryName: crossGeom,
+                typeName: crossName,
+                groupFields: [{
+                    id: 1,
+                    logic: "OR",
+                    index: 0
+                }]
             }
         }
     };
+    if (cqlFilter) crossFilter.collectGeometries.queryCollection.cqlFilter = cqlFilter;
+    return crossFilter;
 }
 
-/**
- * Return simple CQL Cross layer filter from simple CQL expression.
- * This structure is expected by MapStore2 TOC filter plugin to work together.
- * @param {object} props
- * @returns {object} as CQL filter's crossLayer param object.
- */
-export function getNewCqlFilter(props) {
-    if (containEmpty(props)) return null;
-    return {
-        operation: "INTERSECTS",
-        attribute: props.mapLayerGeom,
-        collectGeometries: {
-            queryCollection: {
-                cqlFilter: props.cqlFilter,
-                geometryName: props.crossGeom,
-                typeName: props.crossName
-            }
-        }
-    };
-}
-
-export function getIdsToCql(ids, field) {
-    return ids.map(id => {
-        return {
-            attribute: field,
-            groupId: 1,
-            operator: "=",
-            rowId: new Date().getTime(),
-            type: "number",
-            value: id
-        };
-    });
+export function getFilterField(field, values, valueType, operator, groupId) {
+    return values.map(value => ({
+        attribute: field,
+        groupId: groupId || 1,
+        operator: operator || "=",
+        rowId: new Date().getTime(),
+        type: valueType || "number",
+        value: value
+    }));
 }
 /**
  * Create a simple CQL syntax without spatial query
@@ -143,13 +117,13 @@ export function getCQL(type, field, value) {
 
 /**
  * Create standard CQL Cross Layer filter expression
- * @param {string} type
- * @param {string} geomA
- * @param {string} layer
- * @param {string} geomB
- * @param {string} field
- * @param {any} value
- * @returns {string} as CQL expression value
+ * @param {string} type - date or empty or string
+ * @param {string} geomA - geom field to filtered
+ * @param {string} layer - TOC id to filtered
+ * @param {string} geomB - geom field name from use as filter
+ * @param {string} field - optionnal - Limit layer use as filter by cql expression.
+ * @param {string} value - optionnal. Value for previous field param.
+ * @returns {string} CQL expression
  */
 export function getSpatialCQL(type, geomA, layer, geomB, field, value, onlyTabou) {
     if (type === "date" && (value.start || value.end)) {
@@ -196,4 +170,60 @@ export function getTabouLayersInfos(config) {
  */
 export function getGeoServerUrl(props) {
     return props?.pluginCfg?.geoserverURL || `https://${window.location.hostname}/geoserver`;
+}
+
+/**
+ * Create layer filter from list values
+ * @param {String} layer - layer typeName
+ * @param {Array} values - list of values to filter
+ * @param {String} field - field name to filterFields
+ * @param {String} cql - optional cql expression like list
+ * @returns filter object to apply as MapStore TOC filter
+ */
+export function newfilterLayerByList(layer, values, field, cql, crossLayer) {
+    let newFilter = getNewFilter(layer, null, [], crossLayer);
+    let valuesToCql = values.map(id => `${field} = ${id}`).join(' OR ');
+    let filterFields = values.map((id, idx) => ({
+        "rowId": new Date().getTime() + idx,
+        "groupId": 1,
+        "attribute": field,
+        "operator": "=",
+        "value": id,
+        "type": "number",
+        "fieldOptions": {
+            "valuesCount": 0,
+            "currentPage": 1
+        },
+        "exception": null
+    }));
+    // prepare filter
+    let finalFilter = {
+        layerToFilter: layer,
+        tocFilter: null
+    };
+    if (crossLayer) {
+        newFilter.crossLayerFilter.collectGeometries.queryCollection.filterFields = filterFields;
+    } else {
+        newFilter.filterFields = filterFields;
+        newFilter.cql = cql || valuesToCql;
+    }
+    newFilter.tocFilter = newFilter;
+    return {...finalFilter, ...newFilter};
+}
+
+/**
+ * Create params object expected by Ajax POST request
+ * @param {String} cql - expression
+ * @param {String} layer - name from geoserver typeName
+ * @returns object
+ */
+export function createWfsPostRequest(cql, layer) {
+    return {
+        CQL_FILTER: cql,
+        SERVICE: 'WFS',
+        REQUEST: 'GetFeature',
+        TYPENAME: layer, // tabou2:iris
+        OUTPUTFORMAT: 'application/json',
+        VERSION: '1.0.0'
+    };
 }

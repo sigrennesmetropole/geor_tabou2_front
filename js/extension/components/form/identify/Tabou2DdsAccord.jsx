@@ -7,6 +7,7 @@ import Message from "@mapstore/components/I18N/Message";
 
 import moment from 'moment';
 import momentLocalizer from 'react-widgets/lib/localizers/moment';
+import ControlledPopover from '@mapstore/components/widgets/widget/ControlledPopover';
 momentLocalizer(moment);
 
 /**
@@ -52,14 +53,15 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
     }, {
         name: "ddc",
         label: "tabou2.identify.accordions.ddcData",
+        msg: ["tabou2.getHelp", props.help?.ddc || props.help?.url || ""],
         type: "table",
-        fields: ["numAds", "decisionDossier"/* , "surfCommerce", "surfEquipe"*/],
+        fields: ["numAds", "depotDossier", "adsDate", "docDate", "datDate "],
         labels: [
             "tabou2.identify.accordions.numAds",
-            "tabou2.identify.accordions.adsDate"
-            /* ,
+            "tabou2.identify.accordions.depotDossier",
+            "tabou2.identify.accordions.adsDate",
             "tabou2.identify.accordions.docDate",
-            "tabou2.identify.accordions.daactDate"*/
+            "tabou2.identify.accordions.daactDate"
         ],
         layers: ["layerPA"],
         source: props?.tabouInfos?.permis?.elements || [],
@@ -86,16 +88,8 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
      * @returns any
      */
     const getValueByField = (field, val) => {
-        let fieldVal;
-        switch (field) {
-        case "dateLiv":
-            fieldVal = val ? new Date(val).toLocaleDateString() : val;
-            break;
-        default:
-            fieldVal = val;
-            break;
-        }
-        return fieldVal;
+        let isDate = ["depotDossier", "adsDate", "docDate", "datDate"].includes(field);
+        return isDate && val ? new Date(val).toLocaleDateString() : val;
     };
 
     /**
@@ -125,14 +119,24 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
         <Grid style={{ width: "100%" }} className={""}>
             {
                 fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(item => (
-                    <Row className="attributeInfos">
-                        <Col xs={4}>
+                    <Row className = {item.type === "table" ? "tableDisplay" : ""}>
+                        <Col xs={item.type === "table" ? 12 : 4}>
                             {
-                                item.type !== "boolean" ? <ControlLabel><Message msgId={item.label}/></ControlLabel> :  null
+                                item.type !== "boolean" && (
+                                    <ControlLabel>
+                                        <Message msgId={item.label}/>
+                                        {
+                                            item.msg && (
+                                                <a href={item.msg[1]} className="link-deactivate" target="_blank">
+                                                    <ControlledPopover text={<Message msgId={ item.msg[0] }/>} />
+                                                </a>)
+                                        } :
+                                    </ControlLabel>
+                                )
                             }
                         </Col>
                         {
-                            item.type === "date" ? (
+                            item.type === "date" && (
                                 <Col xs={8}>
                                     <DateTimePicker
                                         type="date"
@@ -150,10 +154,10 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
                                         onChange={(v) => changeDate(item, v)}
                                     />
                                 </Col>
-                            ) : null
+                            )
                         }{
-                            item.type === "table" ? (
-                                <Col xs={12}>
+                            item.type === "table" && (
+                                <Col xs={12} className={"table-accord"}>
                                     <Table striped bordered condensed hover>
                                         <thead>
                                             <tr>
@@ -177,7 +181,7 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
                                         </tbody>
                                     </Table>
                                 </Col>
-                            ) : null
+                            )
                         }
                     </Row>
                 ))

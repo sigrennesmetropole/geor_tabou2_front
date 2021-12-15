@@ -1,11 +1,16 @@
 import React, {useEffect, useState } from "react";
 import { isEmpty, isEqual, pick, get } from "lodash";
-import { Checkbox, Col, Row, Grid, ControlLabel } from "react-bootstrap";
+import { Col, Row, Grid, Glyphicon, ControlLabel } from "react-bootstrap";
 import Tabou2Combo from '@ext/components/form/Tabou2Combo';
 import { getRequestApi } from "@ext/api/search";
 import { Multiselect } from "react-widgets";
 import "@ext/css/identify.css";
+import "@ext/css/tabou.css";
 import Message from "@mapstore/components/I18N/Message";
+
+import ButtonRB from '@mapstore/components/misc/Button';
+import tooltip from '@mapstore/components/misc/enhancers/tooltip';
+const Button = tooltip(ButtonRB);
 /**
  * Accordion to display info for Gouvernance panel section - only for feature linked with id tabou
  * @param {any} param
@@ -13,7 +18,6 @@ import Message from "@mapstore/components/I18N/Message";
  */
 export default function Tabou2GouvernanceAccord({ initialItem, programme, operation, mapFeature, ...props }) {
     let layer = props?.selection?.layer;
-
     const [values, setValues] = useState({});
     const [fields, setFields] = useState([]);
     const [required, setRequired] = useState({});
@@ -95,6 +99,32 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
         props.change(accordValues, pick(accordValues, required));
     };
 
+    const openTierModal = (type) => {
+        let tiersBtn = document.getElementById('tiers');
+        if (props.setTiersFilter && type && tiersBtn) {
+            props.setTiersFilter(operation?.id || programme?.id, type);
+            tiersBtn.click();
+        }
+    };
+
+    const allTiersButtons = {
+        moe: {
+            type: "button",
+            tooltip: "tabou2.identify.accordions.tiersDetail",
+            click: () => openTierModal(2)
+        },
+        promoteur: {
+            type: "button",
+            tooltip: "tabou2.identify.accordions.tiersDetail",
+            click: () => openTierModal(1)
+        },
+        amenageur: {
+            type: "button",
+            tooltip: "tabou2.identify.accordions.tiersDetail",
+            click: () => openTierModal(1)
+        }
+    };
+
     return (
         <Grid style={{ width: "100%" }} className={""}>
             {
@@ -102,23 +132,22 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
                     <Row className="attributeInfos">
                         <Col xs={4}>
                             {
-                                item.type !== "boolean" ? <ControlLabel><Message msgId={item.label}/></ControlLabel> :  null
-                            }
-                            {
-                                item.type === "boolean" ?
-                                    (<Checkbox
-                                        inline="true"
-                                        checked={item.value(item) || false}
-                                        disabled={item.readOnly || !allowChange}
-                                        id={`chbox-${item.name}`}
-                                        className="col-xs-5">
-                                        <ControlLabel><Message msgId={item.label}/></ControlLabel>
-                                    </Checkbox>) : null
+                                item.label && (<ControlLabel><Message msgId={item.label}/></ControlLabel>)
                             }
                         </Col>
-                        <Col xs={8}>
+                        <Col xs={allTiersButtons[item.name] ? 7 : 8}>
                             {
-                                item.type === "combo" ? (
+                                item.type === "button" && (
+                                    <Button
+                                        tooltip={props.i18n(props.messages, item.tooltip || "")}
+                                        onClick={() => item.click() }
+                                        bsStyle="primary"
+                                        bsSize={item.size || "xs"}>
+                                        <Glyphicon glyph="user"/>
+                                    </Button>
+                                )
+                            }{
+                                item.type === "combo" && (
                                     <Tabou2Combo
                                         load={() => getRequestApi(item.api, props.pluginCfg.apiCfg, {})}
                                         placeholder={props.i18n(props.messages, item?.label || "")}
@@ -135,18 +164,31 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
                                             openCombobox: props.i18n(props.messages, "tabou2.displayList")
                                         }}
                                     />
-                                ) : null
+                                )
                             }{
-                                item.type === "multi" ? (
+                                item.type === "multi" && (
                                     <Multiselect
                                         placeholder={props.i18n(props.messages, item?.label || "")}
                                         readOnly={item.readOnly || !allowChange}
                                         value={item.data}
                                         className={ item.readOnly ? "tagColor noClick" : "tagColor"}
                                     />
-                                ) : null
+                                )
                             }
                         </Col>
+                        {
+                            allTiersButtons[item.name] && (
+                                <Col xs={1} className="no-padding">
+                                    <Button
+                                        tooltip={props.i18n(props.messages, allTiersButtons[item.name].tooltip || "")}
+                                        onClick={() => allTiersButtons[item.name].click() }
+                                        bsStyle="primary"
+                                        bsSize="md">
+                                        <Glyphicon glyph="user"/>
+                                    </Button>
+                                </Col>
+                            )
+                        }
                     </Row>
                 ))
             }

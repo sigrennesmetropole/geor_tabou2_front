@@ -18,13 +18,13 @@ import init from '@ext/utils/init';
 
 import { tabouApplyFilter, tabouResetFilter, tabouGetSearchIds } from '@ext/epics/search';
 import { tabouLoadIdentifyContent, tabouSetGFIFormat, purgeTabou, printProgramme, createChangeFeature,
-    displayFeatureInfos } from '@ext/epics/identify';
+    displayFeatureInfos, dipslayPASAByOperation } from '@ext/epics/identify';
 import { getSelectionInfos, updateTabou2Logs, updateTabou2Tier, addCreateTabou2Tier, getTiersElements,
     associateTabou2Tier, createTabouFeature, onLayerReload, getEventsElements } from '@ext/epics/featureEvents';
 import { showNotification } from "@ext/epics/common";
 import { setTbarPosition } from '@ext/epics/setup';
 
-import { CONTROL_NAME } from '@ext/constants';
+import { CONTROL_NAME, PANEL_SIZE } from '@ext/constants';
 
 const compose = (...functions) => args => functions.reduceRight((arg, fn) => fn(arg), args);
 
@@ -42,7 +42,7 @@ class Tabou2Panel extends React.Component {
         filterObj: {},
         toggleControl: () => { },
         tabs: [],
-        size: 500
+        size: PANEL_SIZE
     };
 
     render() {
@@ -100,7 +100,8 @@ export default {
         onLayerReload: onLayerReload,
         displayFeatureInfos: displayFeatureInfos,
         getEventsElements: getEventsElements,
-        showNotification: showNotification
+        showNotification: showNotification,
+        dipslayPASAByOperation: dipslayPASAByOperation
     },
     containers: {
         Toolbar: {
