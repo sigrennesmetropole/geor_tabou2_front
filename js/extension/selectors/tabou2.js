@@ -1,5 +1,5 @@
 import { CONTROL_NAME, TABOU_VECTOR_ID } from '@ext/constants';
-import { keys, pickBy } from 'lodash';
+import { keys, pickBy, get } from 'lodash';
 import { userGroupSecuritySelector, userSelector } from '@mapstore/selectors/security';
 import { additionalLayersSelector } from '@mapstore/selectors/additionallayers';
 import { DEFAULT_STYLE, SELECT_STYLE } from "../constants";
@@ -217,16 +217,27 @@ export function getTabouVectorLayer(state) {
 
 export function getCurrentTabouData(state) {
     const selected = {...tabouDataSelector(state)[0]};
+    const selectedId = get(getSelection(state), "feature")?.id;
     keys(selected).map(lyr => {
-        selected[lyr] = selected[lyr].map(feature => ({
-            ...feature,
-            style: feature.id === getSelection(state).feature.id ? SELECT_STYLE : DEFAULT_STYLE
-        }));
+        const geomField = (getPluginCfg(state).layersCfg, lyr).geomField;
+        selected[lyr] = selected[lyr].map(feature => {
+            return {
+                ...feature,
+                geometry_name: geomField,
+                style: feature.id === selectedId ? SELECT_STYLE : DEFAULT_STYLE
+            };
+        });
     });
     return selected;
 }
 
 export function getVectorTabouFeatures(state) {
-    const features = getSelection(state).feature;
+    const features = getCurrentTabouData(state);
     return keys(features).map(k => features[k]).flat();
+}
+
+export function getSelectedVectorTabouFeature(state) {
+    const features = getVectorTabouFeatures(state);
+    const selectedId = get(getSelection(state), "feature")?.id;
+    return features.filter(f => selectedId && f.id === selectedId);
 }
