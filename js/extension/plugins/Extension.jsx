@@ -20,7 +20,7 @@ import init from '@ext/utils/init';
 
 import { onTabouMapClick, onSelectionUpdate } from "@js/extension/epics/layer";
 import { tabouApplyFilter, tabouResetFilter, tabouGetSearchIds } from '@js/extension/epics/search';
-import { tabouLoadIdentifyContent, tabouSetGFIFormat, purgeTabou, printProgramme, createChangeFeature,
+import { tabouLoadIdentifyContent, tabouSetGFIFormat, printProgramme, createChangeFeature,
     displayFeatureInfos, dipslayPASAByOperation } from '@js/extension/epics/identify';
 import { getSelectionInfos, updateTabou2Logs, updateTabou2Tier, addCreateTabou2Tier, getTiersElements,
     associateTabou2Tier, createTabouFeature, onLayerReload, getEventsElements } from '@js/extension/epics/featureEvents';
@@ -88,7 +88,6 @@ export default {
         tabouApplyFilter: tabouApplyFilter,
         tabouLoadIdentifyContent: tabouLoadIdentifyContent,
         tabouSetGFIFormat: tabouSetGFIFormat,
-        purgeTabou: purgeTabou,
         tabouResetFilter: tabouResetFilter,
         setTbarPosition: setTbarPosition,
         getSelectionInfos: getSelectionInfos,

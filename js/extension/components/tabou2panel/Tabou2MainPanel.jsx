@@ -16,7 +16,6 @@ import { updateVectorTabouStyle } from "../../actions/tabou2";
  */
 function Tabou2MainPanel({
     enabled,
-    dockStyle = {},
     size = PANEL_SIZE,
     onClose = () => { },
     ...props

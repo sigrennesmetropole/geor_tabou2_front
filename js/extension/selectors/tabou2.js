@@ -1,8 +1,7 @@
 import { CONTROL_NAME, TABOU_VECTOR_ID } from '@ext/constants';
-import { keys, pickBy, get } from 'lodash';
+import { keys, pickBy, isEmpty } from 'lodash';
 import { userGroupSecuritySelector, userSelector } from '@mapstore/selectors/security';
 import { additionalLayersSelector } from '@mapstore/selectors/additionallayers';
-import { DEFAULT_STYLE, SELECT_STYLE } from "../constants";
 /**
  * Get active tab id
  * @param {*} state
@@ -41,7 +40,7 @@ export function defaultInfoFormat(state) {
  * @returns {object}
  */
 export function getTabouResponse(state) {
-    return state?.tabou2.response;
+    return state?.tabou2?.response;
 }
 /**
  * Get OGC map click response for each OA, PA, SA layers
@@ -201,6 +200,10 @@ export function tabouDataSelector(state) {
     return state?.tabou2?.features;
 }
 
+export function getClickedFeatures(state) {
+    return pickBy(state?.tabou2?.features[0], (a) => !isEmpty(a));
+}
+
 export function layerStylesSelector(state) {
     return state.tabou2?.styles;
 }
@@ -213,31 +216,4 @@ export function getDefaultStyle(state) {
 export function getTabouVectorLayer(state) {
     const additionalLayers = additionalLayersSelector(state) ?? [];
     return additionalLayers.filter(({ id }) => id === TABOU_VECTOR_ID)?.[0]?.options;
-}
-
-export function getCurrentTabouData(state) {
-    const selected = {...tabouDataSelector(state)[0]};
-    const selectedId = get(getSelection(state), "feature")?.id;
-    keys(selected).map(lyr => {
-        const geomField = (getPluginCfg(state).layersCfg, lyr).geomField;
-        selected[lyr] = selected[lyr].map(feature => {
-            return {
-                ...feature,
-                geometry_name: geomField,
-                style: feature.id === selectedId ? SELECT_STYLE : DEFAULT_STYLE
-            };
-        });
-    });
-    return selected;
-}
-
-export function getVectorTabouFeatures(state) {
-    const features = getCurrentTabouData(state);
-    return keys(features).map(k => features[k]).flat();
-}
-
-export function getSelectedVectorTabouFeature(state) {
-    const features = getVectorTabouFeatures(state);
-    const selectedId = get(getSelection(state), "feature")?.id;
-    return features.filter(f => selectedId && f.id === selectedId);
 }

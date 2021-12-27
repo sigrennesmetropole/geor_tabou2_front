@@ -1,4 +1,5 @@
 import { reproject } from '@mapstore/utils/CoordinatesUtils';
+import GeoJSON from 'ol/format/GeoJSON';
 
 /**
 * Generate a simple point geometry using position data
@@ -40,4 +41,18 @@ export const createParams = (point, layer) => {
 export const createCqlPoint = (point) => {
     const geometry = getGeometry(point, "EPSG:4326", "EPSG:3948");
     return `INTERSECTS(the_geom,POINT(${geometry.coordinates[0] || geometry.coordinates.x} ${geometry.coordinates[1] || geometry.coordinates.y}))`;
+};
+
+
+export const reprojectFeatures = (data) => {
+    let reader = new GeoJSON({
+        defaultDataProjection: 'EPSG:3857'
+    });
+    let features = reader.readFeatures(data, {
+        dataProjection: 'EPSG:3857',
+        featureProjection: 'EPSG:4326'
+    });
+    let writer = new GeoJSON();
+    let newFeatures = writer.writeFeatures(features);
+    return JSON.parse(newFeatures);
 };

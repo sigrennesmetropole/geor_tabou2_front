@@ -1,7 +1,7 @@
 import * as Rx from 'rxjs';
 import { CONTROL_NAME, ID_TABOU, URL_ADD } from '../constants';
 
-import { get, pickBy, find, isEmpty, has } from 'lodash';
+import { get, keys, find, isEmpty, has, pickBy } from 'lodash';
 
 import {
     generalInfoFormatSelector, identifyOptionsSelector, clickPointSelector } from '@mapstore/selectors/mapInfo';
@@ -12,11 +12,8 @@ import { buildIdentifyRequest } from '@mapstore/utils/MapInfoUtils';
 import { layersSelector } from '@mapstore/selectors/layers';
 import { error, success } from "@mapstore/actions/notifications";
 import {getMessageById} from "@mapstore/utils/LocaleUtils";
-import { newfilterLayerByList, getNewCrossLayerFilter } from '@js/extension/utils/search';
+import { newfilterLayerByList, getNewCrossLayerFilter } from '../utils/search';
 import {
-    LOAD_FEATURE_INFO,
-    FEATURE_INFO_CLICK,
-    closeIdentify,
     changeMapInfoFormat,
     loadFeatureInfo,
     updateFeatureInfoClickPoint
@@ -25,11 +22,10 @@ import { TOGGLE_CONTROL } from '@mapstore/actions/controls';
 import {
     isTabou2Activate,
     defaultInfoFormat,
-    getTabouResponse,
     getPluginCfg,
     getSelection,
     getLayerFilterObj
-} from '@ext/selectors/tabou2';
+} from '../selectors/tabou2';
 import {
     loadTabouFeatureInfo,
     setDefaultInfoFormat,
@@ -42,9 +38,10 @@ import {
     DISPLAY_PA_SA_BY_OA,
     setTabouFilterObj,
     applyFilterObj,
-    updateVectorTabouStyle
-} from '@ext/actions/tabou2';
-import { getPDFProgramme, putRequestApi } from '@ext/api/search';
+    cleanTabouInfos,
+    TABOU_CHANGE_FEATURES
+} from "../actions/tabou2";
+import { getPDFProgramme, putRequestApi } from '../api/search';
 
 import { getFeatureInfo } from "@mapstore/api/identify";
 /**
@@ -54,39 +51,16 @@ import { getFeatureInfo } from "@mapstore/api/identify";
  * @param {*} store
  */
 export function tabouLoadIdentifyContent(action$, store) {
-    return action$.ofType(LOAD_FEATURE_INFO)
+    return action$.ofType(TABOU_CHANGE_FEATURES)
         .filter(() => isTabou2Activate(store.getState()))
         .switchMap((action) => {
-            if (action?.layer?.id && action?.data?.features && action.data.features.length) {
-                let resp = getTabouResponse(store.getState());
-                let cfg = getPluginCfg(store.getState()).layersCfg;
-                // delete response for this GFI layer response
-                delete resp[action.layer.name];
-
-                // just keep tabou feature response with features
-                if (action?.data?.features && action.data.features.length) {
-                    resp[action.layer.name] = action;
-                    // only return response for OA, PA, SA
-                    resp = pickBy(resp, (v, k) =>
-                        find(cfg, ["nom", k])
-                    );
-                } else {
-                    resp = {};
-                }
-
-                console.log(resp);
-
-                return Rx.Observable.of(setMainActiveTab("identify")).concat(
-                    Rx.Observable.of(
-                        loadTabouFeatureInfo(resp),
-                        updateVectorTabouStyle()
-                    )
-                        .concat(
-                            Rx.Observable.of(closeIdentify())
-                        )
-                );
-            }
-            return  Rx.Observable.of(closeIdentify());
+            const resp = action.data;
+            const respNotEmpty = keys(resp).filter(k => get(resp, k).data.features.length);
+            const picked = pickBy(resp, (a, b) => respNotEmpty.includes(b));
+            return Rx.Observable.of(
+                setMainActiveTab("identify"),
+                loadTabouFeatureInfo(picked)
+            );
         });
 }
 
@@ -114,21 +88,6 @@ export function tabouSetGFIFormat(action$, store) {
             return Rx.Observable.of(changeMapInfoFormat(firstDefaultMime))
                 .concat(Rx.Observable.of(updateUserPlugin("Identify", { active: true })));
 
-        });
-}
-
-/**
- * Purge info from Tabou identify panel.
- * @param {any} action$
- * @param {any} store
- */
-export function purgeTabou(action$, store) {
-    return action$.ofType(FEATURE_INFO_CLICK)
-        .filter(() => isTabou2Activate(store.getState()))
-        .switchMap(() => {
-            let cancelBtn = document.getElementById('cancelAddForm');
-            if (cancelBtn) cancelBtn.click();
-            return Rx.Observable.of(loadTabouFeatureInfo({}));
         });
 }
 
@@ -253,7 +212,7 @@ export function displayFeatureInfos(action$, store) {
                     // if not we load the entire response to trigger fake map click response and display response into indentify panel
                     if (!isSelected) {
                         return Rx.Observable.of(
-                            loadTabouFeatureInfo({}),
+                            cleanTabouInfos(),
                             loadFeatureInfo(uuid.v1(), response.data, request, { ...metadata, features: response.features, featuresCrs: response.featuresCrs }, tocLayer)
                         );
                     }

@@ -1,5 +1,5 @@
 import { set } from '@mapstore/utils/ImmutableUtils';
-import { get, isNumber, isEmpty } from 'lodash';
+import { get, isNumber } from 'lodash';
 import {
     SETUP,
     SET_MAIN_ACTIVE_TAB,
@@ -22,7 +22,8 @@ import {
     SET_TABOU_ERROR,
     SET_TIERS_FILTER,
     UPDATE_TABOU_SELECTION,
-    CLEAN_TABOU_SELECTION
+    CLEAN_TABOU_SELECTION,
+    CLEAN_TABOU_INFOS
 } from '@ext/actions/tabou2';
 
 const initialState = {
@@ -69,6 +70,8 @@ export default function tabou2(state = initialState, action) {
     case LOAD_TABOU_FEATURE_INFO:
         const { response } = action;
         return set('response', response, state);
+    case CLEAN_TABOU_INFOS:
+        return set('response', {}, state);
     case SET_SELECTOR_INDEX:
         const { selectorsIndex } = action;
         return set('index', selectorsIndex, state);
@@ -121,8 +124,9 @@ export default function tabou2(state = initialState, action) {
         return set('tiersFilter', action, state);
     case UPDATE_TABOU_SELECTION:
     {
-        const {layer, features} = action;
-        return set(`features[0][${layer}]`, features, state);
+        const {infos} = action;
+        console.log(infos);
+        return set("features[0]", infos, state);
     }
     case CLEAN_TABOU_SELECTION:
         return set("features", [], state);
