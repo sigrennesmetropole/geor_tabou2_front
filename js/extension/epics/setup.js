@@ -4,7 +4,7 @@ import { updateAdditionalLayer, removeAdditionalLayer } from '@mapstore/actions/
 import { hideMapinfoMarker, toggleMapInfoState } from '@mapstore/actions/mapInfo';
 import { isTabou2Activate } from '../selectors/tabou2';
 import { PANEL_SIZE, TABOU_VECTOR_ID, TABOU_OWNER } from '../constants';
-import { SETUP, CLOSE_TABOU } from "../actions/tabou2";
+import { SETUP, CLOSE_TABOU, cleanTabouInfos } from "../actions/tabou2";
 import { get } from "lodash";
 /**
  * Manage mapstore toolbar layout
@@ -44,12 +44,6 @@ export const initMap = (action$, store) =>
     action$.ofType(SETUP).switchMap(() => {
         const mapInfoEnabled = get(store.getState(), "mapInfo.enabled");
         return Rx.Observable.defer(() => {
-            // const config = getPluginCfg(store.getState());
-            // let urbaLayersCfg = config.layersCfg;
-            // const wfsOA = find(urbaLayersCfg, "layerOA").nom;
-            // const wfsSA = find(urbaLayersCfg, "layerSA").nom;
-            // const wfsPA = find(urbaLayersCfg, "layerPA").nom;
-            // const wfsURL = `${config.geoserverURL}/wfs`;
             return Rx.Observable.from([
                 updateAdditionalLayer(
                     TABOU_VECTOR_ID,
@@ -73,6 +67,7 @@ export const closeTabouExt = (action$, {getState = ()=>{}}) =>
     action$.ofType(CLOSE_TABOU).switchMap(() => {
         const mapInfoEnabled = get(getState(), "mapInfo.enabled");
         return Rx.Observable.from([
+            cleanTabouInfos(),
             removeAdditionalLayer({id: TABOU_VECTOR_ID, owner: TABOU_OWNER})
         // enable click info right panel if needed
         ]).concat([...(!mapInfoEnabled ? [toggleMapInfoState()] : [])]);
