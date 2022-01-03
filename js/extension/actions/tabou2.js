@@ -47,6 +47,7 @@ export const CLEAN_TABOU_SELECTION = "CLEAN_TABOU_SELECTION";
 export const TABOU_CHANGE_FEATURES = "TABOU_CHANGE_FEATURES";
 export const UPDATE_TABOU_STYLE = "UPDATE_TABOU_STYLE";
 export const CLEAN_TABOU_INFOS = "CLEAN_TABOU_INFOS";
+export const DISPLAY_TABOU_MARKER = "DISPLAY_TABOU_MARKER";
 
 export const closeTabou = (pluginsCfg) => ({
     type: CLOSE_TABOU,
@@ -294,4 +295,9 @@ export const tabouChangeFeatures = (data) => ({
 
 export const cleanTabouInfos = () => ({
     type: CLEAN_TABOU_INFOS
+});
+
+export const displayTabouMarker = (point) => ({
+    type: DISPLAY_TABOU_MARKER,
+    point
 });

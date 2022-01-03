@@ -3,9 +3,11 @@ import { UPDATE_MAP_LAYOUT, updateMapLayout } from '@mapstore/actions/maplayout'
 import { updateAdditionalLayer, removeAdditionalLayer } from '@mapstore/actions/additionallayers';
 import { hideMapinfoMarker, toggleMapInfoState } from '@mapstore/actions/mapInfo';
 import { isTabou2Activate } from '../selectors/tabou2';
-import { PANEL_SIZE, TABOU_VECTOR_ID, TABOU_OWNER } from '../constants';
+import { PANEL_SIZE, TABOU_VECTOR_ID, TABOU_OWNER, TABOU_MARKER_LAYER_ID } from '../constants';
 import { SETUP, CLOSE_TABOU, cleanTabouInfos } from "../actions/tabou2";
 import { get } from "lodash";
+import { defaultIconStyle } from "@mapstore/utils/SearchUtils";
+import iconUrl from "@mapstore/components/map/openlayers/img/marker-icon.png";
 /**
  * Manage mapstore toolbar layout
  * @param {any} action$
@@ -31,11 +33,6 @@ export const setTbarPosition = (action$, store) =>
         });
 /**
  * Create additional layers
- * TODO :
- *  - add geom
- *  - add layer style
- *  - remove geom
- *  - manage layers on close or open action
  * @param {*} action$
  * @param {*} store
  * @returns
@@ -44,6 +41,8 @@ export const initMap = (action$, store) =>
     action$.ofType(SETUP).switchMap(() => {
         const mapInfoEnabled = get(store.getState(), "mapInfo.enabled");
         return Rx.Observable.defer(() => {
+            // replace red marker icon by default ol blue marker
+            let defaultStyle = {...defaultIconStyle, iconUrl: iconUrl};
             return Rx.Observable.from([
                 updateAdditionalLayer(
                     TABOU_VECTOR_ID,
@@ -56,7 +55,19 @@ export const initMap = (action$, store) =>
                         name: "tabouPolygonResult",
                         visibility: true
                     }
-                // TODO : add layer to get feature info from WFS or WMS and display point or geometry instead of keep mapstore GFI request
+                ),
+                updateAdditionalLayer(
+                    TABOU_MARKER_LAYER_ID,
+                    TABOU_OWNER,
+                    "overlay",
+                    {
+                        id: TABOU_MARKER_LAYER_ID,
+                        features: [],
+                        type: "vector",
+                        name: "tabouClicPointMarker",
+                        visibility: true,
+                        style: defaultStyle
+                    }
                 )
             // disable click info right panel
             ]).concat([...(mapInfoEnabled ? [toggleMapInfoState(), hideMapinfoMarker()] : [])]);

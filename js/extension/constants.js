@@ -1,5 +1,6 @@
 export const TABOU_VECTOR_ID = "__OA_OVRLAY_LAYER__";
 export const TABOU_OWNER = "Tabou2";
+export const TABOU_MARKER_LAYER_ID = "__OA_OVRLAY_MARKER__";
 
 export const TABS = [{
     id: 'search',

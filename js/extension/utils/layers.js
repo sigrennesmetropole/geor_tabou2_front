@@ -1,6 +1,11 @@
 import { reproject } from '@mapstore/utils/CoordinatesUtils';
 import GeoJSON from 'ol/format/GeoJSON';
 
+export const featuresToJSON = (features) => {
+    let writer = new GeoJSON();
+    return writer.writeFeatures(features);
+};
+
 /**
 * Generate a simple point geometry using position data
  * @param {object} point/position data from the map
@@ -44,15 +49,10 @@ export const createCqlPoint = (point) => {
 };
 
 
-export const reprojectFeatures = (data) => {
+export const readFeatures = (data, from, to) => {
     let reader = new GeoJSON({
-        defaultDataProjection: 'EPSG:3857'
+        defaultDataProjection: from
     });
-    let features = reader.readFeatures(data, {
-        dataProjection: 'EPSG:3857',
-        featureProjection: 'EPSG:4326'
-    });
-    let writer = new GeoJSON();
-    let newFeatures = writer.writeFeatures(features);
-    return JSON.parse(newFeatures);
+    let features = reader.readFeatures(data, from && to ? {dataProjection: from, featureProjection: to} : {});
+    return JSON.parse(featuresToJSON(features));
 };

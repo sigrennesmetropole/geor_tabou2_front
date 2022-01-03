@@ -1,4 +1,4 @@
-import { CONTROL_NAME, TABOU_VECTOR_ID } from '@ext/constants';
+import { CONTROL_NAME, TABOU_VECTOR_ID, TABOU_MARKER_LAYER_ID } from '@ext/constants';
 import { keys, pickBy, isEmpty } from 'lodash';
 import { userGroupSecuritySelector, userSelector } from '@mapstore/selectors/security';
 import { additionalLayersSelector } from '@mapstore/selectors/additionallayers';
@@ -218,6 +218,11 @@ export function getDefaultStyle(state) {
 export function getTabouVectorLayer(state) {
     const additionalLayers = additionalLayersSelector(state) ?? [];
     return additionalLayers.filter(({ id }) => id === TABOU_VECTOR_ID)?.[0]?.options;
+}
+
+export function getTabouMarkerLayer(state) {
+    const additionalLayers = additionalLayersSelector(state) ?? [];
+    return additionalLayers.filter(({ id }) => id === TABOU_MARKER_LAYER_ID)?.[0]?.options;
 }
 
 export function getGfiData(state) {
