@@ -8,7 +8,7 @@ import { wrapStartStop } from "@mapstore/observables/epics";
 import { error } from "@mapstore/actions/notifications";
 import {getMessageById} from "@mapstore/utils/LocaleUtils";
 import { newfilterLayerByList } from "@ext/utils/search";
-import { getIdsFromSearch } from "@ext/api/search";
+import { createOGCRequest } from "@ext/api/search";
 
 /**
  * From Tabou2 search panel, apply filter for each Tabou layers.
@@ -74,7 +74,7 @@ export function tabouGetSearchIds(action$, store) {
             let messages = store.getState()?.locale.messages;
             let observable$ = Rx.Observable.empty();
             observable$ = Rx.Observable.from((action.params)).mergeMap( filter => {
-                return Rx.Observable.defer(() => getIdsFromSearch(filter.params, getPluginCfg(store.getState()).geoserverURL))
+                return Rx.Observable.defer(() => createOGCRequest(filter.params, getPluginCfg(store.getState()).geoserverURL))
                     .catch(e => {
                         console.log("Error retrieving ids from filter");
                         console.log(e);

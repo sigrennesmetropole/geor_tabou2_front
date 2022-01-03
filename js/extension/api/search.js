@@ -9,14 +9,13 @@ const baseURL = "/tabou2";
  * @param {*} geoserverURL - Geoserver URL or path
  * @returns - geoserver response
  */
-export function getIdsFromSearch(params, geoserverURL) {
+export function createOGCRequest(params, geoserverURL) {
     let paramsToStr = keys(params).map(k => `${k}=${params[k]}`);
     return axios.post(`${geoserverURL}/ows`, paramsToStr.join('&'), {
         timeout: 60000,
         headers: {'Content-Type': 'application/x-www-form-urlencoded'}
     }).then(({ data }) => data);
 }
-
 /**
  * Create GET request - specific method to use header authent
  * @param {string} name - service name

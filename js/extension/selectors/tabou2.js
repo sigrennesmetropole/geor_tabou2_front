@@ -1,6 +1,7 @@
-import { CONTROL_NAME } from '@ext/constants';
-import { keys, pickBy } from 'lodash';
+import { CONTROL_NAME, TABOU_VECTOR_ID, TABOU_MARKER_LAYER_ID } from '@ext/constants';
+import { keys, pickBy, isEmpty } from 'lodash';
 import { userGroupSecuritySelector, userSelector } from '@mapstore/selectors/security';
+import { additionalLayersSelector } from '@mapstore/selectors/additionallayers';
 /**
  * Get active tab id
  * @param {*} state
@@ -39,7 +40,7 @@ export function defaultInfoFormat(state) {
  * @returns {object}
  */
 export function getTabouResponse(state) {
-    return state?.tabou2.response;
+    return state?.tabou2?.response;
 }
 /**
  * Get OGC map click response for each OA, PA, SA layers
@@ -193,4 +194,37 @@ export function getTabouErrors(state) {
  */
 export function getTiersFilter(state) {
     return state?.tabou2?.tiersFilter;
+}
+
+export function tabouDataSelector(state) {
+    return state?.tabou2?.features;
+}
+
+export function getClickedFeatures(state) {
+    return pickBy(state?.tabou2?.features[0], (a) => !isEmpty(a));
+}
+
+export function layerStylesSelector(state) {
+    return state.tabou2?.styles;
+}
+export function getSelectedStyle(state) {
+    return layerStylesSelector(state)?.selected;
+}
+
+export function getDefaultStyle(state) {
+    return layerStylesSelector(state)?.default;
+}
+
+export function getTabouVectorLayer(state) {
+    const additionalLayers = additionalLayersSelector(state) ?? [];
+    return additionalLayers.filter(({ id }) => id === TABOU_VECTOR_ID)?.[0]?.options;
+}
+
+export function getTabouMarkerLayer(state) {
+    const additionalLayers = additionalLayersSelector(state) ?? [];
+    return additionalLayers.filter(({ id }) => id === TABOU_MARKER_LAYER_ID)?.[0]?.options;
+}
+
+export function getGfiData(state) {
+    return state?.tabou2?.gfiData;
 }

@@ -224,7 +224,6 @@
         "cfg": {
           "consultHelpMail": "d.cottencin@rennesmetropole.fr",
           "geoserverURL": "https://gis.jdev.fr/geoserver",
-          "showIdentify": false,
           "layersOrder": ["Opérations", "Secteurs", "Programmes"],
           "help": {
             "url": "https://public.sig.rennesmetropole.fr/ressources/app/georchestra/Portail%20web%20guide%20rapide%20de%20prise%20en%20main.pdf",
@@ -381,7 +380,23 @@
           "apiCfg": {
             "apiURL": "/tabou2",
             "extApiURL": "/tabou2",
-            "authent": ""
+            "authent":""
+          },
+          "styles": {
+            "selection": {
+              "fillColor": "red",
+              "opacity": 1,
+              "fillOpacity": 0.8,
+              "color": "red",
+              "weight": 2
+            },
+            "default": {
+              "fillColor": "#6f718e",
+              "opacity": 0.8,
+              "fillOpacity": 0.2,
+              "color": "orange",
+              "weight": 2
+            }
           }
         }
       },
@@ -523,9 +538,26 @@
       {
         "name": "Tabou2",
         "cfg": {
+          "styles": {
+            "showClick": true,
+            "selection": {
+              "fillColor": "red",
+              "fillOpacity": 0.5,
+              "opacity": 1,
+              "color": "yellow",
+              "weight": 2
+            },
+            "default": {
+              "fillColor": "#6f718e",
+              "fillOpacity": 0,
+              "opacity": 0.8,
+              "color": "yellow",
+              "weight": 2,
+              "dashArray": [5, 5]
+            }
+          },
           "consultHelpMail": "d.cottencin@rennesmetropole.fr",
           "geoserverURL": "https://gis.jdev.fr/geoserver",
-          "showIdentify": false,
           "layersOrder": ["Opérations", "Secteurs", "Programmes"],
           "help": {
             "url": "https://public.sig.rennesmetropole.fr/ressources/app/georchestra/Portail%20web%20guide%20rapide%20de%20prise%20en%20main.pdf",
@@ -684,7 +716,7 @@
           "apiCfg": {
             "apiURL": "/tabou2",
             "extApiURL": "/tabou2",
-            "authent": ""
+            "authent":""
           }
         }
       },
