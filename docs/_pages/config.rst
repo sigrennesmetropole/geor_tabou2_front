@@ -80,6 +80,7 @@ Voici la liste des paramètres et les explications correspondantes.
         "apiLabel","","Nom du champ de l'API qui contient la valeur à afficher dans le filtre dans le cas d'une liste ou d'une multiselection"
         "styles.default","", "Style des entités cliquées de la couche sélectionnée dans la fiche."
         "styles.selection","", "Style de l'entité en consultation dans la fiche."
+        "styles.showClick", "true", "Booléen - true pour afficher l'icône du clic sur la carte quand le plugin est actif"
 
 Explications détaillées
 ========================
@@ -224,6 +225,7 @@ Voici un exemple de configuration :
         {
             "cfg": {
                 "styles": {
+                    "showClick": true,
                     "selection": {
                     "fillColor": "red",
                     "fillOpacity": 0.8,

@@ -18,7 +18,7 @@ import Tabou2MainPanel from '@ext/components/tabou2Panel/Tabou2MainPanel';
 import tabou2 from '@ext/reducers/tabou2';
 import init from '@ext/utils/init';
 
-import { onTabouMapClick, onSelectionUpdate, showTabouClicMarker } from "@js/extension/epics/layer";
+import { onTabouMapClick, onSelectionUpdate, showTabouClickMarker } from "@js/extension/epics/layer";
 import { tabouApplyFilter, tabouResetFilter, tabouGetSearchIds } from '@js/extension/epics/search';
 import { tabouLoadIdentifyContent, tabouSetGFIFormat, printProgramme, createChangeFeature,
     displayFeatureInfos, dipslayPASAByOperation } from '@js/extension/epics/identify';
@@ -109,7 +109,7 @@ export default {
         onTabouMapClick: onTabouMapClick,
         onSelectionUpdate: onSelectionUpdate,
         closeTabouExt: closeTabouExt,
-        showTabouClicMarker: showTabouClicMarker
+        showTabouClickMarker: showTabouClickMarker
     },
     containers: {
         Toolbar: {

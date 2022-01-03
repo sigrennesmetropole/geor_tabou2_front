@@ -34,9 +34,9 @@ import { isTabou2Activate,
     getTabouMarkerLayer
 } from "../selectors/tabou2";
 
-export const showTabouClicMarker = (action$, store) =>
+export const showTabouClickMarker = (action$, store) =>
     action$.ofType(DISPLAY_TABOU_MARKER)
-        .filter(() => isTabou2Activate(store.getState()))
+        .filter(() => isTabou2Activate(store.getState()) && getPluginCfg(store.getState()).styles.showClick)
         .switchMap(({point}) => {
             // insert features into layer
             const options = getTabouMarkerLayer(store.getState());

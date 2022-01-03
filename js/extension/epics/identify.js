@@ -46,7 +46,6 @@ import { getPDFProgramme, putRequestApi } from '../api/search';
 import { getFeatureInfo } from "@mapstore/api/identify";
 /**
  * Catch GFI response on identify load event and close identify if Tabou2 identify tabs is selected
- * TODO: take showIdentify pluginCfg param into account
  * @param {*} action$
  * @param {*} store
  */
