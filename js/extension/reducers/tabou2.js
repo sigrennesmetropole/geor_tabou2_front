@@ -23,7 +23,8 @@ import {
     SET_TIERS_FILTER,
     UPDATE_TABOU_SELECTION,
     CLEAN_TABOU_SELECTION,
-    CLEAN_TABOU_INFOS
+    CLEAN_TABOU_INFOS,
+    TABOU_CHANGE_FEATURES
 } from '@ext/actions/tabou2';
 
 const initialState = {
@@ -125,9 +126,10 @@ export default function tabou2(state = initialState, action) {
     case UPDATE_TABOU_SELECTION:
     {
         const {infos} = action;
-        console.log(infos);
         return set("features[0]", infos, state);
     }
+    case TABOU_CHANGE_FEATURES:
+        return set('gfiData', action?.data, state);
     case CLEAN_TABOU_SELECTION:
         return set("features", [], state);
     default:

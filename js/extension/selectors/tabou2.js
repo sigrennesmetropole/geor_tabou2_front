@@ -210,10 +210,16 @@ export function layerStylesSelector(state) {
 export function getSelectedStyle(state) {
     return layerStylesSelector(state)?.selected;
 }
+
 export function getDefaultStyle(state) {
     return layerStylesSelector(state)?.default;
 }
+
 export function getTabouVectorLayer(state) {
     const additionalLayers = additionalLayersSelector(state) ?? [];
     return additionalLayers.filter(({ id }) => id === TABOU_VECTOR_ID)?.[0]?.options;
+}
+
+export function getGfiData(state) {
+    return state?.tabou2?.gfiData;
 }

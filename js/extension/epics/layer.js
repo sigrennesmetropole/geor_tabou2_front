@@ -3,13 +3,14 @@ import Rx from 'rxjs';
 import { updateAdditionalLayer } from '@mapstore/actions/additionallayers';
 import { CLICK_ON_MAP } from '@mapstore/actions/map';
 import { get, keys, isEmpty } from "lodash";
-import { TABOU_VECTOR_ID, TABOU_OWNER, DEFAULT_STYLE, SELECT_STYLE } from '../constants';
+import { TABOU_VECTOR_ID, TABOU_OWNER } from '../constants';
 import { createParams, reprojectFeatures } from '../utils/layers';
 import {
     cleanTabouSelection,
     updateVectorTabouFeatures,
     tabouChangeFeatures,
-    TABOU_CHANGE_FEATURES
+    TABOU_CHANGE_FEATURES,
+    UPDATE_TABOU_STYLE
 } from "../actions/tabou2";
 import uuid from 'uuid';
 
@@ -22,28 +23,29 @@ import { buildIdentifyRequest } from '@mapstore/utils/MapInfoUtils';
 
 import { getFeatureInfo } from "@mapstore/api/identify";
 
-import { isTabou2Activate, getPluginCfg, getTabouVectorLayer, getSelection } from "../selectors/tabou2";
-
-const prepareFeatures = (data, id) => {
-    let newFeatures =  reprojectFeatures(data);
-    return newFeatures.features.map(f => ({
-        ...f,
-        style: f.id === id ? SELECT_STYLE : DEFAULT_STYLE
-    })).flat(1);
-};
+import { isTabou2Activate, getPluginCfg, getTabouVectorLayer, getSelection, getGfiData, getClickedFeatures } from "../selectors/tabou2";
 
 export const onSelectionUpdate = (action$, store) =>
-    action$.ofType(TABOU_CHANGE_FEATURES)
+    action$.ofType(TABOU_CHANGE_FEATURES, UPDATE_TABOU_STYLE)
         .filter(() => isTabou2Activate(store.getState()))
         .switchMap((action) => {
             let overlayFeatures = [];
-            let responses = action?.data;
+            let responses = action?.data || getGfiData(store.getState());
             const options = getTabouVectorLayer(store.getState());
+            const styles = getPluginCfg(store.getState()).styles;
+            const userSelection = getSelection(store.getState());
             // get features from each layers and reproject
             if (!isEmpty(responses)) {
-                let features = keys(responses).map(k => responses[k].data).flat();
-                const selectedId = get(getSelection(store.getState()), "feature")?.id || "";
-                features = features.map(d => prepareFeatures(d, selectedId));
+                const selectedId = get(userSelection, "feature")?.id || "";
+                const userFeaturesSelection = get(getClickedFeatures(store.getState()), userSelection.tocLayer);
+                // only style selected layer's features
+                const features = userFeaturesSelection.map(d => {
+                    let newFeatures =  reprojectFeatures(d);
+                    return newFeatures.features.map(f => ({
+                        ...f,
+                        style: f?.id === selectedId ? styles.selection : styles.default
+                    })).flat(1);
+                });
                 overlayFeatures = Array.prototype.concat.apply([], features);
             }
             // insert features into layer
