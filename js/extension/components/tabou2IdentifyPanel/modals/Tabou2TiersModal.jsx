@@ -4,7 +4,7 @@ import { Grid, Checkbox, Col, Table, Row } from 'react-bootstrap';
 import { isEqual, orderBy, find, omit, isEmpty, some, includes } from 'lodash';
 import Tabou2Combo from '@ext/components/form/Tabou2Combo';
 import Tabou2TextForm from '@ext/components/form/Tabou2TextForm';
-import Tabou2TiersActions from "@js/extension/components/tabou2IdentifyPanel/modals/Tabou2TiersActions";
+import Tabou2TiersActions from "../../tabou2IdentifyPanel/modals/Tabou2TiersActions";
 import Tabou2TiersForm from '@ext/components/form/Tabou2TiersForm';
 import { TIERS_SCHEMA, REQUIRED_TIERS } from '@ext/constants';
 import { getRequestApi, searchTiers } from "@ext/api/search";
@@ -101,6 +101,7 @@ export default function Tabou2TiersModal({
         if (tier.associate || tier.new) {
             setTiers([...tiers.filter(t => t.id !== tier.id)]);
             setOpened(-1);
+            setAssociateTier({});
         } else {
             openCloseForm({...props.tiers.filter(el => el.id === tier.id)[0]});
         }
@@ -292,7 +293,6 @@ export default function Tabou2TiersModal({
                                                                                 }
                                                                                 onSelect={(t) =>  setAssociateTier({...associateTier, tiers: t})}
                                                                                 onChange={(t) => !t ? setAssociateTier(omit(associateTier, ["tiers"])) : null}
-                                                                                className="tabou-search-combo"
                                                                                 placeholder={getMessageById(props.messages, "tabou2.tiersModal.tierPlaceholder")}
                                                                             />
                                                                         ) : tier.tiers.nom
