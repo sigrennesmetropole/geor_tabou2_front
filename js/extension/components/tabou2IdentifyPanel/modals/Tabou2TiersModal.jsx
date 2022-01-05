@@ -7,10 +7,12 @@ import Tabou2TextForm from '@ext/components/form/Tabou2TextForm';
 import Tabou2TiersActions from "@js/extension/components/tabou2IdentifyPanel/modals/Tabou2TiersActions";
 import Tabou2TiersForm from '@ext/components/form/Tabou2TiersForm';
 import { TIERS_SCHEMA, REQUIRED_TIERS } from '@ext/constants';
-import { getRequestApi } from "@ext/api/search";
-import "@ext/css/identify.css";
+import { getRequestApi, searchTiers } from "@ext/api/search";
 import Message from "@mapstore/components/I18N/Message";
 import {getMessageById} from "@mapstore/utils/LocaleUtils";
+import SearchCombo from '@js/extension/components/form/SearchCombo';
+import "@ext/css/identify.css";
+import "@ext/css/tabou.css";
 /**
  * Tier modal
  * TODO : NEED API FIX TO BE TESTED AND FINISH !!
@@ -276,22 +278,23 @@ export default function Tabou2TiersModal({
                                                                 {
                                                                     tier.associate ?
                                                                         (
-                                                                            <Tabou2Combo
-                                                                                load={() => getRequestApi("tiers", props.pluginCfg.apiCfg, {})}
-                                                                                valueField={"id"}
-                                                                                placeholder={getMessageById(props.messages, "tabou2.tiersModal.tierPlaceholder")}
+                                                                            <SearchCombo
+                                                                                minLength={1}
                                                                                 textField={"nom"}
+                                                                                valueField={"id"}
                                                                                 value={associateTier?.tiers?.nom}
-                                                                                onLoad={(r) => (r?.elements || r).filter(t => !t.dateInactif && !props.tiers.map(item => item.id).includes(t.id))}
-                                                                                disabled={false}
+                                                                                forceSelection
+                                                                                search={
+                                                                                    text => searchTiers(text)
+                                                                                        .then(results =>
+                                                                                            results.elements.map(v => v)
+                                                                                        )
+                                                                                }
                                                                                 onSelect={(t) =>  setAssociateTier({...associateTier, tiers: t})}
                                                                                 onChange={(t) => !t ? setAssociateTier(omit(associateTier, ["tiers"])) : null}
-                                                                                messages={{
-                                                                                    emptyList: getMessageById(props.messages, "tabou2.emptyList"),
-                                                                                    openCombobox: getMessageById(props.messages, "tabou2.displaylist")
-                                                                                }}
+                                                                                className="tabou-search-combo"
+                                                                                placeholder={getMessageById(props.messages, "tabou2.tiersModal.tierPlaceholder")}
                                                                             />
-
                                                                         ) : tier.tiers.nom
                                                                 }
                                                             </td>
