@@ -39,9 +39,10 @@ export default function Tabou2IdentifyPanel({
             selectionVal = find(lyrsOptions(), {label: title || props.queryData[keys(props.queryData)[idx]]?.layer?.title});
         }
         let actualLayer = title || selectionVal?.name;
+        let isSelectedLayer = actualLayer === props.identifyInfos?.tocLayer;
         let actualFeatures = get(props.clickedFeatures, actualLayer);
         actualFeatures = actualFeatures?.length ? actualFeatures : [];
-        let selectedFeature = actualFeatures[props.identifyInfos?.featureIdx || 0];
+        let selectedFeature = isSelectedLayer ? actualFeatures[props.identifyInfos?.featureIdx || 0] : actualFeatures[0];
         let configName = keys(props.layersCfg).filter(k => actualLayer === props.layersCfg[k].nom)[0];
         setConfigLayer(configName);
         setSelectedLayer(actualLayer);
@@ -52,7 +53,7 @@ export default function Tabou2IdentifyPanel({
 
     // hooks to refresh only if query data changed
     useEffect(() => {
-        let needUpdate = gfiId !== reqId || layerIdx !== props.identifyInfos?.layerIdx || props.identifyInfos.feature.id !== feature.id;
+        let needUpdate = gfiId !== reqId || layerIdx !== props.identifyInfos?.layerIdx || props.identifyInfos?.feature?.id !== feature?.id;
         if (needUpdate) {
             changeLayer(null, layerIdx);
             setGfiId(reqId);
