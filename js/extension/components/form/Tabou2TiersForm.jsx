@@ -16,14 +16,17 @@ export default function Tabou2TiersForm({...props}) {
 
     // hooks
     useEffect(() => {
-        setThisTier(props.tier);
+        setThisTier({...props.tier});
     }, [props.opened]);
 
     // manage props change
     const changeProps = (field, val) => {
-        let copyTiers = clone(thisTier);
-        set(copyTiers, field, val);
-        setThisTier(copyTiers);
+        let copyTiers = {
+            ...thisTier, tiers: {...thisTier.tiers, [field]: val}
+        };
+        // avoid to change props.tiers directly and broke ref memory
+        let tiersChanged = set(copyTiers, field, val);
+        setThisTier(tiersChanged);
     };
 
     // forms will be construct from this array
@@ -123,13 +126,13 @@ export default function Tabou2TiersForm({...props}) {
                             <Col xs={f.colLabel || 4} style={{marginTop: marginTop}}>
                                 <ControlLabel><Message msgId={f.label}/>{f.required ? "*" : ""}</ControlLabel>
                             </Col>
-                            <Col xs={f.colForm || 8} className={f.required && !get(thisTier.tiers, f.apiField) ? "has-error" : ""}>
+                            <Col xs={f.colForm || 8} className={f.required && !get(thisTier, f.apiField) ? "has-error" : ""}>
                                 {
                                     f.type !== "combo" && f.type !== "checkbox" ? (
                                         <FormControl
                                             type={f.type}
                                             required={f.required}
-                                            value={get(thisTier.tiers, f.apiField)}
+                                            value={get(thisTier, f.apiField)}
                                             placeholder={props.i18n(props.messages, f.label)}
                                             onChange={(t) => changeProps(f.apiField, t.target.value)}
                                         />
