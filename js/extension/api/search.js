@@ -276,3 +276,11 @@ export function createNewTabouFeature(layer, params) {
 export function searchPlui(text) {
     return axios.get(`${baseURL}/plui`, { params: {libelle: `${text}*`, asc: true}}).then(({ data }) => data);
 }
+/**
+ * Autocomplete tiers by name
+ * @param {string} text - string to search
+ * @returns {object} - autocompletion result
+ */
+export function searchTiers(text) {
+    return axios.get(`${baseURL}/tiers`, { params: {nom: `${text}*`, asc: true}}).then(({ data }) => data);
+}
