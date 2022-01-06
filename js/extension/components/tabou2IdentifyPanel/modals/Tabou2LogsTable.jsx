@@ -8,6 +8,9 @@ import { getTypesEvents } from "@ext/api/search";
 import tooltip from '@mapstore/components/misc/enhancers/tooltip';
 import Message from "@mapstore/components/I18N/Message";
 import moment from 'moment';
+import momentLocalizer from 'react-widgets/lib/localizers/moment';
+momentLocalizer(moment);
+import { DateTimePicker } from 'react-widgets';
 
 const Button = tooltip(ButtonRB);
 
@@ -48,7 +51,7 @@ export default function Tabou2LogsTable({
                                 <th className="col-xs-1">
                                     <Message msgId="tabou2.logsModal.isSystem"/>
                                 </th>
-                                <th className="col-xs-1" style={getStyle("eventDate")}><Message msgId="tabou2.logsModal.date"/>
+                                <th className="col-xs-2" style={getStyle("eventDate")}><Message msgId="tabou2.logsModal.date"/>
                                     {
                                         getSortIcon("eventDate")
                                     }
@@ -79,7 +82,18 @@ export default function Tabou2LogsTable({
                                             </td>
                                             <td>
                                                 {
-                                                    new Date(log.eventDate).toLocaleDateString()
+                                                    log.new || log.edit ? (<DateTimePicker
+                                                        type="date"
+                                                        dropDown
+                                                        calendar
+                                                        time={false}
+                                                        culture="fr"
+                                                        value={log.eventDate ? new Date(log.eventDate) : null}
+                                                        format="DD/MM/YYYY"
+                                                        onSelect={(e) => changeLog({...log, eventDate: new Date(e).toISOString(e)})}
+                                                        onChange={(t) => !t ? changeLog({...log, eventDate: null}) : null}
+                                                    />)
+                                                        : new Date(log.eventDate).toLocaleDateString()
                                                 }
                                             </td>
                                             <td>
@@ -127,13 +141,13 @@ export default function Tabou2LogsTable({
                                             </td>
                                             <td>
                                                 {
-                                                    !log.new ? `${log.modifUser} le ${moment(log.modifDate).format("DD/MM/YYYY")}` : null
+                                                    !log.new && `${log.modifUser} le ${moment(log.modifDate).format("DD/MM/YYYY")}`
                                                 }
                                             </td>
                                             {
                                                 readOnly ? null :
                                                     (<td>
-                                                        {log.new || log.edit ? (
+                                                        {log.new || log.edit && (
                                                             <Button
                                                                 tooltip={props.i18n(props.messages, "tabou2.save")}
                                                                 disabled={!log.typeEvenement || isEmpty(log.typeEvenement) || !log.description}
@@ -142,10 +156,10 @@ export default function Tabou2LogsTable({
                                                                 <span style={{ color: "rgb(40, 167, 69)" }}>
                                                                     <Glyphicon glyph="ok"/>
                                                                 </span>
-                                                            </Button>) : null
+                                                            </Button>)
                                                         }
                                                         {
-                                                            log.edit && !log.new ? (
+                                                            log.edit && !log.new && (
                                                                 <Button
                                                                     tooltip={props.i18n(props.messages, "tabou2.cancel")}
                                                                     style={{ borderColor: "rgba(0,0,0,0)"}}
@@ -154,10 +168,10 @@ export default function Tabou2LogsTable({
                                                                         <Glyphicon glyph="remove"/>
                                                                     </span>
                                                                 </Button>
-                                                            ) : null
+                                                            )
                                                         }
                                                         {
-                                                            !log.systeme && !log.new && !log.edit && !editionActivate.current ? (
+                                                            !log.systeme && !log.new && !log.edit && !editionActivate.current && (
                                                                 <Button
                                                                     tooltip={props.i18n(props.messages, "tabou2.change")}
                                                                     style={{ borderColor: "rgba(0,0,0,0)"}}
@@ -166,10 +180,10 @@ export default function Tabou2LogsTable({
                                                                         <Glyphicon glyph="pencil"/>
                                                                     </span>
                                                                 </Button>
-                                                            ) : null
+                                                            )
                                                         }
                                                         {
-                                                            log.new || !editionActivate.current && !log.systeme ? (
+                                                            log.new || !editionActivate.current && !log.systeme && (
                                                                 <Button
                                                                     tooltip={props.i18n(props.messages, "tabou2.delete")}
                                                                     style={{ borderColor: "rgba(0,0,0,0)"}}
@@ -178,7 +192,7 @@ export default function Tabou2LogsTable({
                                                                         <Glyphicon glyph="trash"/>
                                                                     </span>
                                                                 </Button>
-                                                            ) : null
+                                                            )
                                                         }
                                                     </td>)
                                             }
