@@ -30,7 +30,7 @@ import {
     loadTabouFeatureInfo,
     setDefaultInfoFormat,
     setMainActiveTab,
-    PRINT_PROGRAMME_INFOS,
+    PRINT_PDF_INFOS,
     CHANGE_FEATURE,
     DISPLAY_FEATURE,
     reloadLayer,
@@ -41,7 +41,7 @@ import {
     cleanTabouInfos,
     TABOU_CHANGE_FEATURES
 } from "../actions/tabou2";
-import { getPDFProgramme, putRequestApi } from '../api/search';
+import { getPDFProgramme, getPDFOperation, putRequestApi } from '../api/search';
 
 import { getFeatureInfo } from "@mapstore/api/identify";
 /**
@@ -97,12 +97,12 @@ export function tabouSetGFIFormat(action$, store) {
  * @returns
  */
 export function printProgramme(action$, store) {
-    return action$.ofType(PRINT_PROGRAMME_INFOS)
+    return action$.ofType(PRINT_PDF_INFOS)
         .filter(() => isTabou2Activate(store.getState()))
         .switchMap((action) => {
             let messages = store.getState()?.locale.messages;
             let feature = getSelection(store.getState())?.feature.properties;
-            return Rx.Observable.defer(() => getPDFProgramme(action.id))
+            return Rx.Observable.defer(() => action.layer === "layerPA" ? getPDFProgramme(action.id) : getPDFOperation(action.id))
                 .catch(e => {
                     console.log("Error on get PDF request");
                     console.log(e);

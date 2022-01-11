@@ -211,6 +211,14 @@ export function getPDFProgramme(id) {
     return axios.get(`${baseURL}/programmes/${id}/fiche-suivi`, {responseType: 'arraybuffer'});
 }
 /**
+ * Call PDF document
+ * @param {integer} id - tabou feature id
+ * @returns {object} - contain pdf document as buffer
+ */
+export function getPDFOperation(id) {
+    return axios.get(`${baseURL}/operations/${id}/fiche-suivi`, {responseType: 'arraybuffer'});
+}
+/**
  * Get programme by id tabou
  * @param {integer} id - id tabou
  * @returns {object} - axios response

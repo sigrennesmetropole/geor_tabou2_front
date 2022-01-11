@@ -23,7 +23,7 @@ export const DELETE_FEATURE_TIER = "DELETE_FEATURE_TIER";
 export const CHANGE_FEATURE_TIER = "CHANGE_FEATURE_TIER";
 export const INACTIVATE_TIER = "INACTIVATE_TIER";
 export const SET_TABOU_CONFIG = "SET_TABOU_CONFIG";
-export const PRINT_PROGRAMME_INFOS = "PRINT_FICHE_PROGRAMME";
+export const PRINT_PDF_INFOS = "PRINT_PDF_PROGRAMME";
 export const SEARCH_IDS = "SEARCH_IDS";
 export const LOADING = "LOADING";
 export const LOAD_FICHE_INFOS = "LOAD_FICHE_INFOS";
@@ -215,9 +215,10 @@ export const setTabouConfig = (config) => ({
     config
 });
 
-export const printProgInfos = (id) => ({
-    type: PRINT_PROGRAMME_INFOS,
-    id
+export const printPDFInfos = (id, layer) => ({
+    type: PRINT_PDF_INFOS,
+    id,
+    layer
 });
 
 export const loadFicheInfos = (ficheInfos) => ({
