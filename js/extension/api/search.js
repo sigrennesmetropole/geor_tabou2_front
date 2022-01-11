@@ -290,5 +290,5 @@ export function searchPlui(text) {
  * @returns {object} - autocompletion result
  */
 export function searchTiers(text) {
-    return axios.get(`${baseURL}/tiers`, { params: {nom: `${text}*`, asc: true}}).then(({ data }) => data);
+    return axios.get(`${baseURL}/tiers`, { params: {nom: `*${text}*`, asc: true}}).then(({ data }) => data);
 }
