@@ -196,6 +196,7 @@ export default function Tabou2TiersModal({
                             <Col xs={3} className="col-md-offset-9 searchTier">
                                 <Tabou2TextForm
                                     type="text"
+                                    value={filterText}
                                     onChange={(e) => {
                                         setFilterText(e.target.value);
                                     }}
@@ -221,7 +222,7 @@ export default function Tabou2TiersModal({
                                         </thead>
                                         <tbody style={{overflow: "auto"}}>
                                             {
-                                                orderBy(filterText ? tiers.filter(t => includes(t.nom.toLowerCase(), filterText)) : tiers, sortField[0], sortField[1]).filter(t => isTypeDisplay(t)).map((tier) => (
+                                                orderBy(filterText ? tiers.filter(t => includes(t.tiers.nom.toLowerCase(), filterText.toLowerCase())) : tiers, sortField[0], sortField[1]).filter(t => isTypeDisplay(t)).map((tier) => (
                                                     <>
                                                         <tr>
                                                             <td>
