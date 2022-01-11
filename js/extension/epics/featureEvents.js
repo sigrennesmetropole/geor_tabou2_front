@@ -108,10 +108,6 @@ export function getSelectionInfos(action$, store) {
 
             // get events from API
             /**
-             * TODO
-             * - dynamic type layer
-             * - dynamic idTabou
-             *
              * WARNING
              * - API GET operations/{id}/programmes not works for SA layer
              */
@@ -251,7 +247,6 @@ export function updateTabou2Logs(action$, store) {
 
 /**
  * New tier creation. Will associate the created tier next.
- * TODO: trigger ASSOCIATE_TIER action istead of same behavior.
  * @param {any} action$
  * @param {any} store
  * @returns action
@@ -260,22 +255,10 @@ export function addCreateTabou2Tier(action$, store) {
     return action$.ofType(ADD_FEATURE_TIER)
         .filter(() => isTabou2Activate(store.getState()))
         .switchMap((action) => {
-            // const idTabou = action?.selectedFeature?.properties?.id_tabou || action?.selectedFeature?.properties?.id_tabou;
-            // selected feature and selected layer
-            let {featureId, layerUrl} = getInfos(store.getState());
             // create tier first
             return Rx.Observable.defer(() => createTier(action.tier))
-                .switchMap((tier) => {
-                    // Now we associate this tier to element
-                    return Rx.Observable.defer(() => associateFeatureTier(layerUrl, featureId, tier?.data?.id, action.tier.type.id))
-                        .catch(e => {
-                            console.log("Error to create association between feature and tier");
-                            console.log(e);
-                            return Rx.Observable.of({data: []});
-                        })
-                    // refresh tiers
-                        .switchMap(() => Rx.Observable.of(mapTiers()));
-                });
+                // refresh tiers list
+                .switchMap(() => Rx.Observable.of(mapTiers()));
         });
 }
 
