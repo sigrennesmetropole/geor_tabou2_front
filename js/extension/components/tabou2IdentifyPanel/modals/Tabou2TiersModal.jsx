@@ -5,7 +5,7 @@ import { isEqual, orderBy, find, omit, isEmpty, some, includes } from 'lodash';
 import Tabou2Combo from '@ext/components/form/Tabou2Combo';
 import Tabou2TextForm from '@ext/components/form/Tabou2TextForm';
 import Tabou2TiersActions from "../../tabou2IdentifyPanel/modals/Tabou2TiersActions";
-import Tabou2TiersForm from '@ext/components/form/Tabou2TiersForm';
+import Tabou2TiersForm from '../../form/Tabou2TiersForm';
 import { TIERS_SCHEMA, REQUIRED_TIERS } from '@ext/constants';
 import { getRequestApi, searchTiers } from "@ext/api/search";
 import Message from "@mapstore/components/I18N/Message";

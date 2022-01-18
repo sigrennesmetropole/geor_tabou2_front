@@ -16,14 +16,14 @@ export default function Tabou2TiersActions({ ...props }) {
     };
 
     const simpleMode = !props.editionActivate && !props.tierVisible;
-    const simpleModeActivate = !props.tier.dateInactif && simpleMode;
+    const simpleModeActivate = !props.tier.tiers.dateInactif && simpleMode;
     const notValid = props.valid(props.tier) && props.editionActivate;
     const tiersActions = [
         {
             glyph: "eye-open",
             tooltip: props.i18n(props.messages, "tabou2.tiersModal.read"),
             style: { ...style, color: "rgb(137,178,211)"},
-            showCondition: () => props.tier.dateInactif && !props.editionActivate,
+            showCondition: () => props.tier.tiers.dateInactif && !props.tier.tiers.editionActivate,
             id: "readTier",
             onClick: () => props.open()
         },

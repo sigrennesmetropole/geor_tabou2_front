@@ -87,7 +87,6 @@ export default function Tabou2TiersForm({...props}) {
             colLabel: 5,
             colForm: 4
         }];
-
     return (
         <>
             <Row className="text-center tabou-tbar-panel">
@@ -107,6 +106,7 @@ export default function Tabou2TiersForm({...props}) {
                             disabled: props.valid(thisTier),
                             tooltip: props.i18n(props.messages, "tabou2.tiersModal.save"),
                             id: "saveTierForm",
+                            visible: !thisTier?.tiers?.dateInactif,
                             onClick: () => props.save(thisTier)
                         }, {
                             glyph: "remove",
@@ -132,6 +132,7 @@ export default function Tabou2TiersForm({...props}) {
                                         <FormControl
                                             type={f.type}
                                             required={f.required}
+                                            readOnly={thisTier?.tiers?.dateInactif}
                                             value={get(thisTier, f.apiField)}
                                             placeholder={props.i18n(props.messages, f.label)}
                                             onChange={(t) => changeProps(f.apiField, t.target.value)}
@@ -142,7 +143,7 @@ export default function Tabou2TiersForm({...props}) {
                                     f.type === "checkbox" ? (
                                         <Checkbox
                                             checked={has(thisTier.tiers, "estPrive") ? thisTier.tiers.estPrive : f?.defaultValue || false}
-                                            disabled={props.tier.dateInactif ? true : false}
+                                            disabled={thisTier?.tiers?.dateInactif ? true : false}
                                             style={{marginBottom: "10px"}}
                                             id={`${props.tier.id}-priv-${new Date().getTime()}}`}
                                             onChange={() => {
