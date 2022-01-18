@@ -145,21 +145,23 @@ export default function Tabou2LogsTable({
                                                 }
                                             </td>
                                             {
-                                                readOnly ? null :
+                                                !readOnly &&
                                                     (<td>
-                                                        {log.new || log.edit && (
-                                                            <Button
-                                                                tooltip={props.i18n(props.messages, "tabou2.save")}
-                                                                disabled={!log.typeEvenement || isEmpty(log.typeEvenement) || !log.description}
-                                                                style={{ borderColor: "rgba(0,0,0,0)"}}
-                                                                onClick={() => saveEvent(log)}>
-                                                                <span style={{ color: "rgb(40, 167, 69)" }}>
-                                                                    <Glyphicon glyph="ok"/>
-                                                                </span>
-                                                            </Button>)
+                                                        {
+                                                            (log.new || log.edit) && (
+                                                                <Button
+                                                                    tooltip={props.i18n(props.messages, "tabou2.save")}
+                                                                    disabled={!log.typeEvenement || isEmpty(log.typeEvenement) || !log.description}
+                                                                    style={{ borderColor: "rgba(0,0,0,0)"}}
+                                                                    onClick={() => saveEvent(log)}>
+                                                                    <span style={{ color: "rgb(40, 167, 69)" }}>
+                                                                        <Glyphicon glyph="ok"/>
+                                                                    </span>
+                                                                </Button>
+                                                            )
                                                         }
                                                         {
-                                                            log.edit && !log.new && (
+                                                            (log.edit && !log.new) && (
                                                                 <Button
                                                                     tooltip={props.i18n(props.messages, "tabou2.cancel")}
                                                                     style={{ borderColor: "rgba(0,0,0,0)"}}
@@ -171,7 +173,7 @@ export default function Tabou2LogsTable({
                                                             )
                                                         }
                                                         {
-                                                            !log.systeme && !log.new && !log.edit && !editionActivate.current && (
+                                                            (!log.systeme && !log.new && !log.edit && !editionActivate.current) && (
                                                                 <Button
                                                                     tooltip={props.i18n(props.messages, "tabou2.change")}
                                                                     style={{ borderColor: "rgba(0,0,0,0)"}}
@@ -183,7 +185,7 @@ export default function Tabou2LogsTable({
                                                             )
                                                         }
                                                         {
-                                                            log.new || !editionActivate.current && !log.systeme && (
+                                                            (log.new || !editionActivate.current && !log.systeme) && (
                                                                 <Button
                                                                     tooltip={props.i18n(props.messages, "tabou2.delete")}
                                                                     style={{ borderColor: "rgba(0,0,0,0)"}}
