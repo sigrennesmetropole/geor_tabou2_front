@@ -24,7 +24,8 @@ import {
     UPDATE_TABOU_SELECTION,
     CLEAN_TABOU_SELECTION,
     CLEAN_TABOU_INFOS,
-    TABOU_CHANGE_FEATURES
+    TABOU_CHANGE_FEATURES,
+    SET_TABOU_DOCUMENTS
 } from '@ext/actions/tabou2';
 
 const initialState = {
@@ -132,6 +133,8 @@ export default function tabou2(state = initialState, action) {
         return set('gfiData', action?.data, state);
     case CLEAN_TABOU_SELECTION:
         return set("features", [], state);
+    case SET_TABOU_DOCUMENTS:
+        return set("documents", action?.documents || {}, state);
     default:
         return state;
     }

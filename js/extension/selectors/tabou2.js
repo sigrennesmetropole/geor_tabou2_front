@@ -1,7 +1,8 @@
-import { CONTROL_NAME, TABOU_VECTOR_ID, TABOU_MARKER_LAYER_ID } from '@ext/constants';
-import { keys, pickBy, isEmpty } from 'lodash';
+import { CONTROL_NAME, TABOU_VECTOR_ID, TABOU_MARKER_LAYER_ID, URL_ADD } from '@ext/constants';
+import { keys, pickBy, isEmpty, get } from 'lodash';
 import { userGroupSecuritySelector, userSelector } from '@mapstore/selectors/security';
 import { additionalLayersSelector } from '@mapstore/selectors/additionallayers';
+
 /**
  * Get active tab id
  * @param {*} state
@@ -142,7 +143,7 @@ export function getAuthInfos(state) {
     return {
         user: userSelector(state)?.name ?? "",
         isAdmin: groupNames.includes("MAPSTORE_ADMIN"),
-        isReferent: groupNames.includes("EL_APPLIS_TABOU_REFERENT"),
+        isReferent: true, // groupNames.includes("EL_APPLIS_TABOU_REFERENT"),
         isContrib: groupNames.includes("EL_APPLIS_TABOU_CONTRIB"),
         isConsult: groupNames.includes("EL_APPLIS_TABOU_CONSULT")
     };
@@ -227,4 +228,27 @@ export function getTabouMarkerLayer(state) {
 
 export function getGfiData(state) {
     return state?.tabou2?.gfiData;
+}
+
+export function getInfos(state) {
+    const feature = getSelection(state).feature;
+    const layer = getLayer(state);
+    // get plugin config
+    const layersCfg = getPluginCfg(state).layersCfg;
+    // layerOA, layerPa, layerSA
+    const configName = keys(layersCfg).filter(k => layer === layersCfg[k].nom)[0];
+    // return correct name field id according to layer
+    const featureId = get(feature, "properties.id_tabou");
+    // find correct api name
+    const layerUrl = get(URL_ADD, configName);
+    return {
+        featureId: featureId,
+        layerUrl: layerUrl,
+        layer: layer,
+        layerCfg: configName
+    };
+}
+
+export function getFeatureDocuments(state) {
+    return state.tabou2?.documents;
 }
