@@ -19,6 +19,7 @@
         "successSaveInfos": "Informations sauvegardées !",
         "apiGETError": "Erreur à la récupération des informations.",
         "failPrint": "Le téléchargement de la fiche de suivi a échoué",
+        "failDownload": "Le téléchargement a échoué !",
         "successPrint": "Document téléchargé !"
       },
       "load": "Chargement...",
