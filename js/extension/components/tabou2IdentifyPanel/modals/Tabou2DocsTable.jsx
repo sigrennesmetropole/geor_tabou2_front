@@ -14,7 +14,8 @@ export default function Tabou2DocsTable({
     changePage = () => { },
     displayPages = false,
     pages = 0,
-    page = 1
+    page = 1,
+    readOnly = true
 }) {
     const newDoc = find(documents, { action: 6 });
     const [rows, setRows] = useState(documents);
@@ -47,6 +48,7 @@ export default function Tabou2DocsTable({
     const rowActionsformatter = (document) => {
         return (
             <Tabou2DocsActions
+                readOnly={readOnly}
                 document={document}
                 onClick={changeAction}
             />);

@@ -5,7 +5,7 @@ import Toolbar from '@mapstore/components/misc/toolbar/Toolbar';
  * @param {any} param
  * @returns component
  */
-export default function Tabou2DocsActions({ document = {}, onClick = () => {}}) {
+export default function Tabou2DocsActions({ document = {}, onClick = () => {}, readOnly = true}) {
     // if (props.readOnly || !props.visible) {
     //     return null;
     // }
@@ -36,13 +36,15 @@ export default function Tabou2DocsActions({ document = {}, onClick = () => {}}) 
             glyph: "eye-open",
             style: { ...style, color: color},
             id: "readMetaData",
-            onClick: () => triggerAction(2)
+            onClick: () => triggerAction(2),
+            visible: readOnly
         },
         {
             glyph: "pencil",
             style: {...style, color: color},
             id: "editMetaData",
-            onClick: () => triggerAction(3)
+            onClick: () => triggerAction(3),
+            visible: !readOnly
         }, {
             glyph: "download-alt",
             style: {...style, color: "#a23f97"},
@@ -52,7 +54,8 @@ export default function Tabou2DocsActions({ document = {}, onClick = () => {}}) 
         {
             glyph: "trash",
             style: {...style, color: "rgb(229,0,0)"},
-            id: "cancelEdit",
+            id: "deleteDocument",
+            visible: !readOnly,
             onClick: () => triggerAction(4)
         }
     ];

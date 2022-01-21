@@ -9,6 +9,7 @@ import { getFeatureDocuments, getAuthInfos, getPluginCfg } from "../../../select
 
 function Tabou2DocsModal({
     visible,
+    authInfos = {},
     ...props // {click(), documents[]}
 }) {
     const [newDoc, setNewDoc] = useState({});
@@ -21,6 +22,8 @@ function Tabou2DocsModal({
     useEffect(() => {
         props.loadDocuments(true, page);
     }, [page]);
+
+    const isReadOnly = ![authInfos?.isReferent, authInfos?.isContrib].includes(true);
 
     const documents = props?.documents?.elements || [];
     const count = props.documents?.totalElements || 0;
@@ -64,6 +67,7 @@ function Tabou2DocsModal({
                 <Tabou2DocsTable
                     displayPages={count &&  count > props.config?.apiCfg?.documentsByPage}
                     refresh={refresh}
+                    readOnly={isReadOnly}
                     page={page}
                     pages={Math.round(count / props.config?.apiCfg?.documentsByPage)}
                     changePage={setPage}
