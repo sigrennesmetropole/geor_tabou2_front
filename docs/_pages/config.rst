@@ -71,7 +71,8 @@ Voici la liste des paramètres et les explications correspondantes.
         "livraison","","Groupe de paramètres du filtre de recherche par date de livraison"
         "pbil","","Groupe de paramètres du filtre de recherche selon la couche PBIL"
         "apiCfg","","Groupe de paramètres pour l'utilisation de l'API Tabou2"
-        "apiURL","/tabou2","URL de l'API Tabou2"
+        "apiURL","/tabou2","URL de l'API Tabou2",
+        "documentsByPage", "5", "Nombre de documents par page pour consulter la GED"
         "layer","Pour le filtre par IRIS ==> dem_stats:iris","Nom de la couche geoserver du type workspace:title"
         "geom","Pour le filtre par IRIS ==> shape","Nom du champ contenant la géométrie"
         "placeholder","","Texte à afficher quand le filtre est vide"
@@ -403,7 +404,8 @@ Voici un exemple de configuration :
                     }
                 },
                 "apiCfg": {
-                "apiURL": "/tabou2"
+                    "apiURL": "/tabou2",
+                    "documentsByPage": 5
                 }
             },
             "override": {}
