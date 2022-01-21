@@ -113,6 +113,8 @@ export function printProgramme(action$, store) {
                 })
                 .switchMap( response => {
                     if (response?.status === 200 && response?.data) {
+                        let name = `FicheSuivi_${action.id}_${feature.code}_${feature.nomopa.split(" ")
+                            .map(e => e[0].toUpperCase() + e.slice(1)).join('')}`;
                         downloadToBlob(response, response.data.type || 'application/pdf', name);
                         return Rx.Observable.of(
                             success({
