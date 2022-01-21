@@ -1,0 +1,20 @@
+name: create zip extension
+on:
+  push:
+    branches:
+      - develop
+jobs:
+  runs-on: ubuntu-latest
+  steps:
+    - uses: actions/checkout@v2
+    - name: install project
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+      run: npm install
+    - name: build extension
+      run: npm run ext:build
+    - name: upload zip as artifact
+      uses: actions/upload-artifact@v2
+      with:
+        path: dist/Tabou2.zip
