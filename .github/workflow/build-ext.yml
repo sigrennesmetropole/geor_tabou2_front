@@ -12,6 +12,7 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '14'
+      - name: install
         run: npm install
       - name: build extension
         run: npm run ext:build
