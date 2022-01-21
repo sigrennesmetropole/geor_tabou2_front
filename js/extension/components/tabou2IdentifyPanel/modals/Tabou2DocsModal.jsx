@@ -4,7 +4,7 @@ import { isEmpty } from "lodash";
 import ResizableModal from '@mapstore/components/misc/ResizableModal';
 import Message from "@mapstore/components/I18N/Message";
 import Tabou2DocsTable from "./Tabou2DocsTable";
-import { getDocuments } from "../../../actions/tabou2";
+import { getDocuments, downloadDocument } from "../../../actions/tabou2";
 import { getFeatureDocuments, getAuthInfos, getPluginCfg } from "../../../selectors/tabou2";
 
 function Tabou2DocsModal({
@@ -72,6 +72,7 @@ function Tabou2DocsModal({
                     pages={Math.round(count / props.config?.apiCfg?.documentsByPage)}
                     changePage={setPage}
                     documents={isEmpty(newDoc) ? documents : [...documents, newDoc]}
+                    download={props.download}
                 />
             )}
         </ResizableModal>
@@ -86,5 +87,6 @@ export default connect(state => ({
     config: getPluginCfg(state)
 }), {
     // actions
-    loadDocuments: getDocuments
+    loadDocuments: getDocuments,
+    download: downloadDocument
 })(Tabou2DocsModal);

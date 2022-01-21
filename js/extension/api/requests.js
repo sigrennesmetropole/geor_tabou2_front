@@ -328,7 +328,7 @@ export function updateMetadataDocument(type, id, docId, metadata) {
 
 // DOCUMENT CONTENT
 export function getDocumentContent(type, id, docId) {
-    return axios.get(`${baseURL}/${type}/${id}/documents/${docId}/content`).then(({ data }) => data);
+    return axios.get(`${baseURL}/${type}/${id}/documents/${docId}/content`, {responseType: 'arraybuffer'}).then(( data ) => data);
 }
 export function updateDocumentContent(type, id, docId, content) {
     return axios.put(`${baseURL}/${type}/${id}/documents/${docId}/content`, content).then(({ data }) => data);

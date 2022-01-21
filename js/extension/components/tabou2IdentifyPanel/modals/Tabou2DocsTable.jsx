@@ -15,7 +15,8 @@ export default function Tabou2DocsTable({
     displayPages = false,
     pages = 0,
     page = 1,
-    readOnly = true
+    readOnly = true,
+    download = () => {}
 }) {
     const newDoc = find(documents, { action: 6 });
     const [rows, setRows] = useState(documents);
@@ -36,6 +37,17 @@ export default function Tabou2DocsTable({
         // sortable: true
     };
 
+    const triggerAction = (target) => {
+        console.log(target);
+        switch (target?.action) {
+        case 5:
+            download(target?.document?.row?.id);
+            break;
+        default:
+            break;
+        }
+    };
+
     const changeAction = (target) => {
         if (!target.action) {
             setRow({});
@@ -43,6 +55,7 @@ export default function Tabou2DocsTable({
         } else {
             setRow(target);
         }
+        triggerAction(target);
     };
 
     const rowActionsformatter = (document) => {

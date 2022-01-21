@@ -44,6 +44,8 @@ import {
 import { getPDFProgramme, getPDFOperation, putRequestApi } from '../api/requests';
 
 import { getFeatureInfo } from "@mapstore/api/identify";
+
+import { downloadToBlob } from "../utils/identify";
 /**
  * Catch GFI response on identify load event and close identify if Tabou2 identify tabs is selected
  * @param {*} action$
@@ -111,17 +113,7 @@ export function printProgramme(action$, store) {
                 })
                 .switchMap( response => {
                     if (response?.status === 200 && response?.data) {
-                        const blob = new Blob([response.data], { type: response.data.type || 'application/pdf' });
-                        const url = window.URL.createObjectURL(blob);
-                        const link = document.createElement('a');
-                        link.href = url;
-                        let name = `FicheSuivi_${action.id}_${feature.code}_${feature.nomopa.split(" ")
-                            .map(e => e[0].toUpperCase() + e.slice(1)).join('')}`;
-                        link.setAttribute('download', name);
-                        document.body.appendChild(link);
-                        link.click();
-                        link.remove();
-                        window.URL.revokeObjectURL(url);
+                        downloadToBlob(response, response.data.type || 'application/pdf', name);
                         return Rx.Observable.of(
                             success({
                                 title: getMessageById(messages, "tabou2.infos.successApi"),
