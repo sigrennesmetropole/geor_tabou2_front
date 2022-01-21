@@ -92,7 +92,7 @@ export default function Tabou2DocsForm({document, action = -1, onClick = () => {
                 />
             </Row>
             <FormGroup>
-                <Col xs={8}>
+                <Col xs={7}>
                     {fieldsMetadata.map(field => (
                         <Col xs={12}>
                             <Col xs={3} style={{marginTop: marginTop}}>
