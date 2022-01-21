@@ -2,17 +2,17 @@ import React, {useState, useEffect, useRef} from 'react';
 import ResizableModal from '@mapstore/components/misc/ResizableModal';
 import { Grid, Checkbox, Col, Table, Row } from 'react-bootstrap';
 import { isEqual, orderBy, find, omit, isEmpty, some, includes } from 'lodash';
-import Tabou2Combo from '@ext/components/form/Tabou2Combo';
-import Tabou2TextForm from '@ext/components/form/Tabou2TextForm';
+import Tabou2Combo from '@js/extension/components/form/Tabou2Combo';
+import Tabou2TextForm from '@js/extension/components/form/Tabou2TextForm';
 import Tabou2TiersActions from "../../tabou2IdentifyPanel/modals/Tabou2TiersActions";
 import Tabou2TiersForm from '../../form/Tabou2TiersForm';
-import { TIERS_SCHEMA, REQUIRED_TIERS } from '@ext/constants';
-import { getRequestApi, searchTiers } from "@ext/api/search";
+import { TIERS_SCHEMA, REQUIRED_TIERS } from '@js/extension/constants';
+import { getRequestApi, searchTiers } from "@js/extension/api/requests";
 import Message from "@mapstore/components/I18N/Message";
 import {getMessageById} from "@mapstore/utils/LocaleUtils";
 import SearchCombo from '@js/extension/components/form/SearchCombo';
-import "@ext/css/identify.css";
-import "@ext/css/tabou.css";
+import "@js/extension/css/identify.css";
+import "@js/extension/css/tabou.css";
 /**
  * Tier modal
  * TODO : NEED API FIX TO BE TESTED AND FINISH !!

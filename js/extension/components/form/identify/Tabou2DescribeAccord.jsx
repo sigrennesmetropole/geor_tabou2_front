@@ -1,9 +1,9 @@
 import React, {useEffect, useState } from "react";
 import { isEmpty, isEqual, pick, has, get } from "lodash";
 import { Col, Row, FormControl, Grid, ControlLabel } from "react-bootstrap";
-import Tabou2Combo from '@ext/components/form/Tabou2Combo';
-import { getRequestApi } from "@ext/api/search";
-import "@ext/css/identify.css";
+import Tabou2Combo from '@js/extension/components/form/Tabou2Combo';
+import { getRequestApi } from "@js/extension/api/requests";
+import "@js/extension/css/identify.css";
 import Message from "@mapstore/components/I18N/Message";
 
 /**

@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { keys, isEmpty, get, find, pickBy } from 'lodash';
 
 import Tabou2IdentifyContent from './Tabou2IdentifyContent';
-import { LAYER_FIELD_OPTION } from '@ext/constants';
-import { createOptions, getFeaturesOptions } from '@ext/utils/identify';
+import { LAYER_FIELD_OPTION } from '@js/extension/constants';
+import { createOptions, getFeaturesOptions } from '@js/extension/utils/identify';
 import IdentifyDropDown from "./IdentifyDropDown";
 import { Glyphicon } from 'react-bootstrap';
-import Tabou2Information from "@ext/components/common/Tabou2Information";
+import Tabou2Information from "@js/extension/components/common/Tabou2Information";
 import ButtonRB from '@mapstore/components/misc/Button';
 import tooltip from '@mapstore/components/misc/enhancers/tooltip';
 const Button = tooltip(ButtonRB);

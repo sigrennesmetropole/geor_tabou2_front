@@ -1,10 +1,10 @@
 import React, {useEffect, useState } from "react";
 import { isEmpty, isEqual, pick, get, has } from "lodash";
 import { Col, Row, Grid, ControlLabel } from "react-bootstrap";
-import Tabou2Combo from '@ext/components/form/Tabou2Combo';
-import { getRequestApi } from "@ext/api/search";
+import Tabou2Combo from '@js/extension/components/form/Tabou2Combo';
+import { getRequestApi } from "@js/extension/api/requests";
 import { Multiselect, DateTimePicker } from "react-widgets";
-import "@ext/css/identify.css";
+import "@js/extension/css/identify.css";
 import Message from "@mapstore/components/I18N/Message";
 
 import moment from 'moment';

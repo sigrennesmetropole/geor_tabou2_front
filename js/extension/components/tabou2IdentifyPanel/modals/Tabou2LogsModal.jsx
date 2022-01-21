@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react';
 import ResizableModal from '@mapstore/components/misc/ResizableModal';
 import { isEqual, find, maxBy, omit, isEmpty } from 'lodash';
-import { LOG_SCHEMA } from '@ext/constants';
+import { LOG_SCHEMA } from '@js/extension/constants';
 import Message from "@mapstore/components/I18N/Message";
 import Tabou2LogsTable from './Tabou2LogsTable';
 

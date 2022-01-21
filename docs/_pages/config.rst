@@ -248,7 +248,6 @@ Voici un exemple de configuration :
                     "ddc": "https://...main.pdf",
                     "agapeo": "https://...main.pdf#page=26"
                 },
-                "consultHelpMail": "test@rennesmetropole.fr",
                 "geoserverURL": "/geoserver",
                 "showIdentify": false,
                 "layersOrder": ["Opérations", "Secteurs", "Programmes"],

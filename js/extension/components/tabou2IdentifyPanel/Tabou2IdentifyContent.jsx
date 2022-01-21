@@ -1,20 +1,20 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { PanelGroup, Panel, Row, Grid } from 'react-bootstrap';
 import { some, isEmpty, isEqual } from 'lodash';
-import Tabou2IdentAccord from '@ext/components/form/identify/Tabou2IdentAccord';
-import Tabou2DescribeAccord from '@ext/components/form/identify/Tabou2DescribeAccord';
-import Tabou2GouvernanceAccord from '@ext/components/form/identify/Tabou2GouvernanceAccord';
-import Tabou2ProgActiviteAccord from '@ext/components/form/identify/Tabou2ProgActiviteAccord';
-import Tabou2ProgHabitAccord from '@ext/components/form/identify/Tabou2ProgHabitAccord';
-import Tabou2SuiviOpAccord from '@ext/components/form/identify/Tabou2SuiviOpAccord';
-import Tabou2DdsAccord from '@ext/components/form/identify/Tabou2DdsAccord';
-import Tabou2SecProgLiesAccord from '@ext/components/form/identify/Tabou2SecProgLiesAccord';
-import { ACCORDIONS } from '@ext/constants';
+import Tabou2IdentAccord from '@js/extension/components/form/identify/Tabou2IdentAccord';
+import Tabou2DescribeAccord from '@js/extension/components/form/identify/Tabou2DescribeAccord';
+import Tabou2GouvernanceAccord from '@js/extension/components/form/identify/Tabou2GouvernanceAccord';
+import Tabou2ProgActiviteAccord from '@js/extension/components/form/identify/Tabou2ProgActiviteAccord';
+import Tabou2ProgHabitAccord from '@js/extension/components/form/identify/Tabou2ProgHabitAccord';
+import Tabou2SuiviOpAccord from '@js/extension/components/form/identify/Tabou2SuiviOpAccord';
+import Tabou2DdsAccord from '@js/extension/components/form/identify/Tabou2DdsAccord';
+import Tabou2SecProgLiesAccord from '@js/extension/components/form/identify/Tabou2SecProgLiesAccord';
+import { ACCORDIONS } from '@js/extension/constants';
 import Tabou2IdentifyToolbar from './Tabou2IdentifyToolbar';
 import Loader from '@mapstore/components/misc/Loader';
-import Tabou2Information from '@ext/components/common/Tabou2Information';
+import Tabou2Information from '@js/extension/components/common/Tabou2Information';
 import Message from "@mapstore/components/I18N/Message";
-import "@ext/css/tabou.css";
+import "@js/extension/css/tabou.css";
 
 /**
  * Content of identify panel component - separate to be more readable

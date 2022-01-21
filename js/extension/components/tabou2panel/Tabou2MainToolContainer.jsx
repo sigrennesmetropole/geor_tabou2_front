@@ -23,7 +23,7 @@ import {
 import Tabou2SearchPanel from '../tabou2SearchPanel/Tabou2SearchPanel';
 import Tabou2AddPanel from '../tabou2AddPanel/Tabou2AddPanel';
 import Tabou2IdentifyPanel from '../tabou2IdentifyPanel/Tabou2IdentifyPanel';
-import Tabou2Information from '@ext/components/common/Tabou2Information';
+import Tabou2Information from '@js/extension/components/common/Tabou2Information';
 import {
     setMainActiveTab,
     setSelectedFeature,
@@ -46,7 +46,7 @@ import {
     displayPASAByOA,
     resetSearchFilters,
     setTiersFilter
-} from "@ext/actions/tabou2";
+} from "@js/extension/actions/tabou2";
 
 function toolContainer({...props }) {
     let isTabouFeature = false;

@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Row, Col, FormGroup, Checkbox, FormControl, Panel, Alert, Glyphicon } from 'react-bootstrap';
-import Tabou2Combo from '@ext/components/form/Tabou2Combo';
+import Tabou2Combo from '@js/extension/components/form/Tabou2Combo';
 import { get, has, isEmpty, keys, isEqual, isObject, find, omit } from 'lodash';
-import { getRequestApi } from '@ext/api/search';
+import { getRequestApi } from '@js/extension/api/requests';
 import ControlledPopover from '@mapstore/components/widgets/widget/ControlledPopover';
 import Toolbar from '@mapstore/components/misc/toolbar/Toolbar';
-import { OA_SCHEMA, PA_SCHEMA, ADD_FIELDS, ADD_OA_FORM, ADD_PA_FORM } from '@ext/constants';
+import { OA_SCHEMA, PA_SCHEMA, ADD_FIELDS, ADD_OA_FORM, ADD_PA_FORM } from '@js/extension/constants';
 import { DropdownList} from 'react-widgets';
 import Message from "@mapstore/components/I18N/Message";
 import SearchCombo from '@js/extension/components/form/SearchCombo';
-import "@ext/css/tabou.css";
+import "@js/extension/css/tabou.css";
 export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...props}) {
     const emptyInfos = {
         code: "",

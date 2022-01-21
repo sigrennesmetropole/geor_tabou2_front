@@ -7,7 +7,7 @@ import { toggleControl } from "@mapstore/actions/controls";
 import Tabou2MainTabs from './Tabou2MainTabs';
 import Tabou2MainToolContainer from './Tabou2MainToolContainer';
 import { CONTROL_NAME, PANEL_SIZE } from '../../constants';
-import "@ext/css/tabou.css";
+import "@js/extension/css/tabou.css";
 import { updateVectorTabouStyle } from "../../actions/tabou2";
 /**
  * Main tabou2 plugin panel (parent on top)

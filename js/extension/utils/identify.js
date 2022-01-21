@@ -28,7 +28,6 @@ export function createOptions(response, layersOrder) {
 export function getFeaturesOptions(features, layer) {
     let layerFromConst = LAYER_FIELD_OPTION.filter(f => f.name === layer);
     if (!features) {
-        console.log("STOP");
         return [];
     }
     return features.map((f, i) => (

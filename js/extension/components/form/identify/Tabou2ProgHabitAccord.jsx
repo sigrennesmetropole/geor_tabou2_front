@@ -2,8 +2,8 @@ import React, {useEffect, useState } from "react";
 import { isEmpty, isEqual, pick, has, get, capitalize } from "lodash";
 import { Col, Row, Table, FormControl, Grid, ControlLabel, Alert, Glyphicon } from "react-bootstrap";
 import { DateTimePicker } from "react-widgets";
-import "@ext/css/identify.css";
-import "@ext/css/tabou.css";
+import "@js/extension/css/identify.css";
+import "@js/extension/css/tabou.css";
 import Message from "@mapstore/components/I18N/Message";
 
 import moment from 'moment';

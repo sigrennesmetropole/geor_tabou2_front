@@ -3,7 +3,7 @@ import { Col, FormGroup, FormControl, ControlLabel, Row, Checkbox } from "react-
 import { get, has, set, clone } from "lodash";
 import Toolbar from '@mapstore/components/misc/toolbar/Toolbar';
 import Message from "@mapstore/components/I18N/Message";
-import "@ext/css/tabou.css";
+import "../../css/tabou.css";
 
 /**
  * Form to display when a tier is edit or created.

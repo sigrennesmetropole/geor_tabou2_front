@@ -41,7 +41,7 @@ import {
     cleanTabouInfos,
     TABOU_CHANGE_FEATURES
 } from "../actions/tabou2";
-import { getPDFProgramme, getPDFOperation, putRequestApi } from '../api/search';
+import { getPDFProgramme, getPDFOperation, putRequestApi } from '../api/requests';
 
 import { getFeatureInfo } from "@mapstore/api/identify";
 /**
@@ -207,7 +207,7 @@ export function displayFeatureInfos(action$, store) {
                     if (isEmpty(response)) return Rx.Observable.empty();
                     // control this feature is the selected feature from identify tab
                     let selected = !isEmpty(getSelection(store.getState())) ? getSelection(store.getState())?.feature : null;
-                    let isSelected = selected && selected.properties?.objectid === response.features[0]?.properties?.objectid;
+                    let isSelected = selected && selected.properties?.id_tabou === response.features[0]?.properties?.id_tabou;
                     // if not we load the entire response to trigger fake map click response and display response into indentify panel
                     if (!isSelected) {
                         return Rx.Observable.of(

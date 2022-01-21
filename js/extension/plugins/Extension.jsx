@@ -14,20 +14,22 @@ import {getMessageById} from "@mapstore/utils/LocaleUtils";
 
 import { isTabou2Activate } from "../selectors/tabou2";
 import { setUp, closeTabou } from "../actions/tabou2";
-import Tabou2MainPanel from '@ext/components/tabou2Panel/Tabou2MainPanel';
-import tabou2 from '@ext/reducers/tabou2';
-import init from '@ext/utils/init';
+import Tabou2MainPanel from "../components/tabou2Panel/Tabou2MainPanel";
+import tabou2 from "../reducers/tabou2";
+import init from "../utils/init";
 
-import { onTabouMapClick, onSelectionUpdate, showTabouClickMarker } from "@js/extension/epics/layer";
-import { tabouApplyFilter, tabouResetFilter, tabouGetSearchIds } from '@js/extension/epics/search';
+import { onTabouMapClick, onSelectionUpdate, showTabouClickMarker } from "../epics/layer";
+import { tabouApplyFilter, tabouResetFilter, tabouGetSearchIds } from "../epics/search";
 import { tabouLoadIdentifyContent, tabouSetGFIFormat, printProgramme, createChangeFeature,
-    displayFeatureInfos, dipslayPASAByOperation } from '@js/extension/epics/identify';
-import { getSelectionInfos, updateTabou2Logs, updateTabou2Tier, addCreateTabou2Tier, getTiersElements,
-    associateTabou2Tier, createTabouFeature, onLayerReload, getEventsElements } from '@js/extension/epics/featureEvents';
-import { showNotification } from "@js/extension/epics/common";
-import { setTbarPosition, initMap, closeTabouExt } from "@js/extension/epics/setup";
+    displayFeatureInfos, dipslayPASAByOperation } from '../epics/identify';
+import { getSelectionInfos, createTabouFeature, onLayerReload } from '../epics/featureEvents';
+import { updateTabou2Tier, addCreateTabou2Tier, getTiersElements, associateTabou2Tier } from '../epics/tiers';
+import { updateTabou2Logs, getEventsElements } from "../epics/logs";
+import { getTabouDocuments } from "../epics/documents";
+import { showNotification } from "../epics/common";
+import { setTbarPosition, initMap, closeTabouExt } from "../epics/setup";
 
-import { CONTROL_NAME, PANEL_SIZE } from '@ext/constants';
+import { CONTROL_NAME, PANEL_SIZE } from '../constants';
 
 const compose = (...functions) => args => functions.reduceRight((arg, fn) => fn(arg), args);
 
@@ -109,7 +111,8 @@ export default {
         onTabouMapClick: onTabouMapClick,
         onSelectionUpdate: onSelectionUpdate,
         closeTabouExt: closeTabouExt,
-        showTabouClickMarker: showTabouClickMarker
+        showTabouClickMarker: showTabouClickMarker,
+        getTabouDocuments: getTabouDocuments
     },
     containers: {
         Toolbar: {

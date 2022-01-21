@@ -404,7 +404,6 @@
             "params": {}
         }, {
             "id": "tabou:tabou_v_oa_programme__14",
-            "maxLengthUrl": 5000,
             "format": "image/png",
             "search": {
                 "url": "https://gis.jdev.fr/geoserver/ows",
