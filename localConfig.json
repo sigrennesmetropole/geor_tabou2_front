@@ -23,8 +23,8 @@
     ]
   },
   "geoStoreUrl": "rest/geostore/",
-  "layerSettings": {
-    "maxURLLength": 5000
+  "miscSettings": {
+    "maxURLLength": 4000
   },
   "mailingList": "https://groups.google.com/forum/#!forum/mapstore-users",
   "printUrl": "pdf/info.json",
@@ -222,7 +222,6 @@
       {
         "name": "Tabou2",
         "cfg": {
-          "consultHelpMail": "d.cottencin@rennesmetropole.fr",
           "geoserverURL": "https://gis.jdev.fr/geoserver",
           "layersOrder": ["Opérations", "Secteurs", "Programmes"],
           "help": {
@@ -250,7 +249,7 @@
             }
           },
           "searchCfg": {
-            "limit": 150,
+            "limit": 100000,
             "communes": {
               "layer": "tabou2:commune_emprise",
               "geom": "the_geom",
@@ -380,7 +379,7 @@
           "apiCfg": {
             "apiURL": "/tabou2",
             "extApiURL": "/tabou2",
-            "authent":""
+            "authent": "gbruel:Ay*oh4ak0ohthai6ve1u"
           },
           "styles": {
             "selection": {
@@ -556,7 +555,6 @@
               "dashArray": [5, 5]
             }
           },
-          "consultHelpMail": "d.cottencin@rennesmetropole.fr",
           "geoserverURL": "https://gis.jdev.fr/geoserver",
           "layersOrder": ["Opérations", "Secteurs", "Programmes"],
           "help": {
@@ -586,7 +584,7 @@
             }
           },
           "searchCfg": {
-            "limit": 150,
+            "limit": 100000,
             "communes": {
               "layer": "tabou2:commune_emprise",
               "geom": "the_geom",
@@ -716,7 +714,8 @@
           "apiCfg": {
             "apiURL": "/tabou2",
             "extApiURL": "/tabou2",
-            "authent":""
+            "authent":"",
+            "documentsByPage": 5
           }
         }
       },
