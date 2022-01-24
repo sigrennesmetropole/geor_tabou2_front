@@ -16,6 +16,7 @@ export default function Tabou2DocsTable({
     readOnly = true,
     download = () => {},
     remove = () => {},
+    save = () => {},
     id
 }) {
     const newDoc = find(documents, { action: 6 });
@@ -49,6 +50,9 @@ export default function Tabou2DocsTable({
             break;
         case 4:
             remove(target?.document?.row?.id);
+            break;
+        case 1:
+            save(target?.file, target.metadata);
             break;
         default:
             break;
@@ -145,7 +149,11 @@ export default function Tabou2DocsTable({
                     />)}
                     {formVisible && (
                         <Row>
-                            <Tabou2DocsForm document={row.document.row} action={row.action} onClick={changeAction} />
+                            <Tabou2DocsForm
+                                document={row.document.row}
+                                action={row.action}
+                                onClick={changeAction}
+                            />
                         </Row>
                     )}
                     {!documents?.length && (

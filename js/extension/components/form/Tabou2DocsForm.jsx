@@ -1,21 +1,48 @@
-import React from "react";
+import React, {useState} from "react";
 import { Col, FormGroup, Row, FormControl, ControlLabel, Glyphicon} from "react-bootstrap";
 import Toolbar from '@mapstore/components/misc/toolbar/Toolbar';
 import "../../css/tabou.css";
-import { has, get } from "lodash";
+import { has, get, set } from "lodash";
 import Message from "@mapstore/components/I18N/Message";
 import Dropzone from 'react-dropzone';
-
+import SearchCombo from '@js/extension/components/form/SearchCombo';
+import { getAllDocumentsTypes } from "../../api/requests";
+import { DateTimePicker } from "react-widgets";
+import moment from 'moment';
+import momentLocalizer from 'react-widgets/lib/localizers/moment';
+momentLocalizer(moment);
 /**
  * Form to display when a tier is edit or created.
  * @param {any} param
  * @returns component
  */
-export default function Tabou2DocsForm({document, action = -1, onClick = () => {}}) {
-    const triggerAction = (action) => {
-        return onClick({document: document, action: action});
+export default function Tabou2DocsForm({
+    document,
+    action = -1,
+    onClick = () => {}
+}) {
+    const metadataSchema = {nom: "", libelle: "", type: "", date: new Date().toISOString()};
+    const [file, setFile] = useState({});
+    const [metadata, setMetadata] = useState(metadataSchema);
+    const [typeDoc, setTypeDoc] = useState({});
+
+    const changeMeta = (field, value) => {
+        let copyField = {
+            ...metadata, [field]: value
+        };
+        // avoid to change props.tiers directly and broke ref memory
+        let metaChanged = set(copyField, field, value);
+        setMetadata(metaChanged);
     };
+
+    const changeDate = (field, str) => {
+        // TODO : valid with moment like that
+        // let isValid = moment(str, "DD/MM/YYYY", true);
+        changeMeta(field.key, str ? new Date(str).toISOString() : new Date().toISOString());
+    };
+
     const marginTop = "10px";
+
     const fieldsMetadata = [{
         key: "id",
         visible: action !== 6,
@@ -29,13 +56,20 @@ export default function Tabou2DocsForm({document, action = -1, onClick = () => {
         libelle: "Nom",
         type: "text",
         visible: action,
-        required: false
+        required: true
 
     }, {
         key: "libelle",
         libelle: "Libellé",
         type: "text",
+        readOnly: true,
         required: false,
+        visible: action !== 6
+    },  {
+        key: "type",
+        libelle: "Type",
+        type: "search",
+        required: true,
         visible: action
     }, {
         key: "modifDate",
@@ -58,16 +92,30 @@ export default function Tabou2DocsForm({document, action = -1, onClick = () => {
         libelle: "Format",
         type: "text",
         required: false
+    }, {
+        key: "date",
+        visible: action,
+        libelle: "date",
+        type: "date",
+        required: false
+
     }].filter(f => f.visible);
-    const uploadFiles = (files) => {
-        console.log(files);
+
+    const valid = () => {
+        let required = fieldsMetadata.filter(f => f.required);
+        let values = required.filter(r => metadata[r.key]);
+        return values.length === required.length && file?.name
     };
+
+    const triggerAction = (n) => {
+        return onClick({document: document, action: n, file: file, metadata: metadata});
+    };
+
     return (
         <>
             <Row className="text-center tabou-tbar-panel">
                 <Toolbar
                     btnDefaultProps={{
-                        className: "square-button-lg",
                         bsStyle: "primary"
                     }}
                     btnGroupProps={{
@@ -78,16 +126,20 @@ export default function Tabou2DocsForm({document, action = -1, onClick = () => {
                     buttons={[
                         {
                             glyph: "ok",
-                            disabled: false,
+                            disabled: !valid(),
                             tooltip: "Valider",
                             id: "saveDocDetail",
+                            className: "square-button-md",
                             visible: true,
-                            onClick: () => triggerAction(1)
+                            onClick: () => triggerAction(1),
+                            style: {color: "#fc3f2a", background: "none", border: "none"}
                         }, {
                             glyph: "remove",
                             tooltip: "Annuler",
+                            className: "square-button-md",
                             id: "closeDocDetail",
-                            onClick: () => triggerAction(0)
+                            onClick: () => triggerAction(0),
+                            style: {color: "#28a745", background: "none", border: "none"}
                         }]}
                 />
             </Row>
@@ -101,14 +153,50 @@ export default function Tabou2DocsForm({document, action = -1, onClick = () => {
                                 </ControlLabel>
                             </Col>
                             <Col xs={9}>
-                                <FormControl
+                                {field.type === "text" && (<FormControl
                                     type="text"
                                     required={field?.required || false}
                                     readOnly={field?.readOnly || false}
-                                    value={has(document, field?.key) ? get(document, field?.key) : ""}
+                                    value={has(metadata, field?.key) ? get(metadata, field?.key) : ""}
                                     placeholder={field.libelle}
-                                    onChange={(t) => console.log(t)}
-                                />
+                                    onChange={(t) => changeMeta(field.key, t.target.value)}
+                                />)}
+                                {field.type === "search" && (
+                                    <SearchCombo
+                                        minLength={1}
+                                        textField={"libelle"}
+                                        valueField={"id"}
+                                        readOnly={field?.readOnly || false}
+                                        value={metadata?.type}
+                                        forceSelection
+                                        search={
+                                            text => getAllDocumentsTypes(text)
+                                                .then(({elements}) => {
+                                                    return elements.map(v => v);
+                                                })
+                                        }
+                                        onSelect={(t) =>  changeMeta(field.key, t.libelle)}
+                                        onChange={(t) => !t ? changeMeta(field.key, "") : null}
+                                        placeholder={"Sélectionner un type"}
+                                    />
+                                )}
+                                {field.type === "date" && (
+                                    <DateTimePicker
+                                        type="date"
+                                        className="identifyDate"
+                                        inline
+                                        dropDown
+                                        placeholder={"Date du document..."}
+                                        readOnly={field?.readOnly || false}
+                                        calendar
+                                        time={false}
+                                        culture="fr"
+                                        value={has(metadata, field?.key) ? new Date(get(metadata, field?.key)) : null}
+                                        format="DD/MM/YYYY"
+                                        onSelect={(v) => changeDate(field, v)}
+                                        onChange={(v) => changeDate(field, v)}
+                                    />
+                                )}
                             </Col>
                         </Col>
                     ))}
@@ -117,9 +205,15 @@ export default function Tabou2DocsForm({document, action = -1, onClick = () => {
                     <Dropzone
                         key="dropzone"
                         rejectClassName="alert-danger"
-                        className="alert alert-info"
-                        onDrop={uploadFiles}
+                        className="alert alert-info col-xs-12"
+                        onDrop={(f) => {
+                            if (!metadata.nom) {
+                                changeMeta("nom", f[0].name);
+                            }
+                            setFile(f[0]);
+                        }}
                         style={{
+                            margin: "0px !important",
                             borderStyle: "dashed",
                             borderWidth: "3px",
                             transition: "all 0.3s ease-in-out"
@@ -128,23 +222,17 @@ export default function Tabou2DocsForm({document, action = -1, onClick = () => {
                             backgroundColor: "#eee",
                             borderWidth: "5px",
                             boxShadow: "0px 0px 25px 14px #d9edf7"
-                        }}>
-                        <div style={{
-                            display: "flex",
-                            alignItems: "center",
-                            width: "100%",
-                            height: "100%",
-                            justifyContent: "center"
-                        }}>
-                            <span style={{
-                                width: "100px",
-                                height: "100px",
-                                textAlign: "center"
-                            }}>
-                                <Glyphicon glyph="upload" />
-                                Upload file
-                            </span>
-                        </div>
+                        }}
+                    >
+                        <Col xs={12} className="text-center">
+                            <div>
+                                <Glyphicon glyph="upload" style={{paddingRight: "5px"}}/><br/>
+                                <Message msgId="tabou2.docsModal.uploadFile"/>
+                                <p style={{color: "grey", marginTop: "5px"}}>
+                                    {file && file.name ? file.name : null}
+                                </p>
+                            </div>
+                        </Col>
                     </Dropzone>
                 </Col>)}
             </FormGroup>

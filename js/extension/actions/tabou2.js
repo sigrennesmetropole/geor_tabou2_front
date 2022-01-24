@@ -52,6 +52,7 @@ export const GET_TABOU_DOCUMENTS = "GET_TABOU_DOCUMENTS";
 export const SET_TABOU_DOCUMENTS = "SET_TABOU_DOCUMENTS";
 export const TABOU_DOWNLOAD_DOC = "TABOU_DOWNLOAD_DOC";
 export const DELETE_TABOU_DOCUMENTS = "DELETE_TABOU_DOCUMENTS";
+export const ADD_TABOU_DOC = "ADD_TABOU_DOC";
 
 export const closeTabou = (pluginsCfg) => ({
     type: CLOSE_TABOU,
@@ -326,4 +327,10 @@ export const downloadDocument = (idDoc) => ({
 export const deleteDocument = (idDoc) => ({
     type: DELETE_TABOU_DOCUMENTS,
     idDoc
+});
+
+export const addTabouDocument = (file, metadata) => ({
+    type: ADD_TABOU_DOC,
+    file,
+    metadata
 });

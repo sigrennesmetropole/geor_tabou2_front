@@ -22,7 +22,9 @@
         "failDownload": "Le téléchargement a échoué !",
         "successPrint": "Document téléchargé !",
         "failDocDelete": "Erreur - document non supprimé !",
-        "successDocDelete": "Document supprimé !"
+        "failDocCreate": "Erreur - Document non créé",
+        "successDocDelete": "Document supprimé !",
+        "successDocCreate": "Document ajouté !"
       },
       "load": "Chargement...",
       "save": "Enregistrer",
@@ -195,7 +197,8 @@
       },
       "docsModal": {
         "title": "Documents associés",
-        "noRows": "Il n'y a aucun document sur cette page..."
+        "noRows": "Il n'y a aucun document sur cette page...",
+        "uploadFile": "Cliquer ou glisser un fichier..."
       },
       "logsModal": {
         "isSystem": "Système",

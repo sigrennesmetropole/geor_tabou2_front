@@ -304,9 +304,12 @@ export function getTabouDocuments(type, id, page, result) {
         asc: true
     }}).then(({ data }) => data);
 }
-export function addDocument(type, file, mimeType = "file") {
+export function addDocument(type, id, file, metadata) {
     var formData = new FormData();
-    formData.append(mimeType, file);
+    formData.append("fileToUpload", file);
+    formData.append("operationId", id);
+    formData.append("nom", metadata.nom);
+    formData.append("libelle", metadata.libelle);
     return axios.post(`${baseURL}/${type}/{operationid}/documents`,
         formData, {
             headers: {
@@ -332,4 +335,8 @@ export function getDocumentContent(type, id, docId) {
 }
 export function updateDocumentContent(type, id, docId, content) {
     return axios.put(`${baseURL}/${type}/${id}/documents/${docId}/content`, content).then(({ data }) => data);
+}
+
+export function getAllDocumentsTypes(text) {
+    return axios.get(`${baseURL}/types-documents`, {params: {libelle: `*${text}*`, asc: true}}).then(( data ) => data.data);
 }
