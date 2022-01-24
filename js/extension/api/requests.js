@@ -294,7 +294,7 @@ export function searchTiers(text) {
 }
 
 // FEATURE'S DOCUMENT
-export function getDocuments(type, id, page, result) {
+export function getTabouDocuments(type, id, page, result) {
     const params = (page || page > -1) && result ? {
         start: page,
         resultsNumber: result

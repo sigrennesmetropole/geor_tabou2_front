@@ -20,7 +20,9 @@
         "apiGETError": "Erreur à la récupération des informations.",
         "failPrint": "Le téléchargement de la fiche de suivi a échoué",
         "failDownload": "Le téléchargement a échoué !",
-        "successPrint": "Document téléchargé !"
+        "successPrint": "Document téléchargé !",
+        "failDocDelete": "Erreur - document non supprimé !",
+        "successDocDelete": "Document supprimé !"
       },
       "load": "Chargement...",
       "save": "Enregistrer",
@@ -192,7 +194,8 @@
         "addThird": "3 - Saisir les informations"
       },
       "docsModal": {
-        "title": "Documents associés"
+        "title": "Documents associés",
+        "noRows": "Il n'y a aucun document sur cette page..."
       },
       "logsModal": {
         "isSystem": "Système",

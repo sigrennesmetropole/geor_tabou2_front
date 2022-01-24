@@ -4,7 +4,7 @@ import { isEmpty } from "lodash";
 import ResizableModal from '@mapstore/components/misc/ResizableModal';
 import Message from "@mapstore/components/I18N/Message";
 import Tabou2DocsTable from "./Tabou2DocsTable";
-import { getDocuments, downloadDocument } from "../../../actions/tabou2";
+import { getDocuments, downloadDocument, deleteDocument } from "../../../actions/tabou2";
 import { getFeatureDocuments, getAuthInfos, getPluginCfg } from "../../../selectors/tabou2";
 
 function Tabou2DocsModal({
@@ -16,6 +16,7 @@ function Tabou2DocsModal({
     const [page, setPage] = useState(0);
 
     useEffect(() => {
+        setPage(0);
         return () => props.loadDocuments(!visible);
     }, [visible]);
 
@@ -53,7 +54,7 @@ function Tabou2DocsModal({
         setNewDoc({});
         props.loadDocuments(true, page);
     };
-
+    const countPages = count ? Math.ceil(count / props.config?.apiCfg?.documentsByPage)  : 0;
     return (
         <ResizableModal
             title={<Message msgId="tabou2.docsModal.title"/>}
@@ -63,18 +64,17 @@ function Tabou2DocsModal({
             buttons={buttons}
             onClose={props.onClick}
             size="lg">
-            {(
-                <Tabou2DocsTable
-                    displayPages={count &&  count > props.config?.apiCfg?.documentsByPage}
-                    refresh={refresh}
-                    readOnly={isReadOnly}
-                    page={page}
-                    pages={Math.round(count / props.config?.apiCfg?.documentsByPage)}
-                    changePage={setPage}
-                    documents={isEmpty(newDoc) ? documents : [...documents, newDoc]}
-                    download={props.download}
-                />
-            )}
+            <Tabou2DocsTable
+                refresh={refresh}
+                readOnly={isReadOnly}
+                page={page}
+                pages={countPages}
+                changePage={setPage}
+                id={props.documents?.id}
+                documents={isEmpty(newDoc) ? documents : [...documents, newDoc]}
+                download={props.download}
+                remove={(id) => {props.remove(id); setPage(0);}}
+            />
         </ResizableModal>
     );
 }
@@ -88,5 +88,6 @@ export default connect(state => ({
 }), {
     // actions
     loadDocuments: getDocuments,
-    download: downloadDocument
+    download: downloadDocument,
+    remove: deleteDocument
 })(Tabou2DocsModal);

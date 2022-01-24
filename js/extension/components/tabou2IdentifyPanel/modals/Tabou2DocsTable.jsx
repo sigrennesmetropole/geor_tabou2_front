@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { Grid, Row, Pagination, Col } from 'react-bootstrap';
-import { uniqueId, orderBy, isEmpty, find } from 'lodash';
+import { uniqueId, orderBy, find } from 'lodash';
 import { Data } from "react-data-grid-addons";
+import Message from "@mapstore/components/I18N/Message";
 import Tabou2DocsForm from '../../form/Tabou2DocsForm';
-
 import Tabou2DocsActions from "./Tabou2DocsActions";
-
 import TabouDataGrid from '../../common/TabouDataGrid';
 
 export default function Tabou2DocsTable({
     documents = [],
     refresh = () => { },
     changePage = () => { },
-    displayPages = false,
     pages = 0,
     page = 1,
     readOnly = true,
-    download = () => {}
+    download = () => {},
+    remove = () => {},
+    id
 }) {
     const newDoc = find(documents, { action: 6 });
     const [rows, setRows] = useState(documents);
@@ -30,7 +30,12 @@ export default function Tabou2DocsTable({
     useEffect(() => {
         setRows(documents);
         return;
-    }, [page, documents.length]);
+    }, [page, pages]);
+
+    useEffect(() => {
+        setRows(documents);
+        return;
+    }, [id, documents.length]);
 
     const formVisible = [2, 3, 6].includes(row?.action);
     const defaultColumnProperties = {
@@ -38,10 +43,12 @@ export default function Tabou2DocsTable({
     };
 
     const triggerAction = (target) => {
-        console.log(target);
         switch (target?.action) {
         case 5:
             download(target?.document?.row?.id);
+            break;
+        case 4:
+            remove(target?.document?.row?.id);
             break;
         default:
             break;
@@ -89,8 +96,6 @@ export default function Tabou2DocsTable({
         return uniqueId();
     };
 
-    if (isEmpty(documents)) return null;
-
     const getRows = () => {
         return selectors.getRows({ rows, filters });
     };
@@ -112,35 +117,41 @@ export default function Tabou2DocsTable({
 
     return (
         <>
-            {(!formVisible && displayPages) && (<Col xs={12} className="text-center">
-                <Pagination
-                    prev next first last ellipsis boundaryLinks
-                    bsSize="small"
-                    items={pages}
-                    maxButtons={5}
-                    activePage={page + 1}
-                    onSelect={(n) => changePage(n - 1)} />
-            </Col>)}
-            <Grid className="col-xs-12">
-                {!formVisible && (<TabouDataGrid
-                    id="tabou-documents-grid"
-                    columns={columns}
-                    rowsGetter={rowKeyGetter}
-                    rowGetter={i => getRows()[i]}
-                    rowsCount={getRows()?.length}
-                    onGridSort={(sortColumn, sortDirection) =>
-                        setRows(sortRows(sortColumn, sortDirection))
-                    }
-                    activeFilters
-                    onAddFilter={filter => setFilters(handleFilterChange(filter))}
-                    onClearFilters={() => setFilters({})}
-                />)}
-                {formVisible && (
-                    <Row>
-                        <Tabou2DocsForm document={row.document.row} action={row.action} onClick={changeAction} />
-                    </Row>
-                )}
-            </Grid>
+            {(!formVisible && pages) && (
+                <Col xs={12} className="text-center">
+                    <Pagination
+                        prev next first last ellipsis boundaryLinks
+                        bsSize="small"
+                        items={pages}
+                        maxButtons={5}
+                        activePage={page + 1}
+                        onSelect={(n) => changePage(n - 1)} />
+                </Col>
+            )}
+            {
+                (<Grid className="col-xs-12">
+                    {!formVisible && (<TabouDataGrid
+                        id="tabou-documents-grid"
+                        columns={columns}
+                        rowsGetter={rowKeyGetter}
+                        rowGetter={i => getRows()[i]}
+                        rowsCount={getRows()?.length}
+                        onGridSort={(sortColumn, sortDirection) =>
+                            setRows(sortRows(sortColumn, sortDirection))
+                        }
+                        activeFilters
+                        onAddFilter={filter => setFilters(handleFilterChange(filter))}
+                        onClearFilters={() => setFilters({})}
+                    />)}
+                    {formVisible && (
+                        <Row>
+                            <Tabou2DocsForm document={row.document.row} action={row.action} onClick={changeAction} />
+                        </Row>
+                    )}
+                    {!documents?.length && (
+                        <Message msgId="tabou2.docsModal.noRows"/>
+                    )}
+                </Grid>)}
         </>
     );
 }
