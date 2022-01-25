@@ -172,6 +172,7 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
                                         readOnly={item.readOnly || !allowChange}
                                         value={item.data}
                                         className={ item.readOnly ? "tagColor noClick" : "tagColor"}
+                                        onChange={() => {}}
                                     />
                                 )
                             }
@@ -183,7 +184,7 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
                                         tooltip={props.i18n(props.messages, allTiersButtons[item.name].tooltip || "")}
                                         onClick={() => allTiersButtons[item.name].click() }
                                         bsStyle="primary"
-                                        bsSize="md">
+                                        bsSize="small">
                                         <Glyphicon glyph="user"/>
                                     </Button>
                                 </Col>

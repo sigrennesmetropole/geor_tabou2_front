@@ -131,7 +131,7 @@ export default function Tabou2SuiviOpAccord({ initialItem, programme, operation,
                                     <DateTimePicker
                                         type="date"
                                         className="identifyDate"
-                                        inline
+                                        inline="true"
                                         dropUp
                                         placeholder={props.i18n(props.messages, item?.label || "")}
                                         readOnly={item.readOnly || !allowChange}

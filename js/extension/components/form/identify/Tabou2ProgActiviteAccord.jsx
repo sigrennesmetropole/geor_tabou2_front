@@ -73,7 +73,7 @@ export default function Tabou2ProgActiviteAccord({ initialItem, programme, opera
                             {
                                 item.type === "checkbox" ?
                                     (<Checkbox
-                                        inline="true"
+                                        inline
                                         style={{marginBottom: "10px"}}
                                         checked={getValue(item) || false}
                                         disabled={item.readOnly || !allowChange}
