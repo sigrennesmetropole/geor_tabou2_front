@@ -30,7 +30,7 @@ export default function Tabou2DocsTable({
     const [search, setSearch] = useState("");
 
     useEffect(() => {
-        if (newDoc?.action) return setRow(newDoc);
+        return newDoc?.action ? setRow(newDoc) : null;
     }, [newDoc?.action]);
 
     useEffect(() => {
