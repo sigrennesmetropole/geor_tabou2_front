@@ -60,7 +60,8 @@ export default function Tabou2DocsForm({
         libelle: "tabou2.docsModal.docsForm.name",
         type: "text",
         visible: action,
-        required: true
+        required: true,
+        readOnly: action === 2
 
     }, {
         key: "libelle",
@@ -74,7 +75,8 @@ export default function Tabou2DocsForm({
         libelle: "tabou2.docsModal.docsForm.type",
         type: "search",
         required: true,
-        visible: action
+        visible: action,
+        readOnly: action === 2
     }, {
         key: "modifDate",
         libelle: "tabou2.docsModal.docsForm.changeDate",
@@ -101,7 +103,8 @@ export default function Tabou2DocsForm({
         visible: action,
         libelle: "tabou2.docsModal.docsForm.date",
         type: "date",
-        required: false
+        required: false,
+        readOnly: action === 2
 
     }].filter(f => f.visible);
 
@@ -131,19 +134,19 @@ export default function Tabou2DocsForm({
                         {
                             glyph: "ok",
                             disabled: !valid(),
+                            visible: action !== 2,
                             tooltip: translate.i18n(translate.messages, "tabou2.valid"),
                             id: "saveDocDetail",
                             className: "square-button-md",
-                            visible: true,
                             onClick: () => triggerAction(action === 3 ? 7 : 1),
-                            style: {color: "#fc3f2a", background: "none", border: "none"}
+                            style: {color: "#28a745", background: "none", border: "none"}
                         }, {
                             glyph: "remove",
                             tooltip: translate.i18n(translate.messages, "tabou2.cancel"),
                             className: "square-button-md",
                             id: "closeDocDetail",
                             onClick: () => triggerAction(0),
-                            style: {color: "#28a745", background: "none", border: "none"}
+                            style: {color: "#fc3f2a", background: "none", border: "none"}
                         }]}
                 />
             </Row>
