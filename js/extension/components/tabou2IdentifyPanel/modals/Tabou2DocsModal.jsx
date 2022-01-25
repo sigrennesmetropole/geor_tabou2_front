@@ -66,6 +66,7 @@ function Tabou2DocsModal({
             onClose={props.onClick}
             size="lg">
             <Tabou2DocsTable
+                translate={{i18n: props.i18n, messages: props.messages}}
                 refresh={refresh}
                 readOnly={isReadOnly}
                 onInput={(t) => {

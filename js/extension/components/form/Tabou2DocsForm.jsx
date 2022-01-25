@@ -19,12 +19,12 @@ momentLocalizer(moment);
 export default function Tabou2DocsForm({
     document,
     action = -1,
-    onClick = () => {}
+    onClick = () => {},
+    translate
 }) {
     const metadataSchema = {nom: "", libelle: "", type: "", date: new Date().toISOString()};
     const [file, setFile] = useState({});
     const [metadata, setMetadata] = useState(metadataSchema);
-    const [typeDoc, setTypeDoc] = useState({});
 
     useEffect(() => {
         setMetadata({...metadataSchema, ...document});
@@ -50,34 +50,34 @@ export default function Tabou2DocsForm({
     const fieldsMetadata = [{
         key: "id",
         visible: action !== 6,
-        libelle: "ID",
+        libelle: "tabou2.docsModal.docsForm.id",
         type: "text",
         readOnly: true,
         required: false
 
     }, {
         key: "nom",
-        libelle: "Nom",
+        libelle: "tabou2.docsModal.docsForm.name",
         type: "text",
         visible: action,
         required: true
 
     }, {
         key: "libelle",
-        libelle: "Libellé",
+        libelle: "tabou2.docsModal.docsForm.label",
         type: "text",
         readOnly: true,
         required: false,
         visible: action !== 6
     },  {
         key: "type",
-        libelle: "Type",
+        libelle: "tabou2.docsModal.docsForm.type",
         type: "search",
         required: true,
         visible: action
     }, {
         key: "modifDate",
-        libelle: "Modifié le",
+        libelle: "tabou2.docsModal.docsForm.changeDate",
         visible: action !== 6,
         type: "text",
         readOnly: true,
@@ -85,21 +85,21 @@ export default function Tabou2DocsForm({
     }, {
         key: "modifUser",
         visible: action !== 6,
-        libelle: "Modifié par",
+        libelle: "tabou2.docsModal.docsForm.changeBy",
         type: "text",
         readOnly: true,
         required: false
     }, {
         key: "typeMime",
         visible: action !== 6,
-        libelle: "Format",
+        libelle: "tabou2.docsModal.docsForm.format",
         type: "text",
         readOnly: true,
         required: false
     }, {
         key: "date",
         visible: action,
-        libelle: "date",
+        libelle: "tabou2.docsModal.docsForm.date",
         type: "date",
         required: false
 
@@ -131,7 +131,7 @@ export default function Tabou2DocsForm({
                         {
                             glyph: "ok",
                             disabled: !valid(),
-                            tooltip: "Valider",
+                            tooltip: translate.i18n(translate.messages, "tabou2.valid"),
                             id: "saveDocDetail",
                             className: "square-button-md",
                             visible: true,
@@ -139,7 +139,7 @@ export default function Tabou2DocsForm({
                             style: {color: "#fc3f2a", background: "none", border: "none"}
                         }, {
                             glyph: "remove",
-                            tooltip: "Annuler",
+                            tooltip: translate.i18n(translate.messages, "tabou2.cancel"),
                             className: "square-button-md",
                             id: "closeDocDetail",
                             onClick: () => triggerAction(0),
@@ -162,7 +162,7 @@ export default function Tabou2DocsForm({
                                     required={field?.required || false}
                                     readOnly={field?.readOnly || false}
                                     value={has(metadata, field?.key) ? get(metadata, field?.key) || get(document, field.key) : get(document, field.key)}
-                                    placeholder={field.libelle}
+                                    placeholder={translate.i18n(translate.messages, field.libelle)}
                                     onChange={(t) => changeMeta(field.key, t.target.value)}
                                 />)}
                                 {field.type === "search" && (
@@ -181,7 +181,7 @@ export default function Tabou2DocsForm({
                                         }
                                         onSelect={(t) =>  changeMeta(field.key, t.libelle)}
                                         onChange={(t) => !t ? changeMeta(field.key, "") : null}
-                                        placeholder={"Sélectionner un type"}
+                                        placeholder={translate.i18n(translate.messages, "tabou2.docsModal.docsForm.selectType")}
                                     />
                                 )}
                                 {field.type === "date" && (
@@ -190,7 +190,7 @@ export default function Tabou2DocsForm({
                                         className="identifyDate"
                                         inline
                                         dropDown
-                                        placeholder={"Date du document..."}
+                                        placeholder={translate.i18n(translate.messages, "tabou2.docsModal.docsForm.dateDoc")}
                                         readOnly={field?.readOnly || false}
                                         calendar
                                         time={false}

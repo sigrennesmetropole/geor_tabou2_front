@@ -20,6 +20,7 @@ export default function Tabou2DocsTable({
     save = () => {},
     update = () => {},
     onInput,
+    translate,
     id
 }) {
     const newDoc = find(documents, { action: 6 });
@@ -88,13 +89,13 @@ export default function Tabou2DocsTable({
 
     const columns = [{
         key: "nom",
-        name: "Nom",
+        name: translate.i18n(translate.messages, "tabou2.docsModal.docsForm.nom"),
         sortDescendingFirst: true,
         sortable: true,
         filterable: true
     }, {
         key: "typeMime",
-        name: "Format",
+        name: translate.i18n(translate.messages, "tabou2.docsModal.docsForm.format"),
         sortable: true,
         filterable: true
     }, {
@@ -159,6 +160,7 @@ export default function Tabou2DocsTable({
                             <Tabou2DocsForm
                                 document={row.document.row}
                                 action={row.action}
+                                translate={translate}
                                 onClick={changeAction}
                             />
                         </Row>
@@ -167,7 +169,7 @@ export default function Tabou2DocsTable({
                         <Message msgId="tabou2.docsModal.noRows"/>
                     )}
                 </Grid>)}
-            <Col xs={3} className="col-xs-offset-9" style={{marginTop: "10px"}}>
+            {(!formVisible && documents.length) && (<Col xs={3} className="col-xs-offset-9" style={{marginTop: "10px"}}>
                 <Tabou2TextForm
                     type="text"
                     value={search}
@@ -175,9 +177,9 @@ export default function Tabou2DocsTable({
                         setSearch(e.target.value);
                         onInput(e.target.value);
                     }}
-                    placeholder={"Saisir un nom de document..."}
+                    placeholder={translate.i18n(translate.messages, "tabou2.docsModal.searchPlaceholder")}
                 />
-            </Col>
+            </Col>)}
         </>
     );
 }
