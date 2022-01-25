@@ -294,14 +294,15 @@ export function searchTiers(text) {
 }
 
 // FEATURE'S DOCUMENT
-export function getTabouDocuments(type, id, page, result) {
+export function getTabouDocuments(type, id, page, result, text) {
     const params = (page || page > -1) && result ? {
         start: page,
         resultsNumber: result
     } : {};
     return axios.get(`${baseURL}/${type}/${id}/documents`, {params: {
         ...params,
-        asc: true
+        asc: true,
+        nom: text.length >= 3 ? `*${text}*` : "**"
     }}).then(({ data }) => data);
 }
 export function addDocument(type, id, file, metadata) {

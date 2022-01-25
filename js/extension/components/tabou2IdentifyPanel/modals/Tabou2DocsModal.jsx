@@ -14,14 +14,19 @@ function Tabou2DocsModal({
 }) {
     const [newDoc, setNewDoc] = useState({});
     const [page, setPage] = useState(0);
+    const [searchText, setSearchText] = useState("");
 
     useEffect(() => {
         setPage(0);
         return () => props.loadDocuments(!visible);
     }, [visible]);
 
+    const refresh = (t = "") => {
+        setNewDoc({});
+        props.loadDocuments(true, page, !t && searchText ? searchText : t || "");
+    };
     useEffect(() => {
-        props.loadDocuments(true, page);
+        refresh(searchText);
     }, [page]);
 
     const isReadOnly = ![authInfos?.isReferent, authInfos?.isContrib].includes(true);
@@ -50,10 +55,6 @@ function Tabou2DocsModal({
         tooltip: "Ajouter un document",
         onClick: () => setNewDoc({document: SCHEMA_DOC, action: 6})
     }];
-    const refresh = () => {
-        setNewDoc({});
-        props.loadDocuments(true, page);
-    };
     const countPages = count ? Math.ceil(count / props.config?.apiCfg?.documentsByPage)  : 0;
     return (
         <ResizableModal
@@ -67,6 +68,10 @@ function Tabou2DocsModal({
             <Tabou2DocsTable
                 refresh={refresh}
                 readOnly={isReadOnly}
+                onInput={(t) => {
+                    refresh(t);
+                    setSearchText(t);
+                }}
                 page={page}
                 pages={countPages}
                 changePage={setPage}

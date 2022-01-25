@@ -309,10 +309,11 @@ export const displayTabouMarker = (point) => ({
     point
 });
 
-export const getDocuments = (load = true, page = 0) => ({
+export const getDocuments = (load = true, page = 0, text = "") => ({
     type: GET_TABOU_DOCUMENTS,
     load,
-    page
+    page,
+    text
 });
 
 export const setDocuments = (documents) => ({

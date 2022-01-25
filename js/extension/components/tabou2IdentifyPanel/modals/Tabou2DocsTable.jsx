@@ -6,6 +6,7 @@ import Message from "@mapstore/components/I18N/Message";
 import Tabou2DocsForm from '../../form/Tabou2DocsForm';
 import Tabou2DocsActions from "./Tabou2DocsActions";
 import TabouDataGrid from '../../common/TabouDataGrid';
+import Tabou2TextForm from '@js/extension/components/form/Tabou2TextForm';
 
 export default function Tabou2DocsTable({
     documents = [],
@@ -18,12 +19,14 @@ export default function Tabou2DocsTable({
     remove = () => {},
     save = () => {},
     update = () => {},
+    onInput,
     id
 }) {
     const newDoc = find(documents, { action: 6 });
     const [rows, setRows] = useState(documents);
     const [filters, setFilters] = useState({});
     const [row, setRow] = useState({});
+    const [search, setSearch] = useState("");
 
     useEffect(() => {
         if (newDoc?.action) return setRow(newDoc);
@@ -164,6 +167,17 @@ export default function Tabou2DocsTable({
                         <Message msgId="tabou2.docsModal.noRows"/>
                     )}
                 </Grid>)}
+            <Col xs={3} className="col-xs-offset-9" style={{marginTop: "10px"}}>
+                <Tabou2TextForm
+                    type="text"
+                    value={search}
+                    onChange={(e) => {
+                        setSearch(e.target.value);
+                        onInput(e.target.value);
+                    }}
+                    placeholder={"Saisir un nom de document..."}
+                />
+            </Col>
         </>
     );
 }
