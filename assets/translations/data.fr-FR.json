@@ -4,6 +4,7 @@
     "tabou2": {
       "helpTooltip": "Accéder à l'aide",
       "help": "Aide",
+      "valid": "Valider",
       "getHelp": "Cliquer pour obtenir plus d'informations",
       "copy": "Copier / coller",
       "copyAddress": "L'adresse a été copiée dans le Presse-papiers",
@@ -202,7 +203,21 @@
       "docsModal": {
         "title": "Documents associés",
         "noRows": "Il n'y a aucun document sur cette page...",
-        "uploadFile": "Cliquer ou glisser un fichier..."
+        "uploadFile": "Cliquer ou glisser un fichier...",
+        "searchPlaceholder": "Rechercher un nom de document...",
+        "docsForm": {
+          "valid": "Valider",
+          "selectType": "Choisir un type",
+          "dateDoc": "Date du document...",
+          "id": "id",
+          "name": "Nom",
+          "label": "Libellé",
+          "changeDate": "Modifié le",
+          "changeBy": "Modifié par",
+          "format": "Format",
+          "date": "Date",
+          "type": "Type"
+        }
       },
       "logsModal": {
         "isSystem": "Système",
