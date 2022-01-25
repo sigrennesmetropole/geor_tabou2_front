@@ -22,9 +22,13 @@
         "failDownload": "Le téléchargement a échoué !",
         "successPrint": "Document téléchargé !",
         "failDocDelete": "Erreur - document non supprimé !",
-        "failDocCreate": "Erreur - Document non créé",
+        "failDocCreate": "Erreur - Document non créé !",
         "successDocDelete": "Document supprimé !",
-        "successDocCreate": "Document ajouté !"
+        "successDocCreate": "Document ajouté !",
+        "failDocModification": "Erreur - Modification impossible !",
+        "successDocModification": "Document modifié !",
+        "failDocChange": "Erreur - Mise à jour impossible !",
+        "successDocChange": "Document mis à jour !"
       },
       "load": "Chargement...",
       "save": "Enregistrer",

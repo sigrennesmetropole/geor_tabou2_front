@@ -22,6 +22,8 @@ export default function Tabou2DocsActions({ document = {}, onClick = () => {}, r
      * 3 - open in edit mode
      * 4 - delete
      * 5 - download
+     * 6 - save new doc
+     * 7 - save update edition
      * @param {number} action
      * @returns trigger click method
      */

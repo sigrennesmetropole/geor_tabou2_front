@@ -325,18 +325,25 @@ export function deleteDocuments(type, id, docId) {
 export function getDocumentMetadata(type, id, docId) {
     return axios.get(`${baseURL}/${type}/${id}/documents/${docId}`).then(({ data }) => data);
 }
-export function updateMetadataDocument(type, id, docId, metadata) {
-    return axios.put(`${baseURL}/${type}/${id}/documents/${docId}`, metadata);
+export function updateMetadataDocument(type, id, metadata) {
+    return axios.put(`${baseURL}/${type}/${id}/documents/${metadata.id}`, metadata);
 }
 
 // DOCUMENT CONTENT
 export function getDocumentContent(type, id, docId) {
     return axios.get(`${baseURL}/${type}/${id}/documents/${docId}/content`, {responseType: 'arraybuffer'}).then(( data ) => data);
 }
-export function updateDocumentContent(type, id, docId, content) {
-    return axios.put(`${baseURL}/${type}/${id}/documents/${docId}/content`, content).then(({ data }) => data);
+export function updateDocumentContent(type, id, docId, file) {
+    var formData = new FormData();
+    formData.append("fileToUpload", file);
+    return axios.put(`${baseURL}/${type}/${id}/documents/${docId}/content`,
+        formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
 }
 
-export function getAllDocumentsTypes(text) {
+export function searchDocumentsTypes(text) {
     return axios.get(`${baseURL}/types-documents`, {params: {libelle: `*${text}*`, asc: true}}).then(( data ) => data.data);
 }

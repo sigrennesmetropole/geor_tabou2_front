@@ -25,7 +25,7 @@ import { tabouLoadIdentifyContent, tabouSetGFIFormat, printProgramme, createChan
 import { getSelectionInfos, createTabouFeature, onLayerReload } from '../epics/featureEvents';
 import { updateTabou2Tier, addCreateTabou2Tier, getTiersElements, associateTabou2Tier } from '../epics/tiers';
 import { updateTabou2Logs, getEventsElements } from "../epics/logs";
-import { listTabouDocuments, downloadTabouDocuments, deleteTabouDocuments, addNewDocument } from "../epics/documents";
+import { listTabouDocuments, downloadTabouDocuments, deleteTabouDocuments, addNewDocument, updateDocument } from "../epics/documents";
 import { showNotification } from "../epics/common";
 import { setTbarPosition, initMap, closeTabouExt } from "../epics/setup";
 
@@ -115,7 +115,8 @@ export default {
         listTabouDocuments: listTabouDocuments,
         downloadTabouDocuments: downloadTabouDocuments,
         deleteTabouDocuments: deleteTabouDocuments,
-        addNewDocument: addNewDocument
+        addNewDocument: addNewDocument,
+        updateDocument: updateDocument
     },
     containers: {
         Toolbar: {

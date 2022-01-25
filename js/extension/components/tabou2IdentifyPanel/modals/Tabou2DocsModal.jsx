@@ -4,7 +4,7 @@ import { isEmpty } from "lodash";
 import ResizableModal from '@mapstore/components/misc/ResizableModal';
 import Message from "@mapstore/components/I18N/Message";
 import Tabou2DocsTable from "./Tabou2DocsTable";
-import { getDocuments, downloadDocument, deleteDocument, addTabouDocument } from "../../../actions/tabou2";
+import { getDocuments, downloadDocument, deleteDocument, addTabouDocument, modifyDocument } from "../../../actions/tabou2";
 import { getFeatureDocuments, getAuthInfos, getPluginCfg } from "../../../selectors/tabou2";
 
 function Tabou2DocsModal({
@@ -75,6 +75,7 @@ function Tabou2DocsModal({
                 download={props.download}
                 remove={(id) => {props.remove(id); setPage(0);}}
                 save={(file, metadata) => {props.save(file, metadata); refresh();}}
+                update={(file, metadata) => {props.update(file, metadata); refresh();}}
             />
         </ResizableModal>
     );
@@ -91,5 +92,6 @@ export default connect(state => ({
     loadDocuments: getDocuments,
     download: downloadDocument,
     remove: deleteDocument,
-    save: addTabouDocument
+    save: addTabouDocument,
+    update: modifyDocument
 })(Tabou2DocsModal);

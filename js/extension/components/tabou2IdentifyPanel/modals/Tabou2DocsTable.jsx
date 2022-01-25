@@ -17,6 +17,7 @@ export default function Tabou2DocsTable({
     download = () => {},
     remove = () => {},
     save = () => {},
+    update = () => {},
     id
 }) {
     const newDoc = find(documents, { action: 6 });
@@ -53,6 +54,9 @@ export default function Tabou2DocsTable({
             break;
         case 1:
             save(target?.file, target.metadata);
+            break;
+        case 7:
+            update(target.file, target.metadata);
             break;
         default:
             break;

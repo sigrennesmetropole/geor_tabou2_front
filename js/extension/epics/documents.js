@@ -7,12 +7,15 @@ import { GET_TABOU_DOCUMENTS,
     TABOU_DOWNLOAD_DOC,
     DELETE_TABOU_DOCUMENTS,
     getDocuments,
-    ADD_TABOU_DOC } from "../actions/tabou2";
+    ADD_TABOU_DOC,
+    MODIFY_TABOU_DOC } from "../actions/tabou2";
 import {
     getTabouDocuments,
     getDocumentContent,
     deleteDocuments,
-    addDocument
+    addDocument,
+    updateDocumentContent,
+    updateMetadataDocument
 } from "../api/requests";
 import { downloadToBlob } from "../utils/identify";
 import uuid from 'uuid';
@@ -144,6 +147,53 @@ export function addNewDocument(action$, store) {
                         }),
                         getDocuments()
                     );
+                });
+        });
+}
+
+
+export function updateDocument(action$, store) {
+    return action$.ofType(MODIFY_TABOU_DOC)
+        .filter(() => isTabou2Activate(store.getState()))
+        .switchMap((action) => {
+            let messages = store.getState()?.locale.messages;
+            let {featureId, layerUrl} = getInfos(store.getState());
+            return Rx.Observable.defer(() => updateDocumentContent(layerUrl, featureId, action.metadata.id, action.file))
+                .catch(e => {
+                    console.log("Error on create documents");
+                    console.log(e);
+                    // fail message
+                    return Rx.Observable.of(
+                        error({
+                            title: getMessageById(messages, "tabou2.infos.failApi"),
+                            message: getMessageById(messages, "tabou2.infos.failDocChange")
+                        }),
+                        {...e, data: null}
+                    );
+                })
+                .switchMap(() => {
+                    return Rx.Observable.defer(() => updateMetadataDocument(layerUrl, featureId, action.metadata))
+                        .catch(e => {
+                            console.log("Error on create documents");
+                            console.log(e);
+                            // fail message
+                            return Rx.Observable.of(
+                                error({
+                                    title: getMessageById(messages, "tabou2.infos.failApi"),
+                                    message: getMessageById(messages, "tabou2.infos.failDocChange")
+                                }),
+                                {...e, data: null}
+                            );
+                        })
+                        .switchMap(() => {
+                            return Rx.Observable.of(
+                                success({
+                                    title: getMessageById(messages, "tabou2.infos.successApi"),
+                                    message: getMessageById(messages, "tabou2.infos.successDocChange")
+                                }),
+                                getDocuments()
+                            );
+                        });
                 });
         });
 }

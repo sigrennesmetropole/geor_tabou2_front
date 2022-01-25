@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import { Col, FormGroup, Row, FormControl, ControlLabel, Glyphicon} from "react-bootstrap";
 import Toolbar from '@mapstore/components/misc/toolbar/Toolbar';
 import "../../css/tabou.css";
@@ -6,7 +6,7 @@ import { has, get, set } from "lodash";
 import Message from "@mapstore/components/I18N/Message";
 import Dropzone from 'react-dropzone';
 import SearchCombo from '@js/extension/components/form/SearchCombo';
-import { getAllDocumentsTypes } from "../../api/requests";
+import { searchDocumentsTypes } from "../../api/requests";
 import { DateTimePicker } from "react-widgets";
 import moment from 'moment';
 import momentLocalizer from 'react-widgets/lib/localizers/moment';
@@ -25,6 +25,10 @@ export default function Tabou2DocsForm({
     const [file, setFile] = useState({});
     const [metadata, setMetadata] = useState(metadataSchema);
     const [typeDoc, setTypeDoc] = useState({});
+
+    useEffect(() => {
+        setMetadata({...metadataSchema, ...document});
+    }, []);
 
     const changeMeta = (field, value) => {
         let copyField = {
@@ -75,10 +79,9 @@ export default function Tabou2DocsForm({
         key: "modifDate",
         libelle: "Modifié le",
         visible: action !== 6,
-        type: "date",
+        type: "text",
         readOnly: true,
         required: false
-
     }, {
         key: "modifUser",
         visible: action !== 6,
@@ -91,6 +94,7 @@ export default function Tabou2DocsForm({
         visible: action !== 6,
         libelle: "Format",
         type: "text",
+        readOnly: true,
         required: false
     }, {
         key: "date",
@@ -104,7 +108,7 @@ export default function Tabou2DocsForm({
     const valid = () => {
         let required = fieldsMetadata.filter(f => f.required);
         let values = required.filter(r => metadata[r.key]);
-        return values.length === required.length && file?.name
+        return values.length === required.length && file?.name;
     };
 
     const triggerAction = (n) => {
@@ -131,7 +135,7 @@ export default function Tabou2DocsForm({
                             id: "saveDocDetail",
                             className: "square-button-md",
                             visible: true,
-                            onClick: () => triggerAction(1),
+                            onClick: () => triggerAction(action === 3 ? 7 : 1),
                             style: {color: "#fc3f2a", background: "none", border: "none"}
                         }, {
                             glyph: "remove",
@@ -157,7 +161,7 @@ export default function Tabou2DocsForm({
                                     type="text"
                                     required={field?.required || false}
                                     readOnly={field?.readOnly || false}
-                                    value={has(metadata, field?.key) ? get(metadata, field?.key) : ""}
+                                    value={has(metadata, field?.key) ? get(metadata, field?.key) || get(document, field.key) : get(document, field.key)}
                                     placeholder={field.libelle}
                                     onChange={(t) => changeMeta(field.key, t.target.value)}
                                 />)}
@@ -170,7 +174,7 @@ export default function Tabou2DocsForm({
                                         value={metadata?.type}
                                         forceSelection
                                         search={
-                                            text => getAllDocumentsTypes(text)
+                                            text => searchDocumentsTypes(text)
                                                 .then(({elements}) => {
                                                     return elements.map(v => v);
                                                 })
@@ -201,7 +205,7 @@ export default function Tabou2DocsForm({
                         </Col>
                     ))}
                 </Col>
-                {action === 6 && (<Col xs={4}>
+                {[3, 6].includes(action) && (<Col xs={4}>
                     <Dropzone
                         key="dropzone"
                         rejectClassName="alert-danger"
@@ -230,6 +234,7 @@ export default function Tabou2DocsForm({
                                 <Message msgId="tabou2.docsModal.uploadFile"/>
                                 <p style={{color: "grey", marginTop: "5px"}}>
                                     {file && file.name ? file.name : null}
+                                    {metadata.nom && !file?.name ? metadata.nom : null}
                                 </p>
                             </div>
                         </Col>
