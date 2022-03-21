@@ -92,7 +92,7 @@ export default function Tabou2DocsTable({
 
     const columns = [{
         key: "nom",
-        name: translate.i18n(translate.messages, "tabou2.docsModal.docsForm.nom"),
+        name: translate.i18n(translate.messages, "tabou2.docsModal.docsForm.name"),
         sortDescendingFirst: true,
         sortable: true,
         filterable: true
