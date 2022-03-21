@@ -54,8 +54,19 @@ function Tabou2DocsModal({
         },
         tooltip: "Ajouter un document",
         onClick: () => setNewDoc({document: SCHEMA_DOC, action: 6})
+    }, {
+        text: "",
+        bsSize: "lg",
+        bsStyle: 'primary',
+        glyph: "refresh",
+        tooltip: "Rafraîchir",
+        style: {marginLeft: "2px"},
+        onClick: () => {
+            return props.loadDocuments(true);
+        }
     }];
-    const countPages = count ? Math.ceil(count / props.config?.apiCfg?.documentsByPage)  : 0;
+    const countPages = count ? Math.ceil(count / props.config?.apiCfg?.documentsByPage) : 0;
+    let docsToDisplay = isEmpty(newDoc) ? documents : [...documents, newDoc];
     return (
         <ResizableModal
             title={<Message msgId="tabou2.docsModal.title"/>}
@@ -66,7 +77,7 @@ function Tabou2DocsModal({
             onClose={props.onClick}
             size="lg">
             <Tabou2DocsTable
-                translate={{i18n: props.i18n, messages: props.messages}}
+                translate={{ i18n: props.i18n, messages: props.messages }}
                 refresh={refresh}
                 readOnly={isReadOnly}
                 onInput={(t) => {
@@ -77,7 +88,7 @@ function Tabou2DocsModal({
                 pages={countPages}
                 changePage={setPage}
                 id={props.documents?.id}
-                documents={isEmpty(newDoc) ? documents : [...documents, newDoc]}
+                documents={docsToDisplay}
                 download={props.download}
                 remove={(id) => {props.remove(id); setPage(0);}}
                 save={(file, metadata) => {props.save(file, metadata); refresh();}}

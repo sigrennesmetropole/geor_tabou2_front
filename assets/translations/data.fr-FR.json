@@ -202,7 +202,7 @@
       },
       "docsModal": {
         "title": "Documents associés",
-        "noRows": "Il n'y a aucun document sur cette page...",
+        "noRows": "Il n'y a aucun document...",
         "uploadFile": "Cliquer ou glisser un fichier...",
         "searchPlaceholder": "Rechercher un nom de document...",
         "docsForm": {

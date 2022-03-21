@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Grid, Row, Pagination, Col } from 'react-bootstrap';
-import { uniqueId, orderBy, find } from 'lodash';
+import { uniqueId, orderBy, find, isEmpty } from 'lodash';
 import { Data } from "react-data-grid-addons";
 import Message from "@mapstore/components/I18N/Message";
 import Tabou2DocsForm from '../../form/Tabou2DocsForm';
 import Tabou2DocsActions from "./Tabou2DocsActions";
 import TabouDataGrid from '../../common/TabouDataGrid';
 import Tabou2TextForm from '@js/extension/components/form/Tabou2TextForm';
+import Tabou2Information from '../../common/Tabou2Information';
 
 export default function Tabou2DocsTable({
     documents = [],
@@ -45,6 +46,17 @@ export default function Tabou2DocsTable({
         setRows(documents);
         return;
     }, [id, documents.length]);
+
+
+    if (isEmpty(documents)) {
+        return (
+            <Tabou2Information
+                isVisible
+                glyph="folder-open"
+                message={<Message msgId="tabou2.docsModal.noRows" />}
+            />
+        );
+    }
 
     const formVisible = [2, 3, 6].includes(row?.action);
     const defaultColumnProperties = {
@@ -145,19 +157,21 @@ export default function Tabou2DocsTable({
             )}
             {
                 (<Grid className="col-xs-12">
-                    {!formVisible && (<TabouDataGrid
-                        id="tabou-documents-grid"
-                        columns={columns}
-                        rowsGetter={rowKeyGetter}
-                        rowGetter={i => getRows()[i]}
-                        rowsCount={getRows()?.length}
-                        onGridSort={(sortColumn, sortDirection) =>
-                            setRows(sortRows(sortColumn, sortDirection))
-                        }
-                        activeFilters
-                        onAddFilter={filter => setFilters(handleFilterChange(filter))}
-                        onClearFilters={() => setFilters({})}
-                    />)}
+                    {!formVisible && (
+                        <TabouDataGrid
+                            id="tabou-documents-grid"
+                            columns={columns}
+                            rowsGetter={rowKeyGetter}
+                            rowGetter={i => getRows()[i]}
+                            rowsCount={getRows()?.length}
+                            onGridSort={(sortColumn, sortDirection) =>
+                                setRows(sortRows(sortColumn, sortDirection))
+                            }
+                            activeFilters
+                            onAddFilter={filter => setFilters(handleFilterChange(filter))}
+                            onClearFilters={() => setFilters({})}
+                        />
+                    )}
                     {formVisible && (
                         <Row>
                             <Tabou2DocsForm
@@ -167,9 +181,6 @@ export default function Tabou2DocsTable({
                                 onClick={changeAction}
                             />
                         </Row>
-                    )}
-                    {!documents?.length && (
-                        <Message msgId="tabou2.docsModal.noRows"/>
                     )}
                 </Grid>)}
             {(!formVisible && documents.length) && (<Col xs={3} className="col-xs-offset-9" style={{marginTop: "10px"}}>
