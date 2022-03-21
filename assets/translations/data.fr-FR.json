@@ -202,7 +202,8 @@
       },
       "docsModal": {
         "title": "Documents associés",
-        "noRows": "Il n'y a aucun document...",
+        "noRows": "Il n'y a aucun document à afficher",
+        "createRowMsg": "Vous pouvez ajouter un document en cliquant sur le bouton avec l'icône + ",
         "uploadFile": "Cliquer ou glisser un fichier...",
         "searchPlaceholder": "Rechercher un nom de document...",
         "docsForm": {

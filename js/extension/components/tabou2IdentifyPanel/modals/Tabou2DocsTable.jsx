@@ -53,7 +53,8 @@ export default function Tabou2DocsTable({
             <Tabou2Information
                 isVisible
                 glyph="folder-open"
-                message={<Message msgId="tabou2.docsModal.noRows" />}
+                title={<Message msgId="tabou2.docsModal.noRows" />}
+                message={<Message msgId="tabou2.docsModal.createRowMsg" />}
             />
         );
     }
