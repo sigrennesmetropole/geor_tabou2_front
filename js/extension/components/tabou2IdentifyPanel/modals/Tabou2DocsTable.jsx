@@ -7,13 +7,11 @@ import Tabou2DocsForm from '../../form/Tabou2DocsForm';
 import Tabou2DocsActions from "./Tabou2DocsActions";
 import TabouDataGrid from '../../common/TabouDataGrid';
 import Tabou2TextForm from '@js/extension/components/form/Tabou2TextForm';
-import Tabou2Information from '../../common/Tabou2Information';
-
 export default function Tabou2DocsTable({
     documents = [],
     refresh = () => { },
     changePage = () => { },
-    pages = 0,
+    pages = 1,
     page = 1,
     readOnly = true,
     download = () => {},
@@ -29,7 +27,6 @@ export default function Tabou2DocsTable({
     const [filters, setFilters] = useState({});
     const [row, setRow] = useState({});
     const [search, setSearch] = useState("");
-
     useEffect(() => {
         if (newDoc?.action) {
             return setRow(newDoc);
@@ -46,18 +43,6 @@ export default function Tabou2DocsTable({
         setRows(documents);
         return;
     }, [id, documents.length]);
-
-
-    if (isEmpty(documents)) {
-        return (
-            <Tabou2Information
-                isVisible
-                glyph="folder-open"
-                title={<Message msgId="tabou2.docsModal.noRows" />}
-                message={<Message msgId="tabou2.docsModal.createRowMsg" />}
-            />
-        );
-    }
 
     const formVisible = [2, 3, 6].includes(row?.action);
     const defaultColumnProperties = {
@@ -142,11 +127,11 @@ export default function Tabou2DocsTable({
         }
         return newFilters;
     };
-
+    let displayTable = !isEmpty(documents) && !formVisible;
     return (
         <>
-            {(!formVisible && pages) && (
-                <Col xs={12} className="text-center">
+            <Col xs={12} className="text-center" style={{marginTop: "5px"}}>
+                {(displayTable && pages) && (
                     <Pagination
                         prev next first last ellipsis boundaryLinks
                         bsSize="small"
@@ -154,47 +139,51 @@ export default function Tabou2DocsTable({
                         maxButtons={5}
                         activePage={page + 1}
                         onSelect={(n) => changePage(n - 1)} />
-                </Col>
-            )}
-            {
-                (<Grid className="col-xs-12">
-                    {!formVisible && (
-                        <TabouDataGrid
-                            id="tabou-documents-grid"
-                            columns={columns}
-                            rowsGetter={rowKeyGetter}
-                            rowGetter={i => getRows()[i]}
-                            rowsCount={getRows()?.length}
-                            onGridSort={(sortColumn, sortDirection) =>
-                                setRows(sortRows(sortColumn, sortDirection))
-                            }
-                            activeFilters
-                            onAddFilter={filter => setFilters(handleFilterChange(filter))}
-                            onClearFilters={() => setFilters({})}
+                ) || (
+                    <p>{
+                        search && (<p><Message msgId="tabou2.docsModal.noResult" /></p>)
+                    }</p>
+                )}
+            </Col>
+            <Grid className="col-xs-12">
+                {displayTable && (
+                    <TabouDataGrid
+                        id="tabou-documents-grid"
+                        columns={columns}
+                        rowsGetter={rowKeyGetter}
+                        rowGetter={i => getRows()[i]}
+                        rowsCount={getRows()?.length}
+                        onGridSort={(sortColumn, sortDirection) =>
+                            setRows(sortRows(sortColumn, sortDirection))
+                        }
+                        activeFilters
+                        onAddFilter={filter => setFilters(handleFilterChange(filter))}
+                        onClearFilters={() => setFilters({})}
+                    />
+                )}
+                {formVisible && (
+                    <Row>
+                        <Tabou2DocsForm
+                            document={row.document.row}
+                            action={row.action}
+                            translate={translate}
+                            onClick={changeAction}
                         />
-                    )}
-                    {formVisible && (
-                        <Row>
-                            <Tabou2DocsForm
-                                document={row.document.row}
-                                action={row.action}
-                                translate={translate}
-                                onClick={changeAction}
-                            />
-                        </Row>
-                    )}
-                </Grid>)}
-            {(!formVisible && documents.length) && (<Col xs={3} className="col-xs-offset-9" style={{marginTop: "10px"}}>
-                <Tabou2TextForm
-                    type="text"
-                    value={search}
-                    onChange={(e) => {
-                        setSearch(e.target.value);
-                        onInput(e.target.value);
-                    }}
-                    placeholder={translate.i18n(translate.messages, "tabou2.docsModal.searchPlaceholder")}
-                />
-            </Col>)}
+                    </Row>
+                )}
+            </Grid>
+            {displayTable && (
+                <Col xs={3} className="col-xs-offset-9" style={{ marginTop: "10px" }}>
+                    <Tabou2TextForm
+                        type="text"
+                        value={search}
+                        onChange={(e) => {
+                            setSearch(e.target.value);
+                            onInput(e.target.value);
+                        }}
+                        placeholder={translate.i18n(translate.messages, "tabou2.docsModal.searchPlaceholder")}
+                    />
+                </Col>)}
         </>
     );
 }

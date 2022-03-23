@@ -6,6 +6,7 @@ import Message from "@mapstore/components/I18N/Message";
 import Tabou2DocsTable from "./Tabou2DocsTable";
 import { getDocuments, downloadDocument, deleteDocument, addTabouDocument, modifyDocument } from "../../../actions/tabou2";
 import { getFeatureDocuments, getAuthInfos, getPluginCfg } from "../../../selectors/tabou2";
+import Tabou2Information from '../../common/Tabou2Information';
 
 function Tabou2DocsModal({
     visible,
@@ -23,11 +24,11 @@ function Tabou2DocsModal({
 
     const refresh = (t = "") => {
         setNewDoc({});
-        props.loadDocuments(true, page, !t && searchText ? searchText : t || "");
+        props.loadDocuments(true, page, !t && searchText ? searchText : t);
     };
     useEffect(() => {
         refresh(searchText);
-    }, [page]);
+    }, [page, searchText]);
 
     const isReadOnly = ![authInfos?.isReferent, authInfos?.isContrib].includes(true);
 
@@ -43,7 +44,7 @@ function Tabou2DocsModal({
         typeMime: ""
     };
     // toolbar button
-    const buttons = [{
+    const buttons = isReadOnly ? [] : [{
         text: "",
         bsSize: "lg",
         bsStyle: 'primary',
@@ -65,7 +66,6 @@ function Tabou2DocsModal({
             return props.loadDocuments(true);
         }
     }];
-    const countPages = count ? Math.ceil(count / props.config?.apiCfg?.documentsByPage) : 0;
     let docsToDisplay = isEmpty(newDoc) ? documents : [...documents, newDoc];
     return (
         <ResizableModal
@@ -76,16 +76,23 @@ function Tabou2DocsModal({
             buttons={buttons}
             onClose={props.onClick}
             size="lg">
+            <Tabou2Information
+                style={{margin: "5% auto"}}
+                isVisible={!searchText && !documents.length && isEmpty(newDoc)}
+                glyph="folder-open"
+                title={<Message msgId="tabou2.docsModal.noRows" />}
+                message={<Message msgId="tabou2.docsModal.createRowMsg" />}
+            />
             <Tabou2DocsTable
                 translate={{ i18n: props.i18n, messages: props.messages }}
                 refresh={refresh}
                 readOnly={isReadOnly}
                 onInput={(t) => {
-                    refresh(t);
                     setSearchText(t);
+                    refresh(t);
                 }}
                 page={page}
-                pages={countPages}
+                pages={Math.ceil(count / props.config?.apiCfg?.documentsByPage)}
                 changePage={setPage}
                 id={props.documents?.id}
                 documents={docsToDisplay}

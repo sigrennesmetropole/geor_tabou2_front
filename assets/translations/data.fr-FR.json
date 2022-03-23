@@ -201,6 +201,7 @@
         "addThird": "3 - Saisir les informations"
       },
       "docsModal": {
+        "noResult": "Aucun document n'a été trouvé !",
         "title": "Documents associés",
         "noRows": "Il n'y a aucun document à afficher",
         "createRowMsg": "Vous pouvez ajouter un document en cliquant sur le bouton avec l'icône + ",
