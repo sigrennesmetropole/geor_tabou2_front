@@ -25,6 +25,7 @@ export default function Tabou2DocsForm({
     const metadataSchema = {nom: "", libelle: "", type: "", date: new Date().toISOString()};
     const [file, setFile] = useState({});
     const [metadata, setMetadata] = useState(metadataSchema);
+    const [searchText, setSearchText] = useState("");
 
     useEffect(() => {
         setMetadata({...metadataSchema, ...document});
@@ -174,7 +175,7 @@ export default function Tabou2DocsForm({
                                         textField={"libelle"}
                                         valueField={"id"}
                                         readOnly={field?.readOnly || false}
-                                        value={metadata?.type}
+                                        value={searchText ? searchText : metadata?.type}
                                         forceSelection
                                         search={
                                             text => searchDocumentsTypes(text)
@@ -182,8 +183,18 @@ export default function Tabou2DocsForm({
                                                     return elements.map(v => v);
                                                 })
                                         }
-                                        onSelect={(t) =>  changeMeta(field.key, t.libelle)}
-                                        onChange={(t) => !t ? changeMeta(field.key, "") : null}
+                                        onSelect={(t) => {
+                                            changeMeta(field.key, t.libelle);
+                                            setSearchText(t.libelle);
+                                        }}
+                                        onChange={(t) => {
+                                            if (!t) {
+                                                changeMeta(field.key, "");
+                                                setSearchText("");
+                                            } else {
+                                                setSearchText(t);
+                                            }
+                                        }}
                                         placeholder={translate.i18n(translate.messages, "tabou2.docsModal.docsForm.selectType")}
                                     />
                                 )}
