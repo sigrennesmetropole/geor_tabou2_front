@@ -22,7 +22,7 @@ export default function Tabou2DocsForm({
     onClick = () => {},
     translate
 }) {
-    const metadataSchema = {nom: "", libelle: "", type: "", date: new Date().toISOString()};
+    const metadataSchema = {nom: "", libelleTypeDocument: "", date: new Date().toISOString()};
     const [file, setFile] = useState({});
     const [metadata, setMetadata] = useState(metadataSchema);
     const [searchText, setSearchText] = useState("");
@@ -65,14 +65,7 @@ export default function Tabou2DocsForm({
         readOnly: action === 2
 
     }, {
-        key: "libelle",
-        libelle: "tabou2.docsModal.docsForm.label",
-        type: "text",
-        readOnly: true,
-        required: false,
-        visible: action !== 6
-    },  {
-        key: "type",
+        key: "libelleTypeDocument",
         libelle: "tabou2.docsModal.docsForm.type",
         type: "search",
         required: true,
@@ -122,6 +115,7 @@ export default function Tabou2DocsForm({
     };
 
     const triggerAction = (n) => {
+        console.log(metadata);
         return onClick({document: document, action: n, file: file, metadata: metadata});
     };
 
@@ -186,7 +180,7 @@ export default function Tabou2DocsForm({
                                         textField={"libelle"}
                                         valueField={"id"}
                                         readOnly={field?.readOnly || false}
-                                        value={searchText ? searchText : metadata?.type}
+                                        value={searchText ? searchText : metadata?.libelleTypeDocument}
                                         forceSelection
                                         search={
                                             text => searchDocumentsTypes(text)
@@ -195,6 +189,8 @@ export default function Tabou2DocsForm({
                                                 })
                                         }
                                         onSelect={(t) => {
+                                            console.log(field.key);
+                                            console.log(t.libelle);
                                             if (t) {
                                                 changeMeta(field.key, t.libelle);
                                                 setSearchText(t.libelle);

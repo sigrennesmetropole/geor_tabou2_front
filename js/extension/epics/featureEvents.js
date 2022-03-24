@@ -91,6 +91,15 @@ export function getSelectionInfos(action$, store) {
                         return Rx.Observable.of(loadFicheInfos(infos));
                     });
             } else {
+                if (!searchItem?.operationId) {
+                    return Rx.Observable.of(
+                        // error message
+                        error({
+                            title: getMessageById(messages, "tabou2.infos.failApi"),
+                            message: getMessageById(messages, "tabou2.infos.failErrorData")
+                        })
+                    );
+                }
                 secondObservable$ = Rx.Observable.defer(() => getOperation(searchItem.operationId))
                     .catch(e => {
                         console.log("Error retrieving get operation request");

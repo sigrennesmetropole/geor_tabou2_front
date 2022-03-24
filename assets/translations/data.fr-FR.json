@@ -9,8 +9,9 @@
       "copy": "Copier / coller",
       "copyAddress": "L'adresse a été copiée dans le Presse-papiers",
       "infos": {
-        "failIdentify": "La récupération des informations à échouée",
-        "failApi": "Erreur API",
+        "failIdentify": "La récupération des informations à échouée !",
+        "failErrorData": "Les données récupérées contiennent des erreurs !",
+        "failApi": "Erreur API Urb@map",
         "error": "Erreur",
         "failFilter": "Echec de la création du filtre",
         "failChangeFeature": "Echec de la sauvegarde",
