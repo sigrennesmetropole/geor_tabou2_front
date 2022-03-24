@@ -2,7 +2,7 @@ import React, {useState, useEffect} from "react";
 import { Col, FormGroup, Row, FormControl, ControlLabel, Glyphicon} from "react-bootstrap";
 import Toolbar from '@mapstore/components/misc/toolbar/Toolbar';
 import "../../css/tabou.css";
-import { has, get, set } from "lodash";
+import { has, get, set, isEmpty } from "lodash";
 import Message from "@mapstore/components/I18N/Message";
 import Dropzone from 'react-dropzone';
 import SearchCombo from '@js/extension/components/form/SearchCombo';
@@ -112,7 +112,13 @@ export default function Tabou2DocsForm({
     const valid = () => {
         let required = fieldsMetadata.filter(f => f.required);
         let values = required.filter(r => metadata[r.key]);
-        return values.length === required.length && file?.name;
+        let requiredValid = values.length === required.length;
+        if (isEmpty(document)) {
+            // valid document creation
+            return requiredValid && !isEmpty(file);
+        }
+        // valid document modification
+        return requiredValid && (metadata.nom || file?.name);
     };
 
     const triggerAction = (n) => {
