@@ -119,6 +119,11 @@ export default function Tabou2DocsForm({
         return onClick({document: document, action: n, file: file, metadata: metadata});
     };
 
+    const clearSearch = (key) => {
+        setSearchText("");
+        changeMeta(key, "");
+    };
+
     return (
         <>
             <Row className="text-center tabou-tbar-panel">
@@ -184,13 +189,16 @@ export default function Tabou2DocsForm({
                                                 })
                                         }
                                         onSelect={(t) => {
-                                            changeMeta(field.key, t.libelle);
-                                            setSearchText(t.libelle);
+                                            if (t) {
+                                                changeMeta(field.key, t.libelle);
+                                                setSearchText(t.libelle);
+                                            } else {
+                                                clearSearch(field.key);
+                                            }
                                         }}
                                         onChange={(t) => {
                                             if (!t) {
-                                                changeMeta(field.key, "");
-                                                setSearchText("");
+                                                clearSearch(field.key);
                                             } else {
                                                 setSearchText(t);
                                             }
