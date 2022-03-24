@@ -95,6 +95,17 @@ export default function Tabou2DocsTable({
         sortable: true,
         filterable: true
     }, {
+        key: "libelleTypeDocument",
+        name: translate.i18n(translate.messages, "tabou2.docsModal.docsForm.type"),
+        sortable: true,
+        filterable: true
+    }, {
+        // key: "dateDocument",
+        key: "modifDate",
+        name: translate.i18n(translate.messages, "tabou2.docsModal.docsForm.date"),
+        sortable: true,
+        filterable: true
+    }, {
         key: "typeMime",
         name: translate.i18n(translate.messages, "tabou2.docsModal.docsForm.format"),
         sortable: true,
