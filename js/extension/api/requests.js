@@ -306,9 +306,13 @@ export function getTabouDocuments(type, id, page, result, text) {
     }}).then(({ data }) => data);
 }
 export function addDocument(type, id, file, metadata) {
+    const idFieldName = {
+        "operations": "operationId",
+        "programmes": "programmeId"
+    };
     let formData = new FormData();
     formData.append("fileToUpload", file);
-    formData.append("operationId", id);
+    formData.append(idFieldName[type], id);
     formData.append("nom", metadata.nom);
     formData.append("libelleTypeDocument", metadata.libelleTypeDocument);
     return axios.post(`${baseURL}/${type}/${id}/documents`,
