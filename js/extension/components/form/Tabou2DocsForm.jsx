@@ -28,8 +28,8 @@ export default function Tabou2DocsForm({
     const [searchText, setSearchText] = useState("");
 
     useEffect(() => {
-        setMetadata({...metadataSchema, ...document});
-    }, []);
+        setMetadata({ ...metadataSchema, ...document });
+    }, [action, document?.id]);
 
     const changeMeta = (field, value) => {
         let copyField = {
@@ -93,11 +93,11 @@ export default function Tabou2DocsForm({
         readOnly: true,
         required: false
     }, {
-        key: "date",
+        key: "dateDocument",
         visible: action,
         libelle: "tabou2.docsModal.docsForm.date",
         type: "date",
-        required: false,
+        required: true,
         readOnly: action === 2
 
     }].filter(f => f.visible);
@@ -115,7 +115,6 @@ export default function Tabou2DocsForm({
     };
 
     const triggerAction = (n) => {
-        console.log(metadata);
         return onClick({document: document, action: n, file: file, metadata: metadata});
     };
 
@@ -170,7 +169,7 @@ export default function Tabou2DocsForm({
                                     type="text"
                                     required={field?.required || false}
                                     readOnly={field?.readOnly || false}
-                                    value={has(metadata, field?.key) ? get(metadata, field?.key) || get(document, field.key) : get(document, field.key)}
+                                    value={get(metadata, field?.key)}
                                     placeholder={translate.i18n(translate.messages, field.libelle)}
                                     onChange={(t) => changeMeta(field.key, t.target.value)}
                                 />)}
@@ -215,7 +214,7 @@ export default function Tabou2DocsForm({
                                         calendar
                                         culture="fr"
                                         time={false}
-                                        value={has(metadata, field?.key) ? new Date(get(metadata, field?.key)) : null}
+                                        value={has(metadata, field?.key) && get(metadata, field?.key)  ? new Date(get(metadata, field?.key)) : null}
                                         format="DD/MM/YYYY"
                                         onSelect={(v) => changeDate(field, v)}
                                         onChange={(v) => changeDate(field, v)}

@@ -41,7 +41,8 @@ function Tabou2DocsModal({
         id: "",
         modifDate: "",
         modifUser: "",
-        typeMime: ""
+        typeMime: "",
+        dateDocument: ""
     };
     // toolbar button
     const buttons = isReadOnly || !isEmpty(newDoc) ? [] : [{
@@ -55,7 +56,9 @@ function Tabou2DocsModal({
             borderColor: "rgb(40,167,69)"
         },
         tooltip: "Ajouter un document",
-        onClick: () => setNewDoc({document: SCHEMA_DOC, action: 6})
+        onClick: () => {
+            return setNewDoc({ document: SCHEMA_DOC, action: 6 });
+        }
     }, {
         text: "",
         bsSize: "lg",

@@ -22,11 +22,11 @@ export default function Tabou2DocsTable({
     translate,
     id
 }) {
-    const newDoc = find(documents, { action: 6 });
     const [rows, setRows] = useState(documents);
     const [filters, setFilters] = useState({});
     const [row, setRow] = useState({});
     const [search, setSearch] = useState("");
+    const [newDoc, setNewDoc] = useState({});
     useEffect(() => {
         if (newDoc?.action) {
             return setRow(newDoc);
@@ -41,7 +41,11 @@ export default function Tabou2DocsTable({
 
     useEffect(() => {
         setRows(documents);
-        return;
+        let createDoc = find(documents, { action: 6 });
+        if (!isEmpty(createDoc)) {
+            setNewDoc(createDoc);
+            return setRow(createDoc);
+        }
     }, [id, documents.length]);
 
     const formVisible = [2, 3, 6].includes(row?.action);
@@ -99,6 +103,7 @@ export default function Tabou2DocsTable({
                 onClick={changeAction}
             />);
     };
+
     const selectors = Data.Selectors;
 
     const columns = [{
@@ -113,11 +118,11 @@ export default function Tabou2DocsTable({
         sortable: true,
         filterable: true
     }, {
-        // key: "dateDocument",
-        key: "modifDate",
+        key: "dateDocument",
         name: translate.i18n(translate.messages, "tabou2.docsModal.docsForm.date"),
         sortable: true,
-        filterable: true
+        filterable: true,
+        formatter: (doc) => doc.row.dateDocument ? new Date(doc.row.dateDocument).toLocaleDateString() : null
     }, {
         key: "typeMime",
         name: translate.i18n(translate.messages, "tabou2.docsModal.docsForm.format"),
