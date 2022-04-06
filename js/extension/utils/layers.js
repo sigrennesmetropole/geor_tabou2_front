@@ -37,7 +37,7 @@ export const createParams = (point, layer) => {
         OUTPUTFORMAT: "application/json",
         REQUEST: "GetFeature",
         SERVICE: "WFS",
-        TYPENAME: layer, // "tabou2:tabou_v_oa_operation",
+        TYPENAME: layer, // "tabou:tabou_v_oa_operation",
         VERSION: "1.0.0",
         SRSNAME: "EPSG:4326"
     };
@@ -53,6 +53,6 @@ export const readFeatures = (data, from, to) => {
     let reader = new GeoJSON({
         defaultDataProjection: from
     });
-    let features = reader.readFeatures(data, from && to ? {dataProjection: from, featureProjection: to} : {});
+    let features = reader.readFeatures(data, from && to ? { dataProjection: from, featureProjection: to } : {});
     return JSON.parse(featuresToJSON(features));
 };
