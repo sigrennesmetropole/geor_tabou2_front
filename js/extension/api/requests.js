@@ -310,8 +310,8 @@ export function addDocument(type, id, file, metadata) {
     formData.append("fileToUpload", file);
     formData.append("operationId", id);
     formData.append("nom", metadata.nom);
-    formData.append("libelle", metadata.libelleTypeDocument);
-    return axios.post(`${baseURL}/${type}/{operationid}/documents`,
+    formData.append("libelleTypeDocument", metadata.libelleTypeDocument);
+    return axios.post(`${baseURL}/${type}/${id}/documents`,
         formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
@@ -346,5 +346,5 @@ export function updateDocumentContent(type, id, docId, file) {
 }
 
 export function searchDocumentsTypes(text) {
-    return axios.get(`${baseURL}/types-documents`, {params: {libelle: `*${text}*`, asc: true}}).then(( data ) => data.data);
+    return axios.get(`${baseURL}/types-documents`, {params: {libelleTypeDocument: `*${text}*`, asc: true}}).then(( data ) => data.data);
 }
