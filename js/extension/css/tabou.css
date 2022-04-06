@@ -68,6 +68,6 @@
 }
 
 
-.MapStoreExtension .mapToolbar {
+.MapStoreExtension .mapToolbar, .nav-menu {
     z-index: 999 !important;
 }

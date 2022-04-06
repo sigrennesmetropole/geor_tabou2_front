@@ -7,6 +7,7 @@ import Tabou2DocsTable from "./Tabou2DocsTable";
 import { getDocuments, downloadDocument, deleteDocument, addTabouDocument, modifyDocument } from "../../../actions/tabou2";
 import { getFeatureDocuments, getAuthInfos, getPluginCfg } from "../../../selectors/tabou2";
 import Tabou2Information from '../../common/Tabou2Information';
+import "../../../css/tabou.css";
 
 function Tabou2DocsModal({
     visible,
@@ -48,7 +49,6 @@ function Tabou2DocsModal({
     const buttons = isReadOnly || !isEmpty(newDoc) ? [] : [{
         text: "",
         bsSize: "lg",
-        hidden: !isEmpty(newDoc),
         bsStyle: 'primary',
         glyph: "plus",
         style: {
