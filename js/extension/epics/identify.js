@@ -4,14 +4,15 @@ import { CONTROL_NAME, ID_TABOU, URL_ADD } from '../constants';
 import { get, keys, find, isEmpty, has, pickBy } from 'lodash';
 
 import {
-    generalInfoFormatSelector, identifyOptionsSelector, clickPointSelector } from '@mapstore/selectors/mapInfo';
+    generalInfoFormatSelector, identifyOptionsSelector, clickPointSelector
+} from '@mapstore/selectors/mapInfo';
 import uuid from 'uuid';
 import { localizedLayerStylesEnvSelector } from "@mapstore/selectors/localizedLayerStyles";
 import { updateUserPlugin } from '@mapstore/actions/context';
 import { buildIdentifyRequest } from '@mapstore/utils/MapInfoUtils';
 import { layersSelector } from '@mapstore/selectors/layers';
 import { error, success } from "@mapstore/actions/notifications";
-import {getMessageById} from "@mapstore/utils/LocaleUtils";
+import { getMessageById } from "@mapstore/utils/LocaleUtils";
 import { newfilterLayerByList, getNewCrossLayerFilter } from '../utils/search';
 import {
     changeMapInfoFormat,
@@ -77,7 +78,7 @@ export function tabouSetGFIFormat(action$, store) {
         .switchMap((action) => {
             if (action.control !== CONTROL_NAME) return Rx.Observable.empty();
             if (store.getState().controls[CONTROL_NAME].enabled) {
-            // to save default info format from config or default MS2 config
+                // to save default info format from config or default MS2 config
                 const defaultMime = generalInfoFormatSelector(store.getState());
                 // change format to application/json
                 return Rx.Observable.of(setDefaultInfoFormat(defaultMime))
@@ -109,12 +110,14 @@ export function printProgramme(action$, store) {
                     console.log("Error on get PDF request");
                     console.log(e);
                     // fail message
-                    return Rx.Observable.of({...e, data: null});
+                    return Rx.Observable.of({ ...e, data: null });
                 })
-                .switchMap( response => {
+                .switchMap(response => {
                     if (response?.status === 200 && response?.data) {
-                        let name = `FicheSuivi_${action.id}_${feature.code}_${feature.nomopa.split(" ")
-                            .map(e => e[0].toUpperCase() + e.slice(1)).join('')}`;
+                        let nomOA = action.layer === "layerPA" ? feature.nomopa.split(" ")
+                            .map(e => e[0].toUpperCase() + e.slice(1)).join('') : feature.nom;
+                        let name =
+                            `FicheSuivi_${action.id}_${feature.code}_${nomOA}`;
                         downloadToBlob(response, response.data.type || 'application/pdf', name);
                         return Rx.Observable.of(
                             success({
@@ -141,16 +144,16 @@ export function printProgramme(action$, store) {
  */
 export function createChangeFeature(action$, store) {
     return action$.ofType(CHANGE_FEATURE)
-        .switchMap( action => {
+        .switchMap(action => {
             let messages = store.getState()?.locale.messages;
             let layersToc = find(getPluginCfg(store.getState()).layersCfg, (o, i) => i === action.params.layer);
-            return Rx.Observable.defer( () => putRequestApi(`${get(URL_ADD, action.params.layer)}`, getPluginCfg(store.getState()).apiCfg, action.params.feature))
+            return Rx.Observable.defer(() => putRequestApi(`${get(URL_ADD, action.params.layer)}`, getPluginCfg(store.getState()).apiCfg, action.params.feature))
                 .catch(e => {
                     console.log("Error to save feature change or feature creation");
                     console.log(e);
                     return Rx.Observable.of(e);
                 })
-                .switchMap((el)=> {
+                .switchMap((el) => {
                     return has(el, "status") && el.status !== 200 ? Rx.Observable.of(
                         // fail message
                         error({
@@ -165,7 +168,7 @@ export function createChangeFeature(action$, store) {
                         }),
                         // we just update last GFI request to refresh panel
                         reloadLayer(layersToc.nom),
-                        displayFeature({feature: action.params.feature, layer: layersToc.nom})
+                        displayFeature({ feature: action.params.feature, layer: layersToc.nom })
 
                     );
                 });
@@ -181,14 +184,14 @@ export function createChangeFeature(action$, store) {
  */
 export function displayFeatureInfos(action$, store) {
     return action$.ofType(DISPLAY_FEATURE)
-        .switchMap( action => {
+        .switchMap(action => {
 
             // only if user create tabou feature from clicked map feature
             if (!action?.infos || !action.infos?.feature) return Rx.Observable.isEmpty();
 
             let tocLayer = layersSelector(store.getState()).filter(lyr => lyr.name === action.infos.layer)[0];
             let env = localizedLayerStylesEnvSelector(store.getState());
-            let { url, request, metadata } = buildIdentifyRequest(tocLayer, {...identifyOptionsSelector(store.getState()), env});
+            let { url, request, metadata } = buildIdentifyRequest(tocLayer, { ...identifyOptionsSelector(store.getState()), env });
             request.cql_filter = `${ID_TABOU} = ${action.infos.feature.id}`;
             request.info_format = "application/json";
             return Rx.Observable.defer(() => getFeatureInfo(url, request, tocLayer, {}))
@@ -225,7 +228,7 @@ export function displayFeatureInfos(action$, store) {
  */
 export function dipslayPASAByOperation(action$, store) {
     return action$.ofType(DISPLAY_PA_SA_BY_OA)
-        .switchMap( () => {
+        .switchMap(() => {
             const idTabou = getSelection(store.getState()).id;
             const idsPA = store.getState().tabou2.ficheInfos.programmes.elements.map(p => p.id);
             let layers = getPluginCfg(store.getState()).layersCfg;
