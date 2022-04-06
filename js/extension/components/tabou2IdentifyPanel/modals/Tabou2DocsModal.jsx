@@ -44,9 +44,10 @@ function Tabou2DocsModal({
         typeMime: ""
     };
     // toolbar button
-    const buttons = isReadOnly ? [] : [{
+    const buttons = isReadOnly || !isEmpty(newDoc) ? [] : [{
         text: "",
         bsSize: "lg",
+        hidden: !isEmpty(newDoc),
         bsStyle: 'primary',
         glyph: "plus",
         style: {

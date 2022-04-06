@@ -158,8 +158,8 @@ export default function Tabou2DocsForm({
             </Row>
             <FormGroup>
                 <Col xs={7}>
-                    {fieldsMetadata.map(field => (
-                        <Col xs={12}>
+                    {fieldsMetadata.map((field, i) => (
+                        <Col xs={12} key={`fielDocdMeta-${i}`}>
                             <Col xs={3} style={{marginTop: marginTop}}>
                                 <ControlLabel>
                                     <Message msgId={field.libelle}/>{field.required ? "*" : ""} :
@@ -189,8 +189,6 @@ export default function Tabou2DocsForm({
                                                 })
                                         }
                                         onSelect={(t) => {
-                                            console.log(field.key);
-                                            console.log(t.libelle);
                                             if (t) {
                                                 changeMeta(field.key, t.libelle);
                                                 setSearchText(t.libelle);
@@ -212,13 +210,11 @@ export default function Tabou2DocsForm({
                                     <DateTimePicker
                                         type="date"
                                         className="identifyDate"
-                                        inline
-                                        dropDown
                                         placeholder={translate.i18n(translate.messages, "tabou2.docsModal.docsForm.dateDoc")}
                                         readOnly={field?.readOnly || false}
                                         calendar
-                                        time={false}
                                         culture="fr"
+                                        time={false}
                                         value={has(metadata, field?.key) ? new Date(get(metadata, field?.key)) : null}
                                         format="DD/MM/YYYY"
                                         onSelect={(v) => changeDate(field, v)}

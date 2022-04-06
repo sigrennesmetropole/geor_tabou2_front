@@ -49,6 +49,19 @@ export default function Tabou2DocsTable({
         // sortable: true
     };
 
+    /**
+     * Trigger action by number :
+     * 0 - cancel
+     * 1 - save
+     * 2 - open and read only
+     * 3 - open in edit mode
+     * 4 - delete
+     * 5 - download
+     * 6 - save new doc
+     * 7 - save update edition
+     * @param {target} any row selected
+     * @returns trigger click method
+     */
     const triggerAction = (target) => {
         switch (target?.action) {
         case 5:
