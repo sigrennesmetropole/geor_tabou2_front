@@ -315,7 +315,11 @@ export function addDocument(type, id, file, metadata) {
     formData.append(idFieldName[type], id);
     formData.append("nom", metadata.nom);
     formData.append("libelleTypeDocument", metadata.libelleTypeDocument);
-    return axios.post(`${baseURL}/${type}/${id}/documents`,
+    /**
+     * idField in the path will be delete - see issue #189
+     * https://github.com/sigrennesmetropole/geor_tabou2_front/issues/189
+     */
+    return axios.post(`${baseURL}/${type}/${idFieldName[type]}/documents`,
         formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
