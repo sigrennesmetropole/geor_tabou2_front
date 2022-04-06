@@ -223,26 +223,30 @@
         "name": "Tabou2",
         "cfg": {
           "geoserverURL": "https://gis.jdev.fr/geoserver",
-          "layersOrder": ["Opérations", "Secteurs", "Programmes"],
+          "layersOrder": [
+            "Opérations",
+            "Secteurs",
+            "Programmes"
+          ],
           "help": {
             "url": "https://public.sig.rennesmetropole.fr/ressources/app/georchestra/Portail%20web%20guide%20rapide%20de%20prise%20en%20main.pdf",
             "contact": "d.cottencin@rennesmetropole.fr"
           },
           "layersCfg": {
             "layerPA": {
-              "nom": "tabou2:tabou_v_oa_programme",
+              "nom": "tabou:tabou_v_oa_programme",
               "geomField": "the_geom",
               "idField": "objectid",
               "idType": "number"
             },
             "layerOA": {
-              "nom": "tabou2:tabou_v_oa_operation",
+              "nom": "tabou:tabou_v_oa_operation",
               "geomField": "the_geom",
               "idField": "objectid",
               "idType": "number"
             },
             "layerSA": {
-              "nom": "tabou2:tabou_v_oa_secteur",
+              "nom": "tabou:tabou_v_oa_secteur",
               "geomField": "the_geom",
               "idField": "objectid",
               "idType": "number"
@@ -275,7 +279,7 @@
               "apiLabel": "nmiris"
             },
             "etapesoa": {
-              "layer": "tabou2:tabou_v_oa_operation",
+              "layer": "tabou:tabou_v_oa_operation",
               "geom": "the_geom",
               "filterField": "etape",
               "placeholder": "Etapes OA",
@@ -283,7 +287,7 @@
               "apiLabel": "libelle"
             },
             "etapespa": {
-              "layer": "tabou2:tabou_v_oa_programme",
+              "layer": "tabou:tabou_v_oa_programme",
               "geom": "the_geom",
               "filterField": "etape",
               "apiLabel": "libelle",
@@ -324,11 +328,14 @@
               "placeholder": "Sec. Foncier"
             },
             "natures": {
-              "layer": "tabou2:tabou_v_oa_operation",
+              "layer": "tabou:tabou_v_oa_operation",
               "geom": "the_geom",
               "service": "operations?nature",
               "attribute": "layerOA",
-              "spatial": ["layerPA","layerSA"],
+              "spatial": [
+                "layerPA",
+                "layerSA"
+              ],
               "filterField": "nature",
               "apiField": "libelle",
               "apiLabel": "libelle",
@@ -351,21 +358,21 @@
               "placeholder": "Zonage PLUI"
             },
             "daact": {
-              "layer": "tabou2:tabou_v_oa_programme",
+              "layer": "tabou:tabou_v_oa_programme",
               "geom": "the_geom",
               "filterField": "daact_date",
               "type": "date",
               "placeholder": "Choisir une date"
             },
             "doc": {
-              "layer": "tabou2:tabou_v_oa_programme",
+              "layer": "tabou:tabou_v_oa_programme",
               "geom": "the_geom",
               "filterField": "doc_date",
               "type": "date",
               "placeholder": "Choisir une date"
             },
             "livraison": {
-              "layer": "tabou2:tabou_v_oa_programme",
+              "layer": "tabou:tabou_v_oa_programme",
               "geom": "the_geom",
               "filterField": "livraison_date",
               "type": "date",
@@ -379,7 +386,7 @@
           "apiCfg": {
             "apiURL": "/tabou2",
             "extApiURL": "/tabou2",
-            "authent": "gbruel:Ay*oh4ak0ohthai6ve1u"
+            "authent": ""
           },
           "styles": {
             "selection": {
@@ -552,11 +559,18 @@
               "opacity": 0.8,
               "color": "yellow",
               "weight": 2,
-              "dashArray": [5, 5]
+              "dashArray": [
+                5,
+                5
+              ]
             }
           },
           "geoserverURL": "https://gis.jdev.fr/geoserver",
-          "layersOrder": ["Opérations", "Secteurs", "Programmes"],
+          "layersOrder": [
+            "Opérations",
+            "Secteurs",
+            "Programmes"
+          ],
           "help": {
             "url": "https://public.sig.rennesmetropole.fr/ressources/app/georchestra/Portail%20web%20guide%20rapide%20de%20prise%20en%20main.pdf",
             "contact": "d.cottencin@rennesmetropole.fr",
@@ -565,19 +579,19 @@
           },
           "layersCfg": {
             "layerPA": {
-              "nom": "tabou2:tabou_v_oa_programme",
+              "nom": "tabou:tabou_v_oa_programme",
               "geomField": "the_geom",
               "idField": "objectid",
               "idType": "number"
             },
             "layerOA": {
-              "nom": "tabou2:tabou_v_oa_operation",
+              "nom": "tabou:tabou_v_oa_operation",
               "geomField": "the_geom",
               "idField": "objectid",
               "idType": "number"
             },
             "layerSA": {
-              "nom": "tabou2:tabou_v_oa_secteur",
+              "nom": "tabou:tabou_v_oa_secteur",
               "geomField": "the_geom",
               "idField": "objectid",
               "idType": "number"
@@ -610,7 +624,7 @@
               "apiLabel": "nmiris"
             },
             "etapesoa": {
-              "layer": "tabou2:tabou_v_oa_operation",
+              "layer": "tabou:tabou_v_oa_operation",
               "geom": "the_geom",
               "filterField": "etape",
               "placeholder": "Etapes OA",
@@ -618,7 +632,7 @@
               "apiLabel": "libelle"
             },
             "etapespa": {
-              "layer": "tabou2:tabou_v_oa_programme",
+              "layer": "tabou:tabou_v_oa_programme",
               "geom": "the_geom",
               "filterField": "etape",
               "apiLabel": "libelle",
@@ -659,11 +673,14 @@
               "placeholder": "Sec. Foncier"
             },
             "natures": {
-              "layer": "tabou2:tabou_v_oa_operation",
+              "layer": "tabou:tabou_v_oa_operation",
               "geom": "the_geom",
               "service": "operations?nature",
               "attribute": "layerOA",
-              "spatial": ["layerPA","layerSA"],
+              "spatial": [
+                "layerPA",
+                "layerSA"
+              ],
               "filterField": "nature",
               "apiField": "libelle",
               "apiLabel": "libelle",
@@ -686,21 +703,21 @@
               "placeholder": "Zonage PLUI"
             },
             "daact": {
-              "layer": "tabou2:tabou_v_oa_programme",
+              "layer": "tabou:tabou_v_oa_programme",
               "geom": "the_geom",
               "filterField": "daact_date",
               "type": "date",
               "placeholder": "Choisir une date"
             },
             "doc": {
-              "layer": "tabou2:tabou_v_oa_programme",
+              "layer": "tabou:tabou_v_oa_programme",
               "geom": "the_geom",
               "filterField": "doc_date",
               "type": "date",
               "placeholder": "Choisir une date"
             },
             "livraison": {
-              "layer": "tabou2:tabou_v_oa_programme",
+              "layer": "tabou:tabou_v_oa_programme",
               "geom": "the_geom",
               "filterField": "livraison_date",
               "type": "date",
@@ -714,7 +731,7 @@
           "apiCfg": {
             "apiURL": "/tabou2",
             "extApiURL": "/tabou2",
-            "authent":"",
+            "authent": "",
             "documentsByPage": 5
           }
         }
@@ -925,7 +942,7 @@
                 "subTitle": " Opérations d'aménagement",
                 "options": {
                   "url": "https://gis.jdev.fr/geoserver/wfs",
-                  "typeName": "tabou2:tabou_v_oa_operation",
+                  "typeName": "tabou:tabou_v_oa_operation",
                   "queriableAttributes": [
                     "nomzac"
                   ],
@@ -942,7 +959,7 @@
                 "subTitle": " Programme d'aménagement",
                 "options": {
                   "url": "https://gis.jdev.fr/geoserver/wfs",
-                  "typeName": "tabou2:tabou_v_oa_programme",
+                  "typeName": "tabou:tabou_v_oa_programme",
                   "queriableAttributes": [
                     "nomopa"
                   ],
@@ -959,7 +976,7 @@
                 "subTitle": " Secteur d'aménagement",
                 "options": {
                   "url": "https://gis.jdev.Fr/geoserver/wfs",
-                  "typeName": "tabou2:tabou_v_oa_secteur",
+                  "typeName": "tabou:tabou_v_oa_secteur",
                   "queriableAttributes": [
                     "secteur"
                   ],
@@ -976,7 +993,7 @@
                 "subTitle": " Programme d'aménagement",
                 "options": {
                   "url": "https://gis.jdev.fr/geoserver/wfs",
-                  "typeName": "tabou2:tabou_v_oa_programme",
+                  "typeName": "tabou:tabou_v_oa_programme",
                   "queriableAttributes": [
                     "programme"
                   ],
