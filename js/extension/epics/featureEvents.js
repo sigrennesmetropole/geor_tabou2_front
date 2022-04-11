@@ -11,7 +11,7 @@ import {
     reloadLayer,
     displayFeature
 } from '@ext/actions/tabou2';
-import {getMessageById} from "@mapstore/utils/LocaleUtils";
+import { getMessageById } from "@mapstore/utils/LocaleUtils";
 
 import {
     getFeatureEvents,
@@ -78,52 +78,55 @@ export function getSelectionInfos(action$, store) {
                     .catch(e => {
                         console.log("Error retrieving on OA or SA programmes request");
                         console.log(e);
-                        return Rx.Observable.of({data: []});
+                        return Rx.Observable.of({ data: [] });
                     })
-                    .switchMap( programmes => {
+                    .switchMap(programmes => {
                         // store data
                         let infos = {
                             ...selectInfos,
                             programmes: programmes.data,
                             operation: searchItem,
                             tiers: tiers,
-                            mapFeature: mapFeature};
+                            mapFeature: mapFeature
+                        };
                         return Rx.Observable.of(loadFicheInfos(infos));
                     });
             } else {
-                if (!searchItem?.operationId) {
-                    return Rx.Observable.of(
-                        // error message
-                        error({
-                            title: getMessageById(messages, "tabou2.infos.failApi"),
-                            message: getMessageById(messages, "tabou2.infos.failErrorData")
-                        })
-                    );
-                }
                 secondObservable$ = Rx.Observable.defer(() => getOperation(searchItem.operationId))
                     .catch(e => {
                         console.log("Error retrieving get operation request");
                         console.log(e);
-                        return Rx.Observable.of({data: []});
+                        return Rx.Observable.of({ data: [] });
                     })
-                    .switchMap( operation => {
+                    .switchMap(operation => {
+                        if (!searchItem?.operationId) {
+                            return Rx.Observable.of(
+                                // error message
+                                error({
+                                    title: getMessageById(messages, "tabou2.infos.failApi"),
+                                    message: getMessageById(messages, "tabou2.infos.failErrorData")
+                                }),
+                                console.log("Can't read correct infos !")
+                            );
+                        }
                         // GET programme's permis
                         return Rx.Observable.defer(() => getProgrammeAgapeo(searchItem?.id))
                             .catch(e => {
                                 console.log("Error on get Agapeo data request");
                                 console.log(e);
-                                return Rx.Observable.of({elements: []});
+                                return Rx.Observable.of({ elements: [] });
                             })
-                            .switchMap( agapeo => {
+                            .switchMap(agapeo => {
                                 return Rx.Observable.defer(() => getProgrammePermis(searchItem?.id))
                                     .catch(e => {
                                         console.log("Error retrieving PA permis request");
                                         console.log(e);
-                                        return Rx.Observable.of({data: []});
+                                        return Rx.Observable.of({ data: [] });
                                     })
-                                    .switchMap( permis => {
-                                    // store data
-                                        let infos = {...selectInfos,
+                                    .switchMap(permis => {
+                                        // store data
+                                        let infos = {
+                                            ...selectInfos,
                                             agapeo: agapeo.data.elements,
                                             programme: searchItem,
                                             permis: permis.data,
@@ -139,13 +142,13 @@ export function getSelectionInfos(action$, store) {
             }
 
             let firstObservable$ = Rx.Observable.empty();
-            firstObservable$ =  Rx.Observable.defer(() => getFeatureEvents(layerUrl, idTabou))
+            firstObservable$ = Rx.Observable.defer(() => getFeatureEvents(layerUrl, idTabou))
                 .catch(e => {
                     console.log("Error retrieving on OA or SA events request");
                     console.log(e);
-                    return Rx.Observable.of({data: []});
+                    return Rx.Observable.of({ data: [] });
                 })
-                .switchMap( response => {
+                .switchMap(response => {
                     // GET Feature's Events
                     return Rx.Observable.of(loadEvents(response?.data?.elements || []));
                 })
@@ -157,7 +160,7 @@ export function getSelectionInfos(action$, store) {
                             console.log(e);
                             return Rx.Observable.of(e);
                         })
-                    // GET OA, PA or SA clicked Feature
+                        // GET OA, PA or SA clicked Feature
                         .switchMap((response) => {
                             if (isEmpty(response?.data)) {
                                 return Rx.Observable.of(
@@ -198,18 +201,18 @@ export function getSelectionInfos(action$, store) {
  */
 export function createTabouFeature(action$, store) {
     return action$.ofType(CREATE_FEATURE)
-        .switchMap( action => {
+        .switchMap(action => {
             let infos = getInfos(store.getState());
             let messages = store.getState()?.locale.messages;
             let layerUrl = infos?.layerUrl || get(URL_ADD, action.layer.value);
             let layer = infos.layer || action.layer.name;
-            return Rx.Observable.defer( () => createNewTabouFeature(layerUrl, action.params))
+            return Rx.Observable.defer(() => createNewTabouFeature(layerUrl, action.params))
                 .catch(e => {
                     console.log("Error to save feature change or feature creation");
                     console.log(e);
                     return Rx.Observable.of(e);
                 })
-                .switchMap((el)=> {
+                .switchMap((el) => {
                     return el?.status !== 200 ? Rx.Observable.of(
                         // fail message
                         error({
@@ -223,7 +226,7 @@ export function createTabouFeature(action$, store) {
                             message: getMessageById(messages, "tabou2.infos.successAddFeature")
                         }),
                         reloadLayer(layer),
-                        displayFeature({feature: el.data, layer: layer})
+                        displayFeature({ feature: el.data, layer: layer })
                     );
                 });
         });
@@ -237,7 +240,7 @@ export function createTabouFeature(action$, store) {
  */
 export function onLayerReload(action$, store) {
     return action$.ofType(RELOAD_LAYER)
-        .switchMap( action => {
+        .switchMap(action => {
             let layer = layersSelector(store.getState()).filter(lyr => lyr.name === action.layer);
             return Rx.Observable.of(refreshLayerVersion(layer[0].id));
         });
