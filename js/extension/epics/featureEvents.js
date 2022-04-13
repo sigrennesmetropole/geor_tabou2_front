@@ -22,7 +22,7 @@ import {
     getSecteur,
     getProgrammeAgapeo,
     createNewTabouFeature
-} from '@ext/api/requests';
+} from '../api/requests';
 
 import { getInfos, isTabou2Activate } from '@ext/selectors/tabou2';
 import { URL_ADD } from '@ext/constants';
