@@ -58,7 +58,8 @@ export default ({
 
     const clearData = () => {
         onSelect(undefined);
-        setText('');
+        setText("");
+        onChange("");
     };
 
     return (<div style={{position: "relative", ...additionalStyle}}>

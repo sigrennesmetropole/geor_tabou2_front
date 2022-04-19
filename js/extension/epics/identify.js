@@ -1,22 +1,20 @@
 import * as Rx from 'rxjs';
 import { CONTROL_NAME, ID_TABOU, URL_ADD } from '../constants';
 
-import { get, pickBy, find, isEmpty, has } from 'lodash';
+import { get, keys, find, isEmpty, has, pickBy } from 'lodash';
 
 import {
-    generalInfoFormatSelector, identifyOptionsSelector, clickPointSelector } from '@mapstore/selectors/mapInfo';
+    generalInfoFormatSelector, identifyOptionsSelector, clickPointSelector
+} from '@mapstore/selectors/mapInfo';
 import uuid from 'uuid';
 import { localizedLayerStylesEnvSelector } from "@mapstore/selectors/localizedLayerStyles";
 import { updateUserPlugin } from '@mapstore/actions/context';
 import { buildIdentifyRequest } from '@mapstore/utils/MapInfoUtils';
 import { layersSelector } from '@mapstore/selectors/layers';
 import { error, success } from "@mapstore/actions/notifications";
-import {getMessageById} from "@mapstore/utils/LocaleUtils";
-import { newfilterLayerByList, getNewCrossLayerFilter } from '@js/extension/utils/search';
+import { getMessageById } from "@mapstore/utils/LocaleUtils";
+import { newfilterLayerByList, getNewCrossLayerFilter } from '../utils/search';
 import {
-    LOAD_FEATURE_INFO,
-    FEATURE_INFO_CLICK,
-    closeIdentify,
     changeMapInfoFormat,
     loadFeatureInfo,
     updateFeatureInfoClickPoint
@@ -25,61 +23,46 @@ import { TOGGLE_CONTROL } from '@mapstore/actions/controls';
 import {
     isTabou2Activate,
     defaultInfoFormat,
-    getTabouResponse,
     getPluginCfg,
     getSelection,
     getLayerFilterObj
-} from '@ext/selectors/tabou2';
+} from '../selectors/tabou2';
 import {
     loadTabouFeatureInfo,
     setDefaultInfoFormat,
     setMainActiveTab,
-    PRINT_PROGRAMME_INFOS,
+    PRINT_PDF_INFOS,
     CHANGE_FEATURE,
     DISPLAY_FEATURE,
     reloadLayer,
     displayFeature,
     DISPLAY_PA_SA_BY_OA,
     setTabouFilterObj,
-    applyFilterObj
-} from '@ext/actions/tabou2';
-import { getPDFProgramme, putRequestApi } from '@ext/api/search';
+    applyFilterObj,
+    cleanTabouInfos,
+    TABOU_CHANGE_FEATURES
+} from "../actions/tabou2";
+import { getPDFProgramme, getPDFOperation, putRequestApi } from '../api/requests';
 
 import { getFeatureInfo } from "@mapstore/api/identify";
+
+import { downloadToBlob } from "../utils/identify";
 /**
  * Catch GFI response on identify load event and close identify if Tabou2 identify tabs is selected
- * TODO: take showIdentify pluginCfg param into account
  * @param {*} action$
  * @param {*} store
  */
 export function tabouLoadIdentifyContent(action$, store) {
-    return action$.ofType(LOAD_FEATURE_INFO)
+    return action$.ofType(TABOU_CHANGE_FEATURES)
         .filter(() => isTabou2Activate(store.getState()))
         .switchMap((action) => {
-            if (action?.layer?.id && action?.data?.features && action.data.features.length) {
-                let resp = getTabouResponse(store.getState());
-                let cfg = getPluginCfg(store.getState()).layersCfg;
-                // delete response for this GFI layer response
-                delete resp[action.layer.name];
-
-                // just keep tabou feature response with features
-                if (action?.data?.features && action.data.features.length) {
-                    resp[action.layer.name] = action;
-                    // only return response for OA, PA, SA
-                    resp = pickBy(resp, (v, k) =>
-                        find(cfg, ["nom", k])
-                    );
-                } else {
-                    resp = {};
-                }
-
-                return Rx.Observable.of(setMainActiveTab("identify")).concat(
-                    Rx.Observable.of(loadTabouFeatureInfo(resp)).concat(
-                        Rx.Observable.of(closeIdentify())
-                    )
-                );
-            }
-            return  Rx.Observable.of(closeIdentify());
+            const resp = action.data;
+            const respNotEmpty = keys(resp).filter(k => get(resp, k).data.features.length);
+            const picked = pickBy(resp, (a, b) => respNotEmpty.includes(b));
+            return Rx.Observable.of(
+                setMainActiveTab("identify"),
+                loadTabouFeatureInfo(picked)
+            );
         });
 }
 
@@ -95,7 +78,7 @@ export function tabouSetGFIFormat(action$, store) {
         .switchMap((action) => {
             if (action.control !== CONTROL_NAME) return Rx.Observable.empty();
             if (store.getState().controls[CONTROL_NAME].enabled) {
-            // to save default info format from config or default MS2 config
+                // to save default info format from config or default MS2 config
                 const defaultMime = generalInfoFormatSelector(store.getState());
                 // change format to application/json
                 return Rx.Observable.of(setDefaultInfoFormat(defaultMime))
@@ -111,52 +94,31 @@ export function tabouSetGFIFormat(action$, store) {
 }
 
 /**
- * Purge info from Tabou identify panel.
- * @param {any} action$
- * @param {any} store
- */
-export function purgeTabou(action$, store) {
-    return action$.ofType(FEATURE_INFO_CLICK)
-        .filter(() => isTabou2Activate(store.getState()))
-        .switchMap(() => {
-            let cancelBtn = document.getElementById('cancelAddForm');
-            if (cancelBtn) cancelBtn.click();
-            return Rx.Observable.of(loadTabouFeatureInfo({}));
-        });
-}
-
-/**
  * Get fiche-suivi from tabou2 API as document
  * @param {*} action$
  * @param {*} store
  * @returns
  */
 export function printProgramme(action$, store) {
-    return action$.ofType(PRINT_PROGRAMME_INFOS)
+    return action$.ofType(PRINT_PDF_INFOS)
         .filter(() => isTabou2Activate(store.getState()))
         .switchMap((action) => {
             let messages = store.getState()?.locale.messages;
             let feature = getSelection(store.getState())?.feature.properties;
-            return Rx.Observable.defer(() => getPDFProgramme(action.id))
+            return Rx.Observable.defer(() => action.layer === "layerPA" ? getPDFProgramme(action.id) : getPDFOperation(action.id))
                 .catch(e => {
                     console.log("Error on get PDF request");
                     console.log(e);
                     // fail message
-                    return Rx.Observable.of({...e, data: null});
+                    return Rx.Observable.of({ ...e, data: null });
                 })
-                .switchMap( response => {
+                .switchMap(response => {
                     if (response?.status === 200 && response?.data) {
-                        const blob = new Blob([response.data], { type: response.data.type || 'application/pdf' });
-                        const url = window.URL.createObjectURL(blob);
-                        const link = document.createElement('a');
-                        link.href = url;
-                        let name = `FicheSuivi_${action.id}_${feature.code}_${feature.nomopa.split(" ")
-                            .map(e => e[0].toUpperCase() + e.slice(1)).join('')}`;
-                        link.setAttribute('download', name);
-                        document.body.appendChild(link);
-                        link.click();
-                        link.remove();
-                        window.URL.revokeObjectURL(url);
+                        let nomOA = action.layer === "layerPA" ? feature.nomopa.split(" ")
+                            .map(e => e[0].toUpperCase() + e.slice(1)).join('') : feature.nom;
+                        let name =
+                            `FicheSuivi_${action.id}_${feature.code}_${nomOA}`;
+                        downloadToBlob(response, response.data.type || 'application/pdf', name);
                         return Rx.Observable.of(
                             success({
                                 title: getMessageById(messages, "tabou2.infos.successApi"),
@@ -182,16 +144,16 @@ export function printProgramme(action$, store) {
  */
 export function createChangeFeature(action$, store) {
     return action$.ofType(CHANGE_FEATURE)
-        .switchMap( action => {
+        .switchMap(action => {
             let messages = store.getState()?.locale.messages;
             let layersToc = find(getPluginCfg(store.getState()).layersCfg, (o, i) => i === action.params.layer);
-            return Rx.Observable.defer( () => putRequestApi(`${get(URL_ADD, action.params.layer)}`, getPluginCfg(store.getState()).apiCfg, action.params.feature))
+            return Rx.Observable.defer(() => putRequestApi(`${get(URL_ADD, action.params.layer)}`, getPluginCfg(store.getState()).apiCfg, action.params.feature))
                 .catch(e => {
                     console.log("Error to save feature change or feature creation");
                     console.log(e);
                     return Rx.Observable.of(e);
                 })
-                .switchMap((el)=> {
+                .switchMap((el) => {
                     return has(el, "status") && el.status !== 200 ? Rx.Observable.of(
                         // fail message
                         error({
@@ -206,7 +168,7 @@ export function createChangeFeature(action$, store) {
                         }),
                         // we just update last GFI request to refresh panel
                         reloadLayer(layersToc.nom),
-                        displayFeature({feature: action.params.feature, layer: layersToc.nom})
+                        displayFeature({ feature: action.params.feature, layer: layersToc.nom })
 
                     );
                 });
@@ -222,14 +184,14 @@ export function createChangeFeature(action$, store) {
  */
 export function displayFeatureInfos(action$, store) {
     return action$.ofType(DISPLAY_FEATURE)
-        .switchMap( action => {
+        .switchMap(action => {
 
             // only if user create tabou feature from clicked map feature
             if (!action?.infos || !action.infos?.feature) return Rx.Observable.isEmpty();
 
             let tocLayer = layersSelector(store.getState()).filter(lyr => lyr.name === action.infos.layer)[0];
             let env = localizedLayerStylesEnvSelector(store.getState());
-            let { url, request, metadata } = buildIdentifyRequest(tocLayer, {...identifyOptionsSelector(store.getState()), env});
+            let { url, request, metadata } = buildIdentifyRequest(tocLayer, { ...identifyOptionsSelector(store.getState()), env });
             request.cql_filter = `${ID_TABOU} = ${action.infos.feature.id}`;
             request.info_format = "application/json";
             return Rx.Observable.defer(() => getFeatureInfo(url, request, tocLayer, {}))
@@ -242,11 +204,11 @@ export function displayFeatureInfos(action$, store) {
                     if (isEmpty(response)) return Rx.Observable.empty();
                     // control this feature is the selected feature from identify tab
                     let selected = !isEmpty(getSelection(store.getState())) ? getSelection(store.getState())?.feature : null;
-                    let isSelected = selected && selected.properties?.objectid === response.features[0]?.properties?.objectid;
+                    let isSelected = selected && selected.properties?.id_tabou === response.features[0]?.properties?.id_tabou;
                     // if not we load the entire response to trigger fake map click response and display response into indentify panel
                     if (!isSelected) {
                         return Rx.Observable.of(
-                            loadTabouFeatureInfo({}),
+                            cleanTabouInfos(),
                             loadFeatureInfo(uuid.v1(), response.data, request, { ...metadata, features: response.features, featuresCrs: response.featuresCrs }, tocLayer)
                         );
                     }
@@ -266,7 +228,7 @@ export function displayFeatureInfos(action$, store) {
  */
 export function dipslayPASAByOperation(action$, store) {
     return action$.ofType(DISPLAY_PA_SA_BY_OA)
-        .switchMap( () => {
+        .switchMap(() => {
             const idTabou = getSelection(store.getState()).id;
             const idsPA = store.getState().tabou2.ficheInfos.programmes.elements.map(p => p.id);
             let layers = getPluginCfg(store.getState()).layersCfg;

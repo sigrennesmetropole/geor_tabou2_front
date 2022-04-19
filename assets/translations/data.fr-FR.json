@@ -4,12 +4,14 @@
     "tabou2": {
       "helpTooltip": "Accéder à l'aide",
       "help": "Aide",
+      "valid": "Valider",
       "getHelp": "Cliquer pour obtenir plus d'informations",
       "copy": "Copier / coller",
       "copyAddress": "L'adresse a été copiée dans le Presse-papiers",
       "infos": {
-        "failIdentify": "La récupération des informations à échouée",
-        "failApi": "Erreur API",
+        "failIdentify": "La récupération des informations à échouée !",
+        "failErrorData": "Les données récupérées contiennent des erreurs !",
+        "failApi": "Erreur API Urb@map",
         "error": "Erreur",
         "failFilter": "Echec de la création du filtre",
         "failChangeFeature": "Echec de la sauvegarde",
@@ -19,7 +21,16 @@
         "successSaveInfos": "Informations sauvegardées !",
         "apiGETError": "Erreur à la récupération des informations.",
         "failPrint": "Le téléchargement de la fiche de suivi a échoué",
-        "successPrint": "Document téléchargé !"
+        "failDownload": "Le téléchargement a échoué !",
+        "successPrint": "Document téléchargé !",
+        "failDocDelete": "Erreur - document non supprimé !",
+        "failDocCreate": "Erreur - Document non créé !",
+        "successDocDelete": "Document supprimé !",
+        "successDocCreate": "Document ajouté !",
+        "failDocModification": "Erreur - Modification impossible !",
+        "successDocModification": "Document modifié !",
+        "failDocChange": "Erreur - Mise à jour impossible !",
+        "successDocChange": "Document mis à jour !"
       },
       "load": "Chargement...",
       "save": "Enregistrer",
@@ -88,7 +99,7 @@
           "tiersDetail": "Voir ces tiers",
           "identify": "Identification",
           "describe": "Descriptif",
-          "gouv": "Gouvernance",
+          "gouv": "Modalités de réalisation",
           "opTracking": "Suivi opérationnel",
           "progHabitat": "Programmation habitat",
           "progActivity": "Programmation activités",
@@ -191,7 +202,25 @@
         "addThird": "3 - Saisir les informations"
       },
       "docsModal": {
-        "title": "Documents associés"
+        "noResult": "Aucun document n'a été trouvé !",
+        "title": "Documents associés",
+        "noRows": "Il n'y a aucun document à afficher",
+        "createRowMsg": "Vous pouvez ajouter un document en cliquant sur le bouton avec l'icône + ",
+        "uploadFile": "Cliquer ou glisser un fichier...",
+        "searchPlaceholder": "Rechercher un nom de document...",
+        "docsForm": {
+          "valid": "Valider",
+          "selectType": "Choisir un type",
+          "dateDoc": "Date du document...",
+          "id": "id",
+          "name": "Nom",
+          "label": "Libellé",
+          "changeDate": "Modifié le",
+          "changeBy": "Modifié par",
+          "format": "Format",
+          "date": "Date",
+          "type": "Type"
+        }
       },
       "logsModal": {
         "isSystem": "Système",
@@ -227,13 +256,14 @@
         "cp": "Code postal",
         "numAd": "Numéro",
         "street": "Rue",
+        "address": "Adresse",
         "city": "ville",
         "contact": "Contact",
         "email": "Email",
         "website": "Site web",
         "fax": "Fax",
         "tel": "Téléphone",
-        "isPrivate": "Est privé",
+        "isPrivate": "Entreprise du secteur privé",
         "save": "Enregistrer",
         "exit": "Fermer"
       }

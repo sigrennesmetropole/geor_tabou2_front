@@ -66,3 +66,8 @@
 .no-padding {
     padding: 0px !important;
 }
+
+
+.MapStoreExtension .mapToolbar, .nav-menu {
+    z-index: 999 !important;
+}

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { isEmpty, isEqual, pick, has, get } from "lodash";
 import { Checkbox, Col, Row, FormControl, Grid, ControlLabel } from "react-bootstrap";
-import "@ext/css/identify.css";
+import "@js/extension/css/identify.css";
 import Message from "@mapstore/components/I18N/Message";
 /**
  * Accordion to display info for this specific panel section - only for feature linked with id tabou
@@ -73,7 +73,7 @@ export default function Tabou2ProgActiviteAccord({ initialItem, programme, opera
                             {
                                 item.type === "checkbox" ?
                                     (<Checkbox
-                                        inline="true"
+                                        inline
                                         style={{marginBottom: "10px"}}
                                         checked={getValue(item) || false}
                                         disabled={item.readOnly || !allowChange}

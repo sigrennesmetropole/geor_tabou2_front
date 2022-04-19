@@ -1,3 +1,7 @@
+export const TABOU_VECTOR_ID = "__OA_OVRLAY_LAYER__";
+export const TABOU_OWNER = "Tabou2";
+export const TABOU_MARKER_LAYER_ID = "__OA_OVRLAY_MARKER__";
+
 export const TABS = [{
     id: 'search',
     tooltip: 'tabou2.tabs.search',
@@ -19,8 +23,6 @@ export const CONTROL_NAME = 'tabou2';
 
 export const API_BASE_URL = 'http://localhost:3000';
 
-export const GEOSERVER_WFS_URL = 'https://public.sig.rennesmetropole.fr/geoserver';
-
 export const ID_SELECTOR = 'layerTabouId-selector';
 
 export const PANEL_SIZE = 600;
@@ -32,13 +34,7 @@ export const URL_ADD = {
     "layerSA": "operations"
 };
 
-export const URL_TIERS = {
-    "tabou2": "",
-    "tabou2:v_oa_programme": "programmes",
-    "tabou2:oa_secteur": "operations"
-};
-
-export const REQUIRED_TIERS = ["adresseRue", "nom", "adresseCp", "adresseVille", "email"];
+export const REQUIRED_TIERS = ["nom", "adresseVille"];
 export const TIERS_SCHEMA = {
     id: 0,
     tiers: {
@@ -52,7 +48,7 @@ export const TIERS_SCHEMA = {
         email: "",
         siteWeb: "",
         contact: "",
-        estPrive: false,
+        estPrive: true,
         dateInactif: null
     },
     typeTiers: {

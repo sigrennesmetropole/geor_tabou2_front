@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { isEmpty, isEqual, pick, has, get, capitalize } from "lodash";
 import { Col, Row, Grid, ControlLabel, Table } from "react-bootstrap";
 import { DateTimePicker } from "react-widgets";
-import "@ext/css/identify.css";
+import "@js/extension/css/identify.css";
 import Message from "@mapstore/components/I18N/Message";
 
 import moment from 'moment';

@@ -70,7 +70,7 @@ export default function Tabou2IdentifyToolbar({ response, isValid, ...props }) {
     ];
 
     // display print button only for programme feature
-    if (props.selectedCfgLayer === "layerPA") {
+    if (["layerPA", "layerOA"].includes(props.selectedCfgLayer)) {
         let idTabou = props?.selection?.feature?.properties.id_tabou;
         modalBtns.push({
             glyph: "print",
@@ -79,7 +79,7 @@ export default function Tabou2IdentifyToolbar({ response, isValid, ...props }) {
             },
             tooltip: props.i18n(props.messages, "tabou2.identify.toolbar.print"),
             id: "print",
-            onClick: () => props.printProgInfos(idTabou)
+            onClick: () => props.printPDFInfos(idTabou, props.selectedCfgLayer)
         });
     }
     // manage buttons according to role

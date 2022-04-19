@@ -71,13 +71,17 @@ Voici la liste des paramètres et les explications correspondantes.
         "livraison","","Groupe de paramètres du filtre de recherche par date de livraison"
         "pbil","","Groupe de paramètres du filtre de recherche selon la couche PBIL"
         "apiCfg","","Groupe de paramètres pour l'utilisation de l'API Tabou2"
-        "apiURL","/tabou2","URL de l'API Tabou2"
+        "apiURL","/tabou2","URL de l'API Tabou2",
+        "documentsByPage", "5", "Nombre de documents par page pour consulter la GED"
         "layer","Pour le filtre par IRIS ==> dem_stats:iris","Nom de la couche geoserver du type workspace:title"
         "geom","Pour le filtre par IRIS ==> shape","Nom du champ contenant la géométrie"
         "placeholder","","Texte à afficher quand le filtre est vide"
         "filterField","Pour croiser la couche IRIS avec la couche des opérations, on réalisera un filtre sur le champ code_iris de la couche IRIS","Nom du champ à filtrer au sein de la couche ciblée par l'intersection spatiale"
         "apiField","","Nom du champ fourni par l'API qui contient la valeur à filtrer dans le champ de la couche cible de l'intersection spatial (voir paramètre filterField)"
         "apiLabel","","Nom du champ de l'API qui contient la valeur à afficher dans le filtre dans le cas d'une liste ou d'une multiselection"
+        "styles.default","", "Style des entités cliquées de la couche sélectionnée dans la fiche."
+        "styles.selection","", "Style de l'entité en consultation dans la fiche."
+        "styles.showClick", "true", "Booléen - true pour afficher l'icône du clic sur la carte quand le plugin est actif"
 
 Explications détaillées
 ========================
@@ -168,6 +172,49 @@ c. filtrer dans MapStore2 les couches selon les IDs récupérés par l'intersect
         "apiField","Inutile car nous n'utilisons pas l'API, c'est une sélection libre"
         "apiLabel","Inutile car nous n'utilisons pas l'API, c'est une sélection libre"
 
+Styles de la sélection
+===============
+
+Lorsqu'un utilisateur clique sur une ou plusieurs couches, la fiche information affiche :
+
+1. Une liste des couches (visibles) cliquées qui retournent des features au clic
+2. Une liste qui permet de sélectionner la feature à afficher pour la couche sélectionnée (non visible si une seule feature cliquée)
+
+.. figure:: ../_img/config/style_selection.gif
+            :alt: ouvrir la configuration Tabou2
+            :align: center
+
+            Styles de sélection Tabou2.
+
+
+Le style des entités par défaut (style "default") et le style de l'entité affichée dans la fiche (style "selection") doit correspondre aux paramètre possible pour le style OpenLayers.
+D'autres paramètres de style peuvent donc être ajoutés pour plus de personnalisation.
+
+Enfin, en utilisant les paramètres d'opacité il est alors possible d'afficher l'entités en consultation dans la fiche et / ou les autres entités retournée par le clic pour la couche sélectionnée dans la liste.
+
+* Exemple de paramètres :
+
+.. code-block:: json
+       :linenos:
+
+        "styles": {
+            "selection": {
+            "fillColor": "red",
+            "fillOpacity": 0.8,
+            "opacity": 1,
+            "color": "yellow",
+            "weight": 2
+            },
+            "default": {
+            "fillColor": "#6f718e",
+            "fillOpacity": 0,
+            "opacity": 0.8,
+            "color": "yellow",
+            "weight": 2,
+            "dashArray": [5, 5]
+            }
+        }
+
 Exemple complet
 ===============
 
@@ -178,13 +225,30 @@ Voici un exemple de configuration :
 
         {
             "cfg": {
+                "styles": {
+                    "showClick": true,
+                    "selection": {
+                    "fillColor": "red",
+                    "fillOpacity": 0.8,
+                    "opacity": 1,
+                    "color": "yellow",
+                    "weight": 2
+                    },
+                    "default": {
+                    "fillColor": "#6f718e",
+                    "fillOpacity": 0,
+                    "opacity": 0.8,
+                    "color": "yellow",
+                    "weight": 2,
+                    "dashArray": [5, 5]
+                    }
+                },
                 "help": {
                     "url": "https://...main.pdf",
                     "contact": "d.cottencin@rennesmetropole.fr",
                     "ddc": "https://...main.pdf",
                     "agapeo": "https://...main.pdf#page=26"
                 },
-                "consultHelpMail": "test@rennesmetropole.fr",
                 "geoserverURL": "/geoserver",
                 "showIdentify": false,
                 "layersOrder": ["Opérations", "Secteurs", "Programmes"],
@@ -340,7 +404,8 @@ Voici un exemple de configuration :
                     }
                 },
                 "apiCfg": {
-                "apiURL": "/tabou2"
+                    "apiURL": "/tabou2",
+                    "documentsByPage": 5
                 }
             },
             "override": {}

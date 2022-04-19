@@ -6,16 +6,16 @@ import { currentActiveTabSelector, currentTabouFilters, getLayerFilterObj, searc
 import Tabou2SearchToolbar from './Tabou2SearchToolbar';
 import SearchCombo from '@js/extension/components/form/SearchCombo';
 import Tabou2Combo from '../form/Tabou2Combo';
-import { getRequestApi, searchPlui } from '../../api/search';
+import { getRequestApi, searchPlui } from '../../api/requests';
 import { setTabouFilterObj, setTabouFilters, resetSearchFilters } from '../../actions/tabou2';
 import { getNewFilter, getSpatialCQL, getCQL, getTabouLayersInfos, createWfsPostRequest } from '../../utils/search';
-import { SEARCH_ITEMS, SEARCH_CALENDARS } from '@ext/constants';
+import { SEARCH_ITEMS, SEARCH_CALENDARS } from '@js/extension/constants';
 import Message from "@mapstore/components/I18N/Message";
 import moment from 'moment';
 import momentLocalizer from 'react-widgets/lib/localizers/moment';
 momentLocalizer(moment);
 import { DateTimePicker } from 'react-widgets';
-import "@ext/css/tabou.css";
+import "@js/extension/css/tabou.css";
 
 function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, changeFiltersObj, changeFilters, currentFilters, ...props }) {
     if (currentTab !== 'search') return null;

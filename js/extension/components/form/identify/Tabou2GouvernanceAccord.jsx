@@ -1,11 +1,11 @@
 import React, {useEffect, useState } from "react";
 import { isEmpty, isEqual, pick, get } from "lodash";
 import { Col, Row, Grid, Glyphicon, ControlLabel } from "react-bootstrap";
-import Tabou2Combo from '@ext/components/form/Tabou2Combo';
-import { getRequestApi } from "@ext/api/search";
+import Tabou2Combo from '@js/extension/components/form/Tabou2Combo';
+import { getRequestApi } from "@js/extension/api/requests";
 import { Multiselect } from "react-widgets";
-import "@ext/css/identify.css";
-import "@ext/css/tabou.css";
+import "@js/extension/css/identify.css";
+import "@js/extension/css/tabou.css";
 import Message from "@mapstore/components/I18N/Message";
 
 import ButtonRB from '@mapstore/components/misc/Button';
@@ -172,6 +172,7 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
                                         readOnly={item.readOnly || !allowChange}
                                         value={item.data}
                                         className={ item.readOnly ? "tagColor noClick" : "tagColor"}
+                                        onChange={() => {}}
                                     />
                                 )
                             }
@@ -183,7 +184,7 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
                                         tooltip={props.i18n(props.messages, allTiersButtons[item.name].tooltip || "")}
                                         onClick={() => allTiersButtons[item.name].click() }
                                         bsStyle="primary"
-                                        bsSize="md">
+                                        bsSize="small">
                                         <Glyphicon glyph="user"/>
                                     </Button>
                                 </Col>

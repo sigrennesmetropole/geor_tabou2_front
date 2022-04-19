@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { connect } from 'react-redux';
-import { keys, isEmpty } from 'lodash';
+import { keys, isEmpty, get } from 'lodash';
 import Message from "@mapstore/components/I18N/Message";
 import {
     currentActiveTabSelector,
@@ -15,13 +15,15 @@ import {
     getFicheInfos,
     identifyLoading,
     getIdentifyInfos,
-    getLayersName
-} from '@ext/selectors/tabou2';
+    getLayersName,
+    getTiersFilter,
+    getClickedFeatures
+} from '../../selectors/tabou2';
 
 import Tabou2SearchPanel from '../tabou2SearchPanel/Tabou2SearchPanel';
 import Tabou2AddPanel from '../tabou2AddPanel/Tabou2AddPanel';
 import Tabou2IdentifyPanel from '../tabou2IdentifyPanel/Tabou2IdentifyPanel';
-import Tabou2Information from '@ext/components/common/Tabou2Information';
+import Tabou2Information from '@js/extension/components/common/Tabou2Information';
 import {
     setMainActiveTab,
     setSelectedFeature,
@@ -35,7 +37,7 @@ import {
     associateTier,
     inactivateTier,
     applyFilterObj,
-    printProgInfos,
+    printPDFInfos,
     searchIds,
     createFeature,
     changeFeature,
@@ -44,8 +46,7 @@ import {
     displayPASAByOA,
     resetSearchFilters,
     setTiersFilter
-} from "@ext/actions/tabou2";
-import { getTiersFilter } from '@js/extension/selectors/tabou2';
+} from "@js/extension/actions/tabou2";
 
 function toolContainer({...props }) {
     let isTabouFeature = false;
@@ -62,6 +63,7 @@ function toolContainer({...props }) {
         props.setIdentifyInfos(identifyInfos);
         props.setFeature(identifyInfos);
         props.setLayer(selectedLayer);
+        props.updateVectorTabouStyle();
     };
 
     let showAddPanel = props.authentInfos.isReferent || props.authentInfos.isContrib;
@@ -73,6 +75,8 @@ function toolContainer({...props }) {
     };
 
     isTabouFeature = isEmpty(props.queryData) || !props.identifyInfos.feature?.properties.id_tabou ? false : true;
+
+    const featuresIds = Object.values(props.clickedFeatures).flat().map(i => i.id);
 
     return (
         <>
@@ -119,8 +123,14 @@ function toolContainer({...props }) {
             }
             {
                 // Identify panel
-                props.currentTab === "identify" && !isEmpty(props.queryData) && keys(props.queryData).length ?
-                    (<Tabou2IdentifyPanel authent={props.authentInfos} responseLyr={keys(props.queryData)} {...props} onSelect={handleSelect}/>) : null
+                props.currentTab === "identify" && !isEmpty(props.queryData) && keys(props.queryData).length &&
+                    (<Tabou2IdentifyPanel
+                        reqId={get(props.queryData, keys(props.queryData)[0])?.reqId}
+                        authent={props.authentInfos}
+                        featuresId={featuresIds}
+                        responseLyr={keys(props.queryData)}
+                        {...props}
+                        onSelect={handleSelect}/>)
             }
             {
                 // Identify info message if no results or no clicked realized
@@ -141,6 +151,7 @@ export default connect(
     (state) => ({
         currentTab: currentActiveTabSelector(state),
         queryData: getTabouResponse(state),
+        clickedFeatures: getClickedFeatures(state),
         allIndex: getTabouIndexSelectors(state),
         events: getEvents(state),
         tiers: getTiers(state),
@@ -166,7 +177,7 @@ export default connect(
         inactivateTier: inactivateTier,
         changeTier: changeFeatureTier,
         associateTier: associateTier,
-        printProgInfos: printProgInfos,
+        printPDFInfos: printPDFInfos,
         searchIds: searchIds,
         createFeature: createFeature,
         changeFeature: changeFeature,

@@ -29,7 +29,7 @@ module.exports = {
         target: "http://localhost:8081/",
         secure: false,
         headers: {
-            host: "192.168.1.254"
+            host: "192.168.56.1"
         }
     },
     '/tabou2': {

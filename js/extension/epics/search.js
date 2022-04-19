@@ -8,7 +8,7 @@ import { wrapStartStop } from "@mapstore/observables/epics";
 import { error } from "@mapstore/actions/notifications";
 import {getMessageById} from "@mapstore/utils/LocaleUtils";
 import { newfilterLayerByList } from "@ext/utils/search";
-import { getIdsFromSearch } from "@ext/api/search";
+import { createOGCRequest } from "@ext/api/requests";
 
 /**
  * From Tabou2 search panel, apply filter for each Tabou layers.
@@ -74,7 +74,7 @@ export function tabouGetSearchIds(action$, store) {
             let messages = store.getState()?.locale.messages;
             let observable$ = Rx.Observable.empty();
             observable$ = Rx.Observable.from((action.params)).mergeMap( filter => {
-                return Rx.Observable.defer(() => getIdsFromSearch(filter.params, getPluginCfg(store.getState()).geoserverURL))
+                return Rx.Observable.defer(() => createOGCRequest(filter.params, getPluginCfg(store.getState()).geoserverURL))
                     .catch(e => {
                         console.log("Error retrieving ids from filter");
                         console.log(e);
@@ -87,10 +87,10 @@ export function tabouGetSearchIds(action$, store) {
                         let layer = filter.layer;
                         let ids = [0];
                         let idsCql = "";
-                        let searchLimit = getPluginCfg(store.getState()).searchCfg?.limit || 150;
+                        let searchLimit = getPluginCfg(store.getState()).searchCfg?.limit || 100000;
                         // Force limit to be sur TOC WMS request is not to huge and could be realize
                         if (response?.totalFeatures && response.features.length < searchLimit) {
-                            ids = response.features.map(feature => feature.properties.objectid || '');
+                            ids = response.features.map(feature => feature.properties.id_tabou || '');
                             ids = ids.filter(id => id);
                             let correctIds = filter.idType === 'string' ? ids.map(i => `'${i}'`) : (ids.length ? ids : [0]);
                             // create entire filter string
@@ -105,7 +105,7 @@ export function tabouGetSearchIds(action$, store) {
                         // affect filter
                         return Rx.Observable.of(setTabouFilterObj({
                             ...getLayerFilterObj(store.getState()),
-                            [layer]: newfilterLayerByList(layer, ids, "objectid", idsCql)
+                            [layer]: newfilterLayerByList(layer, ids, "id_tabou", idsCql)
                         }));
                     });
             });

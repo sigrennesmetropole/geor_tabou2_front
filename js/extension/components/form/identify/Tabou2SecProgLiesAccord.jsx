@@ -1,7 +1,7 @@
 import React, {useEffect, useState } from "react";
 import { capitalize, isEmpty, isEqual, get } from "lodash";
 import { Table, Col, Row, Grid } from "react-bootstrap";
-import "@ext/css/identify.css";
+import "@js/extension/css/identify.css";
 
 export default function Tabou2SecProgLiesAccord({ initialItem, programme, operation, mapFeature, ...props }) {
     let layer = props?.selection?.layer;

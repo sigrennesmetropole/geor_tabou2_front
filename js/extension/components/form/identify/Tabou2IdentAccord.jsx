@@ -2,8 +2,8 @@ import React, {useEffect, useState } from "react";
 import { isEmpty, isEqual, pick, get, has } from "lodash";
 import { Col, Row, FormControl, Grid, ControlLabel } from "react-bootstrap";
 import { Multiselect } from "react-widgets";
-import { getRequestApi } from "@ext/api/search";
-import "@ext/css/identify.css";
+import { getRequestApi } from "@js/extension/api/requests";
+import "@js/extension/css/identify.css";
 import Message from "@mapstore/components/I18N/Message";
 import SearchCombo from '@js/extension/components/form/SearchCombo';
 /**

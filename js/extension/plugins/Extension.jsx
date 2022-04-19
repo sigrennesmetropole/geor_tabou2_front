@@ -11,20 +11,25 @@ import { layersSelector } from '@mapstore/selectors/layers';
 import { selectedLayerIdSelector } from '@mapstore/selectors/featuregrid';
 import {getMessageById} from "@mapstore/utils/LocaleUtils";
 
-import { setUp } from '@ext/actions/tabou2';
-import Tabou2MainPanel from '@ext/components/tabou2Panel/Tabou2MainPanel';
-import tabou2 from '@ext/reducers/tabou2';
-import init from '@ext/utils/init';
 
-import { tabouApplyFilter, tabouResetFilter, tabouGetSearchIds } from '@ext/epics/search';
-import { tabouLoadIdentifyContent, tabouSetGFIFormat, purgeTabou, printProgramme, createChangeFeature,
-    displayFeatureInfos, dipslayPASAByOperation } from '@ext/epics/identify';
-import { getSelectionInfos, updateTabou2Logs, updateTabou2Tier, addCreateTabou2Tier, getTiersElements,
-    associateTabou2Tier, createTabouFeature, onLayerReload, getEventsElements } from '@ext/epics/featureEvents';
-import { showNotification } from "@ext/epics/common";
-import { setTbarPosition } from '@ext/epics/setup';
+import { isTabou2Activate } from "../selectors/tabou2";
+import { setUp, closeTabou } from "../actions/tabou2";
+import Tabou2MainPanel from "../components/tabou2Panel/Tabou2MainPanel";
+import tabou2 from "../reducers/tabou2";
+import init from "../utils/init";
 
-import { CONTROL_NAME, PANEL_SIZE } from '@ext/constants';
+import { onTabouMapClick, onSelectionUpdate, showTabouClickMarker } from "../epics/layer";
+import { tabouApplyFilter, tabouResetFilter, tabouGetSearchIds } from "../epics/search";
+import { tabouLoadIdentifyContent, tabouSetGFIFormat, printProgramme, createChangeFeature,
+    displayFeatureInfos, dipslayPASAByOperation } from '../epics/identify';
+import { getSelectionInfos, createTabouFeature, onLayerReload } from '../epics/featureEvents';
+import { updateTabou2Tier, addCreateTabou2Tier, getTiersElements, associateTabou2Tier } from '../epics/tiers';
+import { updateTabou2Logs, getEventsElements } from "../epics/logs";
+import { listTabouDocuments, downloadTabouDocuments, deleteTabouDocuments, addNewDocument, updateDocument } from "../epics/documents";
+import { showNotification } from "../epics/common";
+import { setTbarPosition, initMap, closeTabouExt } from "../epics/setup";
+
+import { CONTROL_NAME, PANEL_SIZE } from '../constants';
 
 const compose = (...functions) => args => functions.reduceRight((arg, fn) => fn(arg), args);
 
@@ -55,6 +60,7 @@ class Tabou2Panel extends React.Component {
 const Tabou2Plugin = compose(
     connect((state) => ({
         active: () => (state.controls && state.controls[CONTROL_NAME] && state.controls[CONTROL_NAME].enabled) || (state[CONTROL_NAME] && state[CONTROL_NAME].closing) || false,
+        enabled: isTabou2Activate(state),
         tocLayers: layersSelector(state),
         selectedLayerId: selectedLayerIdSelector(state),
         messages: state?.locale.messages || {}
@@ -64,13 +70,13 @@ const Tabou2Plugin = compose(
         changeLayerProperties: changeLayerProperties,
         onSyncLayers: syncLayers,
         onSelectLayers: selectLayers,
-        onQuery: search,
-        setCfg: setUp
+        onQuery: search
     }),
     // setup and teardown due to open/close
     compose(
         connect( () => ({}), {
-            setUp
+            setUp,
+            closeTabou
         }),
         init()
     )
@@ -84,7 +90,6 @@ export default {
         tabouApplyFilter: tabouApplyFilter,
         tabouLoadIdentifyContent: tabouLoadIdentifyContent,
         tabouSetGFIFormat: tabouSetGFIFormat,
-        purgeTabou: purgeTabou,
         tabouResetFilter: tabouResetFilter,
         setTbarPosition: setTbarPosition,
         getSelectionInfos: getSelectionInfos,
@@ -101,7 +106,17 @@ export default {
         displayFeatureInfos: displayFeatureInfos,
         getEventsElements: getEventsElements,
         showNotification: showNotification,
-        dipslayPASAByOperation: dipslayPASAByOperation
+        dipslayPASAByOperation: dipslayPASAByOperation,
+        initMap: initMap,
+        onTabouMapClick: onTabouMapClick,
+        onSelectionUpdate: onSelectionUpdate,
+        closeTabouExt: closeTabouExt,
+        showTabouClickMarker: showTabouClickMarker,
+        listTabouDocuments: listTabouDocuments,
+        downloadTabouDocuments: downloadTabouDocuments,
+        deleteTabouDocuments: deleteTabouDocuments,
+        addNewDocument: addNewDocument,
+        updateDocument: updateDocument
     },
     containers: {
         Toolbar: {

@@ -1,5 +1,5 @@
 export const SETUP = "SETUP";
-export const TEAR_DOWN = "TEAR_DOWN";
+export const CLOSE_TABOU = "CLOSE_TABOU";
 export const SET_MAIN_ACTIVE_TAB = "SET_MAIN_ACTIVE_TAB";
 export const APPLY_SEARCH_QUERY = "APPLY_SEARCH_QUERY";
 export const RESET_SEARCH_FILTERS = "RESET_SEARCH_FILTERS";
@@ -23,7 +23,7 @@ export const DELETE_FEATURE_TIER = "DELETE_FEATURE_TIER";
 export const CHANGE_FEATURE_TIER = "CHANGE_FEATURE_TIER";
 export const INACTIVATE_TIER = "INACTIVATE_TIER";
 export const SET_TABOU_CONFIG = "SET_TABOU_CONFIG";
-export const PRINT_PROGRAMME_INFOS = "PRINT_FICHE_PROGRAMME";
+export const PRINT_PDF_INFOS = "PRINT_PDF_PROGRAMME";
 export const SEARCH_IDS = "SEARCH_IDS";
 export const LOADING = "LOADING";
 export const LOAD_FICHE_INFOS = "LOAD_FICHE_INFOS";
@@ -39,6 +39,26 @@ export const GET_EVENTS = "GET_EVENTS";
 export const DISPLAY_MSG = "DISPLAY_MSG";
 export const DISPLAY_PA_SA_BY_OA = "DISPLAY_PA_BY_OA";
 export const SET_TIERS_FILTER = "SET_TIERS_FILTER";
+export const UPDATE_TABOU_SELECTION = "UPDATE_FEATURES_SELECTION";
+export const SET_TABOU_SELECT_FEATURE = "SET_SELECT_FEATURE";
+export const UNSET_TABOU_SELECT_FEATUREE = "UNSET_SELECT_FEATURE";
+export const TOGGLE_TABOU_SELECTION = "TOGGLE_TABOU_SELECTION";
+export const CLEAN_TABOU_SELECTION = "CLEAN_TABOU_SELECTION";
+export const TABOU_CHANGE_FEATURES = "TABOU_CHANGE_FEATURES";
+export const UPDATE_TABOU_STYLE = "UPDATE_TABOU_STYLE";
+export const CLEAN_TABOU_INFOS = "CLEAN_TABOU_INFOS";
+export const DISPLAY_TABOU_MARKER = "DISPLAY_TABOU_MARKER";
+export const GET_TABOU_DOCUMENTS = "GET_TABOU_DOCUMENTS";
+export const SET_TABOU_DOCUMENTS = "SET_TABOU_DOCUMENTS";
+export const TABOU_DOWNLOAD_DOC = "TABOU_DOWNLOAD_DOC";
+export const DELETE_TABOU_DOCUMENTS = "DELETE_TABOU_DOCUMENTS";
+export const ADD_TABOU_DOC = "ADD_TABOU_DOC";
+export const MODIFY_TABOU_DOC = "MODIFY_TABOU_DOC";
+
+export const closeTabou = (pluginsCfg) => ({
+    type: CLOSE_TABOU,
+    pluginsCfg
+});
 
 export const displayMsg = (level, title, message) => ({
     type: DISPLAY_MSG,
@@ -82,12 +102,6 @@ export const searchIds = (params) => ({
 export const setUp = (pluginCfg) => ({
     type: SETUP,
     pluginCfg
-});
-/**
- * Triggered when plugin is close
- */
-export const tearDown = () => ({
-    type: TEAR_DOWN
 });
 
 export const setMainActiveTab = (activeTab, params = {}) => ({
@@ -207,9 +221,10 @@ export const setTabouConfig = (config) => ({
     config
 });
 
-export const printProgInfos = (id) => ({
-    type: PRINT_PROGRAMME_INFOS,
-    id
+export const printPDFInfos = (id, layer) => ({
+    type: PRINT_PDF_INFOS,
+    id,
+    layer
 });
 
 export const loadFicheInfos = (ficheInfos) => ({
@@ -251,4 +266,79 @@ export const setTiersFilter = (id, filter) => ({
     type: SET_TIERS_FILTER,
     id,
     filter
+});
+
+export const toggleTabouSelectionTool = (selectionType) => ({
+    type: TOGGLE_TABOU_SELECTION,
+    selectionType
+});
+
+export const updateVectorTabouFeatures = (infos) => ({
+    type: UPDATE_TABOU_SELECTION,
+    infos
+});
+
+export const updateVectorTabouStyle = () => ({
+    type: UPDATE_TABOU_STYLE
+});
+
+export const setTabouSelectedFeature = (feature) => ({
+    type: SET_TABOU_SELECT_FEATURE,
+    feature
+});
+
+export const unsetTabouSelectedFeature = () => ({
+    type: UNSET_TABOU_SELECT_FEATUREE
+});
+
+export const cleanTabouSelection = () => ({
+    type: CLEAN_TABOU_SELECTION
+});
+
+export const tabouChangeFeatures = (data) => ({
+    type: TABOU_CHANGE_FEATURES,
+    data
+});
+
+export const cleanTabouInfos = () => ({
+    type: CLEAN_TABOU_INFOS
+});
+
+export const displayTabouMarker = (point) => ({
+    type: DISPLAY_TABOU_MARKER,
+    point
+});
+
+export const getDocuments = (load = true, page = 0, text = "") => ({
+    type: GET_TABOU_DOCUMENTS,
+    load,
+    page,
+    text
+});
+
+export const setDocuments = (documents) => ({
+    type: SET_TABOU_DOCUMENTS,
+    documents
+});
+
+export const downloadDocument = (idDoc) => ({
+    type: TABOU_DOWNLOAD_DOC,
+    idDoc
+});
+
+export const deleteDocument = (idDoc) => ({
+    type: DELETE_TABOU_DOCUMENTS,
+    idDoc
+});
+
+export const addTabouDocument = (file, metadata) => ({
+    type: ADD_TABOU_DOC,
+    file,
+    metadata
+});
+
+export const modifyDocument = (file, metadata) => ({
+    type: MODIFY_TABOU_DOC,
+    file,
+    metadata
 });
