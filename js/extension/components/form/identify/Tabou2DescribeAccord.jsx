@@ -1,10 +1,12 @@
 import React, {useEffect, useState } from "react";
 import { isEmpty, isEqual, pick, has, get } from "lodash";
-import { Col, Row, FormControl, Grid, ControlLabel } from "react-bootstrap";
+import { Col, Row, FormControl, Grid, ControlLabel, Button } from "react-bootstrap";
 import Tabou2Combo from '@js/extension/components/form/Tabou2Combo';
 import { getRequestApi } from "@js/extension/api/requests";
 import "@js/extension/css/identify.css";
 import Message from "@mapstore/components/I18N/Message";
+
+import Tabou2VocationModal from "../../tabou2IdentifyPanel/modals/Tabou2VocationModal";
 
 /**
  * Accordion to display info for describe panel section - only for feature linked with id tabou
@@ -17,6 +19,7 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
     const [values, setValues] = useState({});
     const [fields, setFields] = useState([]);
     const [required, setRequired] = useState({});
+    const [opened, setOpened] = useState(false);
 
     const getFields = () => [{
         name: "operation",
@@ -60,7 +63,7 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
         label: "tabou2.identify.accordions.vocation",
         field: "vocation.libelle",
         layers: ["layerSA", "layerOA"],
-        type: "combo",
+        type: "vocation",
         apiLabel: "libelle",
         api: "vocations",
         placeholder: "tabou2.identify.accordions.vocationEmpty",
@@ -107,6 +110,7 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
     };
 
     const allowChange = props.authent.isContrib || props.authent.isReferent;
+
     return (
         <Grid style={{ width: "100%" }} className={""}>
             {
@@ -160,6 +164,18 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
                                         }}
                                     />
                                 ) : null
+                            }{
+                                item.type === "vocation" && (
+                                    <>
+                                        <Button
+                                            tooltip="Vocations"
+                                            disabled={false}
+                                            onClick={() => setOpened(true)}>
+                                            {props.i18n(props.messages, "tabou2.vocation.btnLabel")}
+                                        </Button>
+                                        <Tabou2VocationModal opened={opened} setOpened={() => setOpened(false)}/>
+                                    </>
+                                )
                             }
                         </Col>
                     </Row>

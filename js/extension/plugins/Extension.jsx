@@ -28,6 +28,7 @@ import { updateTabou2Logs, getEventsElements } from "../epics/logs";
 import { listTabouDocuments, downloadTabouDocuments, deleteTabouDocuments, addNewDocument, updateDocument } from "../epics/documents";
 import { showNotification } from "../epics/common";
 import { setTbarPosition, initMap, closeTabouExt } from "../epics/setup";
+import "@js/extension/css/tabou.css";
 
 import { CONTROL_NAME, PANEL_SIZE } from '../constants';
 

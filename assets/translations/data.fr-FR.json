@@ -266,6 +266,10 @@
         "isPrivate": "Entreprise du secteur privé",
         "save": "Enregistrer",
         "exit": "Fermer"
+      },
+      "vocation": {
+        "title": "Vocation - Champs attributaires",
+        "btnLabel": "Voir les attributs"
       }
     }
   }

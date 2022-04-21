@@ -1,0 +1,27 @@
+.voc-tabs {
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+.voc-tabs > .nav-tabs > li.active > a {
+    background-color: #f1efefe7;
+    color: rgb(26, 157, 183);
+    font-weight: bold;
+    border-bottom: 3px solid rgb(26, 157, 183);
+    padding-right: 25px;
+    padding-left: 25px;
+    border-top: 0px solid transparent;
+    border-left: 0px solid transparent;
+    border-right: 0px solid transparent;
+}
+
+.voc-selector{
+    display: flex;
+    margin-left: 50px;
+    padding: 2%;
+    align-items: center;
+}
+
+.voc-selector label {
+    margin-right: 10px;
+}
