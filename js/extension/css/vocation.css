@@ -25,3 +25,7 @@
 .voc-selector label {
     margin-right: 10px;
 }
+.contribPaddOap-style .panel-footer {
+    text-align: end;
+    margin-top: 15px;
+}

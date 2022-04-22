@@ -256,7 +256,7 @@ export function getOperationProgrammes(id) {
  * @returns {object} - axios response
  */
 export function getOperation(id) {
-    return axios.get(`${baseURL}/operations/${id}`);
+    return axios.get(`${baseURL}/v2/operations/${id}`);
 }
 /**
  * Get secteur by id tabou. Secteur is an operation with a specific status.
