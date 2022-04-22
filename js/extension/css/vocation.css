@@ -29,3 +29,7 @@
     text-align: end;
     margin-top: 15px;
 }
+
+#vocation-tabs ul {
+    margin-bottom: 5px;
+}

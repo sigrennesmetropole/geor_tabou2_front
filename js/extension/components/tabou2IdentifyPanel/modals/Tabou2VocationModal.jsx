@@ -8,7 +8,8 @@ import Activites from "../../form/vocations/activites/Activites";
 export default function Tabou2VocationModal({
     operation,
     opened,
-    setOpened
+    close,
+    update
 }) {
     const vocations = [
         "Mixte",
@@ -24,7 +25,7 @@ export default function Tabou2VocationModal({
             show={opened}
             showClose
             buttons={[]}
-            onClose={() => setOpened(false)}
+            onClose={() => close()}
             size="lg">
             <Col xs={12}>
                 <div className="voc-selector">
@@ -43,7 +44,7 @@ export default function Tabou2VocationModal({
                         className="voc-tab-select"
                         key={1} eventKey={1} title={vocation}
                     >
-                        {vocation === "Activités" && (<Activites operation={operation} />)}
+                        {vocation === "Activités" && (<Activites operation={operation} close={close} update={update}/>)}
                     </Tab>
                 </Tabs>
             </Col>

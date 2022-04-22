@@ -6,7 +6,13 @@ import ContributionPaddOap from './ContributionPaddOap';
 import CompositionProgrammation from './CompositionProgrammation';
 import ProgrammationLogements from './ProgrammationLogements';
 
-export default function Activites({operation}) {
+export default function Activites({ operation, update = () => { }, close = () => { } }) {
+    /**
+     * TODO:
+     * - Dans l'epic de recup des données :
+     *      1. appel GET pour récupérer tous les id infoProgrammation
+     *      2. appel GET pour récupérer tous les id contributions
+     */
     const tabs = [{
         key: 0,
         tab: "Composition"
@@ -22,8 +28,10 @@ export default function Activites({operation}) {
     }];
     const subFormProps = {
         operation: operation,
-        owner: {isReferent: true}
-    }
+        owner: { isReferent: true },
+        update: update,
+        close: close
+    };
     return (
         <Row>
             <Col xs={12}>

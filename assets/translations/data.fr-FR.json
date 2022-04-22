@@ -269,7 +269,9 @@
       },
       "vocation": {
         "title": "Vocation - Champs attributaires",
-        "btnLabel": "Voir les attributs"
+        "btnLabel": "Voir les attributs",
+        "changeSuccess": "Modifications sauvegardées !",
+        "changeFail": "Modifications Echouées !"
       }
     }
   }

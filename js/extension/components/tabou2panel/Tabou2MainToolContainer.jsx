@@ -45,7 +45,8 @@ import {
     displayMsg,
     displayPASAByOA,
     resetSearchFilters,
-    setTiersFilter
+    setTiersFilter,
+    updateOperation
 } from "@js/extension/actions/tabou2";
 
 function toolContainer({...props }) {
@@ -185,6 +186,7 @@ export default connect(
         displayMsg: displayMsg,
         displayPASAByOA: displayPASAByOA,
         resetSearchFilters: resetSearchFilters,
-        setTiersFilter: setTiersFilter
+        setTiersFilter: setTiersFilter,
+        updateOperation: updateOperation
     }
 )(toolContainer);

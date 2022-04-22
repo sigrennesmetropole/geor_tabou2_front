@@ -356,3 +356,17 @@ export function updateDocumentContent(type, id, docId, file) {
 export function searchDocumentsTypes(text) {
     return axios.get(`${baseURL}/types-documents`, {params: {libelleTypeDocument: `*${text}*`, asc: true}}).then(( data ) => data.data);
 }
+
+/**
+ * Autocomplete vocaitons-za combo
+ * @param {string} text - string to search
+ * @returns {object} - autocompletion result
+ */
+export function searchVocationZa(text) {
+    return axios.get(`${baseURL}/vocations-za`, { params: {libelle: `*${text}*`, asc: true}}).then(({ data }) => data);
+}
+export function getVocationZa() {
+    return axios.get(`${baseURL}/vocations-za`, { params: { asc: true}}).then(({ data }) => data);
+}
+
+export const changeOperation = (operation) => axios.put(`${baseURL}/v2/operations`, operation);

@@ -174,7 +174,7 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
                                             onClick={() => setOpened(true)}>
                                             {props.i18n(props.messages, "tabou2.vocation.btnLabel")}
                                         </Button>
-                                        <Tabou2VocationModal operation={operation} programme opened={opened} setOpened={() => setOpened(false)}/>
+                                        <Tabou2VocationModal operation={operation} update={props.updateOperation} programme opened={opened} close={() => setOpened(false)}/>
                                     </>
                                 )
                             }
