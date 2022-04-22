@@ -3,6 +3,9 @@ import Message from "@mapstore/components/I18N/Message";
 import { has, get, isEmpty, find, set } from "lodash";
 import { Col, Row, FormControl, Grid, ControlLabel, Button, Panel } from "react-bootstrap";
 import "@js/extension/css/vocation.css";
+import { findValueInfoProg, changeInfoProg } from "./utils";
+import FooterButtons from '../common/FooterButtons';
+
 
 export default function ContributionPaddOap({
     operation = {},
@@ -12,20 +15,6 @@ export default function ContributionPaddOap({
     if (isEmpty(operation)) return "Aucune Opération à afficher !";
     const [values, setValues] = useState(operation);
 
-    const findValueInfoProg = (code) => {
-        console.log(find(values.informationsProgrammation, ["typeProgrammation.code", code]));
-        return find(values.informationsProgrammation, ["typeProgrammation.code", code]);
-    };
-
-    const changeInfoProg = (code, value) => {
-        const findThisCode = findValueInfoProg(code);
-        if (!findThisCode) return;
-        const infosProg = values.informationsProgrammation;
-        const newInfosProg = infosProg.filter(f => f.typeProgrammation.code !== code);
-        newInfosProg.push({ ...findValueInfoProg(code), description: value });
-        setValues({ ...values, informationsProgrammation: newInfosProg });
-    };
-
     const getFields = () => [
         {
             name: "test",
@@ -33,8 +22,8 @@ export default function ContributionPaddOap({
             field: "description",
             type: "text",
             layers: [],
-            source: () => findValueInfoProg("CODE_TYPE_PROG_1_TBR"),
-            change: (value) => changeInfoProg("CODE_TYPE_PROG_1_TBR", value),
+            source: () => findValueInfoProg("CODE_TYPE_PROG_1_TBR", values),
+            change: (value) => setValues(changeInfoProg("CODE_TYPE_PROG_1_TBR", value, values)),
             code: "CODE_TYPE_PROG_1_TBR",
             readOnly: false
         },
@@ -44,8 +33,8 @@ export default function ContributionPaddOap({
             field: "description",
             type: "text",
             layers: [],
-            source: () => findValueInfoProg("Enjeux"),
-            change: (value) => changeInfoProg("Enjeux", value),
+            source: () => findValueInfoProg("Enjeux", values),
+            change: (value) => setValues(changeInfoProg("Enjeux", value, values)),
             code: "Enjeux",
             readOnly: false
         },
@@ -55,8 +44,8 @@ export default function ContributionPaddOap({
             field: "description",
             type: "text",
             layers: [],
-            source: () => findValueInfoProg("Traitee"),
-            change: (value) => changeInfoProg("Traitee", value),
+            source: () => findValueInfoProg("Traitee", values),
+            change: (value) => setValues(changeInfoProg("Traitee", value, values)),
             code: "Traitee",
             readOnly: false
         },
@@ -66,8 +55,8 @@ export default function ContributionPaddOap({
             field: "description",
             type: "text",
             layers: [],
-            source: () => findValueInfoProg("Avenir"),
-            change: (value) => changeInfoProg("Avenir", value),
+            source: () => findValueInfoProg("Avenir", values),
+            change: (value) => setValues(changeInfoProg("Avenir", value, values)),
             code: "Avenir",
             readOnly: false
         }
@@ -80,30 +69,7 @@ export default function ContributionPaddOap({
     return (
         <Panel
             className="contribPaddOap-style"
-            footer={(
-                <span>
-                    <Button
-                        tooltip="Fermer"
-                        disabled={false}
-                        style={{marginRight: "2px"}}
-                        onClick={() => close(values)}>
-                        Retour à la fiche
-                    </Button>
-                    <Button
-                        tooltip="Valeurs par défaut"
-                        disabled={false}
-                        style={{marginRight: "2px"}}
-                        onClick={() => reset(values)}>
-                        Réinitialiser
-                    </Button>
-                    <Button
-                        tooltip="Sauvegarder les modifications"
-                        disabled={false}
-                        onClick={() => save(values)}>
-                        Valider
-                    </Button>
-                </span>
-            )}
+            footer={<FooterButtons save={save} close={close} reset={reset}/>}
         >
             <Row className="attributeInfos">
                 <h4 style={{ marginBottom: "25px" }}>

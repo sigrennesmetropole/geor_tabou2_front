@@ -1,58 +1,14 @@
-export function getProgOperation = (values, dataSource) => [
-    {
-        name: "operation",
-        label: "Opération",
-        field: "operation",
-        type: "text",
-        layers: ["layerOA", "layerSA"],
-        source: has(values, "operation") ? values : dataSource,
-        readOnly: false
-    }
-];
-export function getProgLogements = (values, dataSource) => [
-    {
-        name: "operation",
-        label: "Programmation activités",
-        field: "operation",
-        type: "text",
-        layers: ["layerOA", "layerSA"],
-        source: has(values, "operation") ? values : dataSource,
-        readOnly: false
-    },
-    {
-        name: "operation",
-        label: "Opération",
-        field: "operation",
-        type: "text",
-        layers: ["layerOA", "layerSA"],
-        source: has(values, "operation") ? values : dataSource,
-        readOnly: false
-    },
-    {
-        name: "operation",
-        label: "Opération",
-        field: "operation",
-        type: "text",
-        layers: ["layerOA", "layerSA"],
-        source: has(values, "operation") ? values : dataSource,
-        readOnly: false
-    },
-    {
-        name: "operation",
-        label: "Opération",
-        field: "operation",
-        type: "text",
-        layers: ["layerOA", "layerSA"],
-        source: has(values, "operation") ? values : dataSource,
-        readOnly: false
-    },
-    {
-        name: "operation",
-        label: "Opération",
-        field: "operation",
-        type: "text",
-        layers: ["layerOA", "layerSA"],
-        source: has(values, "operation") ? values : dataSource,
-        readOnly: false
-    }
-];
+import { find } from "lodash";
+export const findValueInfoProg = (code, values) => {
+    return find(values.informationsProgrammation, ["typeProgrammation.code", code]);
+};
+
+export const changeInfoProg = (code, value, values) => {
+    const findThisCode = findValueInfoProg(code, values);
+    if (!findThisCode) return values;
+    const infosProg = values.informationsProgrammation;
+    const newInfosProg = infosProg.filter(f => f.typeProgrammation.code !== code);
+    newInfosProg.push({ ...findThisCode, description: value });
+    return { ...values, informationsProgrammation: newInfosProg };
+};
+
