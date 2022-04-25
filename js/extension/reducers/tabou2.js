@@ -25,8 +25,9 @@ import {
     CLEAN_TABOU_SELECTION,
     CLEAN_TABOU_INFOS,
     TABOU_CHANGE_FEATURES,
-    SET_TABOU_DOCUMENTS
-} from '@ext/actions/tabou2';
+    SET_TABOU_DOCUMENTS,
+    SET_TABOU_VOCATIONS_INFOS
+} from '../actions/tabou2';
 
 const initialState = {
     activeTab: "search",
@@ -52,7 +53,9 @@ const initialState = {
         layerPA: [],
         layerSA: []
     }],
-    featureSelected: undefined
+    featureSelected: undefined,
+    typesContribution: [],
+    typesProgrammation: []
 };
 
 export default function tabou2(state = initialState, action) {
@@ -135,6 +138,8 @@ export default function tabou2(state = initialState, action) {
         return set("features", [], state);
     case SET_TABOU_DOCUMENTS:
         return set("documents", action?.documents || {}, state);
+    case SET_TABOU_VOCATIONS_INFOS:
+        return set(action.key, action.data || {}, state);
     default:
         return state;
     }

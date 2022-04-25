@@ -9,8 +9,9 @@ import {
     loading,
     mapTiers,
     reloadLayer,
-    displayFeature
-} from '@ext/actions/tabou2';
+    displayFeature,
+    getTabouVocationsInfos
+} from '../actions/tabou2';
 import { getMessageById } from "@mapstore/utils/LocaleUtils";
 
 import {
@@ -89,7 +90,20 @@ export function getSelectionInfos(action$, store) {
                             tiers: tiers,
                             mapFeature: mapFeature
                         };
-                        return Rx.Observable.of(loadFicheInfos(infos));
+                        return Rx.Observable.of(loadFicheInfos(infos))
+                            .concat(Rx.Observable.of(getTabouVocationsInfos(searchItem?.id)));
+                        // return Rx.Observable.defer(() => getTabouVocationsInfos(searchItem?.id))
+                        //     .catch(e => {
+                        //         console.log("Error on get getTabouVocationsInfos data request");
+                        //         console.log(e);
+                        //         return Rx.Observable.of({ elements: [] });
+                        //     })
+                        //     .switchMap((r) => {
+                        //         console.log(r);
+                        //         return Rx.Observable.of(
+                        //             loadFicheInfos(infos)
+                        //         );
+                        //     });
                     });
             } else {
                 secondObservable$ = Rx.Observable.defer(() => getOperation(searchItem.operationId))

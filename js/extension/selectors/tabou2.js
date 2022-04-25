@@ -143,7 +143,7 @@ export function getAuthInfos(state) {
     return {
         user: userSelector(state)?.name ?? "",
         isAdmin: groupNames.includes("MAPSTORE_ADMIN"),
-        isReferent: groupNames.includes("EL_APPLIS_TABOU_REFERENT"),
+        isReferent: true, // groupNames.includes("EL_APPLIS_TABOU_REFERENT"),
         isContrib: groupNames.includes("EL_APPLIS_TABOU_CONTRIB"),
         isConsult: groupNames.includes("EL_APPLIS_TABOU_CONSULT")
     };
@@ -251,4 +251,11 @@ export function getInfos(state) {
 
 export function getFeatureDocuments(state) {
     return state.tabou2?.documents;
+}
+
+export function getVocationsActivitesInfos(state) {
+    return {
+        typesContribution: state.tabou2.typesContribution,
+        typeProgrammation: state.tabou2.typesProgrammation
+    };
 }

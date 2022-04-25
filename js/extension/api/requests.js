@@ -370,3 +370,7 @@ export function getVocationZa() {
 }
 
 export const changeOperation = (operation) => axios.put(`${baseURL}/v2/operations`, operation);
+
+export const getTypesProgrammationId = () => axios.get(`${baseURL}/types-programmations`, { params: { asc: true } });
+
+export const getTypesContributionsId = () => axios.get(`${baseURL}/types-contributions`, { params: { asc: true } });

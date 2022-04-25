@@ -27,7 +27,7 @@ import { updateTabou2Tier, addCreateTabou2Tier, getTiersElements, associateTabou
 import { updateTabou2Logs, getEventsElements } from "../epics/logs";
 import { listTabouDocuments, downloadTabouDocuments, deleteTabouDocuments, addNewDocument, updateDocument } from "../epics/documents";
 import { showNotification } from "../epics/common";
-import { onUpdateOperation } from "../epics/vocations";
+import { onUpdateOperation, onGetInfos } from "../epics/vocations";
 import { setTbarPosition, initMap, closeTabouExt } from "../epics/setup";
 import "@js/extension/css/tabou.css";
 
@@ -119,7 +119,8 @@ export default {
         deleteTabouDocuments: deleteTabouDocuments,
         addNewDocument: addNewDocument,
         updateDocument: updateDocument,
-        onUpdateOperation: onUpdateOperation
+        onUpdateOperation: onUpdateOperation,
+        onGetInfos: onGetInfos
     },
     containers: {
         Toolbar: {
