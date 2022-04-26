@@ -15,8 +15,6 @@ import Tabou2VocationModal from "../../tabou2IdentifyPanel/modals/Tabou2Vocation
  */
 export default function Tabou2DescribeAccord({ initialItem, programme, operation, mapFeature, ...props }) {
     let layer = props?.selection?.layer;
-    console.log(operation);
-
     const [values, setValues] = useState({});
     const [fields, setFields] = useState([]);
     const [required, setRequired] = useState({});
@@ -174,7 +172,13 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
                                             onClick={() => setOpened(true)}>
                                             {props.i18n(props.messages, "tabou2.vocation.btnLabel")}
                                         </Button>
-                                        <Tabou2VocationModal operation={operation} update={props.updateOperation} programme opened={opened} close={() => setOpened(false)}/>
+                                        <Tabou2VocationModal
+                                            operation={operation}
+                                            update={props.updateOperation}
+                                            opened={opened}
+                                            close={() => setOpened(false)}
+                                            {...props.vocationsInfos}
+                                        />
                                     </>
                                 )
                             }

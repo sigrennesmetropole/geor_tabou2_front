@@ -1,33 +1,43 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import Message from "@mapstore/components/I18N/Message";
-import { has, get, isEmpty, find, set } from "lodash";
-import { Col, Row, FormControl, Checkbox, ControlLabel, Button, Panel } from "react-bootstrap";
+import { get, isEmpty } from "lodash";
+import { Col, Row, FormControl, Checkbox, ControlLabel, Panel } from "react-bootstrap";
 import "@js/extension/css/vocation.css";
 import "@js/extension/css/tabou.css";
-import { findValueByType, changeByType } from "./utils";
-import FooterButtons from '../common/FooterButtons';
-import SearchCombo from '@js/extension/components/form/SearchCombo';
+import { findValueByType, changeByType, getCodeIdByCode } from "./utils";
 import Tabou2Combo from '@js/extension/components/form/Tabou2Combo';
-import { searchVocationZa, getVocationZa } from "@js/extension/api/requests";
+import { getVocationZa } from "@js/extension/api/requests";
 export default function ProgrammationLogements({
     operation = {},
     owner = {},
     layer = "",
-    update = () => {},
-    close = () => {}
+    typesProgrammation,
+    setValues = () => {},
+    values
 }) {
     if (isEmpty(operation)) return "Aucune Opération à afficher !";
-    const [values, setValues] = useState(operation);
-
+    useEffect(() => {
+        return;
+    }, [values.informationsProgrammation, values.contributions]);
     const getFields = () => [
         {
-            name: "activités",
+            name: "activites",
             label: "Programmation activités",
-            field: "Activites",
+            field: "description",
             type: "text",
             layers: [],
-            source: () => findValueByType("Activites", values, "informationsProgrammation"),
-            change: (value) => setValues(changeByType("Activites", value, values, "informationsProgrammation")),
+            source: () => findValueByType(getCodeIdByCode(typesProgrammation, "Activites"), values, "informationsProgrammation"),
+            change: (value) => {
+                setValues(
+                    changeByType(
+                        getCodeIdByCode(typesProgrammation, "Activites"),
+                        value,
+                        values,
+                        "informationsProgrammation",
+                        getCodeIdByCode(typesProgrammation, "Activites")
+                    )
+                );
+            },
             code: "Activites",
             readOnly: false
         },
@@ -81,7 +91,6 @@ export default function ProgrammationLogements({
     return (
         <Panel
             className="contribPaddOap-style"
-            footer={<FooterButtons save={() => update(values)} close={close} reset={() => setValues(operation)} />}
         >
             <Row className="attributeInfos">
                 <h4 style={{ marginBottom: "25px" }}>

@@ -256,6 +256,6 @@ export function getFeatureDocuments(state) {
 export function getVocationsActivitesInfos(state) {
     return {
         typesContribution: state.tabou2.typesContribution,
-        typeProgrammation: state.tabou2.typesProgrammation
+        typesProgrammation: state.tabou2.typesProgrammation
     };
 }

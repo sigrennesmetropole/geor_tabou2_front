@@ -1,14 +1,14 @@
 import { find } from "lodash";
-export const findValueByType = (code, values, type) => {
+export const findValueByType = (codeId, values, type) => {
     const field = type === "contributions" ? "typeContribution" : "typeProgrammation";
-    return find(values[type], [`${field}.code`, code]);
+    return find(values[type], [`${field}.id`, codeId]);
 };
 
-export const changeByType = (code, value = "", values, type, codeId) => {
+export const changeByType = (codeId, value = "", values, type) => {
     const field = type === "contributions" ? "typeContribution" : "typeProgrammation";
     const infos = values[type];
-    const newInfos = infos.filter(f => f[field].code !== code);
-    let findThisCode = findValueByType(code, values, type);
+    const newInfos = infos.filter(f => f[field].id !== codeId);
+    let findThisCode = findValueByType(codeId, values, type);
     // add new one if not already exists
     if (!findThisCode) {
         findThisCode = {
@@ -20,7 +20,6 @@ export const changeByType = (code, value = "", values, type, codeId) => {
     return { ...values, [type]: newInfos };
 };
 
-export const addNewType = (value, field, id) => ({
-    description: value,
-    [field]: {id: id}
-});
+export const getCodeIdByCode = (ids, code) => {
+    return ids.filter(el => el.code === code)[0].id;
+};

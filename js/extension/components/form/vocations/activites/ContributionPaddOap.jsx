@@ -1,22 +1,23 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import Message from "@mapstore/components/I18N/Message";
-import { has, get, isEmpty, find, set } from "lodash";
-import { Col, Row, FormControl, Grid, ControlLabel, Button, Panel } from "react-bootstrap";
+import { get, isEmpty } from "lodash";
+import { Col, Row, FormControl, ControlLabel, Panel } from "react-bootstrap";
 import "@js/extension/css/vocation.css";
-import { findValueByType, changeByType } from "./utils";
-import FooterButtons from '../common/FooterButtons';
+import { findValueByType, changeByType, getCodeIdByCode } from "./utils";
 
 
 export default function ContributionPaddOap({
     operation = {},
     owner = {},
     layer = "",
-    update = () => {},
-    close = () => {}
+    typesContribution,
+    setValues = () => {},
+    values
 }) {
     if (isEmpty(operation)) return "Aucune Opération à afficher !";
-    const [values, setValues] = useState(operation);
-
+    useEffect(() => {
+        return;
+    }, [values.informationsProgrammation, values.contributions]);
     const getFields = () => [
         {
             name: "enjeux",
@@ -24,8 +25,15 @@ export default function ContributionPaddOap({
             field: "description",
             type: "text",
             layers: [],
-            source: () => findValueByType("CONTRIBUTION_ENJEUX", values, "contributions"),
-            change: (value) => setValues(changeByType("CONTRIBUTION_ENJEUX", value, values, "contributions")),
+            source: () => findValueByType(getCodeIdByCode(typesContribution, "CONTRIBUTION_ENJEUX"), values, "contributions"),
+            change: (value) => setValues(
+                changeByType(
+                    getCodeIdByCode(typesContribution, "CONTRIBUTION_ENJEUX"),
+                    value,
+                    values,
+                    "contributions"
+                )
+            ),
             code: "CONTRIBUTION_ENJEUX",
             readOnly: false
         },
@@ -35,8 +43,15 @@ export default function ContributionPaddOap({
             field: "description",
             type: "text",
             layers: [],
-            source: () => findValueByType("CONTRIBUTION_TRAITEE", values, "contributions"),
-            change: (value) => setValues(changeByType("CONTRIBUTION_TRAITEE", value, values, "contributions")),
+            source: () => findValueByType(getCodeIdByCode(typesContribution, "CONTRIBUTION_TRAITEE"), values, "contributions"),
+            change: (value) => setValues(
+                changeByType(
+                    getCodeIdByCode(typesContribution, "CONTRIBUTION_TRAITEE"),
+                    value,
+                    values,
+                    "contributions"
+                )
+            ),
             code: "CONTRIBUTION_TRAITEE",
             readOnly: false
         },
@@ -46,8 +61,15 @@ export default function ContributionPaddOap({
             field: "description",
             type: "text",
             layers: [],
-            source: () => findValueByType("CONTRIBUTION_AVENIR", values, "contributions"),
-            change: (value) => setValues(changeByType("CONTRIBUTION_AVENIR", value, values, "contributions")),
+            source: () => findValueByType(getCodeIdByCode(typesContribution, "CONTRIBUTION_AVENIR"), values, "contributions"),
+            change: (value) => setValues(
+                changeByType(
+                    getCodeIdByCode(typesContribution, "CONTRIBUTION_AVENIR"),
+                    value,
+                    values,
+                    "contributions"
+                )
+            ),
             code: "CONTRIBUTION_AVENIR",
             readOnly: false
         }
@@ -57,7 +79,6 @@ export default function ContributionPaddOap({
     return (
         <Panel
             className="contribPaddOap-style"
-            footer={<FooterButtons save={() => update(values)} close={close} reset={() => setValues(operation)} />}
         >
             <Row className="attributeInfos">
                 <h4 style={{ marginBottom: "25px" }}>

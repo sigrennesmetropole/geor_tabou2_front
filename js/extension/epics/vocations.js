@@ -41,7 +41,7 @@ export const onGetInfos = (action$, store) =>
         .switchMap(({ id }) => {
             return Rx.Observable.from([
                 { name: "typesContribution", api: getTypesContributionsId },
-                { name: "TypesProgrammation", api: getTypesProgrammationId }
+                { name: "typesProgrammation", api: getTypesProgrammationId }
             ]).map(r =>
                 Rx.Observable.defer(() => r.api(id))
                     .catch(e => {
@@ -49,7 +49,7 @@ export const onGetInfos = (action$, store) =>
                         console.log(e);
                         return Rx.Observable.of({ data: [] });
                     })
-                    .switchMap(({data}) => {
+                    .switchMap(({ data }) => {
                         return Rx.Observable.of({...r, data: data?.elements || [] });
                     })
             ).toArray().switchMap((requestArray) => {

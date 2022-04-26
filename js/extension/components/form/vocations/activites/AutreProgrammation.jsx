@@ -1,22 +1,22 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import Message from "@mapstore/components/I18N/Message";
-import { has, get, isEmpty, find, set } from "lodash";
-import { Col, Row, FormControl, Grid, ControlLabel, Button, Panel } from "react-bootstrap";
+import { get, isEmpty } from "lodash";
+import { Col, Row, FormControl, Panel } from "react-bootstrap";
 import "@js/extension/css/vocation.css";
-import { findValueByType, changeByType } from "./utils";
-import FooterButtons from '../common/FooterButtons';
-
+import { findValueByType, changeByType, getCodeIdByCode } from "./utils";
 
 export default function AutreProgrammation({
     operation = {},
     owner = {},
     layer = "",
-    update = () => {},
-    close = () => {}
+    typesProgrammation,
+    setValues = () => { },
+    values
 }) {
     if (isEmpty(operation)) return "Aucune Opération à afficher !";
-    const [values, setValues] = useState(operation);
-
+    useEffect(() => {
+        return;
+    }, [values.informationsProgrammation, values.contributions]);
     const getFields = () => [
         {
             name: "equipement",
@@ -24,8 +24,15 @@ export default function AutreProgrammation({
             field: "description",
             type: "text",
             layers: [],
-            source: () => findValueByType("Equipement", values, "informationsProgrammation"),
-            change: (value) => setValues(changeByType("Equipement", value, values, "informationsProgrammation")),
+            source: () => findValueByType(getCodeIdByCode(typesProgrammation, "Equipement"), values, "informationsProgrammation"),
+            change: (value) => setValues(
+                changeByType(
+                    getCodeIdByCode(typesProgrammation, "Equipement"),
+                    value,
+                    values,
+                    "informationsProgrammation"
+                )
+            ),
             code: "Equipement",
             readOnly: false
         },
@@ -35,8 +42,15 @@ export default function AutreProgrammation({
             field: "description",
             type: "text",
             layers: [],
-            source: () => findValueByType("Autres", values, "informationsProgrammation"),
-            change: (value) => setValues(changeByType("Autres", value, values, "informationsProgrammation")),
+            source: () => findValueByType(getCodeIdByCode(typesProgrammation, "Autres"), values, "informationsProgrammation"),
+            change: (value) => setValues(
+                changeByType(
+                    getCodeIdByCode(typesProgrammation, "Autres"),
+                    value,
+                    values,
+                    "informationsProgrammation"
+                )
+            ),
             code: "Autres",
             readOnly: false
         }
@@ -46,7 +60,6 @@ export default function AutreProgrammation({
     return (
         <Panel
             className="contribPaddOap-style"
-            footer={<FooterButtons save={() => update(values)} close={close} reset={() => setValues(operation)} />}
         >
             <Row className="attributeInfos">
                 <h4 style={{ marginBottom: "25px" }}>

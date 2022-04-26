@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import Message from "@mapstore/components/I18N/Message";
 import { Col, Tabs, Tab, Row } from 'react-bootstrap';
 import AutreProgrammation from './AutreProgrammation';
@@ -6,13 +6,7 @@ import ContributionPaddOap from './ContributionPaddOap';
 import CompositionProgrammation from './CompositionProgrammation';
 import ProgrammationLogements from './ProgrammationLogements';
 
-export default function Activites({ operation, update = () => { }, close = () => { } }) {
-    /**
-     * TODO:
-     * - Dans l'epic de recup des données :
-     *      1. appel GET pour récupérer tous les id infoProgrammation
-     *      2. appel GET pour récupérer tous les id contributions
-     */
+export default function Activites({...props}) {
     const tabs = [{
         key: 0,
         tab: "Composition"
@@ -26,11 +20,13 @@ export default function Activites({ operation, update = () => { }, close = () =>
         key: 3,
         tab: "Contribution PADD, OAP"
     }];
+    useEffect(() => {
+        return;
+    }, [props.values.informationsProgrammation, props.values.contributions]);
+
     const subFormProps = {
-        operation: operation,
-        owner: { isReferent: true },
-        update: update,
-        close: close
+        ... props,
+        owner: { isReferent: true }
     };
     return (
         <Row>

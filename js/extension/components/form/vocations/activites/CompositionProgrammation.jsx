@@ -1,20 +1,20 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import Message from "@mapstore/components/I18N/Message";
-import { has, get, isEmpty, find, set } from "lodash";
-import { Col, Row, FormControl, Grid, ControlLabel, Button, Panel } from "react-bootstrap";
+import { get, isEmpty } from "lodash";
+import { Col, Row, FormControl, ControlLabel, Panel } from "react-bootstrap";
 import "@js/extension/css/vocation.css";
-import FooterButtons from '../common/FooterButtons';
 
 export default function AutreProgrammation({
     operation = {},
     owner = {},
     layer = "",
-    update = () => { },
-    close = () => {}
+    setValues = () => {},
+    values
 }) {
     if (isEmpty(operation)) return "Aucune Opération à afficher !";
-    const [values, setValues] = useState(operation);
-
+    useEffect(() => {
+        return;
+    }, [values.informationsProgrammation, values.contributions]);
     const getFields = () => [
         {
             name: "compositionProgrammation",
@@ -32,7 +32,6 @@ export default function AutreProgrammation({
     return (
         <Panel
             className="contribPaddOap-style"
-            footer={<FooterButtons save={() => update(values)} close={close} reset={() => setValues(operation)}/>}
         >
             <Row className="attributeInfos">
                 <h4 style={{ marginBottom: "25px" }}>
