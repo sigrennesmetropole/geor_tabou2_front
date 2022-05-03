@@ -92,6 +92,10 @@ export function getLayersName(state) {
 export function getSelection(state) {
     return state?.tabou2?.selectedFeature;
 }
+
+export function getSelectionPoint(state) {
+    return state.tabou2?.point || {};
+}
 /**
  * Get Selected layer from identify panel
  * @param {any} state
@@ -143,7 +147,8 @@ export function getAuthInfos(state) {
     return {
         user: userSelector(state)?.name ?? "",
         isAdmin: groupNames.includes("MAPSTORE_ADMIN"),
-        isReferent: true, // groupNames.includes("EL_APPLIS_TABOU_REFERENT"),
+        isReferent: true,
+        // isReferent: groupNames.includes("EL_APPLIS_TABOU_REFERENT"),
         isContrib: groupNames.includes("EL_APPLIS_TABOU_CONTRIB"),
         isConsult: groupNames.includes("EL_APPLIS_TABOU_CONSULT")
     };

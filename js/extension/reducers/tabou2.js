@@ -26,7 +26,8 @@ import {
     CLEAN_TABOU_INFOS,
     TABOU_CHANGE_FEATURES,
     SET_TABOU_DOCUMENTS,
-    SET_TABOU_VOCATIONS_INFOS
+    SET_TABOU_VOCATIONS_INFOS,
+    DISPLAY_TABOU_MARKER
 } from '../actions/tabou2';
 
 const initialState = {
@@ -105,6 +106,8 @@ export default function tabou2(state = initialState, action) {
     case LOAD_FICHE_INFOS :
         const { ficheInfos } = action;
         return set('ficheInfos', ficheInfos, state);
+    case DISPLAY_TABOU_MARKER:
+        return set('point', action.point, state);
     case LOADING: {
         let newValue = action.value;
         if (action.mode === 'count') {

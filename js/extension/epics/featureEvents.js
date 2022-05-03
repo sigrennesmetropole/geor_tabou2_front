@@ -10,9 +10,16 @@ import {
     mapTiers,
     reloadLayer,
     displayFeature,
-    getTabouVocationsInfos
+    getTabouVocationsInfos,
+    setSelectedFeature
 } from '../actions/tabou2';
 import { getMessageById } from "@mapstore/utils/LocaleUtils";
+
+import {
+    isTabou2Activate,
+    getSelection,
+    getInfos
+} from '../selectors/tabou2';
 
 import {
     getFeatureEvents,
@@ -25,7 +32,6 @@ import {
     createNewTabouFeature
 } from '../api/requests';
 
-import { getInfos, isTabou2Activate } from '@ext/selectors/tabou2';
 import { URL_ADD } from '@ext/constants';
 import { wrapStartStop } from "@mapstore/observables/epics";
 import { error, success } from "@mapstore/actions/notifications";
@@ -220,13 +226,21 @@ export function createTabouFeature(action$, store) {
             let messages = store.getState()?.locale.messages;
             let layerUrl = infos?.layerUrl || get(URL_ADD, action.layer.value);
             let layer = infos.layer || action.layer.name;
+            const selected = getSelection(store.getState());
             return Rx.Observable.defer(() => createNewTabouFeature(layerUrl, action.params))
                 .catch(e => {
                     console.log("Error to save feature change or feature creation");
                     console.log(e);
-                    return Rx.Observable.of(e);
+                    return Rx.Observable.of(e,
+                        reloadLayer(layer),
+                        setSelectedFeature({ ...selected, id: selected.id, feature: selected.feature })
+                    );
                 })
                 .switchMap((el) => {
+                    // create new feature with updated id tabou after new tabou item
+                    console.log(el);
+                    console.log(selected.feature);
+                    const newFeature = { ...selected.feature, properties: { ...selected.feature.properties, id: el.data.id } };
                     return el?.status !== 200 ? Rx.Observable.of(
                         // fail message
                         error({
@@ -240,7 +254,8 @@ export function createTabouFeature(action$, store) {
                             message: getMessageById(messages, "tabou2.infos.successAddFeature")
                         }),
                         reloadLayer(layer),
-                        displayFeature({ feature: el.data, layer: layer })
+                        displayFeature({ feature: el.data, layer: layer }),
+                        setSelectedFeature({...selected, id: selected.id, feature: newFeature})
                     );
                 });
         });
