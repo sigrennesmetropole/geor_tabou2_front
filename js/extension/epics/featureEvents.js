@@ -238,8 +238,6 @@ export function createTabouFeature(action$, store) {
                 })
                 .switchMap((el) => {
                     // create new feature with updated id tabou after new tabou item
-                    console.log(el);
-                    console.log(selected.feature);
                     const newFeature = { ...selected.feature, properties: { ...selected.feature.properties, id: el.data.id } };
                     return el?.status !== 200 ? Rx.Observable.of(
                         // fail message

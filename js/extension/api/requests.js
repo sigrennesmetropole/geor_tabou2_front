@@ -314,6 +314,7 @@ export function addDocument(url, id, file, metadata, type) {
     formData.append("fileToUpload", file);
     formData.append(idFieldName[type], id);
     formData.append("nom", metadata.nom);
+    formData.append("dateDocument", metadata.dateDocument);
     formData.append("libelleTypeDocument", metadata.libelleTypeDocument);
     /**
      * idField in the path will be delete - see issue #189

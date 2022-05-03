@@ -2,13 +2,16 @@ import Rx from 'rxjs';
 import { error, success } from "@mapstore/actions/notifications";
 import {getMessageById} from "@mapstore/utils/LocaleUtils";
 import { isTabou2Activate, getInfos, getPluginCfg } from "../selectors/tabou2";
+import { wrapStartStop } from "@mapstore/observables/epics";
 import { GET_TABOU_DOCUMENTS,
     setDocuments,
     TABOU_DOWNLOAD_DOC,
     DELETE_TABOU_DOCUMENTS,
     getDocuments,
     ADD_TABOU_DOC,
-    MODIFY_TABOU_DOC } from "../actions/tabou2";
+    MODIFY_TABOU_DOC,
+    loading
+} from "../actions/tabou2";
 import {
     getTabouDocuments,
     getDocumentContent,
@@ -29,6 +32,7 @@ export function listTabouDocuments(action$, store) {
     return action$.ofType(GET_TABOU_DOCUMENTS)
         .filter(() => isTabou2Activate(store.getState()))
         .switchMap((action) => {
+            let messages = store.getState()?.locale.messages;
             const resultByPage = getPluginCfg(store.getState()).apiCfg.documentsByPage;
             let { featureId, layerUrl } = getInfos(store.getState());
             let observable$ = Rx.Observable.empty();
@@ -46,7 +50,21 @@ export function listTabouDocuments(action$, store) {
             } else {
                 observable$ = Rx.Observable.of(setDocuments({elements: [], id: uuid.v1()}));
             }
-            return observable$;
+            return observable$.let(
+                wrapStartStop(
+                    [loading(true, "documents")],
+                    loading(false, "documents"),
+                    () => {
+                        return Rx.Observable.of(
+                            error({
+                                title: getMessageById(messages, "tabou2.infos.failApi"),
+                                message: getMessageById(messages, "tabou2.infos.failIdentify")
+                            }),
+                            loading(false, "documents")
+                        );
+                    }
+                )
+            );
         });
 }
 
