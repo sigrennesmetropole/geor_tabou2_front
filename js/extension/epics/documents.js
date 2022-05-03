@@ -30,9 +30,9 @@ export function listTabouDocuments(action$, store) {
         .filter(() => isTabou2Activate(store.getState()))
         .switchMap((action) => {
             const resultByPage = getPluginCfg(store.getState()).apiCfg.documentsByPage;
-            let {featureId, layerUrl} = getInfos(store.getState());
+            let { featureId, layerUrl } = getInfos(store.getState());
             let observable$ = Rx.Observable.empty();
-            if (action.load) {
+            if (action.load && featureId) {
                 observable$ = Rx.Observable.defer(() => getTabouDocuments(layerUrl, featureId, action.page, resultByPage, action.text))
                     .catch(e => {
                         console.log("Error - Get list of documents");
@@ -125,8 +125,8 @@ export function addNewDocument(action$, store) {
         .filter(() => isTabou2Activate(store.getState()))
         .switchMap((action) => {
             let messages = store.getState()?.locale.messages;
-            let {featureId, layerUrl} = getInfos(store.getState());
-            return Rx.Observable.defer(() => addDocument(layerUrl, featureId, action.file, action.metadata))
+            let { featureId, layerUrl, layerCfg } = getInfos(store.getState());
+            return Rx.Observable.defer(() => addDocument(layerUrl, featureId, action.file, action.metadata, layerCfg))
                 .catch(e => {
                     console.log("Error on create documents");
                     console.log(e);
@@ -157,7 +157,8 @@ export function updateDocument(action$, store) {
         .filter(() => isTabou2Activate(store.getState()))
         .switchMap((action) => {
             let messages = store.getState()?.locale.messages;
-            let {featureId, layerUrl} = getInfos(store.getState());
+            let { featureId, layerUrl } = getInfos(store.getState());
+            console.log("MODIFY_DOC");
             return Rx.Observable.defer(() => updateDocumentContent(layerUrl, featureId, action.metadata.id, action.file))
                 .catch(e => {
                     console.log("Error on create documents");

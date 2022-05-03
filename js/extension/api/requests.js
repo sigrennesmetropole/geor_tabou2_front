@@ -75,8 +75,8 @@ export function postRequestApi(name, apiCfg, body) {
  * @param {integer} id - id tabou
  * @return {object} - API response
  */
-export function getFeatureEvents(type, id) {
-    return axios.get(`${baseURL}/${type}/${id}/evenements`, null, {});
+export function getFeatureEvents(service, id) {
+    return axios.get(`${baseURL}/${service}/${id}/evenements`, null, {});
 }
 /**
  * Add event to tabou feature
@@ -85,8 +85,8 @@ export function getFeatureEvents(type, id) {
  * @param {object} event - event infos
  * @returns
  */
-export function addFeatureEvent(type, id, event) {
-    return axios.post(`${baseURL}/${type}/${id}/evenements`, event);
+export function addFeatureEvent(service, id, event) {
+    return axios.post(`${baseURL}/${service}/${id}/evenements`, event);
 }
 /**
  * Change event for a given tabou feature
@@ -95,8 +95,8 @@ export function addFeatureEvent(type, id, event) {
  * @param {object} event - event infos
  * @returns {any} - API response
  */
-export function changeFeatureEvent(type, id, event) {
-    return axios.put(`${baseURL}/${type}/${id}/evenements`, event);
+export function changeFeatureEvent(service, id, event) {
+    return axios.put(`${baseURL}/${service}/${id}/evenements`, event);
 }
 /**
  *
@@ -105,8 +105,8 @@ export function changeFeatureEvent(type, id, event) {
  * @param {integer} eventId - event id
  * @returns {object} - API response
  */
-export function deleteFeatureEvent(type, id, eventId) {
-    return axios.delete(`${baseURL}/${type}/${id}/evenements/${eventId}`);
+export function deleteFeatureEvent(service, id, eventId) {
+    return axios.delete(`${baseURL}/${service}/${id}/evenements/${eventId}`);
 }
 /**
  * Get events types
@@ -129,8 +129,8 @@ export function getTiers(params = {}) {
  * @param {integer} id - id tabou
  * @returns {object} - API response
  */
-export function getFeatureTiers(type, id) {
-    return axios.get(`${baseURL}/${type}/${id}/tiers?asc=true`, null, {});
+export function getFeatureTiers(service, id) {
+    return axios.get(`${baseURL}/${service}/${id}/tiers?asc=true`, null, {});
 }
 /**
  * Get all teirs types from API
@@ -147,8 +147,8 @@ export function getTypesTiers() {
  * @param {string} idType - id's tiers type
  * @returns {object} - axios response
  */
-export function associateFeatureTier(type, id, idTier, idType) {
-    return axios.post(`${baseURL}/${type}/${id}/tiers?tiersId=${idTier}&typeTiersId=${idType}`, {
+export function associateFeatureTier(service, id, idTier, idType) {
+    return axios.post(`${baseURL}/${service}/${id}/tiers?tiersId=${idTier}&typeTiersId=${idType}`, {
         tiersId: idTier,
         typeTiersId: idType
     });
@@ -162,8 +162,8 @@ export function associateFeatureTier(type, id, idTier, idType) {
  * @param {integer} associationId - association id
  * @returns {object} - axios response
  */
-export function changeFeatureTierAssociation(type, id, idTier, idType, associationId) {
-    return axios.put(`${baseURL}/${type}/${id}/tiers/${associationId}`, {
+export function changeFeatureTierAssociation(service, id, idTier, idType, associationId) {
+    return axios.put(`${baseURL}/${service}/${id}/tiers/${associationId}`, {
         tiersId: idTier,
         typeTiersId: idType
     });
@@ -191,8 +191,8 @@ export function changeFeatureTier(tiers) {
  * @param {*} associationId - association id
  * @returns {object} - axios response
  */
-export function dissociateFeatureTier(type, id, associationId) {
-    return axios.delete(`${baseURL}/${type}/${id}/tiers/${associationId}`);
+export function dissociateFeatureTier(service, id, associationId) {
+    return axios.delete(`${baseURL}/${service}/${id}/tiers/${associationId}`);
 }
 /**
  * Inactive tiers
@@ -273,8 +273,8 @@ export function getSecteur(id) {
  * @param {object} params - tabou feature infos
  * @returns {object} - axios response
  */
-export function createNewTabouFeature(layer, params) {
-    return axios.post(`${baseURL}/${layer}`, params);
+export function createNewTabouFeature(service, params) {
+    return axios.post(`${baseURL}/${service}`, params);
 }
 /**
  * Autocomplete PLUI text with API
@@ -294,21 +294,21 @@ export function searchTiers(text) {
 }
 
 // FEATURE'S DOCUMENT
-export function getTabouDocuments(type, id, page, result, text) {
+export function getTabouDocuments(url, id, page, result, text) {
     const params = (page || page > -1) && result ? {
         start: page,
         resultsNumber: result
     } : {};
-    return axios.get(`${baseURL}/${type}/${id}/documents`, {params: {
+    return axios.get(`${baseURL}/${url}/${id}/documents`, {params: {
         ...params,
         asc: true,
         nom: text.length >= 3 ? `*${text}*` : "**"
     }}).then(({ data }) => data);
 }
-export function addDocument(type, id, file, metadata) {
+export function addDocument(url, id, file, metadata, type) {
     const idFieldName = {
-        "operations": "operationId",
-        "programmes": "programmeId"
+        "layerOA": "operationId",
+        "layerPA": "programmeId"
     };
     let formData = new FormData();
     formData.append("fileToUpload", file);
@@ -319,33 +319,33 @@ export function addDocument(type, id, file, metadata) {
      * idField in the path will be delete - see issue #189
      * https://github.com/sigrennesmetropole/geor_tabou2_front/issues/189
      */
-    return axios.post(`${baseURL}/${type}/${idFieldName[type]}/documents`,
+    return axios.post(`${baseURL}/${url}/${idFieldName[type]}/documents`,
         formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }
         });
 }
-export function deleteDocuments(type, id, docId) {
-    return axios.delete(`${baseURL}/${type}/${id}/documents/${docId}`);
+export function deleteDocuments(service, id, docId) {
+    return axios.delete(`${baseURL}/${service}/${id}/documents/${docId}`);
 }
 
 // DOCUMENT METADATA
-export function getDocumentMetadata(type, id, docId) {
-    return axios.get(`${baseURL}/${type}/${id}/documents/${docId}`).then(({ data }) => data);
+export function getDocumentMetadata(service, id, docId) {
+    return axios.get(`${baseURL}/${service}/${id}/documents/${docId}`).then(({ data }) => data);
 }
 export function updateMetadataDocument(type, id, metadata) {
     return axios.put(`${baseURL}/${type}/${id}/documents/${metadata.id}`, metadata);
 }
 
 // DOCUMENT CONTENT
-export function getDocumentContent(type, id, docId) {
-    return axios.get(`${baseURL}/${type}/${id}/documents/${docId}/content`, {responseType: 'arraybuffer'}).then(( data ) => data);
+export function getDocumentContent(service, id, docId) {
+    return axios.get(`${baseURL}/${service}/${id}/documents/${docId}/content`, {responseType: 'arraybuffer'}).then(( data ) => data);
 }
-export function updateDocumentContent(type, id, docId, file) {
+export function updateDocumentContent(service, id, docId, file) {
     var formData = new FormData();
     formData.append("fileToUpload", file);
-    return axios.put(`${baseURL}/${type}/${id}/documents/${docId}/content`,
+    return axios.put(`${baseURL}/${service}/${id}/documents/${docId}/content`,
         formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
