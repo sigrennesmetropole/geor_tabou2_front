@@ -5,6 +5,7 @@ import { DropdownList } from 'react-widgets';
 import { Col, Tabs, Tab } from 'react-bootstrap';
 import "@js/extension/css/vocation.css";
 import Activites from "../../form/vocations/activites/Activites";
+import Habitat from "../../form/vocations/habitat/Habitat";
 import { isEqual } from "lodash";
 export default function Tabou2VocationModal({
     operation,
@@ -40,6 +41,7 @@ export default function Tabou2VocationModal({
             buttons={[
                 {
                     text: "Retour à la fiche",
+                    style: {marginRight: "5px"},
                     onClick: () => {
                         if (!isEqual(newOperation, operation)) {
                             update(newOperation);
@@ -71,7 +73,8 @@ export default function Tabou2VocationModal({
                         className="voc-tab-select"
                         key={1} eventKey={1} title={vocation}
                     >
-                        {vocation === "Activités" && (<Activites {...propsTab}/>)}
+                        {vocation === "Activités" && (<Activites {...propsTab} />)}
+                        {vocation === "Habitat" && (<Habitat {...propsTab}/>)}
                     </Tab>
                 </Tabs>
             </Col>
