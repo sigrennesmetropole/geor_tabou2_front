@@ -7,6 +7,10 @@ import "@js/extension/css/tabou.css";
 import { findValueByType, changeByType, getCodeIdByCode } from "../utils";
 import Tabou2Combo from '@js/extension/components/form/Tabou2Combo';
 import { getVocationZa } from "@js/extension/api/requests";
+import { DateTimePicker } from "react-widgets";
+import moment from 'moment';
+import momentLocalizer from 'react-widgets/lib/localizers/moment';
+momentLocalizer(moment);
 export default function ProgrammationLogements({
     operation = {},
     owner = {},
@@ -21,38 +25,74 @@ export default function ProgrammationLogements({
     }, [values.informationsProgrammation, values.contributions]);
     const getFields = () => [
         {
-            name: "activites",
-            label: "Programmation activités",
+            name: "nbLogementsPrevu",
+            label: "Nombre de logements (bug api)",
+            field: "nbLogementsPrevu",
+            type: "number",
+            layers: [],
+            source: () => values,
+            change: (value) => setValues({...values, nbLogementsPrevu: value}),
+            readOnly: false
+        },
+        {
+            name: "plhDate",
+            label: "Date Covention PLH",
+            field: "plh.description",
+            type: "date",
+            layers: [],
+            source: () => values,
+            change: (value) => setValues({...values, plh: {...values.plh, date: value}}),
+            readOnly: false
+        },
+        {
+            name: "plhDescription",
+            label: "Convention PLH",
+            field: "plh.description",
+            type: "text",
+            layers: [],
+            source: () => values,
+            change: (value) => setValues({...values, plh: {...values.plh, description: value}}),
+            readOnly: false
+        },
+        {
+            name: "nbLogementsPrevu",
+            label: "Logements PLH prévus",
+            field: "plh.logementsPrevus",
+            type: "number",
+            layers: [],
+            source: () => values,
+            change: (value) => setValues({...values, plh: {...values.plh, logementsPrevus: value}}),
+            readOnly: false
+        },
+        {
+            name: "nbLogementsLivres",
+            label: "Logements PLH livrés",
+            field: "plh.logementsLivres",
+            type: "number",
+            layers: [],
+            source: () => values,
+            change: (value) => setValues({...values, plh: {...values.plh, logementsLivres: value}}),
+            readOnly: false
+        },
+        {
+            name: "habitat",
+            label: "Programmation habitat",
             field: "description",
             type: "text",
             layers: [],
-            source: () => findValueByType(getCodeIdByCode(typesProgrammation, "Activites"), values, "informationsProgrammation"),
+            source: () => findValueByType(getCodeIdByCode(typesProgrammation, "Habitat"), values, "informationsProgrammation"),
             change: (value) => {
                 setValues(
                     changeByType(
-                        getCodeIdByCode(typesProgrammation, "Activites"),
+                        getCodeIdByCode(typesProgrammation, "Habitat"),
                         value,
                         values,
                         "informationsProgrammation",
-                        getCodeIdByCode(typesProgrammation, "Activites")
+                        getCodeIdByCode(typesProgrammation, "Habitat")
                     )
                 );
             },
             code: "Activites",
-            readOnly: false
-        },
-        {
-            name: "vocationZa",
-            label: "Vocation ZA",
-            apiLabel: "libelle",
-            apiField: "code",
-            field: "vocationZa.libelle",
-            type: "combo",
-            api: getVocationZa,
-            layers: [],
-            source: () => values,
-            change: (value) => setValues({...values, vocationZa: {...values.vocationZa, libelle: value}}),
-            code: "Autres",
             readOnly: false
         },
         {
@@ -155,7 +195,25 @@ export default function ProgrammationLogements({
                                             onChange={(t) => {if (!t) item.change("");}}
                                         />
                                     ) : null
-                                }
+                                } {item.type === "date" && (
+                                    <DateTimePicker
+                                        type="date"
+                                        className="identifyDate"
+                                        placeholder={item.label}
+                                        readOnly={item?.readOnly || false}
+                                        calendar
+                                        culture="fr"
+                                        time={false}
+                                        value={get(values, item.field)  ? new Date(get(values, item.field)) : null}
+                                        format="DD/MM/YYYY"
+                                        onSelect={(t) => {
+                                            t ? new Date(t).toISOString() : new Date().toISOString();
+                                        }}
+                                        onChange={(t) => {
+                                            t ? new Date(t).toISOString() : new Date().toISOString();
+                                        }}
+                                    />
+                                )}
                             </Col>
                         </Row>
                     ))

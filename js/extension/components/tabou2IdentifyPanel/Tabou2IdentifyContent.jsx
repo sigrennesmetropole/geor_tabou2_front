@@ -89,6 +89,9 @@ export default function Tabou2IdentifyContent({
         mapFeature: mapFeature,
         initialItem: infos,
         change: onChange,
+        changeVocation: (newOA) => {
+            setInfos({...infos, ...newOA});
+        },
         ...props
     };
     return (

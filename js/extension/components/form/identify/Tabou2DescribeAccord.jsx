@@ -108,6 +108,12 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
         props.change(accordValues, pick(accordValues, required));
     };
 
+    const changeVocation = (vocationValues) => {
+        let newValues = { ...values, ...vocationValues };
+        setValues(newValues);
+        props.changeVocation(newValues);
+    };
+
     const allowChange = props.authent.isContrib || props.authent.isReferent;
 
     return (
@@ -174,7 +180,7 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
                                         </Button>
                                         <Tabou2VocationModal
                                             operation={operation}
-                                            update={props.updateOperation}
+                                            update={changeVocation}
                                             opened={opened}
                                             close={() => setOpened(false)}
                                             {...props.vocationsInfos}
