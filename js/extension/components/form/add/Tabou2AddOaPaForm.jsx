@@ -103,7 +103,7 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
         // get programme/emprises need only nature param
         let params = infos.nature && natureId.current && type ? {natureId: natureId.current, nature: infos.nature}  : {};
         if (has(combo, "autocomplete")) {
-            params[combo.autocomplete] = `${text}*`;
+            params[combo.autocomplete] = `*${text}*`;
         }
         if (["layerOA", "layerSA"].includes(type)) {
             // need nature and secteur to request API get operation/emprises
