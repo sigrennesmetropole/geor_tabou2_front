@@ -201,7 +201,7 @@ export default function Tabou2DocsTable({
                     </Row>
                 )}
             </Grid>
-            {displayTable && (
+            {displayTable || search ?  (
                 <Col xs={3} className="col-xs-offset-9" style={{ marginTop: "10px" }}>
                     <Tabou2TextForm
                         type="text"
@@ -212,7 +212,7 @@ export default function Tabou2DocsTable({
                         }}
                         placeholder={translate.i18n(translate.messages, "tabou2.docsModal.searchPlaceholder")}
                     />
-                </Col>)}
+                </Col>) : null}
         </>
     );
 }
