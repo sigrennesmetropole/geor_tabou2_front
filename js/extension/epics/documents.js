@@ -176,7 +176,6 @@ export function updateDocument(action$, store) {
         .switchMap((action) => {
             let messages = store.getState()?.locale.messages;
             let { featureId, layerUrl } = getInfos(store.getState());
-            console.log("MODIFY_DOC");
             return Rx.Observable.defer(() => updateDocumentContent(layerUrl, featureId, action.metadata.id, action.file))
                 .catch(e => {
                     console.log("Error on create documents");
