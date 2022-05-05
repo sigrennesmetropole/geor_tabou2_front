@@ -79,7 +79,7 @@ export default function ContributionPaddOap({
                     <strong><Message msgId="tabou2.vocation.contribPADDOAP"/></strong>
                 </h4>
                 {
-                    getFields().filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map((item,i) => (
+                    getFields().filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map((item, i) => (
                         <Row key={`${item.name}-${i}`}>
                             <Col xs={4}>
                                 <ControlLabel><Message msgId={item.label}/></ControlLabel>
