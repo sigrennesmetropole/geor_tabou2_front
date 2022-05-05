@@ -192,44 +192,27 @@ export default function ProgrammationLogements({
                                             onChange={(t) => {if (!t) item.change("");}}
                                         />
                                     ) : null
-                                } {item.type === "datea" ? (
-                                    <DateTimePicker
-                                        type="date"
-                                        className="identifyDate"
-                                        placeholder={item.label}
-                                        readOnly={item?.readOnly || !allowChange}
-                                        calendar
-                                        culture="fr"
-                                        time={false}
-                                        value={new Date()}
-                                        format="DD/MM/YYYY"
-                                        onSelect={(t) => {
-                                            t ? new Date(t).toISOString() : new Date().toISOString();
-                                        }}
-                                        onChange={(t) => {
-                                            t ? new Date(t).toISOString() : new Date().toISOString();
-                                        }}
-                                    />
-                                ) : null}
-                                {item.type === "date" && (
-                                    <DateTimePicker
-                                        type="date"
-                                        className="identifyDate"
-                                        placeholder={item.label}
-                                        readOnly={item?.readOnly || false}
-                                        calendar
-                                        culture="fr"
-                                        time={false}
-                                        value={get(values, item.field) ? new Date(get(values, item.field)) : null}
-                                        format="DD/MM/YYYY"
-                                        onSelect={(t) => {
-                                            item.change(t ? new Date(t).toISOString() : null);
-                                        }}
-                                        onChange={(t) => {
-                                            item.change(t ? new Date(t).toISOString() : null);
-                                        }}
-                                    />
-                                )}
+                                } {
+                                    item.type === "date" && (
+                                        <DateTimePicker
+                                            type="date"
+                                            className="identifyDate"
+                                            placeholder={item.label}
+                                            readOnly={item?.readOnly || false}
+                                            calendar
+                                            culture="fr"
+                                            time={false}
+                                            value={get(values, item.field) ? new Date(get(values, item.field)) : null}
+                                            format="DD/MM/YYYY"
+                                            onSelect={(t) => {
+                                                item.change(t ? new Date(t).toISOString() : null);
+                                            }}
+                                            onChange={(t) => {
+                                                item.change(t ? new Date(t).toISOString() : null);
+                                            }}
+                                        />
+                                    )
+                                }
                             </Col>
                         </Row>
                     ))

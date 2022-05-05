@@ -56,6 +56,7 @@ export default function Tabou2VocationModal({
                 },
                 {
                     text: "Réinitialiser",
+                    visible: allowChange,
                     onClick: () => setNewOperation(operation)
                 }
             ]}
@@ -63,7 +64,7 @@ export default function Tabou2VocationModal({
             size="lg">
             <Col xs={12}>
                 <div className="voc-selector">
-                    <label>Voir les attributs de la vocation : </label>
+                    <label>Choisir une vocation : </label>
                     <DropdownList
                         style={{width: "30%"}}
                         data={typesVocation.filter(v => showCodeVocations.includes(v.code))}

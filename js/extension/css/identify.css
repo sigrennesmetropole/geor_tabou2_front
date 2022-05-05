@@ -9,6 +9,10 @@
     display: none;
 }
 
+.noInput input {
+    display: none;
+}
+
 .identifyDate .rw-calendar-popup .rw-footer .rw-btn {
     display: none;
 }

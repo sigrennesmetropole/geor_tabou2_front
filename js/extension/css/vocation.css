@@ -37,3 +37,14 @@
 .attributeInfos h4 {
     margin-bottom: 20px;
 }
+
+.vocation-libelle {
+    display: inline;
+    margin-right: 2px;
+    width: 50%;
+    padding-top: 0px;
+}
+
+.vocation-btn {
+
+}

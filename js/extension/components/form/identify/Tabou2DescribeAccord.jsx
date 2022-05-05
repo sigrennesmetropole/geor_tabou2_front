@@ -4,6 +4,7 @@ import { Col, Row, FormControl, Grid, ControlLabel, Button } from "react-bootstr
 import Tabou2Combo from '@js/extension/components/form/Tabou2Combo';
 import { getRequestApi } from "@js/extension/api/requests";
 import "@js/extension/css/identify.css";
+import "@js/extension/css/vocation.css";
 import Message from "@mapstore/components/I18N/Message";
 
 import Tabou2VocationModal from "../../tabou2IdentifyPanel/modals/Tabou2VocationModal";
@@ -172,9 +173,11 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
                             }{
                                 item.type === "vocation" && (
                                     <>
+                                        <FormControl readOnly value={operation?.vocation?.libelle} className={ "vocation-libelle "}/>
                                         <Button
                                             tooltip="Vocations"
-                                            disabled={false}
+                                            className="vocation-btn"
+                                            bsStyle="primary"
                                             onClick={() => setOpened(true)}>
                                             {props.i18n(props.messages, "tabou2.vocation.btnLabel")}
                                         </Button>
