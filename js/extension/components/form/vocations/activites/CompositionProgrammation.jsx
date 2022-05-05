@@ -8,6 +8,8 @@ export default function AutreProgrammation({
     operation = {},
     layer = "",
     setValues = () => {},
+    i18n = () => {},
+    messages,
     values,
     allowChange
 }) {
@@ -45,7 +47,7 @@ export default function AutreProgrammation({
                                     ["text", "number"].includes(item.type) ?
                                         (<FormControl
                                             componentClass={item.isArea ? "textarea" : "input"}
-                                            placeholder={item.label}
+                                            placeholder={i18n(messages, item.label)}
                                             style={{height: item.isArea ? "100px" : "auto"}}
                                             type={item.type}
                                             min="0"

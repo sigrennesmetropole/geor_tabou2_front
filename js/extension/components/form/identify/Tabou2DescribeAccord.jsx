@@ -182,6 +182,8 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
                                             {props.i18n(props.messages, "tabou2.vocation.btnLabel")}
                                         </Button>
                                         <Tabou2VocationModal
+                                            i18n={props.i18n}
+                                            messages={props.messages}
                                             operation={operation}
                                             update={changeVocation}
                                             opened={opened}

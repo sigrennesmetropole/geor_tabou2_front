@@ -12,6 +12,8 @@ export default function ProgrammationLogements({
     layer = "",
     typesProgrammation,
     setValues = () => {},
+    i18n = () => {},
+    messages,
     values,
     allowChange
 }) {
@@ -107,7 +109,7 @@ export default function ProgrammationLogements({
                                     ["text", "number"].includes(item.type) ?
                                         (<FormControl
                                             componentClass={item.isArea ? "textarea" : "input"}
-                                            placeholder={item.label}
+                                            placeholder={i18n(messages, item.label)}
                                             style={{height: item.isArea ? "100px" : "auto"}}
                                             type={item.type}
                                             min="0"
@@ -143,7 +145,7 @@ export default function ProgrammationLogements({
                                         <Tabou2Combo
                                             load={item.api}
                                             defaultValue={get(values, item.field)}
-                                            placeholder={item.label}
+                                            placeholder={i18n(messages, item.label)}
                                             textField={item.apiLabel}
                                             filter={false}
                                             disabled={!allowChange}

@@ -17,6 +17,8 @@ export default function ProgrammationLogements({
     layer = "",
     typesProgrammation,
     setValues = () => {},
+    i18n = () => {},
+    messages,
     values
 }) {
     if (isEmpty(operation)) return <Message msgId="tabou2.vocation.noDisplay"/>;
@@ -176,7 +178,7 @@ export default function ProgrammationLogements({
                                     ["text", "number"].includes(item.type) ?
                                         (<FormControl
                                             componentClass={item.isArea ? "textarea" : "input"}
-                                            placeholder={item.label}
+                                            placeholder={i18n(messages, item.label)}
                                             style={{height: item.isArea ? "100px" : "auto"}}
                                             type={item.type}
                                             min="0"
@@ -212,7 +214,7 @@ export default function ProgrammationLogements({
                                         <Tabou2Combo
                                             load={item.api}
                                             defaultValue={get(values, item.field)}
-                                            placeholder={item.label}
+                                            placeholder={i18n(messages, item.label)}
                                             textField={item.apiLabel}
                                             disabled={!allowChange}
                                             filter={false}
@@ -228,7 +230,7 @@ export default function ProgrammationLogements({
                                     <DateTimePicker
                                         type="date"
                                         className="identifyDate"
-                                        placeholder={item.label}
+                                        placeholder={i18n(messages, item.label)}
                                         readOnly={item?.readOnly || !allowChange}
                                         calendar
                                         culture="fr"
