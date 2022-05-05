@@ -15,13 +15,13 @@ export default function ProgrammationLogements({
     values,
     allowChange
 }) {
-    if (isEmpty(operation)) return "Aucune Opération à afficher !";
+    if (isEmpty(operation)) return <Message msgId={"tabou2.vocation.noDisplay"}/>;
 
     const getFields = () => {
         const fields = [
             {
                 name: "activites",
-                label: "Programmation activités",
+                label: "tabou2.vocation.progActivity",
                 field: "description",
                 type: "text",
                 layers: [],
@@ -42,7 +42,7 @@ export default function ProgrammationLogements({
             },
             {
                 name: "vocationZa",
-                label: "Vocation ZA",
+                label: "tabou2.vocation.vocZa",
                 apiLabel: "libelle",
                 apiField: "code",
                 field: "vocationZa.libelle",
@@ -56,7 +56,7 @@ export default function ProgrammationLogements({
             },
             {
                 name: "scot",
-                label: "Scot",
+                label: "tabou2.vocation.scot",
                 field: "scot",
                 type: "checkbox",
                 layers: ["layerOA"],
@@ -66,7 +66,7 @@ export default function ProgrammationLogements({
             },
             {
                 name: "densiteMiniScot",
-                label: "Densité mini SCoT",
+                label: "tabou2.vocation.densitySCOT",
                 field: "densiteScot",
                 type: "number",
                 layers: [],
@@ -76,7 +76,7 @@ export default function ProgrammationLogements({
             },
             {
                 name: "densiteMiniOapq",
-                label: "Densité mini OAPQ",
+                label: "tabou2.vocation.densityOAPQ",
                 field: "plui.densiteOap",
                 type: "number",
                 layers: [],
@@ -94,14 +94,13 @@ export default function ProgrammationLogements({
         >
             <Row className="attributeInfos">
                 <h4>
-                    <strong>Programmation de logements</strong>
+                    <strong><Message msgId="tabou2.vocation.progHousing"/></strong>
                 </h4>
                 {
                     getFields().filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map((item, i) => (
                         <Row key={`${item.name}-${i}`}>
                             <Col xs={4}>
-                                {/* <ControlLabel><Message msgId={item.label}/></ControlLabel> */}
-                                {item.label}
+                                <ControlLabel><Message msgId={item.label}/></ControlLabel>
                             </Col>
                             <Col xs={4}>
                                 {

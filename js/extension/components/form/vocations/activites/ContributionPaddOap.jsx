@@ -14,11 +14,11 @@ export default function ContributionPaddOap({
     values,
     allowChange
 }) {
-    if (isEmpty(operation)) return "Aucune Opération à afficher !";
+    if (isEmpty(operation)) return <Message msgId={"tabou2.vocation.noDisplay"}/>;
     const getFields = () => [
         {
             name: "enjeux",
-            label: "Enjeux généraux",
+            label: "tabou2.vocation.generalTarget",
             field: "description",
             type: "text",
             layers: [],
@@ -36,7 +36,7 @@ export default function ContributionPaddOap({
         },
         {
             name: "traitee",
-            label: "Principales prises en compte",
+            label: "tabou2.vocation.mainChecked",
             field: "description",
             type: "text",
             layers: [],
@@ -54,7 +54,7 @@ export default function ContributionPaddOap({
         },
         {
             name: "avenir",
-            label: "Comment aller plus loin ?",
+            label: "tabou2.vocation.howFar",
             field: "description",
             type: "text",
             layers: [],
@@ -78,14 +78,13 @@ export default function ContributionPaddOap({
         >
             <Row className="attributeInfos">
                 <h4>
-                    <strong>Contribution à la mise en œuvre du PADD et des OAP métropolitaines</strong>
+                    <strong><Message msgId="tabou2.vocation.contribPADDOAP"/></strong>
                 </h4>
                 {
-                    getFields().filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map((item,i) => (
+                    getFields().filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map((item, i) => (
                         <Row key={`${item.name}-${i}`}>
                             <Col xs={4}>
-                                {/* <ControlLabel><Message msgId={item.label}/></ControlLabel> */}
-                                {item.label}
+                                <ControlLabel><Message msgId={item.label}/></ControlLabel>
                             </Col>
                             <Col xs={4}>
                                 {

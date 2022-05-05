@@ -1,7 +1,7 @@
 import React from 'react';
 import Message from "@mapstore/components/I18N/Message";
 import { get, isEmpty } from "lodash";
-import { Col, Row, FormControl, Panel } from "react-bootstrap";
+import { Col, Row, FormControl, Panel, ControlLabel } from "react-bootstrap";
 import "@js/extension/css/vocation.css";
 import { findValueByType, changeByType, getCodeIdByCode } from "../utils";
 
@@ -13,11 +13,11 @@ export default function AutreProgrammation({
     setValues = () => { },
     values
 }) {
-    if (isEmpty(operation)) return "Aucune Opération à afficher !";
+    if (isEmpty(operation)) return <Message msgId="tabou2.vocation.noDisplay"/>;
     const getFields = () => [
         {
             name: "equipement",
-            label: "Programmation équipement",
+            label: "tabou2.vocation.progItems",
             field: "description",
             type: "text",
             layers: [],
@@ -35,7 +35,7 @@ export default function AutreProgrammation({
         },
         {
             name: "programmationAutre",
-            label: "Programmation autre",
+            label: "tabou2.vocation.otherProg",
             field: "description",
             type: "text",
             layers: [],
@@ -59,14 +59,13 @@ export default function AutreProgrammation({
         >
             <Row className="attributeInfos">
                 <h4>
-                    <strong>Autre programmation</strong>
+                    <strong><Message msgId="tabou2.vocation.tabOtherProg"/></strong>
                 </h4>
                 {
                     getFields().filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map((item, i) => (
                         <Row key={`${item.name}-${i}`}>
                             <Col xs={4}>
-                                {/* <ControlLabel><Message msgId={item.label}/></ControlLabel> */}
-                                {item.label}
+                                <ControlLabel><Message msgId={item.label}/></ControlLabel>
                             </Col>
                             <Col xs={4}>
                                 {

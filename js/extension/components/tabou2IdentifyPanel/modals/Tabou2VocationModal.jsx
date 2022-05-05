@@ -45,7 +45,7 @@ export default function Tabou2VocationModal({
             showClose
             buttons={[
                 {
-                    text: "Retour à la fiche",
+                    text: <Message msgId="tabou2.vocation.back" />,
                     style: {marginRight: "5px"},
                     onClick: () => {
                         if (!isEqual(newOperation, operation)) {
@@ -55,7 +55,7 @@ export default function Tabou2VocationModal({
                     }
                 },
                 {
-                    text: "Réinitialiser",
+                    text: <Message msgId="tabou2.vocation.reset" />,
                     visible: allowChange,
                     onClick: () => setNewOperation(operation)
                 }
@@ -64,7 +64,7 @@ export default function Tabou2VocationModal({
             size="lg">
             <Col xs={12}>
                 <div className="voc-selector">
-                    <label>Choisir une vocation : </label>
+                    <label><Message msgId="tabou2.vocation.selectVoc" /></label>
                     <DropdownList
                         style={{width: "30%"}}
                         data={typesVocation.filter(v => showCodeVocations.includes(v.code))}

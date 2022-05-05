@@ -19,12 +19,12 @@ export default function ProgrammationLogements({
     setValues = () => {},
     values
 }) {
-    if (isEmpty(operation)) return "Aucune Opération à afficher !";
+    if (isEmpty(operation)) return <Message msgId="tabou2.vocation.noDisplay"/>;
     const getFields = () => [
         {
             name: "nbLogementsPrevu",
-            label: "Nombre de logements (bug api)",
             field: "nbLogementsPrevu",
+            label: "tabou2.vocation.nbHousing",
             type: "number",
             layers: [],
             source: () => values,
@@ -33,7 +33,7 @@ export default function ProgrammationLogements({
         },
         {
             name: "habitat",
-            label: "Programmation habitat",
+            label: "tabou2.vocation.progHabitat",
             field: "description",
             type: "text",
             layers: [],
@@ -53,7 +53,7 @@ export default function ProgrammationLogements({
         },
         {
             name: "activites",
-            label: "Programmation activites",
+            label: "tabou2.vocation.progActivity",
             field: "description",
             type: "text",
             layers: [],
@@ -73,7 +73,7 @@ export default function ProgrammationLogements({
         },
         {
             name: "plhDate",
-            label: "Date Covention PLH",
+            label: "tabou2.vocation.datePLH",
             field: "plh.date",
             type: "date",
             layers: [],
@@ -83,7 +83,7 @@ export default function ProgrammationLogements({
         },
         {
             name: "plhDescription",
-            label: "Convention PLH",
+            label: "tabou2.vocation.convPLH",
             field: "plh.description",
             type: "text",
             layers: [],
@@ -93,7 +93,7 @@ export default function ProgrammationLogements({
         },
         {
             name: "nbLogementsPrevu",
-            label: "Logements PLH prévus",
+            label: "tabou2.vocation.targetPLH",
             field: "plh.logementsPrevus",
             type: "number",
             layers: [],
@@ -103,7 +103,7 @@ export default function ProgrammationLogements({
         },
         {
             name: "nbLogementsLivres",
-            label: "Logements PLH livrés",
+            label: "tabou2.vocation.delivPLH",
             field: "plh.logementsLivres",
             type: "number",
             layers: [],
@@ -113,7 +113,7 @@ export default function ProgrammationLogements({
         },
         {
             name: "vocationZa",
-            label: "Vocation ZA",
+            label: "tabou2.vocation.vocZa",
             apiLabel: "libelle",
             apiField: "code",
             field: "vocationZa.libelle",
@@ -127,7 +127,7 @@ export default function ProgrammationLogements({
         },
         {
             name: "scot",
-            label: "Scot",
+            label: "tabou2.vocation.scot",
             field: "scot",
             type: "checkbox",
             layers: ["layerOA"],
@@ -137,7 +137,7 @@ export default function ProgrammationLogements({
         },
         {
             name: "densiteMiniScot",
-            label: "Densité mini SCoT",
+            label: "tabou2.vocation.densitySCOT",
             field: "densiteScot",
             type: "number",
             layers: [],
@@ -147,7 +147,7 @@ export default function ProgrammationLogements({
         },
         {
             name: "densiteMiniOapq",
-            label: "Densité mini OAPQ",
+            label: "tabou2.vocation.densityOAPQ",
             field: "plui.densiteOap",
             type: "number",
             layers: [],
@@ -163,14 +163,13 @@ export default function ProgrammationLogements({
         >
             <Row className="attributeInfos">
                 <h4>
-                    <strong>Programmation de logements</strong>
+                    <strong><Message msgId="tabou2.vocation.progHousing"/></strong>
                 </h4>
                 {
                     getFields().filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map((item, i) => (
                         <Row key={`${item.name}-${i}`}>
                             <Col xs={4}>
-                                {/* <ControlLabel><Message msgId={item.label}/></ControlLabel> */}
-                                {item.label}
+                                <ControlLabel><Message msgId={item.label}/></ControlLabel>
                             </Col>
                             <Col xs={4}>
                                 {

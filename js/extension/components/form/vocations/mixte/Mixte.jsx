@@ -7,19 +7,12 @@ import CompositionProgrammation from './CompositionProgrammation';
 import ProgrammationLogements from './ProgrammationLogements';
 
 export default function Mixte({...props}) {
-    const tabs = [{
-        key: 0,
-        tab: "Composition"
-    }, {
-        key: 1,
-        tab: "Logements"
-    }, {
-        key: 2,
-        tab: "Autre programmation"
-    }, {
-        key: 3,
-        tab: "Contribution PADD, OAP"
-    }];
+    const tabs = [
+        <Message msgId="tabou2.vocation.tabComposition" />,
+        <Message msgId="tabou2.vocation.tabHousing" />,
+        <Message msgId="tabou2.vocation.tabOtherProg" />,
+        <Message msgId="tabou2.vocation.tabContrib" />
+    ];
 
     const subFormProps = {
         ... props,
@@ -32,12 +25,12 @@ export default function Mixte({...props}) {
                     {
                         tabs.map((tab, i) => (
                             <Tab
-                                key={i} eventKey={i} title={tab.tab}
+                                key={i} eventKey={i} title={tab}
                             >
-                                {tab.key === 0 && (<CompositionProgrammation {...subFormProps}/>)}
-                                {tab.key === 1 && (<ProgrammationLogements {...subFormProps}/>)}
-                                {tab.key === 2 && (<AutreProgrammation {...subFormProps}/>)}
-                                {tab.key === 3 && (<ContributionPaddOap {...subFormProps}/>)}
+                                {i === 0 && (<CompositionProgrammation {...subFormProps}/>)}
+                                {i === 1 && (<ProgrammationLogements {...subFormProps}/>)}
+                                {i === 2 && (<AutreProgrammation {...subFormProps}/>)}
+                                {i === 3 && (<ContributionPaddOap {...subFormProps}/>)}
                             </Tab>
                         ))
                     }

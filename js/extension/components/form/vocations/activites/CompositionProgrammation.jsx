@@ -11,12 +11,12 @@ export default function AutreProgrammation({
     values,
     allowChange
 }) {
-    if (isEmpty(operation)) return "Aucune Opération à afficher !";
+    if (isEmpty(operation)) return <Message msgId={"tabou2.vocation.noDisplay"}/>;
 
     const getFields = () => [
         {
             name: "compositionProgrammation",
-            label: "Composition / Programmation",
+            label: "tabou2.vocation.compoProg",
             field: "operation",
             type: "text",
             layers: [],
@@ -32,14 +32,13 @@ export default function AutreProgrammation({
         >
             <Row className="attributeInfos">
                 <h4>
-                    <strong>Composition / Programmation</strong>
+                    <strong><Message msgId={"tabou2.vocation.compoProg"}/></strong>
                 </h4>
                 {
                     getFields().filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map((item, i) => (
                         <Row key={`${item.name}-${i}`}>
                             <Col xs={4}>
-                                {/* <ControlLabel><Message msgId={item.label}/></ControlLabel> */}
-                                {item.label}
+                                <ControlLabel><Message msgId={item.label}/></ControlLabel>
                             </Col>
                             <Col xs={4}>
                                 {
