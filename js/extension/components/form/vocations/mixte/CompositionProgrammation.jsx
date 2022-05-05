@@ -12,7 +12,6 @@ export default function AutreProgrammation({
     values
 }) {
     if (isEmpty(operation)) return "Aucune Opération à afficher !";
-
     const getFields = () => [
         {
             name: "compositionProgrammation",

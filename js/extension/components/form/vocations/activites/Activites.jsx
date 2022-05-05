@@ -20,9 +20,9 @@ export default function Activites({...props}) {
         key: 3,
         tab: "Contribution PADD, OAP"
     }];
-    useEffect(() => {
-        return;
-    }, [props.values.informationsProgrammation, props.values.contributions]);
+    // useEffect(() => {
+    //     return;
+    // }, [props.values]);
 
     const subFormProps = {
         ... props,

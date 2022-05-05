@@ -1,6 +1,6 @@
 import Rx from 'rxjs';
 import { UPDATE_OPERATION, GET_TABOU_VOCATIONS_INFOS, setTabouVocationsInfos  } from '../actions/tabou2';
-import { getTypesContributionsId, getTypesProgrammationId, changeOperation } from '../api/requests';
+import { getTypesContributionsId, getTypesProgrammationId, changeOperation, getTypesVocationsId } from '../api/requests';
 import { isTabou2Activate } from '../selectors/tabou2';
 import { error, success } from "@mapstore/actions/notifications";
 import { getMessageById } from "@mapstore/utils/LocaleUtils";
@@ -41,7 +41,8 @@ export const onGetInfos = (action$, store) =>
         .switchMap(({ id }) => {
             return Rx.Observable.from([
                 { name: "typesContribution", api: getTypesContributionsId },
-                { name: "typesProgrammation", api: getTypesProgrammationId }
+                { name: "typesProgrammation", api: getTypesProgrammationId },
+                { name: "typesVocation", api: getTypesVocationsId }
             ]).map(r =>
                 Rx.Observable.defer(() => r.api(id))
                     .catch(e => {
@@ -56,7 +57,8 @@ export const onGetInfos = (action$, store) =>
                 return Rx.Observable.forkJoin(requestArray).flatMap(elementArray =>
                     Rx.Observable.of(
                         setTabouVocationsInfos(elementArray[0].name, elementArray[0].data),
-                        setTabouVocationsInfos(elementArray[1].name, elementArray[1].data)
+                        setTabouVocationsInfos(elementArray[1].name, elementArray[1].data),
+                        setTabouVocationsInfos(elementArray[2].name, elementArray[2].data)
                     )
                 );
             });

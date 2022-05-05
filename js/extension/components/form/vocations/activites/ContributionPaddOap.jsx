@@ -15,9 +15,6 @@ export default function ContributionPaddOap({
     values
 }) {
     if (isEmpty(operation)) return "Aucune Opération à afficher !";
-    useEffect(() => {
-        return;
-    }, [values.informationsProgrammation, values.contributions]);
     const getFields = () => [
         {
             name: "enjeux",
@@ -81,7 +78,7 @@ export default function ContributionPaddOap({
             className="contribPaddOap-style"
         >
             <Row className="attributeInfos">
-                <h4 style={{ marginBottom: "25px" }}>
+                <h4>
                     <strong>Contribution à la mise en œuvre du PADD et des OAP métropolitaines</strong>
                 </h4>
                 {
@@ -101,7 +98,7 @@ export default function ContributionPaddOap({
                                             type={item.type}
                                             min="0"
                                             step={item?.step}
-                                            value={get(item.source(), item.field)}
+                                            value={get(item.source(), item.field) || ""}
                                             readOnly={item.readOnly || !allowChange}
                                             onChange={(v) => {
                                                 return item.change(item.type === "number" && v.target.value < 0 ? "" : v.target.value);

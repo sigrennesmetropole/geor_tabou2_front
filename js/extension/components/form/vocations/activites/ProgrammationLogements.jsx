@@ -16,84 +16,93 @@ export default function ProgrammationLogements({
     values
 }) {
     if (isEmpty(operation)) return "Aucune Opération à afficher !";
-    useEffect(() => {
-        return;
-    }, [values.informationsProgrammation, values.contributions]);
-    const getFields = () => [
-        {
-            name: "activites",
-            label: "Programmation activités",
-            field: "description",
-            type: "text",
-            layers: [],
-            source: () => findValueByType(getCodeIdByCode(typesProgrammation, "Activites"), values, "informationsProgrammation"),
-            change: (value) => {
-                setValues(
-                    changeByType(
-                        getCodeIdByCode(typesProgrammation, "Activites"),
-                        value,
-                        values,
-                        "informationsProgrammation",
-                        getCodeIdByCode(typesProgrammation, "Activites")
-                    )
-                );
-            },
-            code: "Activites",
-            readOnly: false
-        },
-        {
-            name: "vocationZa",
-            label: "Vocation ZA",
-            apiLabel: "libelle",
-            apiField: "code",
-            field: "vocationZa.libelle",
-            type: "combo",
-            api: getVocationZa,
-            layers: [],
-            source: () => values,
-            change: (value) => setValues({...values, vocationZa: {...values.vocationZa, libelle: value}}),
-            code: "Autres",
-            readOnly: false
-        },
-        {
-            name: "scot",
-            label: "Scot",
-            field: "scot",
-            type: "checkbox",
-            layers: ["layerOA"],
-            source: () => values,
-            change: () => setValues({...values, scot: !values.scot}),
-            readOnly: false
-        },
-        {
-            name: "densiteMiniScot",
-            label: "Densité mini SCoT",
-            field: "densiteScot",
-            type: "number",
-            layers: [],
-            source: () => values,
-            change: (value) => setValues({...values, densiteScot: value}),
-            readOnly: false
-        },
-        {
-            name: "densiteMiniOapq",
-            label: "Densité mini OAPQ",
-            field: "plui.densiteOap",
-            type: "number",
-            layers: [],
-            source: () => values,
-            change: (value) => setValues({...values, plui: {...values.plui, densiteOap: value}}),
-            readOnly: false
-        }
-    ];
+    console.log(operation);
+    console.log(values);
 
+    const getFields = () => {
+        console.log("GET FIELDS");
+        const fields = [
+            {
+                name: "activites",
+                label: "Programmation activités",
+                field: "description",
+                type: "text",
+                layers: [],
+                source: () => findValueByType(getCodeIdByCode(typesProgrammation, "Activites"), values, "informationsProgrammation"),
+                change: (value) => {
+                    setValues(
+                        changeByType(
+                            getCodeIdByCode(typesProgrammation, "Activites"),
+                            value,
+                            values,
+                            "informationsProgrammation",
+                            getCodeIdByCode(typesProgrammation, "Activites")
+                        )
+                    );
+                },
+                code: "Activites",
+                readOnly: false
+            },
+            {
+                name: "vocationZa",
+                label: "Vocation ZA",
+                apiLabel: "libelle",
+                apiField: "code",
+                field: "vocationZa.libelle",
+                type: "combo",
+                api: getVocationZa,
+                layers: [],
+                source: () => values,
+                change: (value) => setValues({ ...values, vocationZa: { ...values.vocationZa, libelle: value } }),
+                code: "Autres",
+                readOnly: false
+            },
+            {
+                name: "scot",
+                label: "Scot",
+                field: "scot",
+                type: "checkbox",
+                layers: ["layerOA"],
+                source: () => values,
+                change: () => setValues({ ...values, scot: !values.scot }),
+                readOnly: false
+            },
+            {
+                name: "densiteMiniScot",
+                label: "Densité mini SCoT",
+                field: "densiteScot",
+                type: "number",
+                layers: [],
+                source: () => values,
+                change: (value) => setValues({ ...values, densiteScot: value }),
+                readOnly: false
+            },
+            {
+                name: "densiteMiniOapq",
+                label: "Densité mini OAPQ",
+                field: "plui.densiteOap",
+                type: "number",
+                layers: [],
+                source: () => values,
+                change: (value) => setValues({ ...values, plui: { ...values.plui, densiteOap: value } }),
+                readOnly: false
+            }
+        ];
+        return fields;
+    };
+    // const wasChanged = () => {
+
+    // }
+    // useEffect(() => {
+    //     return;
+    // }, [values.informationsProgrammation, values.contributions]);
     const allowChange = owner.isContrib || owner.isReferent;
     return (
         <Panel
             className="contribPaddOap-style"
         >
             <Row className="attributeInfos">
-                <h4 style={{ marginBottom: "25px" }}>
+                <h4>
                     <strong>Programmation de logements</strong>
                 </h4>
                 {
@@ -113,7 +122,7 @@ export default function ProgrammationLogements({
                                             type={item.type}
                                             min="0"
                                             step={item?.step}
-                                            value={get(item.source(), item.field)}
+                                            value={get(item.source(), item.field) || ""}
                                             readOnly={item.readOnly || !allowChange}
                                             onChange={(v) => {
                                                 return item.change(item.type === "number" && v.target.value < 0 ? "" : v.target.value);
@@ -147,7 +156,7 @@ export default function ProgrammationLogements({
                                             placeholder={item.label}
                                             textField={item.apiLabel}
                                             filter={false}
-                                            value={get(values, item.field)}
+                                            value={get(values, item.field) || ""}
                                             onLoad={(r) => r?.elements || r}
                                             onSelect={(t) => {
                                                 item.change(t);

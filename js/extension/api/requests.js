@@ -375,3 +375,5 @@ export const changeOperation = (operation) => axios.put(`${baseURL}/v2/operation
 export const getTypesProgrammationId = () => axios.get(`${baseURL}/types-programmations`, { params: { asc: true } });
 
 export const getTypesContributionsId = () => axios.get(`${baseURL}/types-contributions`, { params: { asc: true } });
+
+export const getTypesVocationsId = () => axios.get(`${baseURL}/vocations`, { params: { asc: true } });

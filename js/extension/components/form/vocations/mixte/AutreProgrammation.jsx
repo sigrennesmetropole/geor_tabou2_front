@@ -1,27 +1,54 @@
 import React, { useEffect } from 'react';
 import Message from "@mapstore/components/I18N/Message";
 import { get, isEmpty } from "lodash";
-import { Col, Row, FormControl, ControlLabel, Panel } from "react-bootstrap";
+import { Col, Row, FormControl, Panel } from "react-bootstrap";
 import "@js/extension/css/vocation.css";
+import { findValueByType, changeByType, getCodeIdByCode } from "../utils";
 
 export default function AutreProgrammation({
     operation = {},
     owner = {},
     layer = "",
-    setValues = () => {},
+    typesProgrammation,
+    setValues = () => { },
     values
 }) {
     if (isEmpty(operation)) return "Aucune Opération à afficher !";
-
     const getFields = () => [
         {
-            name: "compositionProgrammation",
-            label: "Composition / Programmation",
-            field: "operation",
+            name: "equipement",
+            label: "Programmation équipement",
+            field: "description",
             type: "text",
             layers: [],
-            source: () => values,
-            change: (value) => setValues({...values, operation: value}),
+            source: () => findValueByType(getCodeIdByCode(typesProgrammation, "Equipement"), values, "informationsProgrammation"),
+            change: (value) => setValues(
+                changeByType(
+                    getCodeIdByCode(typesProgrammation, "Equipement"),
+                    value,
+                    values,
+                    "informationsProgrammation"
+                )
+            ),
+            code: "Equipement",
+            readOnly: false
+        },
+        {
+            name: "programmationAutre",
+            label: "Programmation autre",
+            field: "description",
+            type: "text",
+            layers: [],
+            source: () => findValueByType(getCodeIdByCode(typesProgrammation, "Autres"), values, "informationsProgrammation"),
+            change: (value) => setValues(
+                changeByType(
+                    getCodeIdByCode(typesProgrammation, "Autres"),
+                    value,
+                    values,
+                    "informationsProgrammation"
+                )
+            ),
+            code: "Autres",
             readOnly: false
         }
     ];
@@ -33,7 +60,7 @@ export default function AutreProgrammation({
         >
             <Row className="attributeInfos">
                 <h4>
-                    <strong>Composition / Programmation</strong>
+                    <strong>Autre programmation</strong>
                 </h4>
                 {
                     getFields().filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map((item, i) => (
@@ -65,7 +92,7 @@ export default function AutreProgrammation({
                                                     if (v.preventDefault) v.preventDefault();
                                                 }
                                             }}
-                                        />) : null
+                                        />) : ""
                                 }
                             </Col>
                         </Row>

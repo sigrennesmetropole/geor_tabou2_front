@@ -56,7 +56,8 @@ const initialState = {
     }],
     featureSelected: undefined,
     typesContribution: [],
-    typesProgrammation: []
+    typesProgrammation: [],
+    typesVocation: []
 };
 
 export default function tabou2(state = initialState, action) {

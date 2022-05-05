@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import Message from "@mapstore/components/I18N/Message";
 import { get, isEmpty } from "lodash";
-import { Col, Row, FormControl, Checkbox, ControlLabel, Panel } from "react-bootstrap";
+import { Col, Row, FormControl, Checkbox, ControlLabel, Panel, Grid } from "react-bootstrap";
 import "@js/extension/css/vocation.css";
 import "@js/extension/css/tabou.css";
 import { findValueByType, changeByType, getCodeIdByCode } from "../utils";
@@ -20,7 +20,6 @@ export default function ProgrammationLogements({
     values
 }) {
     if (isEmpty(operation)) return "Aucune Opération à afficher !";
-
     const getFields = () => [
         {
             name: "nbLogementsPrevu",
@@ -30,6 +29,46 @@ export default function ProgrammationLogements({
             layers: [],
             source: () => values,
             change: (value) => setValues({...values, nbLogementsPrevu: value}),
+            readOnly: false
+        },
+        {
+            name: "habitat",
+            label: "Programmation habitat",
+            field: "description",
+            type: "text",
+            layers: [],
+            source: () => findValueByType(getCodeIdByCode(typesProgrammation, "Habitat"), values, "informationsProgrammation"),
+            change: (value) => {
+                setValues(
+                    changeByType(
+                        getCodeIdByCode(typesProgrammation, "Habitat"),
+                        value,
+                        values,
+                        "informationsProgrammation",
+                        getCodeIdByCode(typesProgrammation, "Habitat")
+                    )
+                );
+            },
+            readOnly: false
+        },
+        {
+            name: "activites",
+            label: "Programmation activites",
+            field: "description",
+            type: "text",
+            layers: [],
+            source: () => findValueByType(getCodeIdByCode(typesProgrammation, "Activites"), values, "informationsProgrammation"),
+            change: (value) => {
+                setValues(
+                    changeByType(
+                        getCodeIdByCode(typesProgrammation, "Activites"),
+                        value,
+                        values,
+                        "informationsProgrammation",
+                        getCodeIdByCode(typesProgrammation, "Activites")
+                    )
+                );
+            },
             readOnly: false
         },
         {
@@ -73,24 +112,17 @@ export default function ProgrammationLogements({
             readOnly: false
         },
         {
-            name: "habitat",
-            label: "Programmation habitat",
-            field: "description",
-            type: "text",
+            name: "vocationZa",
+            label: "Vocation ZA",
+            apiLabel: "libelle",
+            apiField: "code",
+            field: "vocationZa.libelle",
+            type: "combo",
+            api: getVocationZa,
             layers: [],
-            source: () => findValueByType(getCodeIdByCode(typesProgrammation, "Habitat"), values, "informationsProgrammation"),
-            change: (value) => {
-                setValues(
-                    changeByType(
-                        getCodeIdByCode(typesProgrammation, "Habitat"),
-                        value,
-                        values,
-                        "informationsProgrammation",
-                        getCodeIdByCode(typesProgrammation, "Habitat")
-                    )
-                );
-            },
-            code: "Activites",
+            source: () => values,
+            change: (value) => setValues({...values, vocationZa: {...values.vocationZa, libelle: value}}),
+            code: "Autres",
             readOnly: false
         },
         {

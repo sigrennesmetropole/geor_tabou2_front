@@ -14,9 +14,7 @@ export default function AutreProgrammation({
     values
 }) {
     if (isEmpty(operation)) return "Aucune Opération à afficher !";
-    useEffect(() => {
-        return;
-    }, [values.informationsProgrammation, values.contributions]);
+
     const getFields = () => [
         {
             name: "equipement",
@@ -62,7 +60,7 @@ export default function AutreProgrammation({
             className="contribPaddOap-style"
         >
             <Row className="attributeInfos">
-                <h4 style={{ marginBottom: "25px" }}>
+                <h4>
                     <strong>Autre programmation</strong>
                 </h4>
                 {
