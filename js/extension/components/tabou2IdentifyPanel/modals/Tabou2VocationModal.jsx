@@ -15,7 +15,8 @@ export default function Tabou2VocationModal({
     update,
     typesContribution,
     typesProgrammation,
-    typesVocation
+    typesVocation,
+    allowChange
 }) {
     const showCodeVocations = ["ACTIVITE", "HABITAT", "MIXTE"];
 
@@ -27,7 +28,8 @@ export default function Tabou2VocationModal({
         typesContribution: typesContribution,
         values: newOperation,
         setValues: setNewOperation,
-        typesProgrammation: typesProgrammation
+        typesProgrammation: typesProgrammation,
+        allowChange: allowChange
     };
 
     const changeVocation = (v) => {

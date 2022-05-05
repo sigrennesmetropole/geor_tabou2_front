@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import Message from "@mapstore/components/I18N/Message";
 import { get, isEmpty } from "lodash";
 import { Col, Row, FormControl, Checkbox, ControlLabel, Panel } from "react-bootstrap";
@@ -9,18 +9,15 @@ import Tabou2Combo from '@js/extension/components/form/Tabou2Combo';
 import { getVocationZa } from "@js/extension/api/requests";
 export default function ProgrammationLogements({
     operation = {},
-    owner = {},
     layer = "",
     typesProgrammation,
     setValues = () => {},
-    values
+    values,
+    allowChange
 }) {
     if (isEmpty(operation)) return "Aucune Opération à afficher !";
-    console.log(operation);
-    console.log(values);
 
     const getFields = () => {
-        console.log("GET FIELDS");
         const fields = [
             {
                 name: "activites",
@@ -90,13 +87,7 @@ export default function ProgrammationLogements({
         ];
         return fields;
     };
-    // const wasChanged = () => {
 
-    // }
-    // useEffect(() => {
-    //     return;
-    // }, [values.informationsProgrammation, values.contributions]);
-    const allowChange = owner.isContrib || owner.isReferent;
     return (
         <Panel
             className="contribPaddOap-style"
@@ -156,6 +147,7 @@ export default function ProgrammationLogements({
                                             placeholder={item.label}
                                             textField={item.apiLabel}
                                             filter={false}
+                                            disabled={!allowChange}
                                             value={get(values, item.field) || ""}
                                             onLoad={(r) => r?.elements || r}
                                             onSelect={(t) => {

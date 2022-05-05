@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import Message from "@mapstore/components/I18N/Message";
 import { get, isEmpty } from "lodash";
 import { Col, Row, FormControl, ControlLabel, Panel } from "react-bootstrap";
@@ -6,10 +6,10 @@ import "@js/extension/css/vocation.css";
 
 export default function AutreProgrammation({
     operation = {},
-    owner = {},
     layer = "",
     setValues = () => {},
-    values
+    values,
+    allowChange
 }) {
     if (isEmpty(operation)) return "Aucune Opération à afficher !";
 
@@ -26,7 +26,6 @@ export default function AutreProgrammation({
         }
     ];
 
-    const allowChange = owner.isContrib || owner.isReferent;
     return (
         <Panel
             className="contribPaddOap-style"

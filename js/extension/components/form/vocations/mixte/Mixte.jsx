@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import Message from "@mapstore/components/I18N/Message";
 import { Col, Tabs, Tab, Row } from 'react-bootstrap';
 import AutreProgrammation from './AutreProgrammation';

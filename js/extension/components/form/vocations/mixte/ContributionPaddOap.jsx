@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import Message from "@mapstore/components/I18N/Message";
 import { get, isEmpty } from "lodash";
 import { Col, Row, FormControl, ControlLabel, Panel } from "react-bootstrap";
@@ -8,7 +8,7 @@ import { findValueByType, changeByType, getCodeIdByCode } from "../utils";
 
 export default function ContributionPaddOap({
     operation = {},
-    owner = {},
+    allowChange = false,
     layer = "",
     typesContribution,
     setValues = () => {},
@@ -73,7 +73,6 @@ export default function ContributionPaddOap({
         }
     ];
 
-    const allowChange = owner.isContrib || owner.isReferent;
     return (
         <Panel
             className="contribPaddOap-style"

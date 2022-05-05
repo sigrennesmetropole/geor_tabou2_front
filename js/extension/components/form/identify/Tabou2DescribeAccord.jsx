@@ -182,6 +182,7 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
                                             operation={operation}
                                             update={changeVocation}
                                             opened={opened}
+                                            allowChange={allowChange}
                                             close={() => setOpened(false)}
                                             {...props.vocationsInfos}
                                         />

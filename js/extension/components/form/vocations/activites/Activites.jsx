@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import Message from "@mapstore/components/I18N/Message";
 import { Col, Tabs, Tab, Row } from 'react-bootstrap';
 import AutreProgrammation from './AutreProgrammation';
@@ -20,9 +20,6 @@ export default function Activites({...props}) {
         key: 3,
         tab: "Contribution PADD, OAP"
     }];
-    // useEffect(() => {
-    //     return;
-    // }, [props.values]);
 
     const subFormProps = {
         ... props,

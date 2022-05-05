@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import Message from "@mapstore/components/I18N/Message";
 import { get, isEmpty } from "lodash";
 import { Col, Row, FormControl, Checkbox, ControlLabel, Panel } from "react-bootstrap";
@@ -6,14 +6,13 @@ import "@js/extension/css/vocation.css";
 import "@js/extension/css/tabou.css";
 import { findValueByType, changeByType, getCodeIdByCode } from "../utils";
 import Tabou2Combo from '@js/extension/components/form/Tabou2Combo';
-import { getVocationZa } from "@js/extension/api/requests";
 import { DateTimePicker } from "react-widgets";
 import moment from 'moment';
 import momentLocalizer from 'react-widgets/lib/localizers/moment';
 momentLocalizer(moment);
 export default function ProgrammationLogements({
     operation = {},
-    owner = {},
+    allowChange = false,
     layer = "",
     typesProgrammation,
     setValues = () => {},
@@ -35,7 +34,7 @@ export default function ProgrammationLogements({
         {
             name: "plhDate",
             label: "Date Covention PLH",
-            field: "plh.description",
+            field: "plh.date",
             type: "date",
             layers: [],
             source: () => values,
@@ -125,7 +124,6 @@ export default function ProgrammationLogements({
         }
     ];
 
-    const allowChange = owner.isContrib || owner.isReferent;
     return (
         <Panel
             className="contribPaddOap-style"
@@ -184,6 +182,7 @@ export default function ProgrammationLogements({
                                             defaultValue={get(values, item.field)}
                                             placeholder={item.label}
                                             textField={item.apiLabel}
+                                            disabled={!allowChange}
                                             filter={false}
                                             value={get(values, item.field)}
                                             onLoad={(r) => r?.elements || r}
@@ -193,7 +192,26 @@ export default function ProgrammationLogements({
                                             onChange={(t) => {if (!t) item.change("");}}
                                         />
                                     ) : null
-                                } {item.type === "date" && (
+                                } {item.type === "datea" ? (
+                                    <DateTimePicker
+                                        type="date"
+                                        className="identifyDate"
+                                        placeholder={item.label}
+                                        readOnly={item?.readOnly || !allowChange}
+                                        calendar
+                                        culture="fr"
+                                        time={false}
+                                        value={new Date()}
+                                        format="DD/MM/YYYY"
+                                        onSelect={(t) => {
+                                            t ? new Date(t).toISOString() : new Date().toISOString();
+                                        }}
+                                        onChange={(t) => {
+                                            t ? new Date(t).toISOString() : new Date().toISOString();
+                                        }}
+                                    />
+                                ) : null}
+                                {item.type === "date" && (
                                     <DateTimePicker
                                         type="date"
                                         className="identifyDate"
@@ -202,13 +220,13 @@ export default function ProgrammationLogements({
                                         calendar
                                         culture="fr"
                                         time={false}
-                                        value={get(values, item.field)  ? new Date(get(values, item.field)) : null}
+                                        value={get(values, item.field) ? new Date(get(values, item.field)) : null}
                                         format="DD/MM/YYYY"
                                         onSelect={(t) => {
-                                            t ? new Date(t).toISOString() : new Date().toISOString();
+                                            item.change(t ? new Date(t).toISOString() : null);
                                         }}
                                         onChange={(t) => {
-                                            t ? new Date(t).toISOString() : new Date().toISOString();
+                                            item.change(t ? new Date(t).toISOString() : null);
                                         }}
                                     />
                                 )}
