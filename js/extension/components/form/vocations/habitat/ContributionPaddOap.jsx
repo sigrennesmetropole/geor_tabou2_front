@@ -12,7 +12,9 @@ export default function ContributionPaddOap({
     layer = "",
     typesContribution,
     setValues = () => {},
-    values
+    values,
+    i18n,
+    messages
 }) {
     if (isEmpty(operation)) return <Message msgId="tabou2.vocation.noDisplay"/>;
 

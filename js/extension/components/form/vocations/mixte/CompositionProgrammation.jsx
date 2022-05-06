@@ -9,7 +9,9 @@ export default function AutreProgrammation({
     allowChange = false,
     layer = "",
     setValues = () => {},
-    values
+    values,
+    i18n,
+    messages
 }) {
     if (isEmpty(operation)) return <Message msgId="tabou2.vocation.noDisplay"/>;
     const getFields = () => [
