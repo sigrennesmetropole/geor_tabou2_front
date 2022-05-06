@@ -6,7 +6,6 @@ import { get, keys, find, isEmpty, has, pickBy } from 'lodash';
 import {
     generalInfoFormatSelector, identifyOptionsSelector, clickPointSelector
 } from '@mapstore/selectors/mapInfo';
-import uuid from 'uuid';
 import { localizedLayerStylesEnvSelector } from "@mapstore/selectors/localizedLayerStyles";
 import { updateUserPlugin } from '@mapstore/actions/context';
 import { buildIdentifyRequest } from '@mapstore/utils/MapInfoUtils';
@@ -16,16 +15,21 @@ import { getMessageById } from "@mapstore/utils/LocaleUtils";
 import { newfilterLayerByList, getNewCrossLayerFilter } from '../utils/search';
 import {
     changeMapInfoFormat,
-    loadFeatureInfo,
     updateFeatureInfoClickPoint
 } from "@mapstore/actions/mapInfo";
+
+import {
+    clickOnMap
+} from "@mapstore/actions/map";
+
 import { TOGGLE_CONTROL } from '@mapstore/actions/controls';
 import {
     isTabou2Activate,
     defaultInfoFormat,
     getPluginCfg,
     getSelection,
-    getLayerFilterObj
+    getLayerFilterObj,
+    getSelectionPoint
 } from '../selectors/tabou2';
 import {
     loadTabouFeatureInfo,
@@ -40,7 +44,8 @@ import {
     setTabouFilterObj,
     applyFilterObj,
     cleanTabouInfos,
-    TABOU_CHANGE_FEATURES
+    TABOU_CHANGE_FEATURES,
+    setSelectedFeature
 } from "../actions/tabou2";
 import { getPDFProgramme, getPDFOperation, putRequestApi } from '../api/requests';
 
@@ -154,13 +159,7 @@ export function createChangeFeature(action$, store) {
                     return Rx.Observable.of(e);
                 })
                 .switchMap((el) => {
-                    return has(el, "status") && el.status !== 200 ? Rx.Observable.of(
-                        // fail message
-                        error({
-                            title: getMessageById(messages, "tabou2.infos.failApi"),
-                            message: getMessageById(messages, "tabou2.infos.failChangeFeature")
-                        })
-                    ) : Rx.Observable.of(
+                    return Rx.Observable.of(
                         // success message
                         success({
                             title: getMessageById(messages, "tabou2.infos.successApi"),
@@ -168,8 +167,7 @@ export function createChangeFeature(action$, store) {
                         }),
                         // we just update last GFI request to refresh panel
                         reloadLayer(layersToc.nom),
-                        displayFeature({ feature: action.params.feature, layer: layersToc.nom })
-
+                        setSelectedFeature(getSelection(store.getState()))
                     );
                 });
         });
@@ -191,7 +189,8 @@ export function displayFeatureInfos(action$, store) {
 
             let tocLayer = layersSelector(store.getState()).filter(lyr => lyr.name === action.infos.layer)[0];
             let env = localizedLayerStylesEnvSelector(store.getState());
-            let { url, request, metadata } = buildIdentifyRequest(tocLayer, { ...identifyOptionsSelector(store.getState()), env });
+            const identifyOptionsInfos = { ...identifyOptionsSelector(store.getState()), point: getSelectionPoint(store.getState()) };
+            let { url, request } = buildIdentifyRequest(tocLayer, { ...identifyOptionsInfos, env });
             request.cql_filter = `${ID_TABOU} = ${action.infos.feature.id}`;
             request.info_format = "application/json";
             return Rx.Observable.defer(() => getFeatureInfo(url, request, tocLayer, {}))
@@ -209,7 +208,8 @@ export function displayFeatureInfos(action$, store) {
                     if (!isSelected) {
                         return Rx.Observable.of(
                             cleanTabouInfos(),
-                            loadFeatureInfo(uuid.v1(), response.data, request, { ...metadata, features: response.features, featuresCrs: response.featuresCrs }, tocLayer)
+                            clickOnMap(getSelectionPoint(store.getState())),
+                            updateFeatureInfoClickPoint(clickPointSelector(store.getState()))
                         );
                     }
                     // if same we just update last GFI request

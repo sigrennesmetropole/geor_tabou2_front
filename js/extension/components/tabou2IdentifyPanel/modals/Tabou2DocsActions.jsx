@@ -6,9 +6,6 @@ import Toolbar from '@mapstore/components/misc/toolbar/Toolbar';
  * @returns component
  */
 export default function Tabou2DocsActions({ document = {}, onClick = () => {}, readOnly = true}) {
-    // if (props.readOnly || !props.visible) {
-    //     return null;
-    // }
 
     const style = {
         backgroundColor: "transparent",

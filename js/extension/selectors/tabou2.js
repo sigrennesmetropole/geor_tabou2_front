@@ -92,6 +92,10 @@ export function getLayersName(state) {
 export function getSelection(state) {
     return state?.tabou2?.selectedFeature;
 }
+
+export function getSelectionPoint(state) {
+    return state.tabou2?.point || {};
+}
 /**
  * Get Selected layer from identify panel
  * @param {any} state
@@ -143,6 +147,7 @@ export function getAuthInfos(state) {
     return {
         user: userSelector(state)?.name ?? "",
         isAdmin: groupNames.includes("MAPSTORE_ADMIN"),
+        // isReferent: true,
         isReferent: groupNames.includes("EL_APPLIS_TABOU_REFERENT"),
         isContrib: groupNames.includes("EL_APPLIS_TABOU_CONTRIB"),
         isConsult: groupNames.includes("EL_APPLIS_TABOU_CONSULT")
@@ -155,6 +160,14 @@ export function getAuthInfos(state) {
  */
 export function searchLoading(state) {
     return state?.tabou2?.loadFlags?.search;
+}
+/**
+ * Get documents loader status
+ * @param {any} state
+ * @returns {boolean}
+ */
+export function documentsLoading(state) {
+    return state?.tabou2?.loadFlags?.documents;
 }
 /**
  * Get identify loader status
@@ -251,4 +264,12 @@ export function getInfos(state) {
 
 export function getFeatureDocuments(state) {
     return state.tabou2?.documents;
+}
+
+export function getVocationsActivitesInfos(state) {
+    return {
+        typesContribution: state.tabou2.typesContribution,
+        typesProgrammation: state.tabou2.typesProgrammation,
+        typesVocation: state.tabou2.typesVocation
+    };
 }

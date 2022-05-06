@@ -25,8 +25,10 @@ import {
     CLEAN_TABOU_SELECTION,
     CLEAN_TABOU_INFOS,
     TABOU_CHANGE_FEATURES,
-    SET_TABOU_DOCUMENTS
-} from '@ext/actions/tabou2';
+    SET_TABOU_DOCUMENTS,
+    SET_TABOU_VOCATIONS_INFOS,
+    DISPLAY_TABOU_MARKER
+} from '../actions/tabou2';
 
 const initialState = {
     activeTab: "search",
@@ -52,7 +54,10 @@ const initialState = {
         layerPA: [],
         layerSA: []
     }],
-    featureSelected: undefined
+    featureSelected: undefined,
+    typesContribution: [],
+    typesProgrammation: [],
+    typesVocation: []
 };
 
 export default function tabou2(state = initialState, action) {
@@ -102,6 +107,8 @@ export default function tabou2(state = initialState, action) {
     case LOAD_FICHE_INFOS :
         const { ficheInfos } = action;
         return set('ficheInfos', ficheInfos, state);
+    case DISPLAY_TABOU_MARKER:
+        return set('point', action.point, state);
     case LOADING: {
         let newValue = action.value;
         if (action.mode === 'count') {
@@ -135,6 +142,8 @@ export default function tabou2(state = initialState, action) {
         return set("features", [], state);
     case SET_TABOU_DOCUMENTS:
         return set("documents", action?.documents || {}, state);
+    case SET_TABOU_VOCATIONS_INFOS:
+        return set(action.key, action.data || {}, state);
     default:
         return state;
     }

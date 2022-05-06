@@ -83,6 +83,17 @@ export default function Tabou2IdentifyContent({
             </>
         );
     }
+    const tabsProps = {
+        programme: props.tabouInfos.programme,
+        operation: operation,
+        mapFeature: mapFeature,
+        initialItem: infos,
+        change: onChange,
+        changeVocation: (newOA) => {
+            setInfos({...infos, ...newOA});
+        },
+        ...props
+    };
     return (
         <div className="tabou-identify-panel">
             <Row className="text-center tabou-tbar-panel">
@@ -111,14 +122,14 @@ export default function Tabou2IdentifyContent({
                                     </span>
                                 )}
                                 eventKey={index.toString()}>
-                                {item.id === "ident" ? <Tabou2IdentAccord operation={operation} mapFeature={mapFeature} initialItem={infos} change={onChange} {...props}/> : null}
-                                {item.id === "describe" ? <Tabou2DescribeAccord programme={props.tabouInfos.programme} operation={operation} mapFeature={mapFeature} initialItem={infos} change={onChange} {...props}/> : null}
-                                {item.id === "gouvernance" ? <Tabou2GouvernanceAccord programme={props.tabouInfos.programme} operation={operation} mapFeature={mapFeature} initialItem={infos} change={onChange} {...props}/> : null}
-                                {item.id === "suivi" ? <Tabou2SuiviOpAccord programme={props.tabouInfos.programme} operation={operation} mapFeature={mapFeature} initialItem={infos} change={onChange} {...props}/> : null}
-                                {item.id === "dds" ? <Tabou2DdsAccord programme={props.tabouInfos.programme} operation={operation} mapFeature={mapFeature} initialItem={infos} change={onChange} {...props}/> : null}
-                                {item.id === "habitat" ? <Tabou2ProgHabitAccord programme={props.tabouInfos.programme} operation={operation} mapFeature={mapFeature} initialItem={infos} change={onChange} {...props}/> : null}
-                                {item.id === "activite" ? <Tabou2ProgActiviteAccord programme={props.tabouInfos.programme} operation={operation} mapFeature={mapFeature} initialItem={infos} change={onChange} {...props}/> : null}
-                                {item.id === "secteursprog" ? <Tabou2SecProgLiesAccord programme={props.tabouInfos.programme} operation={operation} mapFeature={mapFeature} initialItem={infos} change={onChange} {...props}/> : null}
+                                {item.id === "ident" ? <Tabou2IdentAccord {...tabsProps}/> : null}
+                                {item.id === "describe" ? <Tabou2DescribeAccord {...tabsProps}/> : null}
+                                {item.id === "gouvernance" ? <Tabou2GouvernanceAccord {...tabsProps}/> : null}
+                                {item.id === "suivi" ? <Tabou2SuiviOpAccord {...tabsProps}/> : null}
+                                {item.id === "dds" ? <Tabou2DdsAccord {...tabsProps}/> : null}
+                                {item.id === "habitat" ? <Tabou2ProgHabitAccord {...tabsProps}/> : null}
+                                {item.id === "activite" ? <Tabou2ProgActiviteAccord {...tabsProps}/> : null}
+                                {item.id === "secteursprog" ? <Tabou2SecProgLiesAccord {...tabsProps}/> : null}
                             </Panel>
                         </PanelGroup>
                     ))

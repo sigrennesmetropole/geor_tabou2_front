@@ -20,14 +20,16 @@ import init from "../utils/init";
 
 import { onTabouMapClick, onSelectionUpdate, showTabouClickMarker } from "../epics/layer";
 import { tabouApplyFilter, tabouResetFilter, tabouGetSearchIds } from "../epics/search";
-import { tabouLoadIdentifyContent, tabouSetGFIFormat, printProgramme, createChangeFeature,
+import { tabouLoadIdentifyContent, printProgramme, createChangeFeature,
     displayFeatureInfos, dipslayPASAByOperation } from '../epics/identify';
 import { getSelectionInfos, createTabouFeature, onLayerReload } from '../epics/featureEvents';
 import { updateTabou2Tier, addCreateTabou2Tier, getTiersElements, associateTabou2Tier } from '../epics/tiers';
 import { updateTabou2Logs, getEventsElements } from "../epics/logs";
 import { listTabouDocuments, downloadTabouDocuments, deleteTabouDocuments, addNewDocument, updateDocument } from "../epics/documents";
 import { showNotification } from "../epics/common";
+import { onUpdateOperation, onGetInfos } from "../epics/vocations";
 import { setTbarPosition, initMap, closeTabouExt } from "../epics/setup";
+import "@js/extension/css/tabou.css";
 
 import { CONTROL_NAME, PANEL_SIZE } from '../constants';
 
@@ -89,7 +91,6 @@ export default {
     epics: {
         tabouApplyFilter: tabouApplyFilter,
         tabouLoadIdentifyContent: tabouLoadIdentifyContent,
-        tabouSetGFIFormat: tabouSetGFIFormat,
         tabouResetFilter: tabouResetFilter,
         setTbarPosition: setTbarPosition,
         getSelectionInfos: getSelectionInfos,
@@ -116,7 +117,9 @@ export default {
         downloadTabouDocuments: downloadTabouDocuments,
         deleteTabouDocuments: deleteTabouDocuments,
         addNewDocument: addNewDocument,
-        updateDocument: updateDocument
+        updateDocument: updateDocument,
+        onUpdateOperation: onUpdateOperation,
+        onGetInfos: onGetInfos
     },
     containers: {
         Toolbar: {

@@ -17,7 +17,8 @@ import {
     getIdentifyInfos,
     getLayersName,
     getTiersFilter,
-    getClickedFeatures
+    getClickedFeatures,
+    getVocationsActivitesInfos
 } from '../../selectors/tabou2';
 
 import Tabou2SearchPanel from '../tabou2SearchPanel/Tabou2SearchPanel';
@@ -45,7 +46,8 @@ import {
     displayMsg,
     displayPASAByOA,
     resetSearchFilters,
-    setTiersFilter
+    setTiersFilter,
+    updateOperation
 } from "@js/extension/actions/tabou2";
 
 function toolContainer({...props }) {
@@ -163,7 +165,8 @@ export default connect(
         authentInfos: getAuthInfos(state),
         identifyInfos: getIdentifyInfos(state),
         getLayersName: getLayersName(state),
-        tiersFilter: getTiersFilter(state)
+        tiersFilter: getTiersFilter(state),
+        vocationsInfos: getVocationsActivitesInfos(state)
     }), {
         setTab: setMainActiveTab,
         setFeature: setSelectedFeature,
@@ -185,6 +188,7 @@ export default connect(
         displayMsg: displayMsg,
         displayPASAByOA: displayPASAByOA,
         resetSearchFilters: resetSearchFilters,
-        setTiersFilter: setTiersFilter
+        setTiersFilter: setTiersFilter,
+        updateOperation: updateOperation
     }
 )(toolContainer);

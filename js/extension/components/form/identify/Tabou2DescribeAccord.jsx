@@ -1,10 +1,13 @@
 import React, {useEffect, useState } from "react";
 import { isEmpty, isEqual, pick, has, get } from "lodash";
-import { Col, Row, FormControl, Grid, ControlLabel } from "react-bootstrap";
+import { Col, Row, FormControl, Grid, ControlLabel, Button } from "react-bootstrap";
 import Tabou2Combo from '@js/extension/components/form/Tabou2Combo';
 import { getRequestApi } from "@js/extension/api/requests";
 import "@js/extension/css/identify.css";
+import "@js/extension/css/vocation.css";
 import Message from "@mapstore/components/I18N/Message";
+
+import Tabou2VocationModal from "../../tabou2IdentifyPanel/modals/Tabou2VocationModal";
 
 /**
  * Accordion to display info for describe panel section - only for feature linked with id tabou
@@ -13,10 +16,10 @@ import Message from "@mapstore/components/I18N/Message";
  */
 export default function Tabou2DescribeAccord({ initialItem, programme, operation, mapFeature, ...props }) {
     let layer = props?.selection?.layer;
-
     const [values, setValues] = useState({});
     const [fields, setFields] = useState([]);
     const [required, setRequired] = useState({});
+    const [opened, setOpened] = useState(false);
 
     const getFields = () => [{
         name: "operation",
@@ -60,7 +63,7 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
         label: "tabou2.identify.accordions.vocation",
         field: "vocation.libelle",
         layers: ["layerSA", "layerOA"],
-        type: "combo",
+        type: "vocation",
         apiLabel: "libelle",
         api: "vocations",
         placeholder: "tabou2.identify.accordions.vocationEmpty",
@@ -106,7 +109,14 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
         props.change(accordValues, pick(accordValues, required));
     };
 
+    const changeVocation = (vocationValues) => {
+        let newValues = { ...values, ...vocationValues };
+        setValues(newValues);
+        props.changeVocation(newValues);
+    };
+
     const allowChange = props.authent.isContrib || props.authent.isReferent;
+
     return (
         <Grid style={{ width: "100%" }} className={""}>
             {
@@ -160,6 +170,29 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
                                         }}
                                     />
                                 ) : null
+                            }{
+                                item.type === "vocation" && (
+                                    <>
+                                        <FormControl readOnly value={operation?.vocation?.libelle} className={ "vocation-libelle "}/>
+                                        <Button
+                                            tooltip="Vocations"
+                                            className="vocation-btn"
+                                            bsStyle="primary"
+                                            onClick={() => setOpened(true)}>
+                                            {props.i18n(props.messages, "tabou2.vocation.btnLabel")}
+                                        </Button>
+                                        <Tabou2VocationModal
+                                            i18n={props.i18n}
+                                            messages={props.messages}
+                                            operation={operation}
+                                            update={changeVocation}
+                                            opened={opened}
+                                            allowChange={allowChange}
+                                            close={() => setOpened(false)}
+                                            {...props.vocationsInfos}
+                                        />
+                                    </>
+                                )
                             }
                         </Col>
                     </Row>

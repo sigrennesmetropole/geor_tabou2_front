@@ -54,6 +54,20 @@ export const TABOU_DOWNLOAD_DOC = "TABOU_DOWNLOAD_DOC";
 export const DELETE_TABOU_DOCUMENTS = "DELETE_TABOU_DOCUMENTS";
 export const ADD_TABOU_DOC = "ADD_TABOU_DOC";
 export const MODIFY_TABOU_DOC = "MODIFY_TABOU_DOC";
+export const UPDATE_OPERATION = "UPDATE_OPERATION";
+export const GET_TABOU_VOCATIONS_INFOS = "GET_TABOU_VOCATIONS_INFOS";
+export const SET_TABOU_VOCATIONS_INFOS = "SET_TABOU_VOCATIONS_INFOS";
+
+export const setTabouVocationsInfos = (key, data) => ({
+    type: SET_TABOU_VOCATIONS_INFOS,
+    key,
+    data
+});
+
+export const getTabouVocationsInfos = (id) => ({
+    type: GET_TABOU_VOCATIONS_INFOS,
+    id
+});
 
 export const closeTabou = (pluginsCfg) => ({
     type: CLOSE_TABOU,
@@ -341,4 +355,9 @@ export const modifyDocument = (file, metadata) => ({
     type: MODIFY_TABOU_DOC,
     file,
     metadata
+});
+
+export const updateOperation = (operation) => ({
+    type: UPDATE_OPERATION,
+    operation
 });

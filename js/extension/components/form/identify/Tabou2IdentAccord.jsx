@@ -151,7 +151,7 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
                             }{
                                 item.type === "multi" ? (
                                     <Multiselect
-                                        style={{color: "black !important"}}
+                                        style={{ color: "black !important" }}
                                         placeholder={props.i18n(props.messages, item?.label || "")}
                                         value={getValue(item).split(";") || []}
                                         readOnly={item.readOnly || !allowChange}

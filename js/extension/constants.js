@@ -30,8 +30,8 @@ export const PANEL_SIZE = 600;
 export const URL_ADD = {
     "tabou2": "",
     "layerPA": "programmes",
-    "layerOA": "operations",
-    "layerSA": "operations"
+    "layerOA": "v2/operations",
+    "layerSA": "v2/operations"
 };
 
 export const REQUIRED_TIERS = ["nom", "adresseVille"];
@@ -388,7 +388,7 @@ export const ADD_PA_FORM = [ {
     variant: "info"
 }, {
     label: "tabou2.add.selectPaParent",
-    api: "operations?estSecteur=false&asc=true",
+    api: "v1/operations?estSecteur=false&asc=true",
     name: "parentoa",
     autocomplete: "nom",
     min: 3,

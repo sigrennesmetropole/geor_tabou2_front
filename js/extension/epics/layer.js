@@ -100,7 +100,7 @@ export const onSelectionUpdate = (action$, store) =>
 export const onTabouMapClick = (action$, store) =>
     action$.ofType(CLICK_ON_MAP)
         .filter(() => isTabou2Activate(store.getState()))
-        .switchMap(({point}) => {
+        .switchMap(({ point }) => {
             let layers = getPluginCfg(store.getState()).layersCfg;
             let list = keys(layers).map(l => ({
                 name: l,
