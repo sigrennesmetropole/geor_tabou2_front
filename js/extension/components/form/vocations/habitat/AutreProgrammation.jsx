@@ -11,7 +11,9 @@ export default function AutreProgrammation({
     typesProgrammation,
     setValues = () => { },
     values,
-    allowChange
+    allowChange,
+    i18n,
+    messages
 }) {
     if (isEmpty(operation)) return "Aucune Opération à afficher !";
 
