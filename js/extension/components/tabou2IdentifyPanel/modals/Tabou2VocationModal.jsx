@@ -76,6 +76,7 @@ export default function Tabou2VocationModal({
                         textField="libelle"
                         defaultValue={newOperation?.vocation?.libelle || ""}
                         onSelect={val => changeVocation(val)}
+                        placeholder="Choisir une vocation..."
                     />
                 </div>
             </Col>
