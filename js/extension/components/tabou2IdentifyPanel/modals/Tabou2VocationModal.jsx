@@ -22,7 +22,7 @@ export default function Tabou2VocationModal({
 }) {
     const showCodeVocations = ["ACTIVITE", "HABITAT", "MIXTE"];
 
-    const [vocation, setVocation] = useState(operation.vocation);
+    const [vocation, setVocation] = useState(operation.vocation || {});
     const [newOperation, setNewOperation] = useState(operation);
     const propsTab = {
         operation: operation,
@@ -74,7 +74,7 @@ export default function Tabou2VocationModal({
                         data={typesVocation.filter(v => showCodeVocations.includes(v.code))}
                         dataKey="code"
                         textField="libelle"
-                        defaultValue={newOperation.vocation.libelle}
+                        defaultValue={newOperation?.vocation?.libelle || ""}
                         onSelect={val => changeVocation(val)}
                     />
                 </div>
@@ -83,11 +83,11 @@ export default function Tabou2VocationModal({
                 <Tabs defaultActiveKey={1} id="vocation-tabs" className="voc-tabs">
                     <Tab
                         className="voc-tab-select"
-                        key={1} eventKey={1} title={vocation.libelle}
+                        key={1} eventKey={1} title={vocation?.libelle || ""}
                     >
-                        {vocation.code === "ACTIVITE" && (<Activites {...propsTab} />)}
-                        {vocation.code === "HABITAT" && (<Habitat {...propsTab} />)}
-                        {vocation.code === "MIXTE" && (<Mixte {...propsTab}/>)}
+                        {vocation?.code === "ACTIVITE" && (<Activites {...propsTab} />)}
+                        {vocation?.code === "HABITAT" && (<Habitat {...propsTab} />)}
+                        {vocation?.code === "MIXTE" && (<Mixte {...propsTab}/>)}
                     </Tab>
                 </Tabs>
             </Col>
