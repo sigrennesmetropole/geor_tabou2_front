@@ -29,7 +29,7 @@ export default function Tabou2LogsModal({
     // manage change
     const changeLog = (log) => {
         if (log.edit) {
-            editionActivate.current = true;
+            editionActivate.current = log.id;
             disabledAdd.current = true;
         }
         setLogs([...logs.filter(lo => lo.id !== log.id), log]);
@@ -62,6 +62,7 @@ export default function Tabou2LogsModal({
 
     // cancel log modifications
     const cancelChange = (log) => {
+        if (isEmpty(log)) return;
         setLogs([...logs.filter(lo => lo.id !== log.id), props.events.filter(lo => lo.id === log.id)[0]]);
         disabledAdd.current = false;
         editionActivate.current = false;
