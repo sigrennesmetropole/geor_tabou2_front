@@ -119,7 +119,7 @@ export default function Tabou2LogsTable({
                                                         calendar
                                                         time={false}
                                                         culture="fr"
-                                                        value={logInChange ? new Date(logInChange?.eventDate) : new Date()}
+                                                        value={!isEmpty(logInChange) &&  logInChange?.eventDate ? new Date(logInChange?.eventDate) : new Date()}
                                                         format="DD/MM/YYYY"
                                                         onSelect={(e) => modifyLog("eventDate", new Date(e).toISOString(e))}
                                                         onChange={(t) => !t ? modifyLog("eventDate", null) : null}
