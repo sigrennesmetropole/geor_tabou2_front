@@ -23,7 +23,6 @@ export default function Tabou2LogsTable({
     changeSort = () => {},
     saveEvent = () => {},
     cancelChange = () => {},
-    changeLog = () => {},
     ...props
 }) {
     // Manage sort icon
