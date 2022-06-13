@@ -43,7 +43,7 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
         source: has(values, "docDatePrevu") ? values : programme,
         readOnly: false
     }, {
-        name: "datDate",
+        name: "datDatePrevu",
         label: "tabou2.identify.accordions.daactDate",
         field: "datDatePrevu",
         type: "date",
