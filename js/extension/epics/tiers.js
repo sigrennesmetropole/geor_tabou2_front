@@ -108,7 +108,7 @@ export function updateTabou2Tier(action$, store) {
             let {featureId, layerUrl} = getInfos(store.getState());
             return Rx.Observable.defer(() => toDoOnUpdate(layerUrl, featureId, action.tier))
                 .switchMap(() => {
-                    if (action.type !== "CHANGE_FEATURE_TIER") return Rx.Observable.empty();
+                    if (action.type !== "CHANGE_FEATURE_TIER") return Rx.Observable.of(mapTiers());
                     return Rx.Observable.defer(() => changeFeatureTierAssociation(layerUrl, featureId, action.tier.tiers.id, action.tier.typeTiers.id, action.tier.id))
                         .catch(e => {
                             console.log("Error on change feature tier association");
