@@ -11,7 +11,7 @@ import { DateTimePicker } from "react-widgets";
 import moment from 'moment';
 import momentLocalizer from 'react-widgets/lib/localizers/moment';
 momentLocalizer(moment);
-export default function ProgrammationLogements({
+export default function ProgrammationMixte({
     operation = {},
     allowChange = false,
     layer = "",
@@ -165,7 +165,7 @@ export default function ProgrammationLogements({
         >
             <Row className="attributeInfos">
                 <h4>
-                    <strong><Message msgId="tabou2.vocation.progHousing"/></strong>
+                    <strong><Message msgId="tabou2.vocation.progMixte"/></strong>
                 </h4>
                 {
                     getFields().filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map((item, i) => (

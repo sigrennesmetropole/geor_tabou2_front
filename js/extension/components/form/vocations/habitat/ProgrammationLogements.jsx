@@ -35,7 +35,7 @@ export default function ProgrammationLogements({
         },
         {
             name: "plhDate",
-            label: "tabou2.vocaiton.datePLH",
+            label: "tabou2.vocation.datePLH",
             field: "plh.date",
             type: "date",
             layers: [],
