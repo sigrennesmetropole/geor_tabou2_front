@@ -43,7 +43,7 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
         source: has(values, "docDatePrevu") ? values : programme,
         readOnly: false
     }, {
-        name: "datDate",
+        name: "datDatePrevu",
         label: "tabou2.identify.accordions.daactDate",
         field: "datDatePrevu",
         type: "date",
@@ -55,7 +55,7 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
         label: "tabou2.identify.accordions.ddcData",
         msg: ["tabou2.getHelp", props.help?.ddc || props.help?.url || ""],
         type: "table",
-        fields: ["numAds", "depotDossier", "adsDate", "docDate", "datDate "],
+        fields: ["numAds", "depotDossier", "adsDate", "docDate", "datDatePrevu "],
         labels: [
             "tabou2.identify.accordions.numAds",
             "tabou2.identify.accordions.depotDossier",
@@ -88,7 +88,7 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
      * @returns any
      */
     const getValueByField = (field, val) => {
-        let isDate = ["depotDossier", "adsDate", "docDate", "datDate"].includes(field);
+        let isDate = ["depotDossier", "adsDate", "docDate", "datDatePrevu"].includes(field);
         return isDate && val ? new Date(val).toLocaleDateString() : val;
     };
 

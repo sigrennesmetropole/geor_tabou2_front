@@ -26,15 +26,6 @@ export default function Tabou2LogsModal({
         return;
     }, [logs, sortField]);
 
-    // manage change
-    const changeLog = (log) => {
-        if (log.edit) {
-            editionActivate.current = true;
-            disabledAdd.current = true;
-        }
-        setLogs([...logs.filter(lo => lo.id !== log.id), log]);
-    };
-
     // save log
     const saveEvent = (log) => {
         // call action to add log
@@ -62,6 +53,7 @@ export default function Tabou2LogsModal({
 
     // cancel log modifications
     const cancelChange = (log) => {
+        if (isEmpty(log)) return;
         setLogs([...logs.filter(lo => lo.id !== log.id), props.events.filter(lo => lo.id === log.id)[0]]);
         disabledAdd.current = false;
         editionActivate.current = false;
@@ -120,7 +112,6 @@ export default function Tabou2LogsModal({
                 changeSort={changeSort}
                 saveEvent={saveEvent}
                 cancelChange={cancelChange}
-                changeLog={changeLog}
                 {...props}
             />
         </ResizableModal>

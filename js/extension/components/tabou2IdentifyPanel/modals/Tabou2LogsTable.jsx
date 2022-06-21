@@ -1,9 +1,8 @@
-import React from 'react';
-import { Table, Glyphicon, Grid, Row, Col, Checkbox } from 'react-bootstrap';
-import { orderBy, isEmpty, find } from 'lodash';
+import React, { useState, useEffect } from 'react';
+import { Table, Glyphicon, Grid, Row, Col, Checkbox, FormControl } from 'react-bootstrap';
+import { orderBy, isEmpty, find, set } from 'lodash';
 import ButtonRB from '@mapstore/components/misc/Button';
 import Tabou2Combo from '@js/extension/components/form/Tabou2Combo';
-import Tabou2TextForm from '@js/extension/components/form/Tabou2TextForm';
 import { getTypesEvents } from "@js/extension/api/requests";
 import tooltip from '@mapstore/components/misc/enhancers/tooltip';
 import Message from "@mapstore/components/I18N/Message";
@@ -24,7 +23,6 @@ export default function Tabou2LogsTable({
     changeSort = () => {},
     saveEvent = () => {},
     cancelChange = () => {},
-    changeLog = () => {},
     ...props
 }) {
     // Manage sort icon
@@ -35,6 +33,38 @@ export default function Tabou2LogsTable({
             icon = sortField[1][idx] === "asc" ? "sort-by-attributes" : "sort-by-attributes-alt";
         }
         return (<Glyphicon onClick={() => changeSort(name) } glyph={icon} style={{marginLeft: "5px"}}/>);
+    };
+
+    const [logInChange, setLogInChange] = useState({});
+    const [allLogs, setAllLogs] = useState(logs);
+
+    useEffect(() => {
+        const readLogs = logs.filter(log => log.id !== logInChange?.id || log.new);
+        if (logInChange?.id || editionActivate.current) {
+            setAllLogs([...readLogs, { ...logInChange, edit: true }]);
+        } else {
+            setAllLogs(readLogs);
+        }
+        return;
+    }, [logInChange?.id, editionActivate]);
+
+    useEffect(() => {
+        setAllLogs(logs);
+        return;
+    }, [logs.length]);
+
+    const cancel = () => {
+        cancelChange(logInChange);
+        setLogInChange(null);
+    };
+
+    const modifyLog = (field, value) => {
+        let copyLog = {
+            ...logInChange, [field]: value
+        };
+        // avoid to change props.tiers directly and broke ref memory
+        let logChanged = set(copyLog, field, value);
+        setLogInChange(logChanged);
     };
 
     // manage sort style
@@ -71,7 +101,7 @@ export default function Tabou2LogsTable({
                         </thead>
                         <tbody style={{overflow: "auto"}}>
                             {
-                                orderBy(logs, sortField[0], sortField[1]).filter(log => !isEmpty(log)).map((log, i) => (
+                                orderBy(allLogs, sortField[0], sortField[1]).filter(log => !isEmpty(log)).map((log, i) => (
                                     <>
                                         <tr>
                                             <td>
@@ -88,10 +118,10 @@ export default function Tabou2LogsTable({
                                                         calendar
                                                         time={false}
                                                         culture="fr"
-                                                        value={log.eventDate ? new Date(log.eventDate) : null}
+                                                        value={!isEmpty(logInChange) &&  logInChange?.eventDate ? new Date(logInChange?.eventDate) : new Date()}
                                                         format="DD/MM/YYYY"
-                                                        onSelect={(e) => changeLog({...log, eventDate: new Date(e).toISOString(e)})}
-                                                        onChange={(t) => !t ? changeLog({...log, eventDate: null}) : null}
+                                                        onSelect={(e) => modifyLog("eventDate", new Date(e).toISOString(e))}
+                                                        onChange={(t) => !t ? modifyLog("eventDate", null) : null}
                                                     />)
                                                         : new Date(log.eventDate).toLocaleDateString()
                                                 }
@@ -102,16 +132,16 @@ export default function Tabou2LogsTable({
                                                         <Tabou2Combo
                                                             load={() => getTypesEvents()}
                                                             valueField={"id"}
-                                                            defaultValue={log.edit ? log.typeEvenement.id : null}
+                                                            defaultValue={logInChange?.edit ? logInChange?.typeEvenement.id : null}
                                                             placeholder={props.i18n(props.messages, "tabou2.logsModal.typePlaceholder")}
                                                             filter="contains"
                                                             dropUp={i < 6 ? false : true}
                                                             textField={"libelle"}
                                                             onLoad={(r) => r?.elements || r}
                                                             onSelect={(t) => {
-                                                                changeLog({...log, typeEvenement: t});
+                                                                modifyLog("typeEvenement", t);
                                                             }}
-                                                            onChange={(t) => !t ? changeLog({...log, typeEvenement: null}) : null}
+                                                            onChange={(t) => !t ? modifyLog("typeEvenement", null) : null}
                                                             messages={{
                                                                 emptyList: props.i18n(props.messages, "tabou2.emptyList"),
                                                                 openCombobox: props.i18n(props.messages, "tabou2.displaylist")
@@ -127,14 +157,15 @@ export default function Tabou2LogsTable({
                                             }}>
                                                 {
                                                     log.new || log.edit ? (
-                                                        <Tabou2TextForm
+                                                        <FormControl
                                                             type="text"
-                                                            value={log.description}
-                                                            style={{borderRadius: "4px"}}
+                                                            required="false"
+                                                            value={logInChange?.description}
+                                                            placeholder={props.i18n(props.messages, "tabou2.logsModal.notePlaceholder")}
                                                             onChange={(e) => {
-                                                                changeLog({...log, description: e.target.value});
+                                                                modifyLog("description", e.target.value);
                                                             }}
-                                                            placeholder={log.description || props.i18n(props.messages, "tabou2.logsModal.notePlaceholder")} />
+                                                        />
 
                                                     ) : log.description
                                                 }
@@ -151,9 +182,9 @@ export default function Tabou2LogsTable({
                                                             (log.new || log.edit) && (
                                                                 <Button
                                                                     tooltip={props.i18n(props.messages, "tabou2.save")}
-                                                                    disabled={!log.typeEvenement || isEmpty(log.typeEvenement) || !log.description}
+                                                                    disabled={!logInChange?.typeEvenement || isEmpty(logInChange?.typeEvenement) || !logInChange?.description}
                                                                     style={{ borderColor: "rgba(0,0,0,0)"}}
-                                                                    onClick={() => saveEvent(log)}>
+                                                                    onClick={() => saveEvent(logInChange)}>
                                                                     <span style={{ color: "rgb(40, 167, 69)" }}>
                                                                         <Glyphicon glyph="ok"/>
                                                                     </span>
@@ -165,7 +196,7 @@ export default function Tabou2LogsTable({
                                                                 <Button
                                                                     tooltip={props.i18n(props.messages, "tabou2.cancel")}
                                                                     style={{ borderColor: "rgba(0,0,0,0)"}}
-                                                                    onClick={() => cancelChange(log) }>
+                                                                    onClick={() => cancel(logInChange) }>
                                                                     <span style={{color: "rgb(229,0,0)"}}>
                                                                         <Glyphicon glyph="remove"/>
                                                                     </span>
@@ -173,11 +204,11 @@ export default function Tabou2LogsTable({
                                                             )
                                                         }
                                                         {
-                                                            (!log.systeme && !log.new && !log.edit && !editionActivate.current) && (
+                                                            (!log.systeme && !log.new && isEmpty(logInChange)) && (
                                                                 <Button
                                                                     tooltip={props.i18n(props.messages, "tabou2.change")}
                                                                     style={{ borderColor: "rgba(0,0,0,0)"}}
-                                                                    onClick={() => changeLog({...log, edit: true}) }>
+                                                                    onClick={() => setLogInChange(log) }>
                                                                     <span style={{color: "rgb(137,178,211)"}}>
                                                                         <Glyphicon glyph="pencil"/>
                                                                     </span>
@@ -185,7 +216,7 @@ export default function Tabou2LogsTable({
                                                             )
                                                         }
                                                         {
-                                                            (log.new || !editionActivate.current && !log.systeme) && (
+                                                            (log.new || isEmpty(logInChange) && !log.systeme) && (
                                                                 <Button
                                                                     tooltip={props.i18n(props.messages, "tabou2.delete")}
                                                                     style={{ borderColor: "rgba(0,0,0,0)"}}
