@@ -268,7 +268,8 @@
         "exit": "Fermer"
       },
       "vocation": {
-        "title": "Vocation - Champs attributaires",
+        "progHabitat": "Produits logements/répartition",
+        "title": "Vocation – informations complémentaires",
         "btnLabel": "Voir les attributs",
         "changeSuccess": "Modifications sauvegardées !",
         "changeFail": "Modifications Echouées !",
@@ -277,27 +278,29 @@
         "reset": "Réinitialiser",
         "tabComposition": "Composition",
         "tabHousing": "Logements",
+        "tabActivity": "Activité",
         "tabOtherProg": "Autre programmation",
         "tabContrib": "Contribution PADD, OAP",
         "progItems": "Programmation équipement",
         "otherProg": "Programmation autre",
         "noDisplay": "Aucune Opération à afficher !",
-        "compoProg": "Composition / Programmation",
+        "compoTitle": "Composition",
+        "compoProg": "Composition urbaine, Mixité fonctionnelle",
         "howFar": "Comment aller plus loin ?",
         "mainChecked": "Principales prises en compte",
         "generalTarget": "Enjeux généraux",
         "contribPADDOAP": "Contribution à la mise en œuvre du PADD et des OAP métropolitaines",
         "progHousing": "Programmation de logements",
-        "densityOAPQ": "Densité mini OAPQ",
+        "densityOAPQ": "Densité mini OAPq",
         "densitySCOT": "Densité mini SCoT",
         "scot": "Scot",
         "vocZa": "Vocation ZA",
         "progActivity": "Programmation activités",
         "nbHousing": "Nombre de logements",
-        "datePLH": "Date Covention PLH",
+        "datePLH": "Date Convention PLH",
         "convPLH": "Convention PLH",
-        "targetPLH": "Logements PLH prévus",
-        "delivPLH": "Logements PLH livrés"
+        "targetPLH": "Nb. logements conventionnés PLH prévu",
+        "delivPLH": "Nb. logements conventionnés PLH livré"
       }
     }
   }

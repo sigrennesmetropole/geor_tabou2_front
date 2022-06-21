@@ -81,16 +81,9 @@ export default function Tabou2VocationModal({
                 </div>
             </Col>
             <Col xs={12}>
-                <Tabs defaultActiveKey={1} id="vocation-tabs" className="voc-tabs">
-                    <Tab
-                        className="voc-tab-select"
-                        key={1} eventKey={1} title={vocation?.libelle || ""}
-                    >
-                        {vocation?.code === "ACTIVITE" && (<Activites {...propsTab} />)}
-                        {vocation?.code === "HABITAT" && (<Habitat {...propsTab} />)}
-                        {vocation?.code === "MIXTE" && (<Mixte {...propsTab}/>)}
-                    </Tab>
-                </Tabs>
+                {vocation?.code === "ACTIVITE" && (<Activites {...propsTab} />)}
+                {vocation?.code === "HABITAT" && (<Habitat {...propsTab} />)}
+                {vocation?.code === "MIXTE" && (<Mixte {...propsTab}/>)}
             </Col>
         </ResizableModal>
     );

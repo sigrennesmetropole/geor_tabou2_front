@@ -34,7 +34,7 @@ export default function AutreProgrammation({
         >
             <Row className="attributeInfos">
                 <h4>
-                    <strong><Message msgId={"tabou2.vocation.compoProg"}/></strong>
+                    <strong><Message msgId={"tabou2.vocation.compoTitle"}/></strong>
                 </h4>
                 {
                     getFields().filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map((item, i) => (

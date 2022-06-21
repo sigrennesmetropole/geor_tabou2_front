@@ -7,7 +7,7 @@ import "@js/extension/css/tabou.css";
 import { findValueByType, changeByType, getCodeIdByCode } from "../utils";
 import Tabou2Combo from '@js/extension/components/form/Tabou2Combo';
 import { getVocationZa } from "@js/extension/api/requests";
-export default function ProgrammationLogements({
+export default function ProgrammationActivite({
     operation = {},
     layer = "",
     typesProgrammation,
@@ -96,7 +96,7 @@ export default function ProgrammationLogements({
         >
             <Row className="attributeInfos">
                 <h4>
-                    <strong><Message msgId="tabou2.vocation.progHousing"/></strong>
+                    <strong><Message msgId="tabou2.vocation.progActivity"/></strong>
                 </h4>
                 {
                     getFields().filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map((item, i) => (

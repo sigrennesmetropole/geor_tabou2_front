@@ -19,23 +19,21 @@ export default function Mixte({...props}) {
         owner: { isReferent: true }
     };
     return (
-        <Row>
-            <Col xs={12}>
-                <Tabs defaultActiveKey={1} id="vocation-activite-tabs">
-                    {
-                        tabs.map((tab, i) => (
-                            <Tab
-                                key={i} eventKey={i} title={tab}
-                            >
-                                {i === 0 && (<CompositionProgrammation {...subFormProps}/>)}
-                                {i === 1 && (<ProgrammationLogements {...subFormProps}/>)}
-                                {i === 2 && (<AutreProgrammation {...subFormProps}/>)}
-                                {i === 3 && (<ContributionPaddOap {...subFormProps}/>)}
-                            </Tab>
-                        ))
-                    }
-                </Tabs>
-            </Col>
-        </Row>
+        <Col xs={12}>
+            <Tabs defaultActiveKey={1} id="vocation-activite-tabs">
+                {
+                    tabs.map((tab, i) => (
+                        <Tab
+                            key={i} eventKey={i} title={tab}
+                        >
+                            {i === 0 && (<CompositionProgrammation {...subFormProps}/>)}
+                            {i === 1 && (<ProgrammationLogements {...subFormProps}/>)}
+                            {i === 2 && (<AutreProgrammation {...subFormProps}/>)}
+                            {i === 3 && (<ContributionPaddOap {...subFormProps}/>)}
+                        </Tab>
+                    ))
+                }
+            </Tabs>
+        </Col>
     );
 }
