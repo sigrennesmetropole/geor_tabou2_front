@@ -173,7 +173,7 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
                             }{
                                 item.type === "vocation" && (
                                     <>
-                                        <FormControl readOnly value={operation?.vocation?.libelle} className={ "vocation-libelle "}/>
+                                        <FormControl readOnly value={get(values, "vocation.libelle")} className={ "vocation-libelle "}/>
                                         <Button
                                             tooltip="Vocations"
                                             className="vocation-btn"

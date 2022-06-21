@@ -20,8 +20,6 @@ export default function Tabou2VocationModal({
     i18n = () => { },
     messages
 }) {
-    const showCodeVocations = ["ACTIVITE", "HABITAT", "MIXTE"];
-
     const [vocation, setVocation] = useState(operation.vocation || {});
     const [newOperation, setNewOperation] = useState(operation);
     const propsTab = {
@@ -71,7 +69,7 @@ export default function Tabou2VocationModal({
                     <label><Message msgId="tabou2.vocation.selectVoc" /></label>
                     <DropdownList
                         style={{width: "30%"}}
-                        data={typesVocation.filter(v => showCodeVocations.includes(v.code))}
+                        data={typesVocation}
                         dataKey="code"
                         textField="libelle"
                         defaultValue={newOperation?.vocation?.libelle || ""}
