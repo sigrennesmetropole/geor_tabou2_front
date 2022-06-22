@@ -78,6 +78,7 @@ export default function ProgrammationLogements({
             label: "tabou2.vocation.progHabitat",
             field: "description",
             type: "text",
+            isArea: true,
             layers: [],
             source: () => findValueByType(getCodeIdByCode(typesProgrammation, "Habitat"), values, "informationsProgrammation"),
             change: (value) => {

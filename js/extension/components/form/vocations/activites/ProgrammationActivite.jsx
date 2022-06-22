@@ -26,6 +26,7 @@ export default function ProgrammationActivite({
                 label: "tabou2.vocation.progActivity",
                 field: "description",
                 type: "text",
+                isArea: true,
                 layers: [],
                 source: () => findValueByType(getCodeIdByCode(typesProgrammation, "Activites"), values, "informationsProgrammation"),
                 change: (value) => {

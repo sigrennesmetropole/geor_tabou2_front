@@ -18,6 +18,7 @@ export default function AutreProgrammation({
         {
             name: "compositionProgrammation",
             label: "tabou2.vocation.compoProg",
+            isArea: true,
             field: "operation",
             type: "text",
             layers: [],

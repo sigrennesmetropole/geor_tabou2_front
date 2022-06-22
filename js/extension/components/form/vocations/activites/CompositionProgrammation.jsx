@@ -21,6 +21,7 @@ export default function AutreProgrammation({
             label: "tabou2.vocation.compoProg",
             field: "operation",
             type: "text",
+            isArea: true,
             layers: [],
             source: () => values,
             change: (value) => setValues({...values, operation: value}),
