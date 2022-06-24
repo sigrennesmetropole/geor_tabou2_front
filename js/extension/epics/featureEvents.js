@@ -18,7 +18,8 @@ import { getMessageById } from "@mapstore/utils/LocaleUtils";
 import {
     isTabou2Activate,
     getSelection,
-    getInfos
+    getInfos,
+    getParentSA
 } from '../selectors/tabou2';
 
 import {
@@ -37,6 +38,7 @@ import { wrapStartStop } from "@mapstore/observables/epics";
 import { error, success } from "@mapstore/actions/notifications";
 import { refreshLayerVersion } from "@mapstore/actions/layers";
 import { layersSelector } from '@mapstore/selectors/layers';
+import { getAreaFeature } from '../utils/layers';
 
 // get feature from API according to selected layer feature
 const resetFeatureBylayer = {
@@ -72,6 +74,12 @@ export function getSelectionInfos(action$, store) {
             let layerUrl = get(URL_ADD, layerCfg);
             let searchItem = null;
             let mapFeature = action.selectedFeature.feature;
+            const parent = getParentSA(store.getState());
+            let parentArea = 0;
+            if (!isEmpty(parent)) {
+                parentArea = parent.properties?.surfaceTotale || getAreaFeature(parent.geometry);
+                parentArea = Math.round(parentArea) / 10000; // ha unit
+            }
 
             // get events from API
             /**
@@ -89,27 +97,18 @@ export function getSelectionInfos(action$, store) {
                     })
                     .switchMap(programmes => {
                         // store data
-                        let infos = {
+                        let identifyPanelInfos = {
                             ...selectInfos,
                             programmes: programmes.data,
-                            operation: searchItem,
+                            operation: {
+                                ...searchItem,
+                                surfaceParent: parentArea
+                            },
                             tiers: tiers,
                             mapFeature: mapFeature
                         };
-                        return Rx.Observable.of(loadFicheInfos(infos))
+                        return Rx.Observable.of(loadFicheInfos(identifyPanelInfos))
                             .concat(Rx.Observable.of(getTabouVocationsInfos(searchItem?.id)));
-                        // return Rx.Observable.defer(() => getTabouVocationsInfos(searchItem?.id))
-                        //     .catch(e => {
-                        //         console.log("Error on get getTabouVocationsInfos data request");
-                        //         console.log(e);
-                        //         return Rx.Observable.of({ elements: [] });
-                        //     })
-                        //     .switchMap((r) => {
-                        //         console.log(r);
-                        //         return Rx.Observable.of(
-                        //             loadFicheInfos(infos)
-                        //         );
-                        //     });
                     });
             } else {
                 secondObservable$ = Rx.Observable.defer(() => getOperation(searchItem.operationId))
@@ -117,6 +116,9 @@ export function getSelectionInfos(action$, store) {
                         console.log("Error retrieving get operation request");
                         console.log(e);
                         return Rx.Observable.of({ data: [] });
+                    })
+                    .switchMap(operation => {
+                        return Rx.Observable.of(operation);
                     })
                     .switchMap(operation => {
                         if (!searchItem?.operationId) {
@@ -192,6 +194,7 @@ export function getSelectionInfos(action$, store) {
                                 );
                             }
                             searchItem = response.data;
+                            console.log(searchItem);
                             return secondObservable$;
                         })
                 );

@@ -147,7 +147,6 @@ export function getAuthInfos(state) {
     return {
         user: userSelector(state)?.name ?? "",
         isAdmin: groupNames.includes("MAPSTORE_ADMIN"),
-        // isReferent: true,
         isReferent: groupNames.includes("EL_APPLIS_TABOU_REFERENT"),
         isContrib: groupNames.includes("EL_APPLIS_TABOU_CONTRIB"),
         isConsult: groupNames.includes("EL_APPLIS_TABOU_CONSULT")
@@ -243,6 +242,15 @@ export function getGfiData(state) {
     return state?.tabou2?.gfiData;
 }
 
+export function getParentSA(state) {
+    const oaTocName = getPluginCfg(state).layersCfg.layerOA.nom;
+    const clicked = getClickedFeatures(state);
+    if (clicked && clicked[oaTocName].length === 1) {
+        return getClickedFeatures(state)[oaTocName][0];
+    }
+    return [];
+}
+
 export function getInfos(state) {
     const feature = getSelection(state).feature;
     const layer = getLayer(state);
@@ -271,5 +279,11 @@ export function getVocationsActivitesInfos(state) {
         typesContribution: state.tabou2.typesContribution,
         typesProgrammation: state.tabou2.typesProgrammation,
         typesVocation: state.tabou2.typesVocation
+    };
+}
+
+export function getTypesFicheInfos(state) {
+    return {
+        typesFonciers: state.tabou2.typesFonciers
     };
 }

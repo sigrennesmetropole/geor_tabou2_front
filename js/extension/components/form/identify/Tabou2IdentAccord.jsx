@@ -6,6 +6,7 @@ import { getRequestApi } from "@js/extension/api/requests";
 import "@js/extension/css/identify.css";
 import Message from "@mapstore/components/I18N/Message";
 import SearchCombo from '@js/extension/components/form/SearchCombo';
+import Tabou2Combo from '@js/extension/components/form/Tabou2Combo';
 /**
  * Accordion to display info for Identity panel section - only for feature linked with id tabou
  * @param {any} param
@@ -35,6 +36,30 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
         source: values,
         readOnly: false,
         require: true
+    },
+    {
+        name: "entiteReferente",
+        field: "entiteReferente.libelle",
+        label: "tabou2.identify.accordions.entiteRefLib",
+        layers: ["layerSA", "layerOA"],
+        type: "combo",
+        autocomplete: false,
+        api: `entites-referentes`,
+        apiLabel: "libelle",
+        placeholder: "tabou2.identify.accordions.emptySelect",
+        source: operation,
+        readOnly: false,
+        value: () => get(values, "entiteReferente"),
+        select: (v) => changeInfos({entiteReferente: v}),
+        change: (v) => changeInfos(v ? {entiteReferente: v} : {entiteReferente: null})
+    }, {
+        name: "chargeop",
+        label: "tabou2.identify.accordions.chargeOp",
+        layers: ["layerPA"],
+        type: "multi",
+        data: props.tiers.filter(t => t.typeTiers.id === 1).map(t => t.tiers.nom),
+        source: operation,
+        readOnly: true
     }, {
         name: "commune",
         field: "properties.commune",
@@ -48,7 +73,8 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
         field: "nature.libelle",
         type: "text",
         source: operation,
-        readOnly: true
+        readOnly: true,
+        require: true
 
     }, {
         layers: ["layerPA"],
@@ -58,8 +84,8 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
         value: () => has(values, "operationName") ? values.operationName : operation.nom,
         select: (v) => changeInfos({operationId: v?.id || "", operationName: v?.nom || v}),
         change: (v) => changeInfos({operationId: v?.id || "", operationName: v?.nom || v}),
-        autocomplete: "nom",
         type: "combo",
+        autocomplete: true,
         apiLabel: "nom",
         api: "operations?estSecteur=false&asc=true",
         source: operation,
@@ -73,6 +99,36 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
         readOnly: false,
         require: true
     }, {
+        name: "consommationEspace",
+        field: "consommationEspace.libelle",
+        label: "tabou2.identify.accordions.consoSpace",
+        layers: ["layerSA", "layerOA"],
+        type: "combo",
+        autocomplete: false,
+        api: `consommation-espace?asc=true`,
+        apiLabel: "libelle",
+        placeholder: "tabou2.identify.accordions.emptySelect",
+        source: operation,
+        readOnly: false,
+        value: () => get(values, "consommationEspace"),
+        select: (v) => changeInfos({consommationEspace: v}),
+        change: (v) => changeInfos(v ? {consommationEspace: v} : {consommationEspace: null})
+    }, {
+        name: "etape",
+        layers: ["layerSA", "layerOA"],
+        label: "tabou2.identify.accordions.step",
+        field: "etape.libelle",
+        type: "combo",
+        apiLabel: "libelle",
+        filter: false,
+        api: `operations/${initialItem.id}/etapes?orderBy=id&asc=true`,
+        source: operation,
+        readOnly: false,
+        require: true,
+        value: () => get(values, "etape"),
+        select: (v) => changeInfos({etape: v}),
+        change: (v) => changeInfos(v ? {etape: v} : {etape: null})
+    },    {
         name: "numAds",
         label: "tabou2.identify.accordions.numAds",
         field: "numAds",
@@ -98,7 +154,7 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
     const getValue = (item) => {
         if (isEmpty(values) || isEmpty(operation)) return null;
         let itemSrc = getFields().filter(f => f.name === item.name)[0]?.source;
-        return get(itemSrc, item?.field);
+        return get(itemSrc, item?.field) || [];
     };
 
     // manage change info
@@ -120,7 +176,7 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
                         </Col>
                         <Col xs={8}>
                             {
-                                item.type === "combo" ? (
+                                item.type === "combo" && item?.autocomplete ? (
                                     <SearchCombo
                                         minLength={3}
                                         textField={item.apiLabel}
@@ -149,7 +205,7 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
                                         onChange={(v) => changeInfos({[item.name]: v.target.value})}
                                     />) : null
                             }{
-                                item.type === "multi" ? (
+                                item.type === "multi" && item[item.field] ? (
                                     <Multiselect
                                         style={{ color: "black !important" }}
                                         placeholder={props.i18n(props.messages, item?.label || "")}
@@ -161,6 +217,25 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
                                             openCombobox: "tabou2.displayList"
                                         }}
                                         className={ item.readOnly ? "tagColor noClick" : "tagColor"}
+                                    />
+                                ) : null
+                            }{
+                                item.type === "combo" && !item?.autocomplete ? (
+                                    <Tabou2Combo
+                                        load={() => getRequestApi(item.api, props.pluginCfg.apiCfg, {})}
+                                        placeholder={props.i18n(props.messages, item?.placeholder || "")}
+                                        filter="contains"
+                                        disabled={item.readOnly || !allowChange}
+                                        textField={item.apiLabel}
+                                        onLoad={(r) => r?.elements || r}
+                                        name={item.name}
+                                        value={get(values, item.field)}
+                                        onSelect={(v) => changeInfos({[item.name]: v})}
+                                        onChange={(v) => !v ? changeInfos({[item.name]: v}) : null}
+                                        messages={{
+                                            emptyList: props.i18n(props.messages, "tabou2.emptyList"),
+                                            openCombobox: props.i18n(props.messages, "tabou2.displayList")
+                                        }}
                                     />
                                 ) : null
                             }

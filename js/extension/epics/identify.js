@@ -39,15 +39,16 @@ import {
     CHANGE_FEATURE,
     DISPLAY_FEATURE,
     reloadLayer,
-    displayFeature,
+    LOAD_FICHE_INFOS,
     DISPLAY_PA_SA_BY_OA,
     setTabouFilterObj,
     applyFilterObj,
     cleanTabouInfos,
     TABOU_CHANGE_FEATURES,
-    setSelectedFeature
+    setSelectedFeature,
+    setTabouFicheInfos
 } from "../actions/tabou2";
-import { getPDFProgramme, getPDFOperation, putRequestApi } from '../api/requests';
+import { getPDFProgramme, getPDFOperation, putRequestApi, getTypesFoncier } from '../api/requests';
 
 import { getFeatureInfo } from "@mapstore/api/identify";
 
@@ -256,3 +257,29 @@ export function dipslayPASAByOperation(action$, store) {
             );
         });
 }
+
+export const getFicheInfoValues = (action$, store) =>
+    action$.ofType(LOAD_FICHE_INFOS)
+        .filter(() => isTabou2Activate(store.getState()))
+        .switchMap(({ id }) => {
+            return Rx.Observable.from([
+                { name: "typesFonciers", api: getTypesFoncier}
+            ]).map(r =>
+                Rx.Observable.defer(() => r.api(id))
+                    .catch(e => {
+                        console.log("Error on get getTabouVocationsInfos data request");
+                        console.log(e);
+                        return Rx.Observable.of({ data: [] });
+                    })
+                    .switchMap(({ data }) => {
+                        return Rx.Observable.of({...r, data: data?.elements || [] });
+                    })
+            ).toArray().switchMap((requestArray) => {
+                return Rx.Observable.forkJoin(requestArray).flatMap(elementArray => {
+                    console.log(elementArray);
+                    return Rx.Observable.of(
+                        setTabouFicheInfos(elementArray[0].name, elementArray[0].data),
+                    );
+                });
+            });
+        });

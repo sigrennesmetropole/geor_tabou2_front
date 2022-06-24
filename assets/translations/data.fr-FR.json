@@ -96,6 +96,7 @@
           "tooltip": "Tiers"
         },
         "accordions": {
+          "chargeOp": "Chargé d'opération",
           "tiersDetail": "Voir ces tiers",
           "identify": "Identification",
           "describe": "Descriptif",
@@ -110,7 +111,12 @@
           "vocationEmpty": "Vocations...",
           "vocation": "Vocations",
           "operation": "Operation",
+          "localisation": "Localisation",
+          "entiteRefLib": "Service référent",
+          "consoSpace": "Consommation espace",
+          "emptySelect": "Choisir une valeur...",
           "totalSpace": "Surface totale (ha)",
+          "sectorSpace": "Surface secteur (ha) ",
           "programme": "Programme",
           "adsDate": "Date décision",
           "docDate": "Date DOC",
@@ -124,7 +130,7 @@
           "modeAmenagement": "Mode d'aménagement",
           "amenageur": "Aménageurs",
           "moe": "Maîtrise d'oeuvre",
-          "idTabou": "Id Tabou",
+          "idTabou": "Id",
           "code": "Code",
           "city": "Commune",
           "nature": "Nature",
@@ -161,9 +167,17 @@
           "dateAuth": "Date d'autorisation",
           "dateStart": "Date de démarrage",
           "dateClose": "Date de clôture",
-          "errorFormatYear": " Année incorrecte ! (ex: 2010)"
+          "errorFormatYear": " Année incorrecte ! (ex: 2010)",
+          "cadre": "Cadre / montage opérationnel",
+          "pluiAdaptation": "Adaptations PLUI",
+          "pluiDisposition": "Dispositions réglementaires",
+          "outilFoncier": "Outil foncier existant",
+          "typeOccupation": "Type d'occupation actuel",
+          "foncierPriveTaux": "Niveau",
+          "foncierPriveDescription": "Maitrise foncière privée",
+          "foncierPublicTaux": "Niveau",
+          "foncierPublicDescription": "Maitrise foncière publique"
         },
-
         "selectFeatureTitle": "Identifier",
         "selectFeatureMsg": "Cliquer sur une emprise, programme, opération ou secteur visible sur la carte pour commencer",
         "toolbar": {
@@ -265,7 +279,8 @@
         "tel": "Téléphone",
         "isPrivate": "Entreprise du secteur privé",
         "save": "Enregistrer",
-        "exit": "Fermer"
+        "exit": "Fermer",
+        "objectifs": "Enjeux"
       },
       "vocation": {
         "progHabitat": "Produits logements/répartition",
@@ -278,7 +293,7 @@
         "reset": "Réinitialiser",
         "tabComposition": "Composition",
         "tabHousing": "Logements",
-        "tabActivity": "Activité",
+        "tabActivity": "Activités",
         "tabOtherProg": "Autre programmation",
         "tabContrib": "Contribution PADD, OAP",
         "progItems": "Programmation équipement",
@@ -301,8 +316,9 @@
         "tabMixte": "Mixte",
         "datePLH": "Date Convention PLH",
         "convPLH": "Convention PLH",
-        "targetPLH": "Nb. logements conventionnés PLH prévu",
-        "delivPLH": "Nb. logements conventionnés PLH livré"
+        "targetPLH": "Nombre de logements conventionnés PLH prévu",
+        "delivPLH": "Nombre de logements conventionnés PLH livré",
+        "usageActuel":"Usage actuel"
       }
     }
   }

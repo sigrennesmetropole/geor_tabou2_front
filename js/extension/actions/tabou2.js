@@ -57,6 +57,14 @@ export const MODIFY_TABOU_DOC = "MODIFY_TABOU_DOC";
 export const UPDATE_OPERATION = "UPDATE_OPERATION";
 export const GET_TABOU_VOCATIONS_INFOS = "GET_TABOU_VOCATIONS_INFOS";
 export const SET_TABOU_VOCATIONS_INFOS = "SET_TABOU_VOCATIONS_INFOS";
+export const SET_TABOU_FICHE_INFOS = "SET_TABOU_FICHE_INFOS";
+
+
+export const setTabouFicheInfos = (key, data) => ({
+    type: SET_TABOU_FICHE_INFOS,
+    key,
+    data
+});
 
 export const setTabouVocationsInfos = (key, data) => ({
     type: SET_TABOU_VOCATIONS_INFOS,

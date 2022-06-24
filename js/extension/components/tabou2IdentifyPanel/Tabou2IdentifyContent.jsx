@@ -9,6 +9,7 @@ import Tabou2ProgHabitAccord from '@js/extension/components/form/identify/Tabou2
 import Tabou2SuiviOpAccord from '@js/extension/components/form/identify/Tabou2SuiviOpAccord';
 import Tabou2DdsAccord from '@js/extension/components/form/identify/Tabou2DdsAccord';
 import Tabou2SecProgLiesAccord from '@js/extension/components/form/identify/Tabou2SecProgLiesAccord';
+import Tabou2CadreAccord from '../form/identify/Tabou2CadreAccord';
 import { ACCORDIONS } from '@js/extension/constants';
 import Tabou2IdentifyToolbar from './Tabou2IdentifyToolbar';
 import Loader from '@mapstore/components/misc/Loader';
@@ -41,7 +42,6 @@ export default function Tabou2IdentifyContent({
         openedAccordions[idx] = openedAccordions[idx] ? false : true;
         setOpened(openedAccordions);
     };
-
     // hooks to refresh if necessary if user change selected layer or if response change
     useEffect(() => {
         setAccordions(ACCORDIONS.filter(acc => !acc.layers || acc?.layers.indexOf(tabouLayer) > -1));
@@ -92,8 +92,10 @@ export default function Tabou2IdentifyContent({
         changeVocation: (newOA) => {
             setInfos({...infos, ...newOA});
         },
-        ...props
+        ...props,
+        types: props.typesFicheInfos
     };
+
     return (
         <div className="tabou-identify-panel">
             <Row className="text-center tabou-tbar-panel">
@@ -129,7 +131,8 @@ export default function Tabou2IdentifyContent({
                                 {item.id === "dds" ? <Tabou2DdsAccord {...tabsProps}/> : null}
                                 {item.id === "habitat" ? <Tabou2ProgHabitAccord {...tabsProps}/> : null}
                                 {item.id === "activite" ? <Tabou2ProgActiviteAccord {...tabsProps}/> : null}
-                                {item.id === "secteursprog" ? <Tabou2SecProgLiesAccord {...tabsProps}/> : null}
+                                {item.id === "secteursprog" ? <Tabou2SecProgLiesAccord {...tabsProps} /> : null},
+                                {item.id === "cadre" ? <Tabou2CadreAccord {...tabsProps}/> : null}
                             </Panel>
                         </PanelGroup>
                     ))

@@ -20,8 +20,18 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
     const [fields, setFields] = useState([]);
     const [required, setRequired] = useState({});
     const [opened, setOpened] = useState(false);
+    let getValue = () => { };
 
     const getFields = () => [{
+        name: "localisation",
+        type: "text",
+        label: "tabou2.identify.accordions.localisation",
+        field: "localisation",
+        source: has(values, "localisation") ? values : operation,
+        layers: ["layerSA", "layerOA"],
+        readOnly: false,
+        isArea: true
+    }, {
         name: "operation",
         type: "text",
         label: "tabou2.identify.accordions.operation",
@@ -71,13 +81,40 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
         readOnly: false
 
     }, {
-        name: "surfaceTotale",
-        field: "surfaceTotale",
+        name: "surfaceParent",
+        field: "surfaceParent",
         label: "tabou2.identify.accordions.totalSpace",
         type: "number",
         step: 0.1,
+        layers: ["layerSA"],
+        source: initialItem,
+        readOnly: true
+    }, {
+        name: "surfaceTotale",
+        field: "surfaceTotale",
+        label: layer === "layerSA" ? "tabou2.identify.accordions.sectorSpace" : "tabou2.identify.accordions.totalSpace",
+        type: "number",
+        step: 0.1,
         layers: ["layerSA", "layerOA"],
-        source: values
+        source: initialItem
+    }, {
+        name: "usageActuel",
+        type: "text",
+        label: "tabou2.identify.accordions.usageActuel",
+        field: "usageActuel",
+        source: has(values, "usageActuel") ? values : operation,
+        layers: ["layerSA", "layerOA"],
+        readOnly: false,
+        isArea: true
+    }, {
+        name: "objectifs",
+        type: "text",
+        label: "tabou2.identify.accordions.objectifs",
+        field: "objectifs",
+        source: has(values, "objectifs") ? values : operation,
+        layers: ["layerSA", "layerOA"],
+        readOnly: false,
+        isArea: true
     }].filter(el => el?.layers?.includes(layer) || !el?.layers);
 
     /**
@@ -95,8 +132,8 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
         }
     }, [initialItem]);
 
-    const getValue = (item) => {
-        if (isEmpty(values) || isEmpty(operation)) return null;
+    getValue = (item) => {
+        if (isEmpty(values) && isEmpty(operation)) return null;
         let itemSrc = getFields().filter(f => f.name === item.name)[0]?.source;
         return get(itemSrc, item?.field);
     };
@@ -135,11 +172,12 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
                                         type={item.type}
                                         min="0"
                                         step={item?.step}
-                                        value={getValue(item) || ""}
+                                        value={item.value ? item.value(item) : getValue(item) || ""}
                                         readOnly={item.readOnly || !allowChange}
                                         onChange={(v) => {
+                                            const val = item.type === "number" ? parseFloat(v.target.value) : v.target.value;
                                             return changeInfos({
-                                                [item.name]: item.type === "number" && v.target.value < 0 ? "" : v.target.value
+                                                [item.name]: item.type === "number" && val < 0 ? "" : val
                                             });
                                         }}
                                         onKeyDown={(v) => {

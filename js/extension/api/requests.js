@@ -377,3 +377,5 @@ export const getTypesProgrammationId = () => axios.get(`${baseURL}/types-program
 export const getTypesContributionsId = () => axios.get(`${baseURL}/types-contributions`, { params: { asc: true } });
 
 export const getTypesVocationsId = () => axios.get(`${baseURL}/vocations`, { params: { asc: true } });
+
+export const getTypesFoncier = () => axios.get(`${baseURL}/types-fonciers`, { params: { asc: true } });

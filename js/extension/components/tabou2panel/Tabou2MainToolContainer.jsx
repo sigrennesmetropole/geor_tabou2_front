@@ -18,7 +18,8 @@ import {
     getLayersName,
     getTiersFilter,
     getClickedFeatures,
-    getVocationsActivitesInfos
+    getVocationsActivitesInfos,
+    getTypesFicheInfos
 } from '../../selectors/tabou2';
 
 import Tabou2SearchPanel from '../tabou2SearchPanel/Tabou2SearchPanel';
@@ -166,7 +167,8 @@ export default connect(
         identifyInfos: getIdentifyInfos(state),
         getLayersName: getLayersName(state),
         tiersFilter: getTiersFilter(state),
-        vocationsInfos: getVocationsActivitesInfos(state)
+        vocationsInfos: getVocationsActivitesInfos(state),
+        typesFicheInfos: getTypesFicheInfos(state)
     }), {
         setTab: setMainActiveTab,
         setFeature: setSelectedFeature,
