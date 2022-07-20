@@ -276,7 +276,6 @@ export const getFicheInfoValues = (action$, store) =>
                     })
             ).toArray().switchMap((requestArray) => {
                 return Rx.Observable.forkJoin(requestArray).flatMap(elementArray => {
-                    console.log(elementArray);
                     return Rx.Observable.of(
                         setTabouFicheInfos(elementArray[0].name, elementArray[0].data),
                     );

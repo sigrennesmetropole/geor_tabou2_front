@@ -36,28 +36,6 @@ export default function Tabou2SuiviOpAccord({ initialItem, programme, operation,
         type: "date",
         source: values?.livraisonDate ? values : operation,
         readOnly: false
-    }, {
-        name: "autorisationDate",
-        label: "tabou2.identify.accordions.dateAuth",
-        layers: ["layerSA", "layerOA"],
-        type: "date",
-        source: values?.autorisationDate ? values : operation,
-        readOnly: false
-    }, {
-        name: "operationnelDate",
-        label: "tabou2.identify.accordions.dateStart",
-        field: "operationnelDate",
-        layers: ["layerSA", "layerOA"],
-        type: "date",
-        source: values?.operationnelDate ? values : operation,
-        readOnly: false
-    }, {
-        name: "clotureDate",
-        label: "tabou2.identify.accordions.dateClose",
-        field: "clotureDate",
-        type: "date",
-        source: values?.clotureDate ? values : operation,
-        readOnly: false
     }].filter(el => el?.layers?.includes(layer) || !el?.layers);
 
     // hooks
