@@ -284,6 +284,8 @@ export function getVocationsActivitesInfos(state) {
 
 export function getTypesFicheInfos(state) {
     return {
-        typesFonciers: state.tabou2.typesFonciers
+        typesFonciers: state.tabou2.typesFonciers,
+        typesAction: state.tabou2.typesAction,
+        typesActeurs: state.tabou2.typesActeur
     };
 }

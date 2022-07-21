@@ -190,7 +190,10 @@
           "environnement": "Dossiers environnementaux",
           "typesFinancement": "Type Financement",
           "financements": "Financement",
-          "referents": "Chargé d'opération"
+          "referents": "Chargé d'opération",
+          "rmActions": "Actions à mener par RM",
+          "acteursExt": "Acteurs et partenaires externes",
+          "acteursInt": "Services ou personnes internes"
         },
         "selectFeatureTitle": "Identifier",
         "selectFeatureMsg": "Cliquer sur une emprise, programme, opération ou secteur visible sur la carte pour commencer",

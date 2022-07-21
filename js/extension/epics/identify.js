@@ -48,7 +48,7 @@ import {
     setSelectedFeature,
     setTabouFicheInfos
 } from "../actions/tabou2";
-import { getPDFProgramme, getPDFOperation, putRequestApi, getTypesFoncier } from '../api/requests';
+import { getPDFProgramme, getPDFOperation, putRequestApi, getTypesFoncier, getTypesActeurs, getTypesActions } from '../api/requests';
 
 import { getFeatureInfo } from "@mapstore/api/identify";
 
@@ -159,7 +159,7 @@ export function createChangeFeature(action$, store) {
                     console.log(e);
                     return Rx.Observable.of(e);
                 })
-                .switchMap((el) => {
+                .switchMap(() => {
                     return Rx.Observable.of(
                         // success message
                         success({
@@ -263,7 +263,9 @@ export const getFicheInfoValues = (action$, store) =>
         .filter(() => isTabou2Activate(store.getState()))
         .switchMap(({ id }) => {
             return Rx.Observable.from([
-                { name: "typesFonciers", api: getTypesFoncier}
+                { name: "typesFonciers", api: getTypesFoncier },
+                { name: "typesActeur", api: getTypesActeurs },
+                { name: "typesAction", api: getTypesActions}
             ]).map(r =>
                 Rx.Observable.defer(() => r.api(id))
                     .catch(e => {
@@ -275,9 +277,11 @@ export const getFicheInfoValues = (action$, store) =>
                         return Rx.Observable.of({...r, data: data?.elements || [] });
                     })
             ).toArray().switchMap((requestArray) => {
-                return Rx.Observable.forkJoin(requestArray).flatMap(elementArray => {
+                return Rx.Observable.forkJoin(requestArray).flatMap((elementArray) => {
                     return Rx.Observable.of(
                         setTabouFicheInfos(elementArray[0].name, elementArray[0].data),
+                        setTabouFicheInfos(elementArray[1].name, elementArray[1].data),
+                        setTabouFicheInfos(elementArray[2].name, elementArray[2].data),
                     );
                 });
             });

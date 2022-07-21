@@ -53,7 +53,7 @@ export default function Tabou2IdentifyContent({
                 setMapFeature(props?.tabouInfos?.mapFeature);
             }
         }
-    }, [tabouLayer, props.tabouInfos]);
+    }, [tabouLayer, props.tabouInfos, props.typesFicheInfos]);
 
     const onChange = (values, required) => {
         mandatory.current = {...mandatory.current, ...required};

@@ -1,6 +1,6 @@
 import React, {useEffect, useState } from "react";
-import { isEmpty, isEqual, pick, get } from "lodash";
-import { Col, Row, Grid, Glyphicon, ControlLabel } from "react-bootstrap";
+import { isEmpty, isEqual, pick, get, find } from "lodash";
+import { Col, Row, Grid, Glyphicon, ControlLabel, FormControl } from "react-bootstrap";
 import Tabou2Combo from '@js/extension/components/form/Tabou2Combo';
 import { getRequestApi } from "@js/extension/api/requests";
 import { Multiselect } from "react-widgets";
@@ -22,7 +22,50 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
     const [fields, setFields] = useState([]);
     const [required, setRequired] = useState({});
 
-    const getFields = () => [{
+    let changeInfos = () => { };
+    let getFields = () => { };
+
+    useEffect(() => {
+        const calculFields = getFields();
+        const mandatoryFields = calculFields.filter(f => f.require).map(f => f.name);
+        if (!isEqual(initialItem, values)) {
+            setValues(initialItem);
+            setFields(calculFields);
+            setRequired(mandatoryFields);
+        }
+    }, [initialItem, JSON.stringify(props.typesFicheInfos)]);
+
+    let changeAction = (types, fieldArray, search, field, value) => {
+        // get item by type code
+        let itemByCode = find(get(initialItem, fieldArray), search);
+        if (!itemByCode) {
+            itemByCode = { typeAction: find(types.typesAction, ['code', search[1]]) };
+        }
+        // change value
+        itemByCode[field] = value;
+        // filter others item whithout changed item
+        const othersItems = initialItem[fieldArray].filter(item => item.typeAction.code !== itemByCode.typeAction.code);
+        // send to parent
+        const concatAll = [...othersItems, itemByCode];
+        changeInfos({ actions: concatAll });
+    };
+
+    let changeActeur = (types, fieldArray, search, field, value) => {
+        // get item by type code
+        let itemByCode = find(get(initialItem, fieldArray), search);
+        if (!itemByCode) {
+            itemByCode = { typeActeur: find(types.typesActeurs, ['code', search[1]]) };
+        }
+        // change value
+        itemByCode[field] = value;
+        // filter others item whithout changed item
+        const othersItems = initialItem[fieldArray].filter(item => item.typeActeur.code !== itemByCode.typeActeur.code);
+        // send to parent
+        const concatAll = [...othersItems, itemByCode];
+        changeInfos({ acteurs: concatAll });
+    };
+
+    getFields = () => [{
         name: "promoteur",
         label: "tabou2.identify.accordions.promoteur",
         layers: ["layerPA"],
@@ -73,25 +116,38 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
         type: "multi",
         data: props.tiers.filter(t => t.typeTiers.id === 2).map(t => t.tiers.nom),
         readOnly: true
+    }, {
+        name: "actions",
+        type: "text",
+        layers: ["layerSA", "layerOA"],
+        label: "tabou2.identify.accordions.rmActions",
+        field: "actions.description",
+        readOnly: false,
+        value: () => find(get(initialItem, "actions"), ["typeAction.code", "ACTION"])?.description,
+        change: (v, types) => changeAction(types, "actions", ["typeAction.code", "ACTION"], "description", v)
+    }, {
+        name: "acteurs",
+        type: "text",
+        layers: ["layerSA", "layerOA"],
+        label: "tabou2.identify.accordions.acteursInt",
+        field: "acteurs.description",
+        readOnly: false,
+        value: () => find(get(initialItem, "acteurs"), ["typeActeur.code", "ACT_INT"])?.description,
+        change: (v, types) => changeActeur(types, "acteurs", ["typeActeur.code", "ACT_INT"], "description", v)
+    }, {
+        name: "acteurs",
+        type: "text",
+        layers: ["layerSA", "layerOA"],
+        label: "tabou2.identify.accordions.acteursExt",
+        field: "acteurs.description",
+        readOnly: false,
+        value: () => find(get(initialItem, "acteurs"), ["typeActeur.code", "ACT_EXT"])?.description,
+        change: (v, types) => changeActeur(types, "acteurs", ["typeActeur.code", "ACT_EXT"], "description", v)
     }].filter(el => el?.layers?.includes(layer) || !el?.layers);
 
     const allowChange = props.authent.isContrib || props.authent.isReferent;
-    /**
-     * Effect
-     */
-    // return writable fields as object-keys
 
-    useEffect(() => {
-        const calculFields = getFields();
-        const mandatoryFields = calculFields.filter(f => f.require).map(f => f.name);
-        if (!isEqual(initialItem, values)) {
-            setValues(initialItem);
-            setFields(calculFields);
-            setRequired(mandatoryFields);
-        }
-    }, [initialItem]);
-
-    const changeInfos = (item) => {
+    changeInfos = (item) => {
         let newValues = {...values, ...item};
         setValues(newValues);
         // send to parent to save
@@ -137,6 +193,19 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
                         </Col>
                         <Col xs={allTiersButtons[item.name] ? 7 : 8}>
                             {
+                                item.type === "text" || item.type === "number" ?
+                                    (<FormControl
+                                        componentClass={item.isArea ? "textarea" : "input"}
+                                        placeholder={props.i18n(props.messages, item?.placeholder || item.label)}
+                                        style={{height: item.isArea ? "100px" : "auto"}}
+                                        type={item.type}
+                                        min="0"
+                                        step={item?.step}
+                                        value={item.value() || ""}
+                                        readOnly={item.readOnly || !allowChange}
+                                        onChange={(v) => item.change(v.target.value, props.typesFicheInfos)}
+                                    />) : null
+                            }{
                                 item.type === "button" && (
                                     <Button
                                         tooltip={props.i18n(props.messages, item.tooltip || "")}

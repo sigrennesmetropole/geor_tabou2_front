@@ -59,7 +59,9 @@ const initialState = {
     typesContribution: [],
     typesProgrammation: [],
     typesVocation: [],
-    typesFonciers: []
+    typesFonciers: [],
+    typesAction: [],
+    typesActeur: []
 };
 
 export default function tabou2(state = initialState, action) {

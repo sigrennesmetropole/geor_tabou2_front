@@ -37,7 +37,7 @@ export default function Tabou2CadreAccord({ initialItem, programme, operation, m
             setRequired(mandatoryFields);
         }
     }, [initialItem, JSON.stringify(props.typesFicheInfos)]);
-    // "descriptionsFoncier", ["typesFonciers.code", "FONCIER_PUBLIC"], "description", "myNewvValue"
+    // ex : "descriptionsFoncier", ["typesFonciers.code", "FONCIER_PUBLIC"], "description", "myNewvValue"
     let changeFoncier = (types, fieldArray, search, field, value) => {
         // get item by type code
         let itemByCode = find(get(initialItem, fieldArray), search);
@@ -62,8 +62,8 @@ export default function Tabou2CadreAccord({ initialItem, programme, operation, m
         label: "tabou2.identify.accordions.foncierPublicDescription",
         field: "descriptionsFoncier.description",
         readOnly: false,
-        value: () => find(get(initialItem, "descriptionsFoncier"), ["typeFoncier.code", "FONCIER_PUBLIC"])?.description,
-        change: (v, types) => changeFoncier(types, "descriptionsFoncier", ["typeFoncier.code", "FONCIER_PUBLIC"], "description", v)
+        value: () => find(get(initialItem, "descriptionsFoncier"), ["typeFoncier.code", "PUBLIQUE"])?.description,
+        change: (v, types) => changeFoncier(types, "descriptionsFoncier", ["typeFoncier.code", "PUBLIQUE"], "description", v)
     }, {
         name: "descriptionsFoncier",
         type: "number",
@@ -71,8 +71,8 @@ export default function Tabou2CadreAccord({ initialItem, programme, operation, m
         label: "tabou2.identify.accordions.foncierPublicTaux",
         field: "descriptionsFoncier.taux",
         readOnly: false,
-        value: () => find(get(initialItem, "descriptionsFoncier"), ["typeFoncier.code", "FONCIER_PUBLIC"])?.taux,
-        change: (v, types) => changeFoncier(types, "descriptionsFoncier", ["typeFoncier.code", "FONCIER_PUBLIC"], "taux", v)
+        value: () => find(get(initialItem, "descriptionsFoncier"), ["typeFoncier.code", "PUBLIQUE"])?.taux,
+        change: (v, types) => changeFoncier(types, "descriptionsFoncier", ["typeFoncier.code", "PUBLIQUE"], "taux", v)
     }, {
         name: "descriptionsFoncier",
         type: "text",
@@ -80,8 +80,8 @@ export default function Tabou2CadreAccord({ initialItem, programme, operation, m
         label: "tabou2.identify.accordions.foncierPriveDescription",
         field: "descriptionsFoncier.description",
         readOnly: false,
-        value: () => find(get(initialItem, "descriptionsFoncier"), ["typeFoncier.code", "FONCIER_PRIVE"])?.description,
-        change: (v, types) => changeFoncier(types, "descriptionsFoncier", ["typeFoncier.code", "FONCIER_PRIVE"], "description", v)
+        value: () => find(get(initialItem, "descriptionsFoncier"), ["typeFoncier.code", "PRIVEE"])?.description,
+        change: (v, types) => changeFoncier(types, "descriptionsFoncier", ["typeFoncier.code", "PRIVEE"], "description", v)
     }, {
         name: "descriptionsFoncier",
         type: "number",
@@ -89,8 +89,8 @@ export default function Tabou2CadreAccord({ initialItem, programme, operation, m
         label: "tabou2.identify.accordions.foncierPriveTaux",
         field: "descriptionsFoncier.taux",
         readOnly: false,
-        value: () => find(get(initialItem, "descriptionsFoncier"), ["typeFoncier.code", "FONCIER_PRIVE"])?.taux,
-        change: (v, types) => changeFoncier(types, "descriptionsFoncier", ["typeFoncier.code", "FONCIER_PRIVE"], "taux", v)
+        value: () => find(get(initialItem, "descriptionsFoncier"), ["typeFoncier.code", "PRIVEE"])?.taux,
+        change: (v, types) => changeFoncier(types, "descriptionsFoncier", ["typeFoncier.code", "PRIVEE"], "taux", v)
     }, {
         name: "typeOccupation",
         field: "typeOccupation",
@@ -354,7 +354,7 @@ export default function Tabou2CadreAccord({ initialItem, programme, operation, m
                                     (<FormControl
                                         componentClass={item.isArea ? "textarea" : "input"}
                                         placeholder={props.i18n(props.messages, item?.label || "")}
-                                        value={item.value()}
+                                        value={item.value() || ""}
                                         type={item.type}
                                         min="0"
                                         style={{height: item.isArea ? "100px" : "auto"}}
