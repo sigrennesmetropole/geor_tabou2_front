@@ -245,7 +245,7 @@ export function getGfiData(state) {
 export function getParentSA(state) {
     const oaTocName = getPluginCfg(state).layersCfg.layerOA.nom;
     const clicked = getClickedFeatures(state);
-    if (clicked && clicked[oaTocName].length === 1) {
+    if (clicked && clicked[oaTocName] && clicked[oaTocName].length === 1) {
         return getClickedFeatures(state)[oaTocName][0];
     }
     return [];

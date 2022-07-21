@@ -54,12 +54,12 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
         change: (v) => changeInfos(v ? {entiteReferente: v} : {entiteReferente: null})
     }, {
         name: "chargeop",
+        field: "chargeop",
         label: "tabou2.identify.accordions.chargeOp",
-        layers: ["layerPA"],
         type: "multi",
-        data: props.tiers.filter(t => t.typeTiers.id === 1).map(t => t.tiers.nom),
-        source: operation,
-        readOnly: true
+        layers: ["layerPA"],
+        readOnly: true,
+        source: {chargeop: props.tiers.filter(t => t.typeTiers.id === 1).map(t => t.tiers.nom)}
     }, {
         name: "commune",
         field: "properties.commune",
@@ -67,6 +67,14 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
         type: "multi",
         source: mapFeature,
         readOnly: true
+    }, {
+        name: "referents",
+        field: "referents",
+        label: "tabou2.identify.accordions.referents",
+        type: "multi",
+        layers: ["layerOA", "layerSA"],
+        readOnly: true,
+        source: {referents: props.tiers.filter(t => t.typeTiers.id === 3).map(t => t.tiers.nom).join(",")}
     }, {
         name: "nature",
         label: "tabou2.identify.accordions.nature",
@@ -205,11 +213,11 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
                                         onChange={(v) => changeInfos({[item.name]: v.target.value})}
                                     />) : null
                             }{
-                                item.type === "multi" && item[item.field] ? (
+                                item.type === "multi" && has(item.source, item.field) ? (
                                     <Multiselect
                                         style={{ color: "black !important" }}
                                         placeholder={props.i18n(props.messages, item?.label || "")}
-                                        value={getValue(item).split(";") || []}
+                                        value={getValue(item).length ? getValue(item).split(";") : [] }
                                         readOnly={item.readOnly || !allowChange}
                                         onChange={() => null}
                                         messages={{
