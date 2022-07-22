@@ -193,7 +193,10 @@
           "referents": "Chargé d'opération",
           "rmActions": "Actions à mener par RM",
           "acteursExt": "Acteurs et partenaires externes",
-          "acteursInt": "Services ou personnes internes"
+          "acteursInt": "Services ou personnes internes",
+          "foncierOccTitle": "Foncier et occupation",
+          "pluiTitle": "PLUi",
+          "processOpTitle": "Procédure opérationnelle"
         },
         "selectFeatureTitle": "Identifier",
         "selectFeatureMsg": "Cliquer sur une emprise, programme, opération ou secteur visible sur la carte pour commencer",

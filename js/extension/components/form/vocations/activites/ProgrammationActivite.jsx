@@ -28,19 +28,19 @@ export default function ProgrammationActivite({
                 type: "text",
                 isArea: true,
                 layers: [],
-                source: () => findValueByType(getCodeIdByCode(typesProgrammation, "Activites"), values, "informationsProgrammation"),
+                source: () => findValueByType(getCodeIdByCode(typesProgrammation, "ACTIVITES"), values, "informationsProgrammation"),
                 change: (value) => {
                     setValues(
                         changeByType(
-                            getCodeIdByCode(typesProgrammation, "Activites"),
+                            getCodeIdByCode(typesProgrammation, "ACTIVITES"),
                             value,
                             values,
                             "informationsProgrammation",
-                            getCodeIdByCode(typesProgrammation, "Activites")
+                            getCodeIdByCode(typesProgrammation, "ACTIVITES")
                         )
                     );
                 },
-                code: "Activites",
+                code: "ACTIVITES",
                 readOnly: false
             },
             {

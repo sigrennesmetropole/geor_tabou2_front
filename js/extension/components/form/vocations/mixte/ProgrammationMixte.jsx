@@ -39,15 +39,15 @@ export default function ProgrammationMixte({
             field: "description",
             type: "text",
             layers: [],
-            source: () => findValueByType(getCodeIdByCode(typesProgrammation, "Habitat"), values, "informationsProgrammation"),
+            source: () => findValueByType(getCodeIdByCode(typesProgrammation, "HABITAT"), values, "informationsProgrammation"),
             change: (value) => {
                 setValues(
                     changeByType(
-                        getCodeIdByCode(typesProgrammation, "Habitat"),
+                        getCodeIdByCode(typesProgrammation, "HABITAT"),
                         value,
                         values,
                         "informationsProgrammation",
-                        getCodeIdByCode(typesProgrammation, "Habitat")
+                        getCodeIdByCode(typesProgrammation, "HABITAT")
                     )
                 );
             },
@@ -59,15 +59,15 @@ export default function ProgrammationMixte({
             field: "description",
             type: "text",
             layers: [],
-            source: () => findValueByType(getCodeIdByCode(typesProgrammation, "Activites"), values, "informationsProgrammation"),
+            source: () => findValueByType(getCodeIdByCode(typesProgrammation, "ACTIVITES"), values, "informationsProgrammation"),
             change: (value) => {
                 setValues(
                     changeByType(
-                        getCodeIdByCode(typesProgrammation, "Activites"),
+                        getCodeIdByCode(typesProgrammation, "ACTIVITES"),
                         value,
                         values,
                         "informationsProgrammation",
-                        getCodeIdByCode(typesProgrammation, "Activites")
+                        getCodeIdByCode(typesProgrammation, "ACTIVITES")
                     )
                 );
             },

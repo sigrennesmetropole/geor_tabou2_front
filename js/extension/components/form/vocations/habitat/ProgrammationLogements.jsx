@@ -80,19 +80,19 @@ export default function ProgrammationLogements({
             type: "text",
             isArea: true,
             layers: [],
-            source: () => findValueByType(getCodeIdByCode(typesProgrammation, "Habitat"), values, "informationsProgrammation"),
+            source: () => findValueByType(getCodeIdByCode(typesProgrammation, "HABITAT"), values, "informationsProgrammation"),
             change: (value) => {
                 setValues(
                     changeByType(
-                        getCodeIdByCode(typesProgrammation, "Habitat"),
+                        getCodeIdByCode(typesProgrammation, "HABITAT"),
                         value,
                         values,
                         "informationsProgrammation",
-                        getCodeIdByCode(typesProgrammation, "Habitat")
+                        getCodeIdByCode(typesProgrammation, "HABITAT")
                     )
                 );
             },
-            code: "Activites",
+            code: "HABITAT",
             readOnly: false
         },
         {
