@@ -19,16 +19,6 @@ export default function Tabou2SuiviOpAccord({ initialItem, programme, operation,
     const [required, setRequired] = useState({});
     // get fields for this section
     const getFields = () => [{
-        name: "etape",
-        label: "tabou2.identify.accordions.step",
-        field: "etape.libelle",
-        type: "combo",
-        apiLabel: "libelle",
-        filter: false,
-        api: `${layer === "layerPA" ? "programmes" : "operations"}/${initialItem.id}/etapes?orderBy=id&asc=true`,
-        source: values?.etape ? values : initialItem,
-        readOnly: false
-    }, {
         name: "livraisonDate",
         label: "tabou2.identify.accordions.dateLiv",
         field: "livraisonDate",

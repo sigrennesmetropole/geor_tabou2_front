@@ -4,9 +4,6 @@ import { some, isEmpty, isEqual } from 'lodash';
 import Tabou2IdentAccord from '@js/extension/components/form/identify/Tabou2IdentAccord';
 import Tabou2DescribeAccord from '@js/extension/components/form/identify/Tabou2DescribeAccord';
 import Tabou2GouvernanceAccord from '@js/extension/components/form/identify/Tabou2GouvernanceAccord';
-import Tabou2ProgActiviteAccord from '@js/extension/components/form/identify/Tabou2ProgActiviteAccord';
-import Tabou2ProgHabitAccord from '@js/extension/components/form/identify/Tabou2ProgHabitAccord';
-import Tabou2SuiviOpAccord from '@js/extension/components/form/identify/Tabou2SuiviOpAccord';
 import Tabou2DdsAccord from '@js/extension/components/form/identify/Tabou2DdsAccord';
 import Tabou2SecProgLiesAccord from '@js/extension/components/form/identify/Tabou2SecProgLiesAccord';
 import Tabou2CadreAccord from '../form/identify/Tabou2CadreAccord';
@@ -127,10 +124,7 @@ export default function Tabou2IdentifyContent({
                                 {item.id === "ident" ? <Tabou2IdentAccord {...tabsProps}/> : null}
                                 {item.id === "describe" ? <Tabou2DescribeAccord {...tabsProps}/> : null}
                                 {item.id === "gouvernance" ? <Tabou2GouvernanceAccord {...tabsProps}/> : null}
-                                {item.id === "suivi" ? <Tabou2SuiviOpAccord {...tabsProps}/> : null}
                                 {item.id === "dds" ? <Tabou2DdsAccord {...tabsProps}/> : null}
-                                {item.id === "habitat" ? <Tabou2ProgHabitAccord {...tabsProps}/> : null}
-                                {item.id === "activite" ? <Tabou2ProgActiviteAccord {...tabsProps}/> : null}
                                 {item.id === "secteursprog" ? <Tabou2SecProgLiesAccord {...tabsProps} /> : null},
                                 {item.id === "cadre" ? <Tabou2CadreAccord {...tabsProps}/> : null}
                             </Panel>

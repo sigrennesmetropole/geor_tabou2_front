@@ -55,6 +55,10 @@ export default function Tabou2CadreAccord({ initialItem, programme, operation, m
 
     // create fields from const func
     getFields = () => [{
+        type: "title",
+        label: "tabou2.identify.accordions.foncierOccTitle",
+        layers: ["layerSA", "layerOA"]
+    }, {
         // BLOC Foncier et occupation
         name: "descriptionsFoncier",
         type: "text",
@@ -120,6 +124,10 @@ export default function Tabou2CadreAccord({ initialItem, programme, operation, m
         select: (v) => changeInfos({ outilFoncier: v }),
         change: (v) => changeInfos(v ? { outilFoncier: v } : { outilFoncier: null })
     }, {
+        type: "title",
+        label: "tabou2.identify.accordions.pluiTitle",
+        layers: ["layerSA", "layerOA"]
+    }, {
         name: "plui",
         type: "text",
         label: "tabou2.identify.accordions.pluiDisposition",
@@ -139,6 +147,10 @@ export default function Tabou2CadreAccord({ initialItem, programme, operation, m
         isArea: true,
         value: () => get(initialItem, "plui.pluiAdaptation"),
         change: (v) => changeInfos({ plui: { ...initialItem.plui, pluiAdaptation: v } })
+    }, {
+        type: "title",
+        label: "tabou2.identify.accordions.processOpTitle",
+        layers: ["layerSA", "layerOA"]
     }, {
         name: "etude",
         type: "text",
@@ -324,82 +336,93 @@ export default function Tabou2CadreAccord({ initialItem, programme, operation, m
             {
                 fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(item => (
                     <Row className="attributeInfos">
-                        <Col xs={4}>
-                            <ControlLabel><Message msgId={item.label}/></ControlLabel>
-                        </Col>
-                        <Col xs={8}>
-                            {
-                                item.type === "combo" && item?.autocomplete ? (
-                                    <SearchCombo
-                                        minLength={3}
-                                        textField={item.apiLabel}
-                                        valueField={item.apiField}
-                                        forceSelection
-                                        value={item.value()}
-                                        search={
-                                            text => getRequestApi(item.api, props.pluginCfg.apiCfg, {[item.autocomplete]: `${text}*`})
-                                                .then(results =>
-                                                    results.elements.map(v => v)
-                                                )
-                                        }
-                                        onSelect={item.select}
-                                        onChange={item.change}
-                                        name={item.name}
-                                        placeholder={props.i18n(props.messages, item?.label || "")}
-                                    />
-                                ) : null
-                            }
-                            {
-                                item.type === "text" || item.type === "number" ?
-                                    (<FormControl
-                                        componentClass={item.isArea ? "textarea" : "input"}
-                                        placeholder={props.i18n(props.messages, item?.label || "")}
-                                        value={item.value() || ""}
-                                        type={item.type}
-                                        min="0"
-                                        style={{height: item.isArea ? "100px" : "auto"}}
-                                        readOnly={item.readOnly || !allowChange}
-                                        onChange={(v) => item.change(v.target.value, props.typesFicheInfos)}
-                                    />) : null
-                            }{
-                                item.type === "combo" && !item?.autocomplete ? (
-                                    <Tabou2Combo
-                                        load={() => getRequestApi(item.api, props.pluginCfg.apiCfg, {})}
-                                        placeholder={props.i18n(props.messages, item?.placeholder || "")}
-                                        filter="contains"
-                                        disabled={item.readOnly || !allowChange}
-                                        textField={item.apiLabel}
-                                        onLoad={(r) => r?.elements || r}
-                                        name={item.name}
-                                        value={item.value()}
-                                        onSelect={item.select ? item.select : (v) => changeInfos({[item.name]: v})}
-                                        onChange={item.change ? item.change : (v) => !v ? changeInfos({[item.name]: v}) : null}
-                                        messages={{
-                                            emptyList: props.i18n(props.messages, "tabou2.emptyList"),
-                                            openCombobox: props.i18n(props.messages, "tabou2.displayList")
-                                        }}
-                                    />
-                                ) : null
-                            }{
-                                item.type === "date" ? (
-                                    <DateTimePicker
-                                        type="date"
-                                        className="identifyDate"
-                                        inline="true"
-                                        dropUp
-                                        placeholder={props.i18n(props.messages, item?.label || "")}
-                                        readOnly={item.readOnly || !allowChange}
-                                        calendar
-                                        time={false}
-                                        culture="fr"
-                                        value={getDateValue(item) || null}
-                                        format="DD/MM/YYYY"
-                                        onSelect={(v) => changeDate(item, v)}
-                                        onChange={(v) => changeDate(item, v)}
-                                    />
-                                ) : null
-                            }
-                        </Col>
+                        {
+                            item.type === "title" ? (
+                                <Col xs={12}>
+                                    <h4 style={{borderBottom: "1px solid"}}>
+                                        <ControlLabel><Message msgId={item.label} /></ControlLabel>
+                                    </h4>
+                                </Col>
+                            ) : (<>
+                                <Col xs={4}>
+                                    <ControlLabel><Message msgId={item.label}/></ControlLabel>
+                                </Col>
+                                <Col xs={8}>
+                                    {
+                                        item.type === "combo" && item?.autocomplete ? (
+                                            <SearchCombo
+                                                minLength={3}
+                                                textField={item.apiLabel}
+                                                valueField={item.apiField}
+                                                forceSelection
+                                                value={item.value()}
+                                                search={
+                                                    text => getRequestApi(item.api, props.pluginCfg.apiCfg, {[item.autocomplete]: `${text}*`})
+                                                        .then(results =>
+                                                            results.elements.map(v => v)
+                                                        )
+                                                }
+                                                onSelect={item.select}
+                                                onChange={item.change}
+                                                name={item.name}
+                                                placeholder={props.i18n(props.messages, item?.label || "")}
+                                            />
+                                        ) : null
+                                    }
+                                    {
+                                        item.type === "text" || item.type === "number" ?
+                                            (<FormControl
+                                                componentClass={item.isArea ? "textarea" : "input"}
+                                                placeholder={props.i18n(props.messages, item?.label || "")}
+                                                value={item.value() || ""}
+                                                type={item.type}
+                                                min="0"
+                                                style={{height: item.isArea ? "100px" : "auto"}}
+                                                readOnly={item.readOnly || !allowChange}
+                                                onChange={(v) => item.change(v.target.value, props.typesFicheInfos)}
+                                            />) : null
+                                    }{
+                                        item.type === "combo" && !item?.autocomplete ? (
+                                            <Tabou2Combo
+                                                load={() => getRequestApi(item.api, props.pluginCfg.apiCfg, {})}
+                                                placeholder={props.i18n(props.messages, item?.placeholder || "")}
+                                                filter="contains"
+                                                disabled={item.readOnly || !allowChange}
+                                                textField={item.apiLabel}
+                                                onLoad={(r) => r?.elements || r}
+                                                name={item.name}
+                                                value={item.value()}
+                                                onSelect={item.select ? item.select : (v) => changeInfos({[item.name]: v})}
+                                                onChange={item.change ? item.change : (v) => !v ? changeInfos({[item.name]: v}) : null}
+                                                messages={{
+                                                    emptyList: props.i18n(props.messages, "tabou2.emptyList"),
+                                                    openCombobox: props.i18n(props.messages, "tabou2.displayList")
+                                                }}
+                                            />
+                                        ) : null
+                                    }{
+                                        item.type === "date" ? (
+                                            <DateTimePicker
+                                                type="date"
+                                                className="identifyDate"
+                                                inline="true"
+                                                dropUp
+                                                placeholder={props.i18n(props.messages, item?.label || "")}
+                                                readOnly={item.readOnly || !allowChange}
+                                                calendar
+                                                time={false}
+                                                culture="fr"
+                                                value={getDateValue(item) || null}
+                                                format="DD/MM/YYYY"
+                                                onSelect={(v) => changeDate(item, v)}
+                                                onChange={(v) => changeDate(item, v)}
+                                            />
+                                        ) : null
+                                    }
+                                </Col></>
+                            )
+                        }
+
                     </Row>
                 ))
             }

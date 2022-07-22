@@ -32,15 +32,6 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
         readOnly: false,
         isArea: true
     }, {
-        name: "operation",
-        type: "text",
-        label: "tabou2.identify.accordions.operation",
-        field: "operation",
-        source: has(values, "operation") ? values : operation,
-        layers: ["layerSA", "layerOA"],
-        readOnly: false,
-        isArea: true
-    }, {
         name: "programme",
         field: "programme",
         label: "tabou2.identify.accordions.programme",

@@ -171,11 +171,8 @@ export const ACCORDIONS = [
     {title: 'tabou2.identify.accordions.identify', id: 'ident'},
     {title: 'tabou2.identify.accordions.describe', id: 'describe'},
     {title: 'tabou2.identify.accordions.gouv', id: 'gouvernance'},
-    {title: 'tabou2.identify.accordions.opTracking', id: 'suivi'},
-    {title: 'tabou2.identify.accordions.progHabitat', id: 'habitat'},
-    {title: 'tabou2.identify.accordions.progActivity', id: 'activite', layers: ['layerOA', 'layerSA']},
     {title: 'tabou2.identify.accordions.dds', id: 'dds', layers: ['layerPA']},
-    { title: 'tabou2.identify.accordions.secProg', id: 'secteursprog', layers: [] },
+    {title: 'tabou2.identify.accordions.secProg', id: 'secteursprog', layers: []},
     {title: 'tabou2.identify.accordions.cadre', id: 'cadre', layers: ['layerOA', 'layerSA']}
 ];
 

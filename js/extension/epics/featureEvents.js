@@ -194,7 +194,6 @@ export function getSelectionInfos(action$, store) {
                                 );
                             }
                             searchItem = response.data;
-                            console.log(searchItem);
                             return secondObservable$;
                         })
                 );
