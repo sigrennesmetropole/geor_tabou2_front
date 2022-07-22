@@ -1,12 +1,16 @@
 import React, {useEffect, useState } from "react";
 import { isEmpty, isEqual, pick, get, has } from "lodash";
-import { Col, Row, FormControl, Grid, ControlLabel } from "react-bootstrap";
+import { Col, Row, FormControl, Grid, ControlLabel, Glyphicon } from "react-bootstrap";
 import { Multiselect } from "react-widgets";
 import { getRequestApi } from "@js/extension/api/requests";
 import "@js/extension/css/identify.css";
 import Message from "@mapstore/components/I18N/Message";
 import SearchCombo from '@js/extension/components/form/SearchCombo';
 import Tabou2Combo from '@js/extension/components/form/Tabou2Combo';
+
+import ButtonRB from '@mapstore/components/misc/Button';
+import tooltip from '@mapstore/components/misc/enhancers/tooltip';
+const Button = tooltip(ButtonRB);
 /**
  * Accordion to display info for Identity panel section - only for feature linked with id tabou
  * @param {any} param
@@ -137,6 +141,22 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
         readOnly: false
     }];
 
+    const openTierModal = (type) => {
+        let tiersBtn = document.getElementById('tiers');
+        if (props.setTiersFilter && type && tiersBtn) {
+            props.setTiersFilter(operation?.id || programme?.id, type);
+            tiersBtn.click();
+        }
+    };
+
+    const allTiersButtons = {
+        referents: {
+            type: "button",
+            tooltip: "tabou2.identify.accordions.tiersDetail",
+            click: () => openTierModal(3)
+        }
+    };
+
     const allowChange = props.authent.isContrib || props.authent.isReferent;
 
     // hooks
@@ -180,7 +200,7 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
                                 <Col xs={4}>
                                     <ControlLabel><Message msgId={item.label}/></ControlLabel>
                                 </Col>
-                                <Col xs={8}>
+                                <Col xs={allTiersButtons[item.name] ? 7 : 8}>
                                     {
                                         item.type === "combo" && item?.autocomplete ? (
                                             <SearchCombo
@@ -213,7 +233,7 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
                                     }{
                                         item.type === "multi" && has(item.source, item.field) ? (
                                             <Multiselect
-                                                style={{ color: "black !important" }}
+                                                style={{ color: "black !important", paddingRight: "0px" }}
                                                 placeholder={props.i18n(props.messages, item?.label || "")}
                                                 value={getValue(item).length ? getValue(item).split(";") : [] }
                                                 readOnly={item.readOnly || !allowChange}
@@ -245,7 +265,20 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
                                             />
                                         ) : null
                                     }
-                                </Col></>
+                                </Col>
+                                {
+                                    allTiersButtons[item.name] && (
+                                        <Col xs={1} className="no-padding">
+                                            <Button
+                                                tooltip={props.i18n(props.messages, allTiersButtons[item.name].tooltip || "")}
+                                                onClick={() => allTiersButtons[item.name].click() }
+                                                bsStyle="primary"
+                                                bsSize="small">
+                                                <Glyphicon glyph="user"/>
+                                            </Button>
+                                        </Col>
+                                    )
+                                }</>
                             )
                         }
 
