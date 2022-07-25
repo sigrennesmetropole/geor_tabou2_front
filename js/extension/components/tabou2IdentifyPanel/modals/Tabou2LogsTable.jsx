@@ -21,7 +21,6 @@ export default function Tabou2LogsTable({
     readOnly,
     sortField,
     changeSort = () => {},
-    saveEvent = () => {},
     cancelChange = () => {},
     ...props
 }) {
@@ -46,7 +45,7 @@ export default function Tabou2LogsTable({
             setAllLogs(readLogs);
         }
         return;
-    }, [logInChange?.id, editionActivate]);
+    }, [logInChange?.id, editionActivate.current]);
 
     useEffect(() => {
         setAllLogs(logs);
@@ -65,6 +64,11 @@ export default function Tabou2LogsTable({
         // avoid to change props.tiers directly and broke ref memory
         let logChanged = set(copyLog, field, value);
         setLogInChange(logChanged);
+    };
+
+    const saveEvent = () => {
+        props.saveEvent(logInChange);
+        setLogInChange(null);
     };
 
     // manage sort style
@@ -176,23 +180,23 @@ export default function Tabou2LogsTable({
                                                 }
                                             </td>
                                             {
-                                                !readOnly &&
+                                                readOnly ? null :
                                                     (<td>
                                                         {
-                                                            (log.new || log.edit) && (
+                                                            (log.new || log.edit) ? (
                                                                 <Button
                                                                     tooltip={props.i18n(props.messages, "tabou2.save")}
                                                                     disabled={!logInChange?.typeEvenement || isEmpty(logInChange?.typeEvenement) || !logInChange?.description}
                                                                     style={{ borderColor: "rgba(0,0,0,0)"}}
-                                                                    onClick={() => saveEvent(logInChange)}>
+                                                                    onClick={() => saveEvent()}>
                                                                     <span style={{ color: "rgb(40, 167, 69)" }}>
                                                                         <Glyphicon glyph="ok"/>
                                                                     </span>
                                                                 </Button>
-                                                            )
+                                                            ) : null
                                                         }
                                                         {
-                                                            (log.edit && !log.new) && (
+                                                            (log.edit && !log.new) ? (
                                                                 <Button
                                                                     tooltip={props.i18n(props.messages, "tabou2.cancel")}
                                                                     style={{ borderColor: "rgba(0,0,0,0)"}}
@@ -201,10 +205,10 @@ export default function Tabou2LogsTable({
                                                                         <Glyphicon glyph="remove"/>
                                                                     </span>
                                                                 </Button>
-                                                            )
+                                                            ) : null
                                                         }
                                                         {
-                                                            (!log.systeme && !log.new && isEmpty(logInChange)) && (
+                                                            (!log.systeme && !log.new && isEmpty(logInChange)) ? (
                                                                 <Button
                                                                     tooltip={props.i18n(props.messages, "tabou2.change")}
                                                                     style={{ borderColor: "rgba(0,0,0,0)"}}
@@ -213,10 +217,10 @@ export default function Tabou2LogsTable({
                                                                         <Glyphicon glyph="pencil"/>
                                                                     </span>
                                                                 </Button>
-                                                            )
+                                                            ) : null
                                                         }
                                                         {
-                                                            (log.new || isEmpty(logInChange) && !log.systeme) && (
+                                                            ((log.new || isEmpty(logInChange)) && !log.systeme) ? (
                                                                 <Button
                                                                     tooltip={props.i18n(props.messages, "tabou2.delete")}
                                                                     style={{ borderColor: "rgba(0,0,0,0)"}}
@@ -225,7 +229,7 @@ export default function Tabou2LogsTable({
                                                                         <Glyphicon glyph="trash"/>
                                                                     </span>
                                                                 </Button>
-                                                            )
+                                                            ) : null
                                                         }
                                                     </td>)
                                             }

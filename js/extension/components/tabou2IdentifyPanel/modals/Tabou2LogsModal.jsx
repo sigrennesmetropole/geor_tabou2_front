@@ -37,10 +37,7 @@ export default function Tabou2LogsModal({
         }
         disabledAdd.current = false;
         editionActivate.current = false;
-        if (log.new) {
-            // delete log to get log from API with correct ID
-            setLogs([...logs.filter(lo => lo.id !== log.id)]);
-        }
+        setLogs([...logs.filter(lo => lo.id !== log.id)]);
     };
 
     // create a new log - allow to pass some default params
