@@ -28,7 +28,6 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
     */
     useEffect(() => {
         const calculFields = getFields();
-        console.log("REFRESH DDS");
         const mandatoryFields = calculFields.filter(f => f.require).map(f => f.name);
         if (!isEqual(initialItem, values)) {
             setValues(initialItem);
