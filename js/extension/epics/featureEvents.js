@@ -40,6 +40,8 @@ import { refreshLayerVersion } from "@mapstore/actions/layers";
 import { layersSelector } from '@mapstore/selectors/layers';
 import { getAreaFeature } from '../utils/layers';
 
+import uuid from "uuid";
+
 // get feature from API according to selected layer feature
 const resetFeatureBylayer = {
     "layerOA": (id) => getOperation(id),
@@ -99,6 +101,7 @@ export function getSelectionInfos(action$, store) {
                         // store data
                         let identifyPanelInfos = {
                             ...selectInfos,
+                            uuid: uuid.v1(),
                             programmes: programmes.data,
                             operation: {
                                 ...searchItem,
@@ -149,6 +152,7 @@ export function getSelectionInfos(action$, store) {
                                         // store data
                                         let infos = {
                                             ...selectInfos,
+                                            uuid: uuid.v1(),
                                             agapeo: agapeo.data.elements,
                                             programme: searchItem,
                                             permis: permis.data,
