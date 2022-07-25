@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Glyphicon, Grid, Row, Col, Checkbox, FormControl } from 'react-bootstrap';
-import { orderBy, isEmpty, find, set } from 'lodash';
+import { orderBy, isEmpty, find, set, get } from 'lodash';
 import ButtonRB from '@mapstore/components/misc/Button';
 import Tabou2Combo from '@js/extension/components/form/Tabou2Combo';
 import { getTypesEvents } from "@js/extension/api/requests";
@@ -132,7 +132,7 @@ export default function Tabou2LogsTable({
                                                         <Tabou2Combo
                                                             load={() => getTypesEvents()}
                                                             valueField={"id"}
-                                                            defaultValue={logInChange?.edit ? logInChange?.typeEvenement.id : null}
+                                                            defaultValue={get(logInChange, "typeEvenement.id")}
                                                             placeholder={props.i18n(props.messages, "tabou2.logsModal.typePlaceholder")}
                                                             filter="contains"
                                                             dropUp={i < 6 ? false : true}
