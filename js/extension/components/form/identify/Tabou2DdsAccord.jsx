@@ -34,7 +34,7 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
             setFields(calculFields);
             setRequired(mandatoryFields);
         }
-    }, [initialItem]);
+    }, [props.infos]);
 
     /**
      * Create fields to display into table

@@ -124,7 +124,7 @@ export default function Tabou2IdentifyContent({
                                 {item.id === "ident" ? <Tabou2IdentAccord {...tabsProps}/> : null}
                                 {item.id === "describe" ? <Tabou2DescribeAccord {...tabsProps}/> : null}
                                 {item.id === "gouvernance" ? <Tabou2GouvernanceAccord {...tabsProps}/> : null}
-                                {item.id === "dds" ? <Tabou2DdsAccord {...tabsProps}/> : null}
+                                {item.id === "dds" ? <Tabou2DdsAccord {...tabsProps} infos={JSON.stringify(infos)}/> : null}
                                 {item.id === "secteursprog" ? <Tabou2SecProgLiesAccord {...tabsProps} /> : null}
                                 {item.id === "cadre" ? <Tabou2CadreAccord {...tabsProps}/> : null}
                             </Panel>
