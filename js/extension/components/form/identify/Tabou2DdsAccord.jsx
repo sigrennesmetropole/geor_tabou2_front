@@ -17,16 +17,31 @@ momentLocalizer(moment);
  */
 export default function Tabou2DdsAccord({ initialItem, programme, operation, mapFeature, ...props }) {
     let layer = props?.selection?.layer;
+    let getFields;
 
     const [values, setValues] = useState({});
     const [fields, setFields] = useState([]);
     const [required, setRequired] = useState({});
 
     /**
+     * Effect
+    */
+    useEffect(() => {
+        const calculFields = getFields();
+        console.log("REFRESH DDS");
+        const mandatoryFields = calculFields.filter(f => f.require).map(f => f.name);
+        if (!isEqual(initialItem, values)) {
+            setValues(initialItem);
+            setFields(calculFields);
+            setRequired(mandatoryFields);
+        }
+    }, [initialItem]);
+
+    /**
      * Create fields to display into table
      * @returns Array of fields
      */
-    const getFields = () => [{
+    getFields = () => [{
         name: "adsDatePrevu",
         label: "tabou2.identify.accordions.adsDate",
         field: "adsDatePrevu",
@@ -69,19 +84,6 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
     }].filter(el => el?.layers?.includes(layer) || !el?.layers);
 
     /**
-     * Effect
-     */
-    useEffect(() => {
-        const calculFields = getFields();
-        const mandatoryFields = calculFields.filter(f => f.require).map(f => f.name);
-        if (!isEqual(initialItem, values)) {
-            setValues(initialItem);
-            setFields(calculFields);
-            setRequired(mandatoryFields);
-        }
-    }, [initialItem]);
-
-    /**
      * Get a value to display inside table cell according to a field
      * @param {string} field
      * @param {any} val
@@ -107,9 +109,17 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
     const allowChange = props.authent.isContrib || props.authent.isReferent;
 
     const changeDate = (field, str) => {
-        // TODO : valid with moment like that
-        // let isValid = moment(str, "DD/MM/YYYY", true);
         changeInfos({[field.name]: str ? new Date(str).toISOString() : ""});
+    };
+
+    const getDateValue = item => {
+        let defaultValue = null;
+        if (item.name !== item.field) {
+            defaultValue = get(initialItem, `${item.name}.${item.field}`);
+        } else if (initialItem[item.name]) {
+            defaultValue = get(initialItem, item.name);
+        }
+        return defaultValue ? new Date(defaultValue) : null;
     };
 
     /**
@@ -148,7 +158,7 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
                                         calendar
                                         time={false}
                                         culture="fr"
-                                        value={get(values, item.name) ? new Date(get(values, item.name)) : null}
+                                        value={getDateValue(item) || null}
                                         format="DD/MM/YYYY"
                                         onSelect={(v) => changeDate(item, v)}
                                         onChange={(v) => changeDate(item, v)}
