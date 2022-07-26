@@ -294,7 +294,7 @@ export function searchTiers(text) {
 }
 
 // FEATURE'S DOCUMENT
-export function getTabouDocuments(url, id, page, result, text) {
+export function getTabouDocuments(url, id, page, result, nom = "", libelleTypeDocument = "", typeMime = "") {
     const params = (page || page > -1) && result ? {
         start: page,
         resultsNumber: result
@@ -302,7 +302,9 @@ export function getTabouDocuments(url, id, page, result, text) {
     return axios.get(`${baseURL}/${url}/${id}/documents`, {params: {
         ...params,
         asc: true,
-        nom: text.length >= 3 ? `*${text}*` : "**"
+        nom: nom.length >= 3 ? `*${nom}*` : "**",
+        libelleTypeDocument: libelleTypeDocument ? `*${libelleTypeDocument}*` : "**",
+        typeMime: typeMime ? `*${typeMime}*` : "**"
     }}).then(({ data }) => data);
 }
 export function addDocument(url, id, file, metadata, type) {

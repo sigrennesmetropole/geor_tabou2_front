@@ -331,11 +331,13 @@ export const displayTabouMarker = (point) => ({
     point
 });
 
-export const getDocuments = (load = true, page = 0, text = "") => ({
+export const getDocuments = (load = true, page = 0, filters = {}) => ({
     type: GET_TABOU_DOCUMENTS,
     load,
     page,
-    text
+    typeMime: filters?.typeMime,
+    libelleTypeDocument: filters?.libelleTypeDocument,
+    nom: filters?.nom
 });
 
 export const setDocuments = (documents) => ({
