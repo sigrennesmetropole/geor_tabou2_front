@@ -267,9 +267,10 @@ function Tabou2DocsModal({
     return (
         <ResizableModal
             title={<Message msgId="tabou2.docsModal.title"/>}
-            bodyClassName="ms-flex"
+            bodyClassName="ms-flex tabou-doc-modal"
             show={visible}
             buttons={buttons}
+            id="doc-modal"
             showClose
             onClose={() => {
                 resetFilters();
@@ -286,6 +287,7 @@ function Tabou2DocsModal({
                     />
                     <TabouAdaptiveDataGrid
                         id="tabou-documents-grid"
+                        minHeight={400}
                         ref={canvas}
                         columns={columns}
                         rowsGetter={rowKeyGetter}
@@ -310,7 +312,7 @@ function Tabou2DocsModal({
                 </Row>
             )}
             {
-                props.loaderDocuments ? (
+                props.loaderDocuments && !displayTable ? (
                     <>
                         <Tabou2Information
                             isVisible={props.loadDocuments}
@@ -323,16 +325,14 @@ function Tabou2DocsModal({
                     </>
                 ) : null
             }
-            {/* <>
-                <Loader size={size} style={{ padding: size / 10, margin: "auto", display: "flex" }} />
-                <Tabou2Information
-                    isVisible={props.loadDocuments}
-                    style={{ margin: "5% auto" }}
-                    glyph=""
-                    message="Récupération des documents en cours"
-                    title="Chargement..."
-                />
-            </> */}
+            {
+                props.loaderDocuments && displayTable ? (
+                    <div className="doc-load-text">
+                        <Loader size={size} style={{ padding: size / 10, margin: "auto", display: "flex" }} />
+                        <span>Chargement des données</span>
+                    </div>
+                ) : null
+            }
         </ResizableModal>
     );
 }

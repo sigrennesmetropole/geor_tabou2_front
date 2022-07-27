@@ -71,3 +71,19 @@
 .mapToolbar, .nav-menu {
     z-index: 999 !important;
 }
+
+.tabou-doc-modal .react-grid-Container {
+    height: auto !important;
+}
+
+.tabou-doc-modal {
+    padding: 10px !important;
+}
+
+.doc-load-text span {
+    padding:5px;
+}
+
+.doc-load-text {
+    display: inline-flex;
+}
