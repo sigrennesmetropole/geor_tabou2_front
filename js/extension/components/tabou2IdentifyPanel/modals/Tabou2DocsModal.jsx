@@ -301,15 +301,13 @@ function Tabou2DocsModal({
                     />
                 </> : null}
             {!props.loaderDocuments && formVisible && (
-                <Row>
-                    <Tabou2DocsForm
-                        document={row.document.row}
-                        action={row.action}
-                        translate={translate}
-                        onClick={changeAction}
-                        direction="downwards"
-                    />
-                </Row>
+                <Tabou2DocsForm
+                    document={row.document.row}
+                    action={row.action}
+                    translate={translate}
+                    onClick={changeAction}
+                    direction="downwards"
+                />
             )}
             {
                 props.loaderDocuments && !displayTable ? (

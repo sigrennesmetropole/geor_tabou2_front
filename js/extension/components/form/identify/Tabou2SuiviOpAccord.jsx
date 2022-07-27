@@ -19,12 +19,31 @@ export default function Tabou2SuiviOpAccord({ initialItem, programme, operation,
     const [required, setRequired] = useState({});
     // get fields for this section
     const getFields = () => [{
+        name: "etape",
+        label: "tabou2.identify.accordions.step",
+        field: "etape.libelle",
+        type: "combo",
+        apiLabel: "libelle",
+        layers: ["layerPA"],
+        filter: false,
+        api: `programmes/${initialItem.id}/etapes?orderBy=id&asc=true`,
+        source: values?.etape ? values : initialItem,
+        readOnly: false
+    }, {
         name: "livraisonDate",
         label: "tabou2.identify.accordions.dateLiv",
         field: "livraisonDate",
         layers: ["layerPA"],
         type: "date",
         source: values?.livraisonDate ? values : operation,
+        readOnly: false
+    }, {
+        name: "clotureDate",
+        label: "tabou2.identify.accordions.dateClose",
+        field: "clotureDate",
+        layers: ["layerPA"],
+        type: "date",
+        source: values?.clotureDate ? values : operation,
         readOnly: false
     }].filter(el => el?.layers?.includes(layer) || !el?.layers);
 

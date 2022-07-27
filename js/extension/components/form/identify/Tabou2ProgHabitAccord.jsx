@@ -18,147 +18,119 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
     const [fields, setFields] = useState([]);
     const [required, setRequired] = useState({});
     // create fields from const func
-    const getFields = () => [{
-    // OPERATION
-        name: "nbLogementsPrevu",
-        layers: ["layerSA", "layerOA"],
-        label: "tabou2.identify.accordions.logementPlan",
-        field: "nbLogementsPrevu",
-        type: "number",
-        min: 0,
-        source: values?.nbLogementsPrevu ? values : operation,
-        readOnly: false
-    }, {
-        name: "plhLogementsPrevus",
-        layers: ["layerSA", "layerOA"],
-        label: "tabou2.identify.accordions.plhPlan",
-        field: "plhLogementsPrevus",
-        type: "number",
-        min: 0,
-        source: values?.plhLogementsPrevus ? values : operation,
-        readOnly: false
-    }, {
-        name: "plhLogementsLivres",
-        layers: ["layerSA", "layerOA"],
-        label: "tabou2.identify.accordions.plhLiv",
-        field: "plhLogementsLivres",
-        type: "number",
-        min: 0,
-        source: values?.plhLogementsLivres ? values : operation,
-        readOnly: false
-    }, // PROGRAMME
-    {
-        name: "attributionFonciereAnnee",
-        label: "tabou2.identify.accordions.yearAttrib",
-        field: "attributionFonciereAnnee",
-        layers: ["layerPA"],
-        type: "number",
-        min: 1950,
-        max: 2100,
-        step: 1,
-        source: has(values, "attributionFonciereAnnee") ? values : programme,
-        valid: (v) => {
-            return v > 1000;
-        },
-        errorMsg: "tabou2.identify.accordions.errorFormatYear",
-        readOnly: false
-    }, {
-        name: "attributionDate",
-        label: "tabou2.identify.accordions.dateAttrib",
-        field: "attributionDate",
-        type: "date",
-        layers: ["layerPA"],
-        source: has(values, "attributionDate") ? values : programme,
-        readOnly: false
-    }, {
-        name: "commercialisationDate",
-        label: "tabou2.identify.accordions.dateCom",
-        field: "commercialisationDate",
-        type: "date",
-        layers: ["layerPA"],
-        source: has(values, "commercialisationDate") ? values : programme,
-        readOnly: false
-    }, {
-        name: "logementsTotal",
-        label: "tabou2.identify.accordions.totalLog",
-        field: "logementsTotal",
-        layers: ["layerPA"],
-        type: "number",
-        min: 0,
-        source: has(values, "logementsTotal") ? values : programme,
-        readOnly: false
-    }, {
-        name: "logementsAccessAidePrevu",
-        label: "tabou2.identify.accordions.helpAccess",
-        field: "logementsAccessAidePrevu",
-        layers: ["layerPA"],
-        type: "number",
-        min: 0,
-        source: has(values, "logementsAccessAidePrevu") ? values : programme,
-        readOnly: false
-    }, {
-        name: "logementsAccessLibrePrevu",
-        label: "tabou2.identify.accordions.freeAccess",
-        field: "logementsAccessLibrePrevu",
-        layers: ["layerPA"],
-        type: "number",
-        min: 0,
-        source: has(values, "logementsAccessLibrePrevu") ? values : programme,
-        readOnly: false
-    }, {
-        name: "logementsAccessMaitrisePrevu",
-        label: "tabou2.identify.accordions.controlAccess",
-        field: "logementsAccessMaitrisePrevu",
-        layers: ["layerPA"],
-        type: "number",
-        min: 0,
-        source: has(values, "logementsAccessMaitrisePrevu") ? values : programme,
-        readOnly: false
-    }, {
-        name: "logementsLocatifAidePrevu",
-        label: "tabou2.identify.accordions.locHelp",
-        field: "logementsLocatifAidePrevu",
-        layers: ["layerPA"],
-        type: "number",
-        min: 0,
-        source: has(values, "logementsLocatifAidePrevu") ? values : programme,
-        readOnly: false
-    }, {
-        name: "logementsLocatifReguleHlmPrevu",
-        label: "tabou2.identify.accordions.locHlm",
-        field: "logementsLocatifReguleHlmPrevu",
-        layers: ["layerPA"],
-        type: "number",
-        min: 0,
-        source: has(values, "logementsLocatifReguleHlmPrevu") ? values : programme,
-        readOnly: false
-    }, {
-        name: "logementsLocatifRegulePrivePrevu",
-        label: "tabou2.identify.accordions.privateLoc",
-        field: "logementsLocatifRegulePrivePrevu",
-        layers: ["layerPA"],
-        type: "number",
-        min: 0,
-        source: has(values, "logementsLocatifRegulePrivePrevu") ? values : programme,
-        readOnly: false
-    }, {
-        name: "agapeo",
-        label: "tabou2.identify.accordions.agapeoData",
-        msg: ["tabou2.getHelp", props.help.agapeo || props.help?.url || ""],
-        type: "table",
-        fields: ["anneeProg", "numDossier", "logementsLocatAide", "logementsLocatRegulHlm", "logementsLocatRegulPrive", "logementsAccessAide"],
-        labels: [
-            "tabou2.identify.accordions.progYear",
-            "tabou2.identify.accordions.numFolder",
-            "tabou2.identify.accordions.locHelpTitle",
-            "tabou2.identify.accordions.locRegHlm",
-            "tabou2.identify.accordions.locRegPriv",
-            "tabou2.identify.accordions.accessHelpTitle"
-        ],
-        layers: ["layerPA"],
-        source: props?.tabouInfos?.agapeo || [],
-        readOnly: true
-    }].filter(el => el?.layers?.includes(layer) || !el?.layers);
+    const getFields = () => [ // PROGRAMME
+        {
+            name: "attributionFonciereAnnee",
+            label: "tabou2.identify.accordions.yearAttrib",
+            field: "attributionFonciereAnnee",
+            layers: ["layerPA"],
+            type: "number",
+            min: 1950,
+            max: 2100,
+            step: 1,
+            source: has(values, "attributionFonciereAnnee") ? values : programme,
+            valid: (v) => {
+                return v > 1000;
+            },
+            errorMsg: "tabou2.identify.accordions.errorFormatYear",
+            readOnly: false
+        }, {
+            name: "attributionDate",
+            label: "tabou2.identify.accordions.dateAttrib",
+            field: "attributionDate",
+            type: "date",
+            layers: ["layerPA"],
+            source: has(values, "attributionDate") ? values : programme,
+            readOnly: false
+        }, {
+            name: "commercialisationDate",
+            label: "tabou2.identify.accordions.dateCom",
+            field: "commercialisationDate",
+            type: "date",
+            layers: ["layerPA"],
+            source: has(values, "commercialisationDate") ? values : programme,
+            readOnly: false
+        }, {
+            name: "logementsTotal",
+            label: "tabou2.identify.accordions.totalLog",
+            field: "logementsTotal",
+            layers: ["layerPA"],
+            type: "number",
+            min: 0,
+            source: has(values, "logementsTotal") ? values : programme,
+            readOnly: false
+        }, {
+            name: "logementsAccessAidePrevu",
+            label: "tabou2.identify.accordions.helpAccess",
+            field: "logementsAccessAidePrevu",
+            layers: ["layerPA"],
+            type: "number",
+            min: 0,
+            source: has(values, "logementsAccessAidePrevu") ? values : programme,
+            readOnly: false
+        }, {
+            name: "logementsAccessLibrePrevu",
+            label: "tabou2.identify.accordions.freeAccess",
+            field: "logementsAccessLibrePrevu",
+            layers: ["layerPA"],
+            type: "number",
+            min: 0,
+            source: has(values, "logementsAccessLibrePrevu") ? values : programme,
+            readOnly: false
+        }, {
+            name: "logementsAccessMaitrisePrevu",
+            label: "tabou2.identify.accordions.controlAccess",
+            field: "logementsAccessMaitrisePrevu",
+            layers: ["layerPA"],
+            type: "number",
+            min: 0,
+            source: has(values, "logementsAccessMaitrisePrevu") ? values : programme,
+            readOnly: false
+        }, {
+            name: "logementsLocatifAidePrevu",
+            label: "tabou2.identify.accordions.locHelp",
+            field: "logementsLocatifAidePrevu",
+            layers: ["layerPA"],
+            type: "number",
+            min: 0,
+            source: has(values, "logementsLocatifAidePrevu") ? values : programme,
+            readOnly: false
+        }, {
+            name: "logementsLocatifReguleHlmPrevu",
+            label: "tabou2.identify.accordions.locHlm",
+            field: "logementsLocatifReguleHlmPrevu",
+            layers: ["layerPA"],
+            type: "number",
+            min: 0,
+            source: has(values, "logementsLocatifReguleHlmPrevu") ? values : programme,
+            readOnly: false
+        }, {
+            name: "logementsLocatifRegulePrivePrevu",
+            label: "tabou2.identify.accordions.privateLoc",
+            field: "logementsLocatifRegulePrivePrevu",
+            layers: ["layerPA"],
+            type: "number",
+            min: 0,
+            source: has(values, "logementsLocatifRegulePrivePrevu") ? values : programme,
+            readOnly: false
+        }, {
+            name: "agapeo",
+            label: "tabou2.identify.accordions.agapeoData",
+            msg: ["tabou2.getHelp", props.help.agapeo || props.help?.url || ""],
+            type: "table",
+            fields: ["anneeProg", "numDossier", "logementsLocatAide", "logementsLocatRegulHlm", "logementsLocatRegulPrive", "logementsAccessAide"],
+            labels: [
+                "tabou2.identify.accordions.progYear",
+                "tabou2.identify.accordions.numFolder",
+                "tabou2.identify.accordions.locHelpTitle",
+                "tabou2.identify.accordions.locRegHlm",
+                "tabou2.identify.accordions.locRegPriv",
+                "tabou2.identify.accordions.accessHelpTitle"
+            ],
+            layers: ["layerPA"],
+            source: props?.tabouInfos?.agapeo || [],
+            readOnly: true
+        }].filter(el => el?.layers?.includes(layer) || !el?.layers);
 
     // hooks
     useEffect(() => {
