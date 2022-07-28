@@ -1,6 +1,6 @@
 import * as Rx from 'rxjs';
-import { DISPLAY_MSG } from '@ext/actions/tabou2';
-import { isTabou2Activate } from '@ext/selectors/tabou2';
+import { DISPLAY_MSG } from '../actions/tabou2';
+import { isTabou2Activate } from '../selectors/tabou2';
 import { error, success, warning, info } from "@mapstore/actions/notifications";
 import {getMessageById} from "@mapstore/utils/LocaleUtils";
 

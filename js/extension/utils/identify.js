@@ -1,4 +1,4 @@
-import { LAYER_FIELD_OPTION } from "@ext/constants";
+import { LAYER_FIELD_OPTION } from "../constants";
 import { get, find } from 'lodash';
 
 /**

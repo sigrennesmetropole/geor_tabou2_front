@@ -2,7 +2,7 @@ import * as Rx from 'rxjs';
 import { get, keys, find } from 'lodash';
 import { loadTiers, ADD_FEATURE_TIER, ASSOCIATE_TIER, DELETE_FEATURE_TIER, CHANGE_FEATURE_TIER, INACTIVATE_TIER,
     MAP_TIERS, mapTiers
-} from '@ext/actions/tabou2';
+} from '../actions/tabou2';
 
 import {
     getFeatureTiers,
@@ -13,10 +13,10 @@ import {
     inactivateTier,
     dissociateFeatureTier,
     changeFeatureTierAssociation
-} from '@ext/api/requests';
+} from '../api/requests';
 
-import { getSelection, getLayer, getPluginCfg, isTabou2Activate } from '@ext/selectors/tabou2';
-import { URL_ADD } from '@ext/constants';
+import { getSelection, getLayer, getPluginCfg, isTabou2Activate } from '../selectors/tabou2';
+import { URL_ADD } from '../constants';
 
 // get service to request according to action type
 const actionOnUpdate = {

@@ -33,7 +33,7 @@ import {
     createNewTabouFeature
 } from '../api/requests';
 
-import { URL_ADD } from '@ext/constants';
+import { URL_ADD } from '../constants';
 import { wrapStartStop } from "@mapstore/observables/epics";
 import { error, success } from "@mapstore/actions/notifications";
 import { refreshLayerVersion } from "@mapstore/actions/layers";

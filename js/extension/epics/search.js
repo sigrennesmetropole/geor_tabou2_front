@@ -7,8 +7,8 @@ import { changeLayerParams, changeLayerProperties } from "@mapstore/actions/laye
 import { wrapStartStop } from "@mapstore/observables/epics";
 import { error } from "@mapstore/actions/notifications";
 import {getMessageById} from "@mapstore/utils/LocaleUtils";
-import { newfilterLayerByList } from "@ext/utils/search";
-import { createOGCRequest } from "@ext/api/requests";
+import { newfilterLayerByList } from "../utils/search";
+import { createOGCRequest } from "../api/requests";
 
 /**
  * From Tabou2 search panel, apply filter for each Tabou layers.

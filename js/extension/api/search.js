@@ -1,5 +1,5 @@
 import axios from "@mapstore/libs/ajax";
-import { API_BASE_URL } from "@ext/constants";
+import { API_BASE_URL } from "../constants";
 import { keys } from "lodash";
 const baseURL = "/tabou2";
 

@@ -1,4 +1,4 @@
-import { CONTROL_NAME, TABOU_VECTOR_ID, TABOU_MARKER_LAYER_ID, URL_ADD } from '@ext/constants';
+import { CONTROL_NAME, TABOU_VECTOR_ID, TABOU_MARKER_LAYER_ID, URL_ADD } from '../constants';
 import { keys, pickBy, isEmpty, get } from 'lodash';
 import { userGroupSecuritySelector, userSelector } from '@mapstore/selectors/security';
 import { additionalLayersSelector } from '@mapstore/selectors/additionallayers';
