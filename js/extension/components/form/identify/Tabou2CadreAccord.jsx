@@ -17,9 +17,16 @@ momentLocalizer(moment);
  * @param {any} param
  * @returns component
  */
-export default function Tabou2CadreAccord({ initialItem, programme, operation, mapFeature, ...props }) {
-    let layer = props?.selection?.layer;
-
+export default function Tabou2CadreAccord({
+    initialItem,
+    layer,
+    authent,
+    change = () => { },
+    i18n = () => { },
+    messages,
+    apiCfg,
+    types
+}) {
     const [values, setValues] = useState({});
     const [fields, setFields] = useState([]);
     const [required, setRequired] = useState({});
@@ -36,13 +43,13 @@ export default function Tabou2CadreAccord({ initialItem, programme, operation, m
             setFields(calculFields);
             setRequired(mandatoryFields);
         }
-    }, [initialItem, JSON.stringify(props.typesFicheInfos)]);
+    }, [initialItem, JSON.stringify(types)]);
     // ex : "descriptionsFoncier", ["typesFonciers.code", "FONCIER_PUBLIC"], "description", "myNewvValue"
-    let changeFoncier = (types, fieldArray, search, field, value) => {
+    let changeFoncier = (t, fieldArray, search, field, value) => {
         // get item by type code
         let itemByCode = find(get(initialItem, fieldArray), search);
         if (!itemByCode) {
-            itemByCode = { typeFoncier: find(types.typesFonciers, ['code', search[1]]) };
+            itemByCode = { typeFoncier: find(t.typesFonciers, ['code', search[1]]) };
         }
         // change value
         itemByCode[field] = value;
@@ -67,7 +74,7 @@ export default function Tabou2CadreAccord({ initialItem, programme, operation, m
         field: "descriptionsFoncier.description",
         readOnly: false,
         value: () => find(get(initialItem, "descriptionsFoncier"), ["typeFoncier.code", "PUBLIQUE"])?.description,
-        change: (v, types) => changeFoncier(types, "descriptionsFoncier", ["typeFoncier.code", "PUBLIQUE"], "description", v)
+        change: (v, t) => changeFoncier(t, "descriptionsFoncier", ["typeFoncier.code", "PUBLIQUE"], "description", v)
     }, {
         name: "descriptionsFoncier",
         type: "number",
@@ -76,7 +83,7 @@ export default function Tabou2CadreAccord({ initialItem, programme, operation, m
         field: "descriptionsFoncier.taux",
         readOnly: false,
         value: () => find(get(initialItem, "descriptionsFoncier"), ["typeFoncier.code", "PUBLIQUE"])?.taux,
-        change: (v, types) => changeFoncier(types, "descriptionsFoncier", ["typeFoncier.code", "PUBLIQUE"], "taux", v)
+        change: (v, t) => changeFoncier(t, "descriptionsFoncier", ["typeFoncier.code", "PUBLIQUE"], "taux", v)
     }, {
         name: "descriptionsFoncier",
         type: "text",
@@ -85,7 +92,7 @@ export default function Tabou2CadreAccord({ initialItem, programme, operation, m
         field: "descriptionsFoncier.description",
         readOnly: false,
         value: () => find(get(initialItem, "descriptionsFoncier"), ["typeFoncier.code", "PRIVEE"])?.description,
-        change: (v, types) => changeFoncier(types, "descriptionsFoncier", ["typeFoncier.code", "PRIVEE"], "description", v)
+        change: (v, t) => changeFoncier(t, "descriptionsFoncier", ["typeFoncier.code", "PRIVEE"], "description", v)
     }, {
         name: "descriptionsFoncier",
         type: "number",
@@ -94,7 +101,7 @@ export default function Tabou2CadreAccord({ initialItem, programme, operation, m
         field: "descriptionsFoncier.taux",
         readOnly: false,
         value: () => find(get(initialItem, "descriptionsFoncier"), ["typeFoncier.code", "PRIVEE"])?.taux,
-        change: (v, types) => changeFoncier(types, "descriptionsFoncier", ["typeFoncier.code", "PRIVEE"], "taux", v)
+        change: (v, t) => changeFoncier(t, "descriptionsFoncier", ["typeFoncier.code", "PRIVEE"], "taux", v)
     }, {
         name: "typeOccupation",
         field: "typeOccupation",
@@ -296,7 +303,7 @@ export default function Tabou2CadreAccord({ initialItem, programme, operation, m
         change: (v) => !isEmpty(initialItem.financements) ? changeInfos({ financements: [{ ...initialItem.financements[0], description: v }] }) : null
     }];
 
-    const allowChange = props.authent.isContrib || props.authent.isReferent;
+    const allowChange = authent.isContrib || authent.isReferent;
 
     // manage change info
     changeInfos = (item) => {
@@ -304,7 +311,7 @@ export default function Tabou2CadreAccord({ initialItem, programme, operation, m
         setValues(newValues);
         // send to parent to save
         let accordValues = pick(newValues, getFields().filter(f => !f.readOnly).map(f => f.name));
-        props.change(accordValues, pick(accordValues, required));
+        change(accordValues, pick(accordValues, required));
     };
 
     const changeDate = (item, str) => {
@@ -357,7 +364,7 @@ export default function Tabou2CadreAccord({ initialItem, programme, operation, m
                                                 forceSelection
                                                 value={item.value()}
                                                 search={
-                                                    text => getRequestApi(item.api, props.pluginCfg.apiCfg, {[item.autocomplete]: `${text}*`})
+                                                    text => getRequestApi(item.api, apiCfg, {[item.autocomplete]: `${text}*`})
                                                         .then(results =>
                                                             results.elements.map(v => v)
                                                         )
@@ -365,7 +372,7 @@ export default function Tabou2CadreAccord({ initialItem, programme, operation, m
                                                 onSelect={item.select}
                                                 onChange={item.change}
                                                 name={item.name}
-                                                placeholder={props.i18n(props.messages, item?.label || "")}
+                                                placeholder={i18n(messages, item?.label || "")}
                                             />
                                         ) : null
                                     }
@@ -373,19 +380,19 @@ export default function Tabou2CadreAccord({ initialItem, programme, operation, m
                                         item.type === "text" || item.type === "number" ?
                                             (<FormControl
                                                 componentClass={item.isArea ? "textarea" : "input"}
-                                                placeholder={props.i18n(props.messages, item?.label || "")}
+                                                placeholder={i18n(messages, item?.label || "")}
                                                 value={item.value() || ""}
                                                 type={item.type}
                                                 min="0"
                                                 style={{height: item.isArea ? "100px" : "auto"}}
                                                 readOnly={item.readOnly || !allowChange}
-                                                onChange={(v) => item.change(v.target.value, props.typesFicheInfos)}
+                                                onChange={(v) => item.change(v.target.value, types)}
                                             />) : null
                                     }{
                                         item.type === "combo" && !item?.autocomplete ? (
                                             <Tabou2Combo
-                                                load={() => getRequestApi(item.api, props.pluginCfg.apiCfg, {})}
-                                                placeholder={props.i18n(props.messages, item?.placeholder || "")}
+                                                load={() => getRequestApi(item.api, apiCfg, {})}
+                                                placeholder={i18n(messages, item?.placeholder || "")}
                                                 filter="contains"
                                                 disabled={item.readOnly || !allowChange}
                                                 textField={item.apiLabel}
@@ -395,8 +402,8 @@ export default function Tabou2CadreAccord({ initialItem, programme, operation, m
                                                 onSelect={item.select ? item.select : (v) => changeInfos({[item.name]: v})}
                                                 onChange={item.change ? item.change : (v) => !v ? changeInfos({[item.name]: v}) : null}
                                                 messages={{
-                                                    emptyList: props.i18n(props.messages, "tabou2.emptyList"),
-                                                    openCombobox: props.i18n(props.messages, "tabou2.displayList")
+                                                    emptyList: i18n(messages, "tabou2.emptyList"),
+                                                    openCombobox: i18n(messages, "tabou2.displayList")
                                                 }}
                                             />
                                         ) : null
@@ -407,7 +414,7 @@ export default function Tabou2CadreAccord({ initialItem, programme, operation, m
                                                 className="identifyDate"
                                                 inline="true"
                                                 dropUp
-                                                placeholder={props.i18n(props.messages, item?.label || "")}
+                                                placeholder={i18n(messages, item?.label || "")}
                                                 readOnly={item.readOnly || !allowChange}
                                                 calendar
                                                 time={false}

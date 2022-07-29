@@ -14,8 +14,18 @@ import Tabou2VocationModal from "../../tabou2IdentifyPanel/modals/Tabou2Vocation
  * @param {any} param
  * @returns component
  */
-export default function Tabou2DescribeAccord({ initialItem, programme, operation, mapFeature, ...props }) {
-    let layer = props?.selection?.layer;
+export default function Tabou2DescribeAccord({
+    initialItem,
+    programme,
+    operation,
+    layer,
+    authent,
+    change = () => { },
+    messages,
+    apiCfg,
+    i18n = () => { },
+    vocationsInfos
+}) {
     const [values, setValues] = useState({});
     const [fields, setFields] = useState([]);
     const [required, setRequired] = useState({});
@@ -110,7 +120,7 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
             setFields(calculFields);
             setRequired(mandatoryFields);
         }
-    }, [initialItem]);
+    }, [JSON.stringify(initialItem)]);
 
     getValue = (item) => {
         if (isEmpty(values) && isEmpty(operation)) return null;
@@ -123,16 +133,16 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
         setValues(newValues);
         // send to parent to save
         let accordValues = pick(newValues, getFields().filter(f => !f.readOnly).map(f => f.name));
-        props.change(accordValues, pick(accordValues, required));
+        change(accordValues, pick(accordValues, required));
     };
 
     const changeVocation = (vocationValues) => {
         let newValues = { ...values, ...vocationValues };
         setValues(newValues);
-        props.changeVocation(newValues);
+        changeVocation(newValues);
     };
 
-    const allowChange = props.authent.isContrib || props.authent.isReferent;
+    const allowChange = authent.isContrib || authent.isReferent;
 
     return (
         <Grid style={{ width: "100%" }} className={""}>
@@ -147,7 +157,7 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
                                 item.type === "text" || item.type === "number" ?
                                     (<FormControl
                                         componentClass={item.isArea ? "textarea" : "input"}
-                                        placeholder={props.i18n(props.messages, item?.placeholder || item.label)}
+                                        placeholder={i18n(messages, item?.placeholder || item.label)}
                                         style={{height: item.isArea ? "100px" : "auto"}}
                                         type={item.type}
                                         min="0"
@@ -172,8 +182,8 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
                             }{
                                 item.type === "combo" ? (
                                     <Tabou2Combo
-                                        load={() => getRequestApi(item.api, props.pluginCfg.apiCfg, {})}
-                                        placeholder={props.i18n(props.messages, item?.placeholder || "")}
+                                        load={() => getRequestApi(item.api, apiCfg, {})}
+                                        placeholder={i18n(messages, item?.placeholder || "")}
                                         filter="contains"
                                         disabled={item.readOnly || !allowChange}
                                         textField={item.apiLabel}
@@ -183,8 +193,8 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
                                         onSelect={(v) => changeInfos({[item.name]: v})}
                                         onChange={(v) => !v ? changeInfos({[item.name]: v}) : null}
                                         messages={{
-                                            emptyList: props.i18n(props.messages, "tabou2.emptyList"),
-                                            openCombobox: props.i18n(props.messages, "tabou2.displayList")
+                                            emptyList: i18n(messages, "tabou2.emptyList"),
+                                            openCombobox: i18n(messages, "tabou2.displayList")
                                         }}
                                     />
                                 ) : null
@@ -197,17 +207,17 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
                                             className="vocation-btn"
                                             bsStyle="primary"
                                             onClick={() => setOpened(true)}>
-                                            {props.i18n(props.messages, "tabou2.vocation.btnLabel")}
+                                            {i18n(messages, "tabou2.vocation.btnLabel")}
                                         </Button>
                                         <Tabou2VocationModal
-                                            i18n={props.i18n}
-                                            messages={props.messages}
+                                            i18n={i18n}
+                                            messages={messages}
                                             operation={operation}
                                             update={changeVocation}
                                             opened={opened}
                                             allowChange={allowChange}
                                             close={() => setOpened(false)}
-                                            {...props.vocationsInfos}
+                                            {...vocationsInfos}
                                         />
                                     </>
                                 )

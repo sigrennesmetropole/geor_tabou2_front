@@ -16,9 +16,20 @@ const Button = tooltip(ButtonRB);
  * @param {any} param
  * @returns component
  */
-export default function Tabou2IdentAccord({ initialItem, programme, operation, mapFeature, ...props }) {
-    let layer = props?.selection?.layer;
-
+export default function Tabou2IdentAccord({
+    initialItem,
+    programme,
+    operation,
+    mapFeature,
+    layer,
+    tiers,
+    setTiersFilter,
+    authent,
+    change = () => { },
+    apiCfg,
+    i18n = () => { },
+    messages
+}) {
     const [values, setValues] = useState({});
     const [fields, setFields] = useState([]);
     const [required, setRequired] = useState({});
@@ -63,7 +74,7 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
         type: "multi",
         layers: ["layerOA", "layerSA"],
         readOnly: true,
-        source: {referents: props.tiers.filter(t => t.typeTiers.id === 3).map(t => t.tiers.nom).join(",")}
+        source: {referents: tiers.filter(t => t.typeTiers.id === 3).map(t => t.tiers.nom).join(",")}
     }, {
         name: "commune",
         field: "properties.commune",
@@ -143,8 +154,8 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
 
     const openTierModal = (type) => {
         let tiersBtn = document.getElementById('tiers');
-        if (props.setTiersFilter && type && tiersBtn) {
-            props.setTiersFilter(operation?.id || programme?.id, type);
+        if (setTiersFilter && type && tiersBtn) {
+            setTiersFilter(operation?.id || programme?.id, type);
             tiersBtn.click();
         }
     };
@@ -157,7 +168,7 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
         }
     };
 
-    const allowChange = props.authent.isContrib || props.authent.isReferent;
+    const allowChange = authent.isContrib || authent.isReferent;
 
     // hooks
     useEffect(() => {
@@ -183,7 +194,7 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
         setValues(newValues);
         // send to parent to save
         let accordValues = pick(newValues, getFields().filter(f => !f.readOnly).map(f => f.name));
-        props.change(accordValues, pick(accordValues, required));
+        change(accordValues, pick(accordValues, required));
     };
 
     return (
@@ -210,7 +221,7 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
                                                 forceSelection
                                                 value={item.value()}
                                                 search={
-                                                    text => getRequestApi(item.api, props.pluginCfg.apiCfg, {[item.autocomplete]: `${text}*`})
+                                                    text => getRequestApi(item.api, apiCfg, {[item.autocomplete]: `${text}*`})
                                                         .then(results =>
                                                             results.elements.map(v => v)
                                                         )
@@ -218,14 +229,14 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
                                                 onSelect={item.select}
                                                 onChange={item.change}
                                                 name={item.name}
-                                                placeholder={props.i18n(props.messages, item?.label || "")}
+                                                placeholder={i18n(messages, item?.label || "")}
                                             />
                                         ) : null
                                     }
                                     {
                                         item.type === "text" ?
                                             (<FormControl
-                                                placeholder={props.i18n(props.messages, item?.label || "")}
+                                                placeholder={i18n(messages, item?.label || "")}
                                                 value={getValue(item) || ""}
                                                 readOnly={item.readOnly || !allowChange}
                                                 onChange={(v) => changeInfos({[item.name]: v.target.value})}
@@ -234,7 +245,7 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
                                         item.type === "multi" && has(item.source, item.field) ? (
                                             <Multiselect
                                                 style={{ color: "black !important", paddingRight: "0px" }}
-                                                placeholder={props.i18n(props.messages, item?.label || "")}
+                                                placeholder={i18n(messages, item?.label || "")}
                                                 value={getValue(item).length ? getValue(item).split(";") : [] }
                                                 readOnly={item.readOnly || !allowChange}
                                                 onChange={() => null}
@@ -248,8 +259,8 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
                                     }{
                                         item.type === "combo" && !item?.autocomplete ? (
                                             <Tabou2Combo
-                                                load={() => getRequestApi(item.api, props.pluginCfg.apiCfg, {})}
-                                                placeholder={props.i18n(props.messages, item?.placeholder || "")}
+                                                load={() => getRequestApi(item.api, apiCfg, {})}
+                                                placeholder={i18n(messages, item?.placeholder || "")}
                                                 filter="contains"
                                                 disabled={item.readOnly || !allowChange}
                                                 textField={item.apiLabel}
@@ -259,8 +270,8 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
                                                 onSelect={(v) => changeInfos({[item.name]: v})}
                                                 onChange={(v) => !v ? changeInfos({[item.name]: v}) : null}
                                                 messages={{
-                                                    emptyList: props.i18n(props.messages, "tabou2.emptyList"),
-                                                    openCombobox: props.i18n(props.messages, "tabou2.displayList")
+                                                    emptyList: i18n(messages, "tabou2.emptyList"),
+                                                    openCombobox: i18n(messages, "tabou2.displayList")
                                                 }}
                                             />
                                         ) : null
@@ -270,7 +281,7 @@ export default function Tabou2IdentAccord({ initialItem, programme, operation, m
                                     allTiersButtons[item.name] && (
                                         <Col xs={1} className="no-padding">
                                             <Button
-                                                tooltip={props.i18n(props.messages, allTiersButtons[item.name].tooltip || "")}
+                                                tooltip={i18n(messages, allTiersButtons[item.name].tooltip || "")}
                                                 onClick={() => allTiersButtons[item.name].click() }
                                                 bsStyle="primary"
                                                 bsSize="small">

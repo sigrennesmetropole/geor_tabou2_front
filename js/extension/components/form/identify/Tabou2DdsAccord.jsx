@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, memo } from "react";
 import { isEmpty, isEqual, pick, has, get, capitalize } from "lodash";
 import { Col, Row, Grid, ControlLabel, Table } from "react-bootstrap";
 import { DateTimePicker } from "react-widgets";
@@ -10,13 +10,29 @@ import momentLocalizer from 'react-widgets/lib/localizers/moment';
 import ControlledPopover from '@mapstore/components/widgets/widget/ControlledPopover';
 momentLocalizer(moment);
 
+const avoidReRender = (prevProps, nextProps) => {
+    if (isEqual(prevProps.initialItem, nextProps.initialItem)) {
+        return true;
+    }
+    return false; // re render
+};
+
 /**
  * Accordion to display info for DDS panel section - only for feature linked with id tabou
  * @param {any} param
  * @returns component
  */
-export default function Tabou2DdsAccord({ initialItem, programme, operation, mapFeature, ...props }) {
-    let layer = props?.selection?.layer;
+const Tabou2DdsAccord = ({
+    initialItem,
+    programme,
+    layer,
+    authent,
+    change,
+    i18n,
+    messages,
+    help,
+    permisElement
+}) => {
     let getFields;
 
     const [values, setValues] = useState({});
@@ -34,7 +50,7 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
             setFields(calculFields);
             setRequired(mandatoryFields);
         }
-    }, [props.infos]);
+    }, [JSON.stringify(initialItem)]);
 
     /**
      * Create fields to display into table
@@ -67,7 +83,7 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
     }, {
         name: "ddc",
         label: "tabou2.identify.accordions.ddcData",
-        msg: ["tabou2.getHelp", props.help?.ddc || props.help?.url || ""],
+        msg: ["tabou2.getHelp", help?.ddc || help?.url || ""],
         type: "table",
         fields: ["numAds", "depotDossier", "adsDate", "docDate", "datDatePrevu "],
         labels: [
@@ -78,7 +94,7 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
             "tabou2.identify.accordions.daactDate"
         ],
         layers: ["layerPA"],
-        source: props?.tabouInfos?.permis?.elements || [],
+        source: permisElement || [],
         readOnly: true
     }].filter(el => el?.layers?.includes(layer) || !el?.layers);
 
@@ -98,17 +114,17 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
      * @param {Array} item
      */
     const changeInfos = (item) => {
-        let newValues = {...values, ...item};
+        let newValues = { ...values, ...item };
         setValues(newValues);
         // send to parent to save
         let accordValues = pick(newValues, getFields().filter(f => !f.readOnly).map(f => f.name));
-        props.change(accordValues, pick(accordValues, required));
+        change(accordValues, pick(accordValues, required));
     };
 
-    const allowChange = props.authent.isContrib || props.authent.isReferent;
+    const allowChange = authent.isContrib || authent.isReferent;
 
     const changeDate = (field, str) => {
-        changeInfos({[field.name]: str ? new Date(str).toISOString() : ""});
+        changeInfos({ [field.name]: str ? new Date(str).toISOString() : "" });
     };
 
     const getDateValue = item => {
@@ -128,16 +144,16 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
         <Grid style={{ width: "100%" }} className={""}>
             {
                 fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(item => (
-                    <Row className = {item.type === "table" ? "tableDisplay" : ""}>
+                    <Row className={item.type === "table" ? "tableDisplay" : ""}>
                         <Col xs={item.type === "table" ? 12 : 4}>
                             {
                                 item.type !== "boolean" && (
                                     <ControlLabel>
-                                        <Message msgId={item.label}/>
+                                        <Message msgId={item.label} />
                                         {
                                             item.msg && (
                                                 <a href={item.msg[1]} className="link-deactivate" target="_blank">
-                                                    <ControlledPopover text={<Message msgId={ item.msg[0] }/>} />
+                                                    <ControlledPopover text={<Message msgId={item.msg[0]} />} />
                                                 </a>)
                                         } :
                                     </ControlLabel>
@@ -153,7 +169,7 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
                                         inline
                                         dropUp
                                         disabled={!allowChange}
-                                        placeholder={props.i18n(props.messages, item?.placeholder || item?.label)}
+                                        placeholder={i18n(messages, item?.placeholder || item?.label)}
                                         calendar
                                         time={false}
                                         culture="fr"
@@ -171,7 +187,7 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
                                         <thead>
                                             <tr>
                                                 {item.fields.map((fieldName, i) => (
-                                                    <th>{capitalize(props.i18n(props.messages, item.labels[i]))}</th>)
+                                                    <th>{capitalize(i18n(messages, item.labels[i]))}</th>)
                                                 )}
                                             </tr>
                                         </thead>
@@ -197,4 +213,6 @@ export default function Tabou2DdsAccord({ initialItem, programme, operation, map
             }
         </Grid>
     );
-}
+};
+
+export default memo(Tabou2DdsAccord, avoidReRender);

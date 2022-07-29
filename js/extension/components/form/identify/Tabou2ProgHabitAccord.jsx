@@ -11,9 +11,18 @@ import momentLocalizer from 'react-widgets/lib/localizers/moment';
 import ControlledPopover from '@mapstore/components/widgets/widget/ControlledPopover';
 momentLocalizer(moment);
 
-export default function Tabou2ProgHabitatAccord({ initialItem, programme, operation, mapFeature, ...props }) {
-    let layer = props?.selection?.layer;
-
+export default function Tabou2ProgHabitatAccord({
+    initialItem,
+    programme,
+    operation,
+    layer,
+    authent,
+    change = () => { },
+    i18n = () => { },
+    messages,
+    help,
+    agapeo
+}) {
     const [values, setValues] = useState({});
     const [fields, setFields] = useState([]);
     const [required, setRequired] = useState({});
@@ -116,7 +125,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
         }, {
             name: "agapeo",
             label: "tabou2.identify.accordions.agapeoData",
-            msg: ["tabou2.getHelp", props.help.agapeo || props.help?.url || ""],
+            msg: ["tabou2.getHelp", help.agapeo || help?.url || ""],
             type: "table",
             fields: ["anneeProg", "numDossier", "logementsLocatAide", "logementsLocatRegulHlm", "logementsLocatRegulPrive", "logementsAccessAide"],
             labels: [
@@ -128,7 +137,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
                 "tabou2.identify.accordions.accessHelpTitle"
             ],
             layers: ["layerPA"],
-            source: props?.tabouInfos?.agapeo || [],
+            source: agapeo || [],
             readOnly: true
         }].filter(el => el?.layers?.includes(layer) || !el?.layers);
 
@@ -170,7 +179,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
         setValues(newValues);
         // send to parent to save
         let accordValues = pick(newValues, getFields().filter(f => !f.readOnly).map(f => f.name));
-        props.change(accordValues, pick(accordValues, required));
+        change(accordValues, pick(accordValues, required));
     };
 
     const changeDate = (field, str) => {
@@ -179,7 +188,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
         changeInfos({[field.name]: str ? new Date(str).toISOString() : ""});
     };
 
-    const allowChange = props.authent.isContrib || props.authent.isReferent;
+    const allowChange = authent.isContrib || authent.isReferent;
     return (
         <Grid style={{ width: "100%" }} className={""}>
             {
@@ -189,7 +198,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
                             has(item, "valid") && getValue(item) && !item.valid(getValue(item)) ? (
                                 <Alert className="alert-danger">
                                     <Glyphicon glyph="warning-sign" />
-                                    <Message msgId={props.i18n(props.messages, item?.errorMsg || "")}/>
+                                    <Message msgId={i18n(messages, item?.errorMsg || "")}/>
                                 </Alert>) : null
                         }
                         <Col xs={item.type === "table" ? 12 : 5}>
@@ -213,7 +222,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
                                         inline
                                         readOnly={!allowChange || item.readOnly}
                                         dropUp
-                                        placeholder={props.i18n(props.messages, item?.label || "")}
+                                        placeholder={i18n(messages, item?.label || "")}
                                         calendar
                                         time={false}
                                         culture="fr"
@@ -231,7 +240,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
                                         min={item?.min}
                                         max={item?.max}
                                         step={item?.step}
-                                        placeholder={props.i18n(props.messages, item?.label || "")}
+                                        placeholder={i18n(messages, item?.label || "")}
                                         value={getValue(item) || ""}
                                         readOnly={!allowChange || item.readOnly}
                                         onChange={(v) => changeInfos({[item.name]: v.target.value})}
@@ -254,7 +263,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
                                             <tr>
                                                 {item.fields.map((fieldName, i) =>
                                                     (
-                                                        <th>{capitalize(props.i18n(props.messages, item.labels[i]))}</th>
+                                                        <th>{capitalize(i18n(messages, item.labels[i]))}</th>
                                                     )
                                                 )}
                                             </tr>

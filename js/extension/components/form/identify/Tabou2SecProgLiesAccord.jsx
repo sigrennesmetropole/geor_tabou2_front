@@ -3,9 +3,13 @@ import { capitalize, isEmpty, isEqual, get } from "lodash";
 import { Table, Col, Row, Grid } from "react-bootstrap";
 import "@js/extension/css/identify.css";
 
-export default function Tabou2SecProgLiesAccord({ initialItem, programme, operation, mapFeature, ...props }) {
-    let layer = props?.selection?.layer;
-
+export default function Tabou2SecProgLiesAccord({
+    initialItem,
+    programmes,
+    layer,
+    i18n = () => { },
+    messages
+}) {
     const [values, setValues] = useState({});
     const [fields, setFields] = useState([]);
 
@@ -21,7 +25,7 @@ export default function Tabou2SecProgLiesAccord({ initialItem, programme, operat
             "tabou2.identify.accordions.dateLiv"
         ],
         layers: ["layerOA", "layerSA"],
-        source: props?.tabouInfos?.programmes?.elements || [],
+        source: programmes?.elements || [],
         readOnly: true
     }].filter(el => el?.layers?.includes(layer) || !el?.layers);
 
@@ -61,7 +65,7 @@ export default function Tabou2SecProgLiesAccord({ initialItem, programme, operat
                                             <tr>
                                                 {item.fields.map((fieldName, i) =>
                                                     (
-                                                        <th>{capitalize(props.i18n(props.messages, item.labels[i]))}</th>
+                                                        <th>{capitalize(i18n(messages, item.labels[i]))}</th>
                                                     )
                                                 )}
                                             </tr>

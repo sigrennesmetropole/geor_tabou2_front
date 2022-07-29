@@ -16,8 +16,20 @@ const Button = tooltip(ButtonRB);
  * @param {any} param
  * @returns component
  */
-export default function Tabou2GouvernanceAccord({ initialItem, programme, operation, mapFeature, ...props }) {
-    let layer = props?.selection?.layer;
+export default function Tabou2GouvernanceAccord({
+    initialItem,
+    programme,
+    operation,
+    layer,
+    messages,
+    types,
+    tiers,
+    setTiersFilter,
+    authent,
+    change = () => { },
+    apiCfg,
+    i18n = () => { }
+}) {
     const [values, setValues] = useState({});
     const [fields, setFields] = useState([]);
     const [required, setRequired] = useState({});
@@ -33,13 +45,13 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
             setFields(calculFields);
             setRequired(mandatoryFields);
         }
-    }, [initialItem, JSON.stringify(props.typesFicheInfos)]);
+    }, [initialItem, JSON.stringify(types)]);
 
-    let changeAction = (types, fieldArray, search, field, value) => {
+    let changeAction = (t, fieldArray, search, field, value) => {
         // get item by type code
         let itemByCode = find(get(initialItem, fieldArray), search);
         if (!itemByCode) {
-            itemByCode = { typeAction: find(types.typesAction, ['code', search[1]]) };
+            itemByCode = { typeAction: find(t.typesAction, ['code', search[1]]) };
         }
         // change value
         itemByCode[field] = value;
@@ -50,11 +62,11 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
         changeInfos({ actions: concatAll });
     };
 
-    let changeActeur = (types, fieldArray, search, field, value) => {
+    let changeActeur = (t, fieldArray, search, field, value) => {
         // get item by type code
         let itemByCode = find(get(initialItem, fieldArray), search);
         if (!itemByCode) {
-            itemByCode = { typeActeur: find(types.typesActeurs, ['code', search[1]]) };
+            itemByCode = { typeActeur: find(t.typesActeurs, ['code', search[1]]) };
         }
         // change value
         itemByCode[field] = value;
@@ -70,7 +82,7 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
         label: "tabou2.identify.accordions.promoteur",
         layers: ["layerPA"],
         type: "multi",
-        data: props.tiers.filter(t => t.typeTiers.id === 1).map(t => t.tiers.nom),
+        data: tiers.filter(t => t.typeTiers.id === 1).map(t => t.tiers.nom),
         readOnly: true
     }, {
         name: "decision",
@@ -108,13 +120,13 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
         label: "tabou2.identify.accordions.amenageur",
         layers: ["layerSA", "layerOA"],
         type: "multi",
-        data: props.tiers.filter(t => t.typeTiers.id === 1).map(t => t.tiers.nom),
+        data: tiers.filter(t => t.typeTiers.id === 1).map(t => t.tiers.nom),
         readOnly: true
     }, {
         name: "moe",
         label: "tabou2.identify.accordions.moe",
         type: "multi",
-        data: props.tiers.filter(t => t.typeTiers.id === 2).map(t => t.tiers.nom),
+        data: tiers.filter(t => t.typeTiers.id === 2).map(t => t.tiers.nom),
         readOnly: true
     }, {
         name: "actions",
@@ -124,7 +136,7 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
         field: "actions.description",
         readOnly: false,
         value: () => find(get(initialItem, "actions"), ["typeAction.code", "ACTION"])?.description,
-        change: (v, types) => changeAction(types, "actions", ["typeAction.code", "ACTION"], "description", v)
+        change: (v, t) => changeAction(t, "actions", ["typeAction.code", "ACTION"], "description", v)
     }, {
         name: "acteurs",
         type: "text",
@@ -133,7 +145,7 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
         field: "acteurs.description",
         readOnly: false,
         value: () => find(get(initialItem, "acteurs"), ["typeActeur.code", "ACT_INT"])?.description,
-        change: (v, types) => changeActeur(types, "acteurs", ["typeActeur.code", "ACT_INT"], "description", v)
+        change: (v, t) => changeActeur(t, "acteurs", ["typeActeur.code", "ACT_INT"], "description", v)
     }, {
         name: "acteurs",
         type: "text",
@@ -142,23 +154,23 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
         field: "acteurs.description",
         readOnly: false,
         value: () => find(get(initialItem, "acteurs"), ["typeActeur.code", "ACT_EXT"])?.description,
-        change: (v, types) => changeActeur(types, "acteurs", ["typeActeur.code", "ACT_EXT"], "description", v)
+        change: (v, t) => changeActeur(t, "acteurs", ["typeActeur.code", "ACT_EXT"], "description", v)
     }].filter(el => el?.layers?.includes(layer) || !el?.layers);
 
-    const allowChange = props.authent.isContrib || props.authent.isReferent;
+    const allowChange = authent.isContrib || authent.isReferent;
 
     changeInfos = (item) => {
         let newValues = {...values, ...item};
         setValues(newValues);
         // send to parent to save
         let accordValues = pick(newValues, getFields().filter(f => !f.readOnly).map(f => f.name));
-        props.change(accordValues, pick(accordValues, required));
+        change(accordValues, pick(accordValues, required));
     };
 
     const openTierModal = (type) => {
         let tiersBtn = document.getElementById('tiers');
-        if (props.setTiersFilter && type && tiersBtn) {
-            props.setTiersFilter(operation?.id || programme?.id, type);
+        if (setTiersFilter && type && tiersBtn) {
+            setTiersFilter(operation?.id || programme?.id, type);
             tiersBtn.click();
         }
     };
@@ -196,19 +208,19 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
                                 item.type === "text" || item.type === "number" ?
                                     (<FormControl
                                         componentClass={item.isArea ? "textarea" : "input"}
-                                        placeholder={props.i18n(props.messages, item?.placeholder || item.label)}
+                                        placeholder={i18n(messages, item?.placeholder || item.label)}
                                         style={{height: item.isArea ? "100px" : "auto"}}
                                         type={item.type}
                                         min="0"
                                         step={item?.step}
                                         value={item.value() || ""}
                                         readOnly={item.readOnly || !allowChange}
-                                        onChange={(v) => item.change(v.target.value, props.typesFicheInfos)}
+                                        onChange={(v) => item.change(v.target.value, types)}
                                     />) : null
                             }{
                                 item.type === "button" && (
                                     <Button
-                                        tooltip={props.i18n(props.messages, item.tooltip || "")}
+                                        tooltip={i18n(messages, item.tooltip || "")}
                                         onClick={() => item.click() }
                                         bsStyle="primary"
                                         bsSize={item.size || "xs"}>
@@ -218,8 +230,8 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
                             }{
                                 item.type === "combo" && (
                                     <Tabou2Combo
-                                        load={() => getRequestApi(item.api, props.pluginCfg.apiCfg, {})}
-                                        placeholder={props.i18n(props.messages, item?.label || "")}
+                                        load={() => getRequestApi(item.api, apiCfg, {})}
+                                        placeholder={i18n(messages, item?.label || "")}
                                         filter="contains"
                                         textField={item.apiLabel}
                                         disabled={item?.readOnly || !allowChange}
@@ -229,15 +241,15 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
                                         onSelect={(v) => changeInfos({[item.name]: v})}
                                         onChange={(v) => !v ? changeInfos({[item.name]: v}) : null}
                                         messages={{
-                                            emptyList: props.i18n(props.messages, "tabou2.emptyList"),
-                                            openCombobox: props.i18n(props.messages, "tabou2.displayList")
+                                            emptyList: i18n(messages, "tabou2.emptyList"),
+                                            openCombobox: i18n(messages, "tabou2.displayList")
                                         }}
                                     />
                                 )
                             }{
                                 item.type === "multi" && (
                                     <Multiselect
-                                        placeholder={props.i18n(props.messages, item?.label || "")}
+                                        placeholder={i18n(messages, item?.label || "")}
                                         readOnly={item.readOnly || !allowChange}
                                         value={item.data}
                                         className={ item.readOnly ? "tagColor noClick" : "tagColor"}
@@ -250,7 +262,7 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
                             allTiersButtons[item.name] && (
                                 <Col xs={1} className="no-padding">
                                     <Button
-                                        tooltip={props.i18n(props.messages, allTiersButtons[item.name].tooltip || "")}
+                                        tooltip={i18n(messages, allTiersButtons[item.name].tooltip || "")}
                                         onClick={() => allTiersButtons[item.name].click() }
                                         bsStyle="primary"
                                         bsSize="small">
