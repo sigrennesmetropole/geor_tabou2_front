@@ -1,4 +1,4 @@
-import React, {useEffect, useState } from "react";
+import React, {useEffect, useState, memo } from "react";
 import { isEmpty, isEqual, pick, has, get, capitalize } from "lodash";
 import { Col, Row, Table, FormControl, Grid, ControlLabel, Alert, Glyphicon } from "react-bootstrap";
 import { DateTimePicker } from "react-widgets";
@@ -11,7 +11,14 @@ import momentLocalizer from 'react-widgets/lib/localizers/moment';
 import ControlledPopover from '@mapstore/components/widgets/widget/ControlledPopover';
 momentLocalizer(moment);
 
-export default function Tabou2ProgHabitatAccord({
+const avoidReRender = (prevProps, nextProps) => {
+    if (isEqual(prevProps.initialItem, nextProps.initialItem)) {
+        return true;
+    }
+    return false; // re render
+};
+
+const Tabou2ProgHabitatAccord = ({
     initialItem,
     programme,
     operation,
@@ -22,7 +29,7 @@ export default function Tabou2ProgHabitatAccord({
     messages,
     help,
     agapeo
-}) {
+}) => {
     const [values, setValues] = useState({});
     const [fields, setFields] = useState([]);
     const [required, setRequired] = useState({});
@@ -175,7 +182,7 @@ export default function Tabou2ProgHabitatAccord({
 
     // manage change info
     const changeInfos = (item) => {
-        let newValues = {...values, ...item};
+        let newValues = { ...values, ...item };
         setValues(newValues);
         // send to parent to save
         let accordValues = pick(newValues, getFields().filter(f => !f.readOnly).map(f => f.name));
@@ -185,7 +192,7 @@ export default function Tabou2ProgHabitatAccord({
     const changeDate = (field, str) => {
         // TODO : valid with moment like that
         // let isValid = moment(str, "DD/MM/YYYY", true);
-        changeInfos({[field.name]: str ? new Date(str).toISOString() : ""});
+        changeInfos({ [field.name]: str ? new Date(str).toISOString() : "" });
     };
 
     const allowChange = authent.isContrib || authent.isReferent;
@@ -193,21 +200,21 @@ export default function Tabou2ProgHabitatAccord({
         <Grid style={{ width: "100%" }} className={""}>
             {
                 fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(item => (
-                    <Row className = {item.type === "table" ? "tableDisplay" : ""}>
+                    <Row className={item.type === "table" ? "tableDisplay" : ""}>
                         {
                             has(item, "valid") && getValue(item) && !item.valid(getValue(item)) ? (
                                 <Alert className="alert-danger">
                                     <Glyphicon glyph="warning-sign" />
-                                    <Message msgId={i18n(messages, item?.errorMsg || "")}/>
+                                    <Message msgId={i18n(messages, item?.errorMsg || "")} />
                                 </Alert>) : null
                         }
                         <Col xs={item.type === "table" ? 12 : 5}>
                             <ControlLabel>
-                                <Message msgId={item.label}/>
+                                <Message msgId={item.label} />
                                 {
                                     item.msg && (
                                         <a href={item.msg[1]} className="link-deactivate" target="_blank">
-                                            <ControlledPopover text={<Message msgId={ item.msg[0] }/>} />
+                                            <ControlledPopover text={<Message msgId={item.msg[0]} />} />
                                         </a>
                                     )
                                 } :
@@ -235,24 +242,24 @@ export default function Tabou2ProgHabitatAccord({
                             }
                             {
                                 (item.type === "text" || item.type === "number") &&
-                                    (<FormControl
-                                        type={item.type}
-                                        min={item?.min}
-                                        max={item?.max}
-                                        step={item?.step}
-                                        placeholder={i18n(messages, item?.label || "")}
-                                        value={getValue(item) || ""}
-                                        readOnly={!allowChange || item.readOnly}
-                                        onChange={(v) => changeInfos({[item.name]: v.target.value})}
-                                        onKeyDown={(v) => {
-                                            if (item.type !== "number") return;
-                                            // only keep numeric and special key control as "Delete" or "Backspace"
-                                            if (!new RegExp('^[0-9]+$').test(v.key) && v.key.length < 2 && v.key !== ",") {
-                                                v.returnValue = false;
-                                                if (v.preventDefault) v.preventDefault();
-                                            }
-                                        }}
-                                    />)
+                                (<FormControl
+                                    type={item.type}
+                                    min={item?.min}
+                                    max={item?.max}
+                                    step={item?.step}
+                                    placeholder={i18n(messages, item?.label || "")}
+                                    value={getValue(item) || ""}
+                                    readOnly={!allowChange || item.readOnly}
+                                    onChange={(v) => changeInfos({ [item.name]: v.target.value })}
+                                    onKeyDown={(v) => {
+                                        if (item.type !== "number") return;
+                                        // only keep numeric and special key control as "Delete" or "Backspace"
+                                        if (!new RegExp('^[0-9]+$').test(v.key) && v.key.length < 2 && v.key !== ",") {
+                                            v.returnValue = false;
+                                            if (v.preventDefault) v.preventDefault();
+                                        }
+                                    }}
+                                />)
                             }
                         </Col>
                         {
@@ -290,4 +297,6 @@ export default function Tabou2ProgHabitatAccord({
             }
         </Grid>
     );
-}
+};
+
+export default memo(Tabou2ProgHabitatAccord, avoidReRender);

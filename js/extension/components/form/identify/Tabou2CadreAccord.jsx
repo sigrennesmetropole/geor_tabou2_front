@@ -1,4 +1,4 @@
-import React, {useEffect, useState } from "react";
+import React, {useEffect, useState, memo } from "react";
 import { isEmpty, isEqual, pick, get, find } from "lodash";
 import { Col, Row, FormControl, Grid, ControlLabel } from "react-bootstrap";
 import { getRequestApi } from "@js/extension/api/requests";
@@ -12,12 +12,20 @@ import { DateTimePicker } from "react-widgets";
 import moment from 'moment';
 import momentLocalizer from 'react-widgets/lib/localizers/moment';
 momentLocalizer(moment);
+
+const avoidReRender = (prevProps, nextProps) => {
+    if (isEqual(prevProps.initialItem, nextProps.initialItem)) {
+        return true;
+    }
+    return false; // re render
+};
+
 /**
  * Accordion to display info for Identity panel section - only for feature linked with id tabou
  * @param {any} param
  * @returns component
  */
-export default function Tabou2CadreAccord({
+const Tabou2CadreAccord = ({
     initialItem,
     layer,
     authent,
@@ -26,7 +34,7 @@ export default function Tabou2CadreAccord({
     messages,
     apiCfg,
     types
-}) {
+}) => {
     const [values, setValues] = useState({});
     const [fields, setFields] = useState([]);
     const [required, setRequired] = useState({});
@@ -204,10 +212,10 @@ export default function Tabou2CadreAccord({
         readOnly: false,
         value: () => get(initialItem, "amenageurs")[0]?.typeAmenageur?.libelle,
         change: (v) => changeInfos({
-            amenageurs: v ? [{nom: "", typeAmenageur: v }] : []
+            amenageurs: v ? [{ nom: "", typeAmenageur: v }] : []
         }),
         select: (v) => changeInfos({
-            amenageurs: v ? [{nom: "", typeAmenageur: v }] : []
+            amenageurs: v ? [{ nom: "", typeAmenageur: v }] : []
         })
     }, {
         name: "amenageurs",
@@ -286,10 +294,10 @@ export default function Tabou2CadreAccord({
         readOnly: false,
         value: () => get(initialItem, "financements[0].typeFinancement.libelle"),
         change: (v) => changeInfos({
-            financements: v ? [{...initialItem.financements[0], typeFinancement: v }] : []
+            financements: v ? [{ ...initialItem.financements[0], typeFinancement: v }] : []
         }),
         select: (v) => changeInfos({
-            financements: v ? [{...initialItem.financements[0], typeFinancement: v }] : []
+            financements: v ? [{ ...initialItem.financements[0], typeFinancement: v }] : []
         })
     }, {
         name: "financements",
@@ -307,7 +315,7 @@ export default function Tabou2CadreAccord({
 
     // manage change info
     changeInfos = (item) => {
-        let newValues = {...values, ...item};
+        let newValues = { ...values, ...item };
         setValues(newValues);
         // send to parent to save
         let accordValues = pick(newValues, getFields().filter(f => !f.readOnly).map(f => f.name));
@@ -324,7 +332,7 @@ export default function Tabou2CadreAccord({
                 }
             });
         } else {
-            changeInfos({[item.name]: str ? new Date(str).toISOString() : ""});
+            changeInfos({ [item.name]: str ? new Date(str).toISOString() : "" });
         }
     };
 
@@ -346,13 +354,13 @@ export default function Tabou2CadreAccord({
                         {
                             item.type === "title" ? (
                                 <Col xs={12}>
-                                    <h4 style={{borderBottom: "1px solid"}}>
+                                    <h4 style={{ borderBottom: "1px solid" }}>
                                         <ControlLabel><Message msgId={item.label} /></ControlLabel>
                                     </h4>
                                 </Col>
                             ) : (<>
                                 <Col xs={4}>
-                                    <ControlLabel><Message msgId={item.label}/></ControlLabel>
+                                    <ControlLabel><Message msgId={item.label} /></ControlLabel>
                                 </Col>
                                 <Col xs={8}>
                                     {
@@ -364,7 +372,7 @@ export default function Tabou2CadreAccord({
                                                 forceSelection
                                                 value={item.value()}
                                                 search={
-                                                    text => getRequestApi(item.api, apiCfg, {[item.autocomplete]: `${text}*`})
+                                                    text => getRequestApi(item.api, apiCfg, { [item.autocomplete]: `${text}*` })
                                                         .then(results =>
                                                             results.elements.map(v => v)
                                                         )
@@ -384,7 +392,7 @@ export default function Tabou2CadreAccord({
                                                 value={item.value() || ""}
                                                 type={item.type}
                                                 min="0"
-                                                style={{height: item.isArea ? "100px" : "auto"}}
+                                                style={{ height: item.isArea ? "100px" : "auto" }}
                                                 readOnly={item.readOnly || !allowChange}
                                                 onChange={(v) => item.change(v.target.value, types)}
                                             />) : null
@@ -399,8 +407,8 @@ export default function Tabou2CadreAccord({
                                                 onLoad={(r) => r?.elements || r}
                                                 name={item.name}
                                                 value={item.value()}
-                                                onSelect={item.select ? item.select : (v) => changeInfos({[item.name]: v})}
-                                                onChange={item.change ? item.change : (v) => !v ? changeInfos({[item.name]: v}) : null}
+                                                onSelect={item.select ? item.select : (v) => changeInfos({ [item.name]: v })}
+                                                onChange={item.change ? item.change : (v) => !v ? changeInfos({ [item.name]: v }) : null}
                                                 messages={{
                                                     emptyList: i18n(messages, "tabou2.emptyList"),
                                                     openCombobox: i18n(messages, "tabou2.displayList")
@@ -435,4 +443,6 @@ export default function Tabou2CadreAccord({
             }
         </Grid>
     );
-}
+};
+
+export default memo(Tabou2CadreAccord, avoidReRender);

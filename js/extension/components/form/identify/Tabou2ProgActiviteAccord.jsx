@@ -15,7 +15,8 @@ export default function Tabou2ProgActiviteAccord({
     layer,
     authent,
     change = () => { },
-    i18n = () => { }
+    i18n = () => { },
+    messages
 }) {
     const [values, setValues] = useState({});
     const [fields, setFields] = useState([]);
