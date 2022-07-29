@@ -307,8 +307,10 @@ const Tabou2CadreAccord = ({
         layers: ["layerSA", "layerOA"],
         readOnly: false,
         isArea: false,
-        value: () => isEmpty(initialItem.financements) ? "" : get(initialItem, "financements[0")?.description,
-        change: (v) => !isEmpty(initialItem.financements) ? changeInfos({ financements: [{ ...initialItem.financements[0], description: v }] }) : null
+        value: () => isEmpty(initialItem.financements) ? "" : get(initialItem, "financements[0]")?.description,
+        change: (v) => changeInfos({
+            financements: initialItem.financements[0] ? [{ ...initialItem.financements[0], description: v }] : [{description: v}]
+        })
     }];
 
     const allowChange = authent.isContrib || authent.isReferent;
