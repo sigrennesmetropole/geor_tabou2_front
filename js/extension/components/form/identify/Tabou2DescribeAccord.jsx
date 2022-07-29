@@ -49,17 +49,6 @@ export default function Tabou2DescribeAccord({ initialItem, programme, operation
         readOnly: false,
         isArea: true
     }, {
-        name: "consommationEspace",
-        field: "consommationEspace.libelle",
-        label: "tabou2.identify.accordions.space",
-        layers: ["layerSA", "layerOA"],
-        type: "combo",
-        api: `consommation-espace`,
-        apiLabel: "libelle",
-        placeholder: "tabou2.identify.accordions.spaceEmpty",
-        source: operation,
-        readOnly: false
-    }, {
         name: "vocation",
         label: "tabou2.identify.accordions.vocation",
         field: "vocation.libelle",
