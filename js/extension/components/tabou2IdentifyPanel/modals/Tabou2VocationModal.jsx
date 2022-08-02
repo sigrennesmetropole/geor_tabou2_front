@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import ResizableModal from '@mapstore/components/misc/ResizableModal';
 import Message from "@mapstore/components/I18N/Message";
 import { DropdownList } from 'react-widgets';
-import { Col, Tabs, Tab } from 'react-bootstrap';
+import { Col } from 'react-bootstrap';
 import "@js/extension/css/vocation.css";
 import Activites from "../../form/vocations/activites/Activites";
 import Habitat from "../../form/vocations/habitat/Habitat";

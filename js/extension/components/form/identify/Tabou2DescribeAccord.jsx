@@ -10,10 +10,14 @@ import Message from "@mapstore/components/I18N/Message";
 import Tabou2VocationModal from "../../tabou2IdentifyPanel/modals/Tabou2VocationModal";
 
 const avoidReRender = (prevProps, nextProps) => {
-    if (isEqual(prevProps.initialItem, nextProps.initialItem)) {
-        return true;
+    let avoid = false;
+    if (
+        isEqual(prevProps.initialItem, nextProps.initialItem)
+        && isEqual(prevProps.vocationsInfos, nextProps.vocationsInfos)
+    ) {
+        avoid = true;
     }
-    return false; // re render
+    return avoid; // re render if false
 };
 /**
  * Accordion to display info for describe panel section - only for feature linked with id tabou
@@ -119,7 +123,6 @@ const Tabou2DescribeAccord = ({
     // return writable fields as object-keys
 
     useEffect(() => {
-        console.log("refresh describe");
         const calculFields = getFields();
         const mandatoryFields = calculFields.filter(f => f.require).map(f => f.name);
         if (!isEqual(initialItem, values)) {
@@ -127,7 +130,7 @@ const Tabou2DescribeAccord = ({
             setFields(calculFields);
             setRequired(mandatoryFields);
         }
-    }, [initialItem]);
+    }, [JSON.stringify(initialItem)]);
 
     getValue = (item) => {
         if (isEmpty(values) && isEmpty(operation)) return null;
