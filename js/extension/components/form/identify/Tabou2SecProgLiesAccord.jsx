@@ -1,15 +1,22 @@
-import React, {useEffect, useState } from "react";
+import React, {useEffect, useState, memo } from "react";
 import { capitalize, isEmpty, isEqual, get } from "lodash";
 import { Table, Col, Row, Grid } from "react-bootstrap";
 import "@js/extension/css/identify.css";
 
-export default function Tabou2SecProgLiesAccord({
+const avoidReRender = (prevProps, nextProps) => {
+    if (isEqual(prevProps.initialItem, nextProps.initialItem)) {
+        return true;
+    }
+    return false; // re render
+};
+
+const Tabou2SecProgLiesAccord = ({
     initialItem,
     programmes,
     layer,
     i18n = () => { },
     messages
-}) {
+}) => {
     const [values, setValues] = useState({});
     const [fields, setFields] = useState([]);
 
@@ -92,4 +99,5 @@ export default function Tabou2SecProgLiesAccord({
             }
         </Grid>
     );
-}
+};
+export default memo(Tabou2SecProgLiesAccord, avoidReRender);

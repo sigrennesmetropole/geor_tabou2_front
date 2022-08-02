@@ -1,4 +1,4 @@
-import React, {useEffect, useState } from "react";
+import React, {useEffect, useState, memo } from "react";
 import { isEmpty, isEqual, pick, get, has } from "lodash";
 import { Col, Row, FormControl, Grid, ControlLabel, Glyphicon } from "react-bootstrap";
 import { Multiselect } from "react-widgets";
@@ -11,12 +11,19 @@ import Tabou2Combo from '@js/extension/components/form/Tabou2Combo';
 import ButtonRB from '@mapstore/components/misc/Button';
 import tooltip from '@mapstore/components/misc/enhancers/tooltip';
 const Button = tooltip(ButtonRB);
+
+const avoidReRender = (prevProps, nextProps) => {
+    if (isEqual(prevProps.initialItem, nextProps.initialItem)) {
+        return true;
+    }
+    return false; // re render
+};
 /**
  * Accordion to display info for Identity panel section - only for feature linked with id tabou
  * @param {any} param
  * @returns component
  */
-export default function Tabou2IdentAccord({
+const Tabou2IdentAccord = ({
     initialItem,
     programme,
     operation,
@@ -29,7 +36,7 @@ export default function Tabou2IdentAccord({
     apiCfg,
     i18n = () => { },
     messages
-}) {
+}) => {
     const [values, setValues] = useState({});
     const [fields, setFields] = useState([]);
     const [required, setRequired] = useState({});
@@ -298,4 +305,7 @@ export default function Tabou2IdentAccord({
             }
         </Grid>
     );
-}
+};
+
+export default memo(Tabou2IdentAccord, avoidReRender);
+

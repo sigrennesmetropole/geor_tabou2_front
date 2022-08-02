@@ -1,15 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, memo } from "react";
 import { isEmpty, isEqual, pick, has, get } from "lodash";
 import { Checkbox, Col, Row, FormControl, Grid, ControlLabel } from "react-bootstrap";
 import "@js/extension/css/identify.css";
 import Message from "@mapstore/components/I18N/Message";
+
+const avoidReRender = (prevProps, nextProps) => {
+    if (isEqual(prevProps.initialItem, nextProps.initialItem)) {
+        return true;
+    }
+    return false; // re render
+};
 /**
  * Accordion to display info for this specific panel section - only for feature linked with id tabou
  * This component is only use and display for OA, SA entity
  * @param {any} param
  * @returns component
  */
-export default function Tabou2ProgActiviteAccord({
+const Tabou2ProgActiviteAccord = ({
     initialItem,
     operation,
     layer,
@@ -17,7 +24,7 @@ export default function Tabou2ProgActiviteAccord({
     change = () => { },
     i18n = () => { },
     messages
-}) {
+}) => {
     const [values, setValues] = useState({});
     const [fields, setFields] = useState([]);
     const [required, setRequired] = useState({});
@@ -106,4 +113,5 @@ export default function Tabou2ProgActiviteAccord({
             }
         </Grid>
     );
-}
+};
+export default memo(Tabou2ProgActiviteAccord, avoidReRender);

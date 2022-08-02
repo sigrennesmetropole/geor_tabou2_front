@@ -1,4 +1,4 @@
-import React, {useEffect, useState } from "react";
+import React, {useEffect, useState, memo } from "react";
 import { isEmpty, isEqual, pick, get, find } from "lodash";
 import { Col, Row, Grid, Glyphicon, ControlLabel, FormControl } from "react-bootstrap";
 import Tabou2Combo from '@js/extension/components/form/Tabou2Combo';
@@ -11,12 +11,19 @@ import Message from "@mapstore/components/I18N/Message";
 import ButtonRB from '@mapstore/components/misc/Button';
 import tooltip from '@mapstore/components/misc/enhancers/tooltip';
 const Button = tooltip(ButtonRB);
+
+const avoidReRender = (prevProps, nextProps) => {
+    if (isEqual(prevProps.initialItem, nextProps.initialItem)) {
+        return true;
+    }
+    return false; // re render
+};
 /**
  * Accordion to display info for Gouvernance panel section - only for feature linked with id tabou
  * @param {any} param
  * @returns component
  */
-export default function Tabou2GouvernanceAccord({
+const Tabou2GouvernanceAccord = ({
     initialItem,
     programme,
     operation,
@@ -29,7 +36,7 @@ export default function Tabou2GouvernanceAccord({
     change = () => { },
     apiCfg,
     i18n = () => { }
-}) {
+}) => {
     const [values, setValues] = useState({});
     const [fields, setFields] = useState([]);
     const [required, setRequired] = useState({});
@@ -160,7 +167,7 @@ export default function Tabou2GouvernanceAccord({
     const allowChange = authent.isContrib || authent.isReferent;
 
     changeInfos = (item) => {
-        let newValues = {...values, ...item};
+        let newValues = { ...values, ...item };
         setValues(newValues);
         // send to parent to save
         let accordValues = pick(newValues, getFields().filter(f => !f.readOnly).map(f => f.name));
@@ -200,7 +207,7 @@ export default function Tabou2GouvernanceAccord({
                     <Row className="attributeInfos">
                         <Col xs={4}>
                             {
-                                item.label && (<ControlLabel><Message msgId={item.label}/></ControlLabel>)
+                                item.label && (<ControlLabel><Message msgId={item.label} /></ControlLabel>)
                             }
                         </Col>
                         <Col xs={allTiersButtons[item.name] ? 7 : 8}>
@@ -209,7 +216,7 @@ export default function Tabou2GouvernanceAccord({
                                     (<FormControl
                                         componentClass={item.isArea ? "textarea" : "input"}
                                         placeholder={i18n(messages, item?.placeholder || item.label)}
-                                        style={{height: item.isArea ? "100px" : "auto"}}
+                                        style={{ height: item.isArea ? "100px" : "auto" }}
                                         type={item.type}
                                         min="0"
                                         step={item?.step}
@@ -221,10 +228,10 @@ export default function Tabou2GouvernanceAccord({
                                 item.type === "button" && (
                                     <Button
                                         tooltip={i18n(messages, item.tooltip || "")}
-                                        onClick={() => item.click() }
+                                        onClick={() => item.click()}
                                         bsStyle="primary"
                                         bsSize={item.size || "xs"}>
-                                        <Glyphicon glyph="user"/>
+                                        <Glyphicon glyph="user" />
                                     </Button>
                                 )
                             }{
@@ -238,8 +245,8 @@ export default function Tabou2GouvernanceAccord({
                                         onLoad={(r) => r?.elements || r}
                                         name={item.name}
                                         value={get(values, item.name)}
-                                        onSelect={(v) => changeInfos({[item.name]: v})}
-                                        onChange={(v) => !v ? changeInfos({[item.name]: v}) : null}
+                                        onSelect={(v) => changeInfos({ [item.name]: v })}
+                                        onChange={(v) => !v ? changeInfos({ [item.name]: v }) : null}
                                         messages={{
                                             emptyList: i18n(messages, "tabou2.emptyList"),
                                             openCombobox: i18n(messages, "tabou2.displayList")
@@ -252,8 +259,8 @@ export default function Tabou2GouvernanceAccord({
                                         placeholder={i18n(messages, item?.label || "")}
                                         readOnly={item.readOnly || !allowChange}
                                         value={item.data}
-                                        className={ item.readOnly ? "tagColor noClick" : "tagColor"}
-                                        onChange={() => {}}
+                                        className={item.readOnly ? "tagColor noClick" : "tagColor"}
+                                        onChange={() => { }}
                                     />
                                 )
                             }
@@ -263,10 +270,10 @@ export default function Tabou2GouvernanceAccord({
                                 <Col xs={1} className="no-padding">
                                     <Button
                                         tooltip={i18n(messages, allTiersButtons[item.name].tooltip || "")}
-                                        onClick={() => allTiersButtons[item.name].click() }
+                                        onClick={() => allTiersButtons[item.name].click()}
                                         bsStyle="primary"
                                         bsSize="small">
-                                        <Glyphicon glyph="user"/>
+                                        <Glyphicon glyph="user" />
                                     </Button>
                                 </Col>
                             )
@@ -276,4 +283,6 @@ export default function Tabou2GouvernanceAccord({
             }
         </Grid>
     );
-}
+};
+
+export default memo(Tabou2GouvernanceAccord, avoidReRender);

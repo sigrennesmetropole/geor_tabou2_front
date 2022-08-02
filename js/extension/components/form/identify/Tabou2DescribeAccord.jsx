@@ -1,4 +1,4 @@
-import React, {useEffect, useState } from "react";
+import React, {useEffect, useState, memo } from "react";
 import { isEmpty, isEqual, pick, has, get } from "lodash";
 import { Col, Row, FormControl, Grid, ControlLabel, Button } from "react-bootstrap";
 import Tabou2Combo from '@js/extension/components/form/Tabou2Combo';
@@ -9,12 +9,18 @@ import Message from "@mapstore/components/I18N/Message";
 
 import Tabou2VocationModal from "../../tabou2IdentifyPanel/modals/Tabou2VocationModal";
 
+const avoidReRender = (prevProps, nextProps) => {
+    if (isEqual(prevProps.initialItem, nextProps.initialItem)) {
+        return true;
+    }
+    return false; // re render
+};
 /**
  * Accordion to display info for describe panel section - only for feature linked with id tabou
  * @param {any} param
  * @returns component
  */
-export default function Tabou2DescribeAccord({
+const Tabou2DescribeAccord = ({
     initialItem,
     programme,
     operation,
@@ -25,7 +31,7 @@ export default function Tabou2DescribeAccord({
     apiCfg,
     i18n = () => { },
     vocationsInfos
-}) {
+}) => {
     const [values, setValues] = useState({});
     const [fields, setFields] = useState([]);
     const [required, setRequired] = useState({});
@@ -113,6 +119,7 @@ export default function Tabou2DescribeAccord({
     // return writable fields as object-keys
 
     useEffect(() => {
+        console.log("refresh describe");
         const calculFields = getFields();
         const mandatoryFields = calculFields.filter(f => f.require).map(f => f.name);
         if (!isEqual(initialItem, values)) {
@@ -120,7 +127,7 @@ export default function Tabou2DescribeAccord({
             setFields(calculFields);
             setRequired(mandatoryFields);
         }
-    }, [JSON.stringify(initialItem)]);
+    }, [initialItem]);
 
     getValue = (item) => {
         if (isEmpty(values) && isEmpty(operation)) return null;
@@ -129,7 +136,7 @@ export default function Tabou2DescribeAccord({
     };
 
     const changeInfos = (item) => {
-        let newValues = {...values, ...item};
+        let newValues = { ...values, ...item };
         setValues(newValues);
         // send to parent to save
         let accordValues = pick(newValues, getFields().filter(f => !f.readOnly).map(f => f.name));
@@ -139,7 +146,6 @@ export default function Tabou2DescribeAccord({
     const changeVocation = (vocationValues) => {
         let newValues = { ...values, ...vocationValues };
         setValues(newValues);
-        changeVocation(newValues);
     };
 
     const allowChange = authent.isContrib || authent.isReferent;
@@ -150,7 +156,7 @@ export default function Tabou2DescribeAccord({
                 fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(item => (
                     <Row className="attributeInfos">
                         <Col xs={4}>
-                            <ControlLabel><Message msgId={item.label}/></ControlLabel>
+                            <ControlLabel><Message msgId={item.label} /></ControlLabel>
                         </Col>
                         <Col xs={8}>
                             {
@@ -158,7 +164,7 @@ export default function Tabou2DescribeAccord({
                                     (<FormControl
                                         componentClass={item.isArea ? "textarea" : "input"}
                                         placeholder={i18n(messages, item?.placeholder || item.label)}
-                                        style={{height: item.isArea ? "100px" : "auto"}}
+                                        style={{ height: item.isArea ? "100px" : "auto" }}
                                         type={item.type}
                                         min="0"
                                         step={item?.step}
@@ -190,8 +196,8 @@ export default function Tabou2DescribeAccord({
                                         onLoad={(r) => r?.elements || r}
                                         name={item.name}
                                         value={get(values, item.name)}
-                                        onSelect={(v) => changeInfos({[item.name]: v})}
-                                        onChange={(v) => !v ? changeInfos({[item.name]: v}) : null}
+                                        onSelect={(v) => changeInfos({ [item.name]: v })}
+                                        onChange={(v) => !v ? changeInfos({ [item.name]: v }) : null}
                                         messages={{
                                             emptyList: i18n(messages, "tabou2.emptyList"),
                                             openCombobox: i18n(messages, "tabou2.displayList")
@@ -201,7 +207,7 @@ export default function Tabou2DescribeAccord({
                             }{
                                 item.type === "vocation" && (
                                     <>
-                                        <FormControl readOnly value={get(values, "vocation.libelle")} className={ "vocation-libelle "}/>
+                                        <FormControl readOnly value={get(values, "vocation.libelle")} className={"vocation-libelle "} />
                                         <Button
                                             tooltip="Vocations"
                                             className="vocation-btn"
@@ -228,4 +234,6 @@ export default function Tabou2DescribeAccord({
             }
         </Grid>
     );
-}
+};
+
+export default memo(Tabou2DescribeAccord, avoidReRender);
