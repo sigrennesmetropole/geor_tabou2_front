@@ -222,105 +222,112 @@ export default function Tabou2TiersModal({
                                         </thead>
                                         <tbody style={{overflow: "auto"}}>
                                             {
-                                                orderBy(filterText ? tiers.filter(t => includes(t.tiers.nom.toLowerCase(), filterText.toLowerCase())) : tiers, sortField[0], sortField[1]).filter(t => isTypeDisplay(t)).map((tier) => (
-                                                    <>
-                                                        <tr>
-                                                            <td>
-                                                                <Checkbox
-                                                                    checked={!tier.tiers.dateInactif}
-                                                                    disabled
-                                                                    inline
-                                                                    id={`${tier.id}-${new Date().getTime()}}`}
-                                                                    className="col-xs-3"
-                                                                />
-                                                            </td>
-                                                            <td>
-                                                                <Checkbox
-                                                                    checked={tier.tiers.estPrive}
-                                                                    disabled={tier.dateInactif || opened !== tier.id ? true : false}
-                                                                    inline
-                                                                    id={`${tier.id}-${new Date().getTime()}}`}
-                                                                    onChange={() => {
-                                                                        changeTier({...tier, estPrive: !tier.tiers.estPrive});
-                                                                    }}
-                                                                    className="col-xs-2"
-                                                                    change
-                                                                />
-                                                            </td>
-                                                            <td>
-                                                                {tier.associate ? (
-                                                                    <Tabou2Combo
-                                                                        load={() => getRequestApi("types-tiers?asc=true", props.pluginCfg.apiCfg, {})}
-                                                                        defaultValue={tier.typeTiers.libelle}
-                                                                        placeholder={getMessageById(props.messages, "tabou2.tiersModal.typePlaceholder")}
-                                                                        textField={"libelle"}
-                                                                        filter={false}
-                                                                        value={associateTier?.typeTiers?.libelle}
-                                                                        onLoad={(r) => r?.elements || r}
-                                                                        disabled={false}
-                                                                        onSelect={(t) =>  {
-                                                                            changeTier({...tier, typeTiers: {...tier.typeTiers, ...t}});
-                                                                            setAssociateTier({...associateTier, typeTiers: t});
-                                                                        }}
-                                                                        onChange={(t) => {
-                                                                            if (!t) {
-                                                                                changeTier({...tier, typeTiers: {...tier.typeTiers, libelle: ""}});
-                                                                                setAssociateTier({...associateTier, type: t});
-                                                                            }
-                                                                        }
-                                                                        }
-                                                                        messages={{
-                                                                            emptyList: getMessageById(props.messages, "tabou2.emptyList"),
-                                                                            openCombobox: getMessageById(props.messages, "tabou2.displaylist")
-                                                                        }}
+                                                orderBy(
+                                                    filterText ?
+                                                        tiers
+                                                            .filter(t => includes(t.tiers.nom.toLowerCase(), filterText.toLowerCase()))
+                                                        : tiers
+                                                    , sortField[0], sortField[1])
+                                                    .filter(t => t.associate || isTypeDisplay(t))
+                                                    .map((tier) => (
+                                                        <>
+                                                            <tr>
+                                                                <td>
+                                                                    <Checkbox
+                                                                        checked={!tier.tiers.dateInactif}
+                                                                        disabled
+                                                                        inline
+                                                                        id={`${tier.id}-${new Date().getTime()}}`}
+                                                                        className="col-xs-3"
                                                                     />
-                                                                ) : tier.typeTiers.libelle}
-                                                            </td>
-                                                            <td>
-                                                                {
-                                                                    tier.associate ?
-                                                                        (
-                                                                            <SearchCombo
-                                                                                minLength={1}
-                                                                                textField={"nom"}
-                                                                                valueField={"id"}
-                                                                                value={associateTier?.tiers?.nom}
-                                                                                forceSelection
-                                                                                search={
-                                                                                    text => searchTiers(text)
-                                                                                        .then(results =>
-                                                                                            results.elements.map(v => v)
-                                                                                        )
+                                                                </td>
+                                                                <td>
+                                                                    <Checkbox
+                                                                        checked={tier.tiers.estPrive}
+                                                                        disabled={tier.dateInactif || opened !== tier.id ? true : false}
+                                                                        inline
+                                                                        id={`${tier.id}-${new Date().getTime()}}`}
+                                                                        onChange={() => {
+                                                                            changeTier({...tier, estPrive: !tier.tiers.estPrive});
+                                                                        }}
+                                                                        className="col-xs-2"
+                                                                        change
+                                                                    />
+                                                                </td>
+                                                                <td>
+                                                                    {tier.associate ? (
+                                                                        <Tabou2Combo
+                                                                            load={() => getRequestApi("types-tiers?asc=true", props.pluginCfg.apiCfg, {})}
+                                                                            defaultValue={tier.typeTiers.libelle}
+                                                                            placeholder={getMessageById(props.messages, "tabou2.tiersModal.typePlaceholder")}
+                                                                            textField={"libelle"}
+                                                                            filter={false}
+                                                                            value={associateTier?.typeTiers?.libelle}
+                                                                            onLoad={(r) => r?.elements || r}
+                                                                            disabled={false}
+                                                                            onSelect={(t) =>  {
+                                                                                changeTier({...tier, typeTiers: {...tier.typeTiers, ...t}});
+                                                                                setAssociateTier({...associateTier, typeTiers: t});
+                                                                            }}
+                                                                            onChange={(t) => {
+                                                                                if (!t) {
+                                                                                    changeTier({...tier, typeTiers: {...tier.typeTiers, libelle: ""}});
+                                                                                    setAssociateTier({...associateTier, type: t});
                                                                                 }
-                                                                                onSelect={(t) =>  setAssociateTier({...associateTier, tiers: t})}
-                                                                                onChange={(t) => !t ? setAssociateTier(omit(associateTier, ["tiers"])) : null}
-                                                                                placeholder={getMessageById(props.messages, "tabou2.tiersModal.tierPlaceholder")}
-                                                                            />
-                                                                        ) : tier.tiers.nom
-                                                                }
-                                                            </td>
-                                                            <td>
-                                                                <Tabou2TiersActions
-                                                                    messages={props.messages}
-                                                                    i18n={props.i18n}
-                                                                    tier={tier}
-                                                                    tiers={tiers}
-                                                                    visible={opened > -1 ? opened === tier.id : true}
-                                                                    opened={opened}
-                                                                    readOnly={readOnly}
-                                                                    editionActivate={editionActivate.current}
-                                                                    open={() => openCloseForm(tier)}
-                                                                    cancel={() => cancelChange(tier)}
-                                                                    save={() => saveTier(tier)}
-                                                                    isAssociation={tier.associate && !isEmpty(associateTier)}
-                                                                    valid={getEmpty}
-                                                                    dissociate={() => dissociateTier(tier)}
-                                                                    inactivate={() => inactivateTier(tier)}
-                                                                />
-                                                            </td>
-                                                        </tr>
-                                                    </>
-                                                ))
+                                                                            }
+                                                                            }
+                                                                            messages={{
+                                                                                emptyList: getMessageById(props.messages, "tabou2.emptyList"),
+                                                                                openCombobox: getMessageById(props.messages, "tabou2.displaylist")
+                                                                            }}
+                                                                        />
+                                                                    ) : tier.typeTiers.libelle}
+                                                                </td>
+                                                                <td>
+                                                                    {
+                                                                        tier.associate ?
+                                                                            (
+                                                                                <SearchCombo
+                                                                                    minLength={1}
+                                                                                    textField={"nom"}
+                                                                                    valueField={"id"}
+                                                                                    value={associateTier?.tiers?.nom}
+                                                                                    forceSelection
+                                                                                    search={
+                                                                                        text => searchTiers(text)
+                                                                                            .then(results =>
+                                                                                                results.elements.map(v => v)
+                                                                                            )
+                                                                                    }
+                                                                                    onSelect={(t) =>  setAssociateTier({...associateTier, tiers: t})}
+                                                                                    onChange={(t) => !t ? setAssociateTier(omit(associateTier, ["tiers"])) : null}
+                                                                                    placeholder={getMessageById(props.messages, "tabou2.tiersModal.tierPlaceholder")}
+                                                                                />
+                                                                            ) : tier.tiers.nom
+                                                                    }
+                                                                </td>
+                                                                <td>
+                                                                    <Tabou2TiersActions
+                                                                        messages={props.messages}
+                                                                        i18n={props.i18n}
+                                                                        tier={tier}
+                                                                        tiers={tiers}
+                                                                        visible={opened > -1 ? opened === tier.id : true}
+                                                                        opened={opened}
+                                                                        readOnly={readOnly}
+                                                                        editionActivate={editionActivate.current}
+                                                                        open={() => openCloseForm(tier)}
+                                                                        cancel={() => cancelChange(tier)}
+                                                                        save={() => saveTier(tier)}
+                                                                        isAssociation={tier.associate && !isEmpty(associateTier)}
+                                                                        valid={getEmpty}
+                                                                        dissociate={() => dissociateTier(tier)}
+                                                                        inactivate={() => inactivateTier(tier)}
+                                                                    />
+                                                                </td>
+                                                            </tr>
+                                                        </>
+                                                    ))
                                             }
                                         </tbody>
                                     </Table>
