@@ -24,7 +24,7 @@ export default function AutreProgrammation({
             isArea: true,
             layers: [],
             source: () => values,
-            change: (value) => setValues({...values, operation: value}),
+            change: (value) => setValues({operation: value}),
             readOnly: false
         }
     ];

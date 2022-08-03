@@ -14,6 +14,9 @@ const avoidReRender = (prevProps, nextProps) => {
     if (
         isEqual(prevProps.initialItem, nextProps.initialItem)
         && isEqual(prevProps.vocationsInfos, nextProps.vocationsInfos)
+        && isEqual(prevProps.operation, nextProps.operation)
+        && isEqual(prevProps.layer, nextProps.layer)
+        && isEqual(prevProps.programme, nextProps.programme)
     ) {
         avoid = true;
     }
@@ -31,6 +34,7 @@ const Tabou2DescribeAccord = ({
     layer,
     authent,
     change = () => { },
+    changeVocation = () => { },
     messages,
     apiCfg,
     i18n = () => { },
@@ -146,13 +150,7 @@ const Tabou2DescribeAccord = ({
         change(accordValues, pick(accordValues, required));
     };
 
-    const changeVocation = (vocationValues) => {
-        let newValues = { ...values, ...vocationValues };
-        setValues(newValues);
-    };
-
     const allowChange = authent.isContrib || authent.isReferent;
-
     return (
         <Grid style={{ width: "100%" }} className={""}>
             {
@@ -221,7 +219,7 @@ const Tabou2DescribeAccord = ({
                                         <Tabou2VocationModal
                                             i18n={i18n}
                                             messages={messages}
-                                            operation={operation}
+                                            operation={{...operation, ...initialItem}}
                                             update={changeVocation}
                                             opened={opened}
                                             allowChange={allowChange}

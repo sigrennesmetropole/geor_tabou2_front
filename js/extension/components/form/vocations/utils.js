@@ -17,7 +17,7 @@ export const changeByType = (codeId, value = "", values, type) => {
     }
     // set or update description value
     newInfos.push({ ...findThisCode, description: value });
-    return { ...values, [type]: newInfos };
+    return {[type]: newInfos };
 };
 
 export const getCodeIdByCode = (ids, code) => {

@@ -30,7 +30,7 @@ export default function ProgrammationLogements({
             type: "number",
             layers: [],
             source: () => values,
-            change: (value) => setValues({...values, nbLogementsPrevu: value}),
+            change: (value) => setValues({nbLogementsPrevu: value}),
             readOnly: false
         },
         {

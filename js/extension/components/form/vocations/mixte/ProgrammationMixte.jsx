@@ -21,7 +21,7 @@ export default function ProgrammationMixte({
     messages,
     values
 }) {
-    if (isEmpty(operation)) return <Message msgId="tabou2.vocation.noDisplay"/>;
+    if (isEmpty(operation)) return <Message msgId="tabou2.vocation.noDisplay" />;
     const getFields = () => [
         {
             name: "nbLogementsPrevu",
@@ -30,7 +30,7 @@ export default function ProgrammationMixte({
             type: "number",
             layers: [],
             source: () => values,
-            change: (value) => setValues({...values, nbLogementsPrevu: value}),
+            change: (value) => setValues({nbLogementsPrevu: value}),
             readOnly: false
         },
         {
@@ -80,7 +80,7 @@ export default function ProgrammationMixte({
             type: "date",
             layers: [],
             source: () => values,
-            change: (value) => setValues({...values, plh: {...values.plh, date: value}}),
+            change: (value) => setValues({plh: {...values.plh, date: value}}),
             readOnly: false
         },
         {
@@ -90,7 +90,7 @@ export default function ProgrammationMixte({
             type: "text",
             layers: [],
             source: () => values,
-            change: (value) => setValues({...values, plh: {...values.plh, description: value}}),
+            change: (value) => setValues({plh: {...values.plh, description: value}}),
             readOnly: false
         },
         {
@@ -123,7 +123,7 @@ export default function ProgrammationMixte({
             api: getVocationZa,
             layers: [],
             source: () => values,
-            change: (value) => setValues({...values, vocationZa: {...values.vocationZa, libelle: value}}),
+            change: (value) => setValues({vocationZa: {...values.vocationZa, libelle: value}}),
             code: "Autres",
             readOnly: false
         },

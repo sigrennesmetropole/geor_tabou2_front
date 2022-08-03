@@ -53,7 +53,7 @@ export default function ProgrammationActivite({
                 api: getVocationZa,
                 layers: [],
                 source: () => values,
-                change: (value) => setValues({ ...values, vocationZa: { ...values.vocationZa, libelle: value } }),
+                change: (value) => setValues({ vocationZa: { ...values.vocationZa, libelle: value } }),
                 code: "Autres",
                 readOnly: false
             },

@@ -1,6 +1,6 @@
 import React from 'react';
 import Message from "@mapstore/components/I18N/Message";
-import { Col, Tabs, Tab, Row } from 'react-bootstrap';
+import { Col, Tabs, Tab } from 'react-bootstrap';
 import AutreProgrammation from './AutreProgrammation';
 import ContributionPaddOap from './ContributionPaddOap';
 import CompositionProgrammation from './CompositionProgrammation';

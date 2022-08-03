@@ -21,13 +21,16 @@ export default function Tabou2VocationModal({
     messages
 }) {
     const [vocation, setVocation] = useState(operation.vocation || {});
-    const [newOperation, setNewOperation] = useState(operation);
-    const propsTab = {
+    const [newOperation, setNewOperation] = useState({});
+
+    let propsTab = {
         operation: operation,
-        update: setNewOperation,
+        update: update,
         typesContribution: typesContribution,
-        values: newOperation,
-        setValues: setNewOperation,
+        values: {...operation, ...newOperation},
+        setValues: (t) => {
+            setNewOperation(t);
+        },
         typesProgrammation: typesProgrammation,
         allowChange: allowChange,
         i18n: i18n,
