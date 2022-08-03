@@ -1,7 +1,7 @@
 import * as Rx from 'rxjs';
 import { CONTROL_NAME, ID_TABOU, URL_ADD } from '../constants';
 
-import { get, keys, find, isEmpty, has, pickBy } from 'lodash';
+import { get, keys, find, isEmpty, pickBy } from 'lodash';
 
 import {
     generalInfoFormatSelector, identifyOptionsSelector, clickPointSelector

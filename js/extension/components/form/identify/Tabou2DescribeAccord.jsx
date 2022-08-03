@@ -219,7 +219,8 @@ const Tabou2DescribeAccord = ({
                                         <Tabou2VocationModal
                                             i18n={i18n}
                                             messages={messages}
-                                            operation={{...operation, ...initialItem}}
+                                            operation={operation}
+                                            initialItems={initialItem}
                                             update={changeVocation}
                                             opened={opened}
                                             allowChange={allowChange}

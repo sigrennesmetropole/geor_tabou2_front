@@ -7,9 +7,9 @@ import "@js/extension/css/vocation.css";
 import Activites from "../../form/vocations/activites/Activites";
 import Habitat from "../../form/vocations/habitat/Habitat";
 import Mixte from "../../form/vocations/mixte/Mixte";
-import { isEqual } from "lodash";
 export default function Tabou2VocationModal({
     operation,
+    initialItems,
     opened,
     close,
     update,
@@ -20,16 +20,30 @@ export default function Tabou2VocationModal({
     i18n = () => { },
     messages
 }) {
-    const [vocation, setVocation] = useState(operation.vocation || {});
-    const [newOperation, setNewOperation] = useState({});
+    const [vocation, setVocation] = useState(initialItems.vocation || {});
+    const fieldsToFollow = [
+        "contributions",
+        "operation",
+        "vocation",
+        "plui",
+        "nbLogementsPrevu",
+        "informationsProgrammation",
+        "vocationZa",
+        "plh",
+        "scot",
+        "densiteScot",
+        "contributions"
+    ];
+    const [newOperation, setNewOperation] = useState(Object.assign({}, ...fieldsToFollow.map(f => ({[f]: initialItems[f]}))));
 
     let propsTab = {
         operation: operation,
         update: update,
         typesContribution: typesContribution,
-        values: {...operation, ...newOperation},
+        values: newOperation,
         setValues: (t) => {
-            setNewOperation(t);
+            const newOA = { ...newOperation, ...t };
+            setNewOperation({...newOA});
         },
         typesProgrammation: typesProgrammation,
         allowChange: allowChange,
@@ -39,7 +53,7 @@ export default function Tabou2VocationModal({
 
     const changeVocation = (v) => {
         setVocation(v);
-        setNewOperation({ ...newOperation, vocation: v });
+        update({ vocation: v });
     };
 
     return (
@@ -53,16 +67,14 @@ export default function Tabou2VocationModal({
                     text: <Message msgId="tabou2.vocation.back" />,
                     style: {marginRight: "5px"},
                     onClick: () => {
-                        if (!isEqual(newOperation, operation)) {
-                            update(newOperation);
-                        }
+                        update(newOperation);
                         close();
                     }
                 },
                 {
                     text: <Message msgId="tabou2.vocation.reset" />,
                     visible: allowChange,
-                    onClick: () => setNewOperation(operation)
+                    onClick: () => setNewOperation(initialItems)
                 }
             ]}
             onClose={() => close()}
@@ -75,7 +87,7 @@ export default function Tabou2VocationModal({
                         data={typesVocation}
                         dataKey="code"
                         textField="libelle"
-                        defaultValue={newOperation?.vocation?.libelle || ""}
+                        defaultValue={{...initialItems, ...newOperation}?.vocation?.libelle || ""}
                         onSelect={val => changeVocation(val)}
                         placeholder="Choisir une vocation..."
                     />

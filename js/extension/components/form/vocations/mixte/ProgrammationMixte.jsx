@@ -100,7 +100,7 @@ export default function ProgrammationMixte({
             type: "number",
             layers: [],
             source: () => values,
-            change: (value) => setValues({...values, plh: {...values.plh, logementsPrevus: value}}),
+            change: (value) => setValues({plh: {...values.plh, logementsPrevus: value}}),
             readOnly: false
         },
         {
@@ -110,7 +110,7 @@ export default function ProgrammationMixte({
             type: "number",
             layers: [],
             source: () => values,
-            change: (value) => setValues({...values, plh: {...values.plh, logementsLivres: value}}),
+            change: (value) => setValues({plh: {...values.plh, logementsLivres: value}}),
             readOnly: false
         },
         {
@@ -123,7 +123,7 @@ export default function ProgrammationMixte({
             api: getVocationZa,
             layers: [],
             source: () => values,
-            change: (value) => setValues({vocationZa: {...values.vocationZa, libelle: value}}),
+            change: (value) => setValues({vocationZa: value}),
             code: "Autres",
             readOnly: false
         },
@@ -134,7 +134,7 @@ export default function ProgrammationMixte({
             type: "checkbox",
             layers: ["layerOA"],
             source: () => values,
-            change: () => setValues({...values, scot: !values.scot}),
+            change: () => setValues({scot: !values.scot}),
             readOnly: false
         },
         {
@@ -144,7 +144,7 @@ export default function ProgrammationMixte({
             type: "number",
             layers: [],
             source: () => values,
-            change: (value) => setValues({...values, densiteScot: value}),
+            change: (value) => setValues({densiteScot: value}),
             readOnly: false
         },
         {
@@ -154,7 +154,7 @@ export default function ProgrammationMixte({
             type: "number",
             layers: [],
             source: () => values,
-            change: (value) => setValues({...values, plui: {...values.plui, densiteOap: value}}),
+            change: (value) => setValues({plui: {...values.plui, densiteOap: value}}),
             readOnly: false
         }
     ];

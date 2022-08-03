@@ -53,7 +53,7 @@ export default function ProgrammationActivite({
                 api: getVocationZa,
                 layers: [],
                 source: () => values,
-                change: (value) => setValues({ vocationZa: { ...values.vocationZa, libelle: value } }),
+                change: (value) => setValues({ vocationZa: value }),
                 code: "Autres",
                 readOnly: false
             },
@@ -64,7 +64,7 @@ export default function ProgrammationActivite({
                 type: "checkbox",
                 layers: ["layerOA"],
                 source: () => values,
-                change: () => setValues({ ...values, scot: !values.scot }),
+                change: () => setValues({ scot: !values.scot }),
                 readOnly: false
             },
             {
@@ -74,7 +74,7 @@ export default function ProgrammationActivite({
                 type: "number",
                 layers: [],
                 source: () => values,
-                change: (value) => setValues({ ...values, densiteScot: value }),
+                change: (value) => setValues({ densiteScot: value }),
                 readOnly: false
             },
             {
@@ -84,7 +84,7 @@ export default function ProgrammationActivite({
                 type: "number",
                 layers: [],
                 source: () => values,
-                change: (value) => setValues({ ...values, plui: { ...values.plui, densiteOap: value } }),
+                change: (value) => setValues({ plui: { ...values.plui, densiteOap: value } }),
                 readOnly: false
             }
         ];
