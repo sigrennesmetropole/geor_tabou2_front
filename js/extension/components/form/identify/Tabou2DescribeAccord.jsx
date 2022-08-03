@@ -34,7 +34,7 @@ const Tabou2DescribeAccord = ({
     layer,
     authent,
     change = () => { },
-    changeVocation = () => { },
+    changeProp = () => { },
     messages,
     apiCfg,
     i18n = () => { },
@@ -221,7 +221,7 @@ const Tabou2DescribeAccord = ({
                                             messages={messages}
                                             operation={operation}
                                             initialItems={initialItem}
-                                            update={changeVocation}
+                                            update={changeProp}
                                             opened={opened}
                                             allowChange={allowChange}
                                             close={() => setOpened(false)}

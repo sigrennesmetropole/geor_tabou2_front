@@ -1,4 +1,4 @@
-import React, {useEffect, useState, memo } from "react";
+import React, {useEffect, useState } from "react";
 import { isEmpty, isEqual, pick, get, find } from "lodash";
 import { Col, Row, Grid, Glyphicon, ControlLabel, FormControl } from "react-bootstrap";
 import Tabou2Combo from '@js/extension/components/form/Tabou2Combo';
@@ -12,12 +12,6 @@ import ButtonRB from '@mapstore/components/misc/Button';
 import tooltip from '@mapstore/components/misc/enhancers/tooltip';
 const Button = tooltip(ButtonRB);
 
-const avoidReRender = (prevProps, nextProps) => {
-    if (isEqual(prevProps.initialItem, nextProps.initialItem)) {
-        return true;
-    }
-    return false; // re render
-};
 /**
  * Accordion to display info for Gouvernance panel section - only for feature linked with id tabou
  * @param {any} param
@@ -37,54 +31,40 @@ const Tabou2GouvernanceAccord = ({
     apiCfg,
     i18n = () => { }
 }) => {
-    const [values, setValues] = useState({});
-    const [fields, setFields] = useState([]);
-    const [required, setRequired] = useState({});
 
     let changeInfos = () => { };
-    let getFields = () => { };
 
-    useEffect(() => {
-        const calculFields = getFields();
-        const mandatoryFields = calculFields.filter(f => f.require).map(f => f.name);
-        if (!isEqual(initialItem, values)) {
-            setValues(initialItem);
-            setFields(calculFields);
-            setRequired(mandatoryFields);
-        }
-    }, [initialItem, JSON.stringify(types)]);
-
-    let changeAction = (t, fieldArray, search, field, value) => {
+    let changeAction = (t, fieldArray, search, field, value, src) => {
         // get item by type code
-        let itemByCode = find(get(initialItem, fieldArray), search);
+        let itemByCode = find(get(src, fieldArray), search);
         if (!itemByCode) {
             itemByCode = { typeAction: find(t.typesAction, ['code', search[1]]) };
         }
         // change value
         itemByCode[field] = value;
         // filter others item whithout changed item
-        const othersItems = initialItem[fieldArray].filter(item => item.typeAction.code !== itemByCode.typeAction.code);
+        const othersItems = src[fieldArray].filter(item => item.typeAction.code !== itemByCode.typeAction.code);
         // send to parent
         const concatAll = [...othersItems, itemByCode];
         changeInfos({ actions: concatAll });
     };
 
-    let changeActeur = (t, fieldArray, search, field, value) => {
+    let changeActeur = (t, fieldArray, search, field, value, src) => {
         // get item by type code
-        let itemByCode = find(get(initialItem, fieldArray), search);
+        let itemByCode = find(get(src, fieldArray), search);
         if (!itemByCode) {
             itemByCode = { typeActeur: find(t.typesActeurs, ['code', search[1]]) };
         }
         // change value
         itemByCode[field] = value;
         // filter others item whithout changed item
-        const othersItems = initialItem[fieldArray].filter(item => item.typeActeur.code !== itemByCode.typeActeur.code);
+        const othersItems = src[fieldArray].filter(item => item.typeActeur.code !== itemByCode.typeActeur.code);
         // send to parent
         const concatAll = [...othersItems, itemByCode];
         changeInfos({ acteurs: concatAll });
     };
 
-    getFields = () => [{
+    const fields = [{
         name: "promoteur",
         label: "tabou2.identify.accordions.promoteur",
         layers: ["layerPA"],
@@ -142,8 +122,8 @@ const Tabou2GouvernanceAccord = ({
         label: "tabou2.identify.accordions.rmActions",
         field: "actions.description",
         readOnly: false,
-        value: () => find(get(initialItem, "actions"), ["typeAction.code", "ACTION"])?.description,
-        change: (v, t) => changeAction(t, "actions", ["typeAction.code", "ACTION"], "description", v)
+        value: find(initialItem.actions, ["typeAction.code", "ACTION"])?.description,
+        change: (v, t, src) => changeAction(t, "actions", ["typeAction.code", "ACTION"], "description", v, src)
     }, {
         name: "acteurs",
         type: "text",
@@ -151,8 +131,8 @@ const Tabou2GouvernanceAccord = ({
         label: "tabou2.identify.accordions.acteursInt",
         field: "acteurs.description",
         readOnly: false,
-        value: () => find(get(initialItem, "acteurs"), ["typeActeur.code", "ACT_INT"])?.description,
-        change: (v, t) => changeActeur(t, "acteurs", ["typeActeur.code", "ACT_INT"], "description", v)
+        value: find(initialItem.acteurs, ["typeActeur.code", "ACT_INT"])?.description,
+        change: (v, t, src) => changeActeur(t, "acteurs", ["typeActeur.code", "ACT_INT"], "description", v, src)
     }, {
         name: "acteurs",
         type: "text",
@@ -160,18 +140,18 @@ const Tabou2GouvernanceAccord = ({
         label: "tabou2.identify.accordions.acteursExt",
         field: "acteurs.description",
         readOnly: false,
-        value: () => find(get(initialItem, "acteurs"), ["typeActeur.code", "ACT_EXT"])?.description,
-        change: (v, t) => changeActeur(t, "acteurs", ["typeActeur.code", "ACT_EXT"], "description", v)
+        value: find(initialItem.acteurs, ["typeActeur.code", "ACT_EXT"])?.description,
+        change: (v, t, src) => changeActeur(t, "acteurs", ["typeActeur.code", "ACT_EXT"], "description", v, src)
     }].filter(el => el?.layers?.includes(layer) || !el?.layers);
+    const required = fields.filter(f => f.require).map(f => f.name);
 
     const allowChange = authent.isContrib || authent.isReferent;
 
     changeInfos = (item) => {
-        let newValues = { ...values, ...item };
-        setValues(newValues);
+        // get readOnly field name
+        let editableFields = fields.filter(f => !f.readOnly).map(f => f.name);
         // send to parent to save
-        let accordValues = pick(newValues, getFields().filter(f => !f.readOnly).map(f => f.name));
-        change(accordValues, pick(accordValues, required));
+        change(item, pick(editableFields, required));
     };
 
     const openTierModal = (type) => {
@@ -220,9 +200,9 @@ const Tabou2GouvernanceAccord = ({
                                         type={item.type}
                                         min="0"
                                         step={item?.step}
-                                        value={item.value() || ""}
+                                        value={item.value || ""}
                                         readOnly={item.readOnly || !allowChange}
-                                        onChange={(v) => item.change(v.target.value, types)}
+                                        onChange={(v) => item.change(v.target.value, types, initialItem)}
                                     />) : null
                             }{
                                 item.type === "button" && (
@@ -244,7 +224,7 @@ const Tabou2GouvernanceAccord = ({
                                         disabled={item?.readOnly || !allowChange}
                                         onLoad={(r) => r?.elements || r}
                                         name={item.name}
-                                        value={get(values, item.name)}
+                                        value={get(initialItem, item.name)}
                                         onSelect={(v) => changeInfos({ [item.name]: v })}
                                         onChange={(v) => !v ? changeInfos({ [item.name]: v }) : null}
                                         messages={{
@@ -285,4 +265,4 @@ const Tabou2GouvernanceAccord = ({
     );
 };
 
-export default memo(Tabou2GouvernanceAccord, avoidReRender);
+export default Tabou2GouvernanceAccord;

@@ -1,25 +1,12 @@
-import React, {useEffect, useState, memo } from "react";
-import { isEmpty, isEqual, pick, get, find } from "lodash";
+import React from "react";
+import { isEmpty, pick, get, find, isEqual } from "lodash";
 import { Col, Row, FormControl, Grid, ControlLabel } from "react-bootstrap";
 import { getRequestApi } from "@js/extension/api/requests";
 import "@js/extension/css/identify.css";
 import Message from "@mapstore/components/I18N/Message";
 import SearchCombo from '@js/extension/components/form/SearchCombo';
 import Tabou2Combo from '@js/extension/components/form/Tabou2Combo';
-
-import { DateTimePicker } from "react-widgets";
-
-import moment from 'moment';
-import momentLocalizer from 'react-widgets/lib/localizers/moment';
-momentLocalizer(moment);
-
-const avoidReRender = (prevProps, nextProps) => {
-    if (isEqual(prevProps.initialItem, nextProps.initialItem)) {
-        return true;
-    }
-    return false; // re render
-};
-
+import Tabou2Date from "../../common/Tabou2Date";
 /**
  * Accordion to display info for Identity panel section - only for feature linked with id tabou
  * @param {any} param
@@ -33,43 +20,30 @@ const Tabou2CadreAccord = ({
     i18n = () => { },
     messages,
     apiCfg,
-    types
+    types,
+    changeProp = () => {}
 }) => {
-    const [values, setValues] = useState({});
-    const [fields, setFields] = useState([]);
-    const [required, setRequired] = useState({});
 
     let changeInfos = () => { };
-    let getFields = () => { };
 
-    // hooks
-    useEffect(() => {
-        const calculFields = getFields();
-        const mandatoryFields = calculFields.filter(f => f.require).map(f => f.name);
-        if (!isEqual(initialItem, values)) {
-            setValues(initialItem);
-            setFields(calculFields);
-            setRequired(mandatoryFields);
-        }
-    }, [initialItem, JSON.stringify(types)]);
     // ex : "descriptionsFoncier", ["typesFonciers.code", "FONCIER_PUBLIC"], "description", "myNewvValue"
-    let changeFoncier = (t, fieldArray, search, field, value) => {
+    let changeFoncier = (t, fieldArray, search, field, value, src) => {
         // get item by type code
-        let itemByCode = find(get(initialItem, fieldArray), search);
+        let itemByCode = find(src[fieldArray], search);
         if (!itemByCode) {
             itemByCode = { typeFoncier: find(t.typesFonciers, ['code', search[1]]) };
         }
         // change value
         itemByCode[field] = value;
         // filter others item whithout changed item
-        const othersItems = initialItem[fieldArray].filter(item => item.typeFoncier.code !== itemByCode.typeFoncier.code);
+        const othersItems = src[fieldArray].filter(item => item.typeFoncier.code !== itemByCode.typeFoncier.code);
         // send to parent
         const concatAll = [...othersItems, itemByCode];
         changeInfos({ descriptionsFoncier: concatAll });
     };
 
     // create fields from const func
-    getFields = () => [{
+    const fields = [{
         type: "title",
         label: "tabou2.identify.accordions.foncierOccTitle",
         layers: ["layerSA", "layerOA"]
@@ -81,8 +55,8 @@ const Tabou2CadreAccord = ({
         label: "tabou2.identify.accordions.foncierPublicDescription",
         field: "descriptionsFoncier.description",
         readOnly: false,
-        value: () => find(get(initialItem, "descriptionsFoncier"), ["typeFoncier.code", "PUBLIQUE"])?.description,
-        change: (v, t) => changeFoncier(t, "descriptionsFoncier", ["typeFoncier.code", "PUBLIQUE"], "description", v)
+        value: find(initialItem?.descriptionsFoncier, ["typeFoncier.code", "PUBLIQUE"])?.description,
+        change: (v, t, src) => changeFoncier(t, "descriptionsFoncier", ["typeFoncier.code", "PUBLIQUE"], "description", v, src)
     }, {
         name: "descriptionsFoncier",
         type: "number",
@@ -90,8 +64,8 @@ const Tabou2CadreAccord = ({
         label: "tabou2.identify.accordions.foncierPublicTaux",
         field: "descriptionsFoncier.taux",
         readOnly: false,
-        value: () => find(get(initialItem, "descriptionsFoncier"), ["typeFoncier.code", "PUBLIQUE"])?.taux,
-        change: (v, t) => changeFoncier(t, "descriptionsFoncier", ["typeFoncier.code", "PUBLIQUE"], "taux", v)
+        value: find(initialItem?.descriptionsFoncier, ["typeFoncier.code", "PUBLIQUE"])?.taux,
+        change: (v, t, src) => changeFoncier(t, "descriptionsFoncier", ["typeFoncier.code", "PUBLIQUE"], "taux", v, src)
     }, {
         name: "descriptionsFoncier",
         type: "text",
@@ -99,8 +73,8 @@ const Tabou2CadreAccord = ({
         label: "tabou2.identify.accordions.foncierPriveDescription",
         field: "descriptionsFoncier.description",
         readOnly: false,
-        value: () => find(get(initialItem, "descriptionsFoncier"), ["typeFoncier.code", "PRIVEE"])?.description,
-        change: (v, t) => changeFoncier(t, "descriptionsFoncier", ["typeFoncier.code", "PRIVEE"], "description", v)
+        value: find(initialItem?.descriptionsFoncier, ["typeFoncier.code", "PRIVEE"])?.description,
+        change: (v, t, src) => changeFoncier(t, "descriptionsFoncier", ["typeFoncier.code", "PRIVEE"], "description", v, src)
     }, {
         name: "descriptionsFoncier",
         type: "number",
@@ -108,8 +82,8 @@ const Tabou2CadreAccord = ({
         label: "tabou2.identify.accordions.foncierPriveTaux",
         field: "descriptionsFoncier.taux",
         readOnly: false,
-        value: () => find(get(initialItem, "descriptionsFoncier"), ["typeFoncier.code", "PRIVEE"])?.taux,
-        change: (v, t) => changeFoncier(t, "descriptionsFoncier", ["typeFoncier.code", "PRIVEE"], "taux", v)
+        value: find(initialItem?.descriptionsFoncier, ["typeFoncier.code", "PRIVEE"])?.taux,
+        change: (v, t, src) => changeFoncier(t, "descriptionsFoncier", ["typeFoncier.code", "PRIVEE"], "taux", v, src)
     }, {
         name: "typeOccupation",
         field: "typeOccupation",
@@ -121,7 +95,7 @@ const Tabou2CadreAccord = ({
         apiLabel: "libelle",
         placeholder: "tabou2.identify.accordions.emptySelect",
         readOnly: false,
-        value: () => get(initialItem, "typeOccupation.libelle"),
+        value: get(initialItem, "typeOccupation.libelle"),
         select: (v) => changeInfos({ typeOccupation: v }),
         change: (v) => changeInfos(v ? { typeOccupation: v } : { typeOccupation: null })
     }, {
@@ -135,7 +109,7 @@ const Tabou2CadreAccord = ({
         apiLabel: "libelle",
         placeholder: "tabou2.identify.accordions.emptySelect",
         readOnly: false,
-        value: () => get(initialItem, "outilFoncier.libelle"),
+        value: get(initialItem, "outilFoncier.libelle"),
         select: (v) => changeInfos({ outilFoncier: v }),
         change: (v) => changeInfos(v ? { outilFoncier: v } : { outilFoncier: null })
     }, {
@@ -150,8 +124,8 @@ const Tabou2CadreAccord = ({
         layers: ["layerSA", "layerOA"],
         readOnly: false,
         isArea: true,
-        value: () => get(initialItem, "plui.pluiDisposition"),
-        change: (v) => changeInfos({ plui: { ...initialItem.plui, pluiDisposition: v } })
+        value: get(initialItem, "plui.pluiDisposition"),
+        change: (v, t, src) => changeInfos({ plui: { ...src.plui, pluiDisposition: v } })
     }, {
         name: "plui",
         type: "text",
@@ -160,8 +134,8 @@ const Tabou2CadreAccord = ({
         layers: ["layerSA", "layerOA"],
         readOnly: false,
         isArea: true,
-        value: () => get(initialItem, "plui.pluiAdaptation"),
-        change: (v) => changeInfos({ plui: { ...initialItem.plui, pluiAdaptation: v } })
+        value: get(initialItem, "plui.pluiAdaptation"),
+        change: (v, t, src) => changeInfos({ plui: { ...src.plui, pluiAdaptation: v } })
     }, {
         type: "title",
         label: "tabou2.identify.accordions.processOpTitle",
@@ -174,7 +148,7 @@ const Tabou2CadreAccord = ({
         layers: ["layerSA", "layerOA"],
         readOnly: false,
         isArea: true,
-        value: () => get(initialItem, "etude"),
+        value: get(initialItem, "etude"),
         change: (v) => changeInfos({ etude: v })
     }, {
         name: "autorisationDate",
@@ -182,7 +156,7 @@ const Tabou2CadreAccord = ({
         label: "tabou2.identify.accordions.dateAuth",
         layers: ["layerSA", "layerOA"],
         type: "date",
-        value: () => get(values, "autorisationDate"),
+        value: get(initialItem, "autorisationDate"),
         readOnly: false
     }, {
         name: "operationnelDate",
@@ -190,14 +164,14 @@ const Tabou2CadreAccord = ({
         field: "operationnelDate",
         layers: ["layerSA", "layerOA"],
         type: "date",
-        value: () => values.operationnelDate ? values.operationnelDate : initialItem.operationnelDate,
+        value: initialItem?.operationnelDate || null,
         readOnly: false
     }, {
         name: "clotureDate",
         label: "tabou2.identify.accordions.dateClose",
         field: "clotureDate",
         type: "date",
-        value: () => values.clotureDate ? values.clotureDate : initialItem.clotureDate,
+        value: initialItem?.clotureDate || null,
         readOnly: false
     }, {
         name: "amenageurs",
@@ -210,7 +184,7 @@ const Tabou2CadreAccord = ({
         apiLabel: "libelle",
         placeholder: "tabou2.identify.accordions.emptySelect",
         readOnly: false,
-        value: () => get(initialItem, "amenageurs")[0]?.typeAmenageur?.libelle,
+        value: get(initialItem, "amenageurs")[0]?.typeAmenageur?.libelle,
         change: (v) => changeInfos({
             amenageurs: v ? [{ nom: "", typeAmenageur: v }] : []
         }),
@@ -225,8 +199,8 @@ const Tabou2CadreAccord = ({
         layers: ["layerSA", "layerOA"],
         readOnly: false,
         isArea: false,
-        value: () => isEmpty(initialItem.amenageurs) ? "" : get(initialItem, "amenageurs")[0]?.nom,
-        change: (v) => !isEmpty(initialItem.amenageurs) ? changeInfos({ amenageurs: [{ ...initialItem.amenageurs[0], nom: v }] }) : null
+        value: get(initialItem, "amenageurs")[0]?.nom,
+        change: (v, t, src) => !isEmpty(src.amenageurs) ? changeInfos({ amenageurs: [{ ...src.amenageurs[0], nom: v }] }) : null
     }, {
         name: "outilAmenagement",
         type: "text",
@@ -235,21 +209,21 @@ const Tabou2CadreAccord = ({
         layers: ["layerSA", "layerOA"],
         readOnly: false,
         isArea: false,
-        value: () => get(initialItem, "outilAmenagement"),
+        value: get(initialItem, "outilAmenagement"),
         change: (v) => changeInfos({ outilAmenagement: v })
     }, {
         name: "concertation",
         label: "tabou2.identify.accordions.dateDebut",
         field: "dateDebut",
         type: "date",
-        value: () => values?.concertation?.dateDebut || initialItem?.concertation?.dateDebut,
+        value: initialItem?.concertation?.dateDebut || null,
         readOnly: false
     }, {
         name: "concertation",
         label: "tabou2.identify.accordions.dateFin",
         field: "dateFin",
         type: "date",
-        value: () => values?.concertation?.dateFin || initialItem?.concertation?.dateFin,
+        value: initialItem?.concertation?.dateFin || null,
         readOnly: false
     }, {
         name: "avancementAdministratif",
@@ -259,7 +233,7 @@ const Tabou2CadreAccord = ({
         layers: ["layerSA", "layerOA"],
         readOnly: false,
         isArea: true,
-        value: () => get(initialItem, "avancementAdministratif"),
+        value: get(initialItem, "avancementAdministratif"),
         change: (v) => changeInfos({ avancementAdministratif: v })
     }, {
         name: "surfaceRealisee",
@@ -269,7 +243,7 @@ const Tabou2CadreAccord = ({
         layers: ["layerSA", "layerOA"],
         readOnly: false,
         isArea: false,
-        value: () => get(initialItem, "surfaceRealisee"),
+        value: get(initialItem, "surfaceRealisee"),
         change: (v) => changeInfos({ surfaceRealisee: v })
     }, {
         name: "environnement",
@@ -279,7 +253,7 @@ const Tabou2CadreAccord = ({
         layers: ["layerSA", "layerOA"],
         readOnly: false,
         isArea: true,
-        value: () => get(initialItem, "environnement"),
+        value: get(initialItem, "environnement"),
         change: (v) => changeInfos({ environnement: v })
     }, {
         name: "financements",
@@ -292,12 +266,12 @@ const Tabou2CadreAccord = ({
         apiLabel: "libelle",
         placeholder: "tabou2.identify.accordions.emptySelect",
         readOnly: false,
-        value: () => get(initialItem, "financements[0].typeFinancement.libelle"),
-        change: (v) => changeInfos({
-            financements: v ? [{ ...initialItem.financements[0], typeFinancement: v }] : []
+        value: get(initialItem, "financements[0].typeFinancement.libelle"),
+        change: (v, src) => changeInfos({
+            financements: v ? [{ ...src.financements[0], typeFinancement: v }] : []
         }),
-        select: (v) => changeInfos({
-            financements: v ? [{ ...initialItem.financements[0], typeFinancement: v }] : []
+        select: (v, t, src) => changeInfos({
+            financements: v ? [{ ...src.financements[0], typeFinancement: v }] : []
         })
     }, {
         name: "financements",
@@ -307,43 +281,30 @@ const Tabou2CadreAccord = ({
         layers: ["layerSA", "layerOA"],
         readOnly: false,
         isArea: false,
-        value: () => isEmpty(initialItem.financements) ? "" : get(initialItem, "financements[0]")?.description,
-        change: (v) => changeInfos({
-            financements: initialItem.financements[0] ? [{ ...initialItem.financements[0], description: v }] : [{description: v}]
+        value: get(initialItem, "financements[0]")?.description,
+        change: (v, t, src) => changeInfos({
+            financements: src.financements[0] ? [{ ...src.financements[0], description: v }] : [{description: v}]
         })
     }];
+
+    const required = fields.filter(f => f.require).map(f => f.name);
 
     const allowChange = authent.isContrib || authent.isReferent;
 
     // manage change info
     changeInfos = (item) => {
-        let newValues = { ...values, ...item };
-        setValues(newValues);
+        // get readOnly field name
+        let editableFields = fields.filter(f => !f.readOnly).map(f => f.name);
         // send to parent to save
-        let accordValues = pick(newValues, getFields().filter(f => !f.readOnly).map(f => f.name));
-        change(accordValues, pick(accordValues, required));
+        change(item, pick(editableFields, required));
     };
 
-    const changeDate = (item, str) => {
-        if (item.name !== item.field) {
-            // only to change a key inside object as field.child
-            changeInfos({
-                [item.name]: {
-                    ...initialItem[item.name],
-                    [item.field]: str ? new Date(str).toISOString() : ""
-                }
-            });
-        } else {
-            changeInfos({ [item.name]: str ? new Date(str).toISOString() : "" });
-        }
-    };
-
-    const getDateValue = item => {
+    const getDateValue = (item, src) => {
         let defaultValue = null;
         if (item.name !== item.field) {
-            defaultValue = get(initialItem, `${item.name}.${item.field}`);
-        } else if (initialItem[item.name]) {
-            defaultValue = get(initialItem, item.name);
+            defaultValue = get(src, `${item.name}.${item.field}`);
+        } else if (src[item.name]) {
+            defaultValue = get(src, item.name);
         }
         return defaultValue ? new Date(defaultValue) : null;
     };
@@ -372,15 +333,15 @@ const Tabou2CadreAccord = ({
                                                 textField={item.apiLabel}
                                                 valueField={item.apiField}
                                                 forceSelection
-                                                value={item.value()}
+                                                value={item.value}
                                                 search={
                                                     text => getRequestApi(item.api, apiCfg, { [item.autocomplete]: `${text}*` })
                                                         .then(results =>
                                                             results.elements.map(v => v)
                                                         )
                                                 }
-                                                onSelect={item.select}
-                                                onChange={item.change}
+                                                onSelect={(e) => item.select(e, initialItem)}
+                                                onChange={(e) => item.change(e, initialItem)}
                                                 name={item.name}
                                                 placeholder={i18n(messages, item?.label || "")}
                                             />
@@ -391,12 +352,12 @@ const Tabou2CadreAccord = ({
                                             (<FormControl
                                                 componentClass={item.isArea ? "textarea" : "input"}
                                                 placeholder={i18n(messages, item?.label || "")}
-                                                value={item.value() || ""}
+                                                value={item.value}
                                                 type={item.type}
                                                 min="0"
                                                 style={{ height: item.isArea ? "100px" : "auto" }}
                                                 readOnly={item.readOnly || !allowChange}
-                                                onChange={(v) => item.change(v.target.value, types)}
+                                                onChange={(v) => item.change(v.target.value, types, initialItem)}
                                             />) : null
                                     }{
                                         item.type === "combo" && !item?.autocomplete ? (
@@ -408,9 +369,9 @@ const Tabou2CadreAccord = ({
                                                 textField={item.apiLabel}
                                                 onLoad={(r) => r?.elements || r}
                                                 name={item.name}
-                                                value={item.value()}
+                                                value={item.value}
                                                 onSelect={item.select ? item.select : (v) => changeInfos({ [item.name]: v })}
-                                                onChange={item.change ? item.change : (v) => !v ? changeInfos({ [item.name]: v }) : null}
+                                                onChange={item.change ? (v) => item.change(v, initialItem) : (v) => !v ? changeInfos({ [item.name]: v }) : null}
                                                 messages={{
                                                     emptyList: i18n(messages, "tabou2.emptyList"),
                                                     openCombobox: i18n(messages, "tabou2.displayList")
@@ -419,7 +380,7 @@ const Tabou2CadreAccord = ({
                                         ) : null
                                     }{
                                         item.type === "date" ? (
-                                            <DateTimePicker
+                                            <Tabou2Date
                                                 type="date"
                                                 className="identifyDate"
                                                 inline="true"
@@ -429,10 +390,38 @@ const Tabou2CadreAccord = ({
                                                 calendar
                                                 time={false}
                                                 culture="fr"
-                                                value={getDateValue(item) || null}
+                                                value={getDateValue(item, initialItem) || null}
                                                 format="DD/MM/YYYY"
-                                                onSelect={(v) => changeDate(item, v)}
-                                                onChange={(v) => changeDate(item, v)}
+                                                refreshValue={initialItem}
+                                                refresh={(o, n) => {
+                                                    return isEqual(o, n);
+                                                }}
+                                                onSelect={(v) => {
+                                                    if (item.name !== item.field) {
+                                                        // only to change a key inside object as field.child
+                                                        changeProp({
+                                                            [item.name]: {
+                                                                ...initialItem[item.name],
+                                                                [item.field]: v ? new Date(v).toISOString() : ""
+                                                            }
+                                                        });
+                                                    } else {
+                                                        changeProp({ [item.name]: v ? new Date(v).toISOString() : "" });
+                                                    }
+                                                }}
+                                                onChange={(v) => {
+                                                    if (item.name !== item.field) {
+                                                        // only to change a key inside object as field.child
+                                                        changeProp({
+                                                            [item.name]: {
+                                                                ...initialItem[item.name],
+                                                                [item.field]: v ? new Date(v).toISOString() : ""
+                                                            }
+                                                        });
+                                                    } else {
+                                                        changeProp({ [item.name]: v ? new Date(v).toISOString() : "" });
+                                                    }
+                                                }}
                                             />
                                         ) : null
                                     }
@@ -447,4 +436,4 @@ const Tabou2CadreAccord = ({
     );
 };
 
-export default memo(Tabou2CadreAccord, avoidReRender);
+export default Tabou2CadreAccord;

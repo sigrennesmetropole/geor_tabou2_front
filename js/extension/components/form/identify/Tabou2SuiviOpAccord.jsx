@@ -3,7 +3,8 @@ import { isEmpty, isEqual, pick, get, has } from "lodash";
 import { Col, Row, Grid, ControlLabel } from "react-bootstrap";
 import Tabou2Combo from '@js/extension/components/form/Tabou2Combo';
 import { getRequestApi } from "@js/extension/api/requests";
-import { Multiselect, DateTimePicker } from "react-widgets";
+import { Multiselect } from "react-widgets";
+import Tabou2Date from "../../common/Tabou2Date";
 import "@js/extension/css/identify.css";
 import Message from "@mapstore/components/I18N/Message";
 
@@ -129,10 +130,14 @@ const Tabou2SuiviOpAccord = ({
                                 ) : null
                             }{
                                 item.type === "date" ? (
-                                    <DateTimePicker
+                                    <Tabou2Date
                                         type="date"
                                         className="identifyDate"
                                         inline="true"
+                                        refreshValue={initialItem}
+                                        refresh={(o, n) => {
+                                            return isEqual(o, n);
+                                        }}
                                         dropUp
                                         placeholder={i18n(messages, item?.label || "")}
                                         readOnly={item.readOnly || !allowChange}

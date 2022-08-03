@@ -7,10 +7,7 @@ import Message from "@mapstore/components/I18N/Message";
 import Dropzone from 'react-dropzone';
 import SearchCombo from '@js/extension/components/form/SearchCombo';
 import { searchDocumentsTypes } from "../../api/requests";
-import { DateTimePicker } from "react-widgets";
-import moment from 'moment';
-import momentLocalizer from 'react-widgets/lib/localizers/moment';
-momentLocalizer(moment);
+import Tabou2Date from "../common/Tabou2Date";
 /**
  * Form to display when a tier is edit or created.
  * @param {any} param
@@ -206,7 +203,7 @@ export default function Tabou2DocsForm({
                                     />
                                 )}
                                 {field.type === "date" && (
-                                    <DateTimePicker
+                                    <Tabou2Date
                                         type="date"
                                         className="identifyDate"
                                         placeholder={translate.i18n(translate.messages, "tabou2.docsModal.docsForm.dateDoc")}

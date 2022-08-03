@@ -1,14 +1,11 @@
 import React, { useEffect, useState, memo } from "react";
 import { isEmpty, isEqual, pick, has, get, capitalize } from "lodash";
 import { Col, Row, Grid, ControlLabel, Table } from "react-bootstrap";
-import { DateTimePicker } from "react-widgets";
+import Tabou2Date from "../../common/Tabou2Date";
 import "@js/extension/css/identify.css";
 import Message from "@mapstore/components/I18N/Message";
 
-import moment from 'moment';
-import momentLocalizer from 'react-widgets/lib/localizers/moment';
 import ControlledPopover from '@mapstore/components/widgets/widget/ControlledPopover';
-momentLocalizer(moment);
 
 const avoidReRender = (prevProps, nextProps) => {
     if (isEqual(prevProps.initialItem, nextProps.initialItem)) {
@@ -163,7 +160,7 @@ const Tabou2DdsAccord = ({
                         {
                             item.type === "date" && (
                                 <Col xs={8}>
-                                    <DateTimePicker
+                                    <Tabou2Date
                                         type="date"
                                         className="identifyDate"
                                         inline
@@ -171,6 +168,10 @@ const Tabou2DdsAccord = ({
                                         disabled={!allowChange}
                                         placeholder={i18n(messages, item?.placeholder || item?.label)}
                                         calendar
+                                        refreshValue={initialItem}
+                                        refresh={(o, n) => {
+                                            return isEqual(o, n);
+                                        }}
                                         time={false}
                                         culture="fr"
                                         value={getDateValue(item) || null}

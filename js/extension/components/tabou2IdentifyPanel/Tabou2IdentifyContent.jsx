@@ -55,11 +55,6 @@ const Tabou2IdentifyContent = ({
         }
     }, [tabouLayer, props.tabouInfos.uuid, JSON.stringify(typesFicheInfos)]);
 
-    const onChange = (values, required) => {
-        mandatory.current = { ...mandatory.current, ...required };
-        setInfos({ ...infos, ...values });
-    };
-
     const save = () => {
         props.changeFeature({
             feature: infos,
@@ -88,9 +83,16 @@ const Tabou2IdentifyContent = ({
         operation: operation,
         mapFeature: mapFeature,
         initialItem: infos,
-        change: onChange,
-        changeVocation: (newOA) => {
-            setInfos({ ...infos, ...newOA });
+        change: (values, required) => {
+            console.log(values);
+            mandatory.current = { ...mandatory.current, ...required };
+            let oldInfos = { ...infos };
+            setInfos({ ...oldInfos, ...values });
+        },
+        changeProp: (newOA) => {
+            console.log(newOA);
+            let oldInfos = { ...infos };
+            setInfos({ ...oldInfos, ...newOA });
         },
         tiers: props.tiers,
         types: typesFicheInfos,

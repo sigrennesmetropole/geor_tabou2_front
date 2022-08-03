@@ -6,10 +6,7 @@ import Tabou2Combo from '@js/extension/components/form/Tabou2Combo';
 import { getTypesEvents } from "@js/extension/api/requests";
 import tooltip from '@mapstore/components/misc/enhancers/tooltip';
 import Message from "@mapstore/components/I18N/Message";
-import moment from 'moment';
-import momentLocalizer from 'react-widgets/lib/localizers/moment';
-momentLocalizer(moment);
-import { DateTimePicker } from 'react-widgets';
+import Tabou2Date from '../../common/Tabou2Date';
 
 const Button = tooltip(ButtonRB);
 
@@ -116,7 +113,7 @@ export default function Tabou2LogsTable({
                                             </td>
                                             <td>
                                                 {
-                                                    log.new || log.edit ? (<DateTimePicker
+                                                    log.new || log.edit ? (<Tabou2Date
                                                         type="date"
                                                         dropDown
                                                         calendar

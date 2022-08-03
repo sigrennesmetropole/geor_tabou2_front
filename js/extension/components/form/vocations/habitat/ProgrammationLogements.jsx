@@ -6,10 +6,8 @@ import "@js/extension/css/vocation.css";
 import "@js/extension/css/tabou.css";
 import { findValueByType, changeByType, getCodeIdByCode } from "../utils";
 import Tabou2Combo from '@js/extension/components/form/Tabou2Combo';
-import { DateTimePicker } from "react-widgets";
-import moment from 'moment';
-import momentLocalizer from 'react-widgets/lib/localizers/moment';
-momentLocalizer(moment);
+import Tabou2Date from '@js/extension/components/common/Tabou2Date';
+
 export default function ProgrammationLogements({
     operation = {},
     allowChange = false,
@@ -196,7 +194,7 @@ export default function ProgrammationLogements({
                                     ) : null
                                 } {
                                     item.type === "date" && (
-                                        <DateTimePicker
+                                        <Tabou2Date
                                             type="date"
                                             className="identifyDate"
                                             placeholder={i18n(messages, item.label)}
