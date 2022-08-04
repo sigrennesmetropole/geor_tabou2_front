@@ -24,16 +24,16 @@ export default function AutreProgrammation({
             field: "description",
             type: "text",
             layers: [],
-            source: () => findValueByType(getCodeIdByCode(typesProgrammation, "Equipement"), values, "informationsProgrammation"),
+            source: () => findValueByType(getCodeIdByCode(typesProgrammation, "EQUIPEMENT"), values, "informationsProgrammation"),
             change: (value) => setValues(
                 changeByType(
-                    getCodeIdByCode(typesProgrammation, "Equipement"),
+                    getCodeIdByCode(typesProgrammation, "EQUIPEMENT"),
                     value,
                     values,
                     "informationsProgrammation"
                 )
             ),
-            code: "Equipement",
+            code: "EQUIPEMENT",
             readOnly: false
         },
         {
@@ -42,16 +42,16 @@ export default function AutreProgrammation({
             field: "description",
             type: "text",
             layers: [],
-            source: () => findValueByType(getCodeIdByCode(typesProgrammation, "Autres"), values, "informationsProgrammation"),
+            source: () => findValueByType(getCodeIdByCode(typesProgrammation, "AUTRE"), values, "informationsProgrammation"),
             change: (value) => setValues(
                 changeByType(
-                    getCodeIdByCode(typesProgrammation, "Autres"),
+                    getCodeIdByCode(typesProgrammation, "AUTRE"),
                     value,
                     values,
                     "informationsProgrammation"
                 )
             ),
-            code: "Autres",
+            code: "AUTRE",
             readOnly: false
         }
     ];

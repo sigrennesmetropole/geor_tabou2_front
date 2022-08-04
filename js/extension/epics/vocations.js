@@ -1,6 +1,8 @@
 import Rx from 'rxjs';
 import { UPDATE_OPERATION, GET_TABOU_VOCATIONS_INFOS, setTabouVocationsInfos  } from '../actions/tabou2';
-import { getTypesContributionsId, getTypesProgrammationId, changeOperation, getTypesVocationsId } from '../api/requests';
+import {
+    getTypesContributionsId, getTypesProgrammationId, changeOperation, getTypesVocationsId
+} from '../api/requests';
 import { isTabou2Activate } from '../selectors/tabou2';
 import { error, success } from "@mapstore/actions/notifications";
 import { getMessageById } from "@mapstore/utils/LocaleUtils";

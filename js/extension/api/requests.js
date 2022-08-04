@@ -1,5 +1,5 @@
 import axios from "@mapstore/libs/ajax";
-import { API_BASE_URL } from "@ext/constants";
+import { API_BASE_URL } from "../constants";
 import { keys } from "lodash";
 const baseURL = "/tabou2";
 
@@ -294,7 +294,7 @@ export function searchTiers(text) {
 }
 
 // FEATURE'S DOCUMENT
-export function getTabouDocuments(url, id, page, result, text) {
+export function getTabouDocuments(url, id, page, result, nom = "", libelleTypeDocument = "", typeMime = "") {
     const params = (page || page > -1) && result ? {
         start: page,
         resultsNumber: result
@@ -302,7 +302,9 @@ export function getTabouDocuments(url, id, page, result, text) {
     return axios.get(`${baseURL}/${url}/${id}/documents`, {params: {
         ...params,
         asc: true,
-        nom: text.length >= 3 ? `*${text}*` : "**"
+        nom: nom.length >= 3 ? `*${nom}*` : "**",
+        libelleTypeDocument: libelleTypeDocument ? `*${libelleTypeDocument}*` : "**",
+        typeMime: typeMime ? `*${typeMime}*` : "**"
     }}).then(({ data }) => data);
 }
 export function addDocument(url, id, file, metadata, type) {
@@ -377,3 +379,9 @@ export const getTypesProgrammationId = () => axios.get(`${baseURL}/types-program
 export const getTypesContributionsId = () => axios.get(`${baseURL}/types-contributions`, { params: { asc: true } });
 
 export const getTypesVocationsId = () => axios.get(`${baseURL}/vocations`, { params: { asc: true } });
+
+export const getTypesFoncier = () => axios.get(`${baseURL}/types-fonciers`, { params: { asc: true } });
+
+export const getTypesActions = () => axios.get(`${baseURL}/types-actions-operations`, { params: { asc: true } });
+
+export const getTypesActeurs = () => axios.get(`${baseURL}/types-acteurs`, { params: { asc: true } });

@@ -7,11 +7,9 @@ import "@js/extension/css/tabou.css";
 import { findValueByType, changeByType, getCodeIdByCode } from "../utils";
 import Tabou2Combo from '@js/extension/components/form/Tabou2Combo';
 import { getVocationZa } from "@js/extension/api/requests";
-import { DateTimePicker } from "react-widgets";
-import moment from 'moment';
-import momentLocalizer from 'react-widgets/lib/localizers/moment';
-momentLocalizer(moment);
-export default function ProgrammationLogements({
+import Tabou2Date from '@js/extension/components/common/Tabou2Date';
+
+export default function ProgrammationMixte({
     operation = {},
     allowChange = false,
     layer = "",
@@ -21,7 +19,7 @@ export default function ProgrammationLogements({
     messages,
     values
 }) {
-    if (isEmpty(operation)) return <Message msgId="tabou2.vocation.noDisplay"/>;
+    if (isEmpty(operation)) return <Message msgId="tabou2.vocation.noDisplay" />;
     const getFields = () => [
         {
             name: "nbLogementsPrevu",
@@ -30,7 +28,7 @@ export default function ProgrammationLogements({
             type: "number",
             layers: [],
             source: () => values,
-            change: (value) => setValues({...values, nbLogementsPrevu: value}),
+            change: (value) => setValues({nbLogementsPrevu: value}),
             readOnly: false
         },
         {
@@ -39,15 +37,15 @@ export default function ProgrammationLogements({
             field: "description",
             type: "text",
             layers: [],
-            source: () => findValueByType(getCodeIdByCode(typesProgrammation, "Habitat"), values, "informationsProgrammation"),
+            source: () => findValueByType(getCodeIdByCode(typesProgrammation, "HABITAT"), values, "informationsProgrammation"),
             change: (value) => {
                 setValues(
                     changeByType(
-                        getCodeIdByCode(typesProgrammation, "Habitat"),
+                        getCodeIdByCode(typesProgrammation, "HABITAT"),
                         value,
                         values,
                         "informationsProgrammation",
-                        getCodeIdByCode(typesProgrammation, "Habitat")
+                        getCodeIdByCode(typesProgrammation, "HABITAT")
                     )
                 );
             },
@@ -59,15 +57,15 @@ export default function ProgrammationLogements({
             field: "description",
             type: "text",
             layers: [],
-            source: () => findValueByType(getCodeIdByCode(typesProgrammation, "Activites"), values, "informationsProgrammation"),
+            source: () => findValueByType(getCodeIdByCode(typesProgrammation, "ACTIVITES"), values, "informationsProgrammation"),
             change: (value) => {
                 setValues(
                     changeByType(
-                        getCodeIdByCode(typesProgrammation, "Activites"),
+                        getCodeIdByCode(typesProgrammation, "ACTIVITES"),
                         value,
                         values,
                         "informationsProgrammation",
-                        getCodeIdByCode(typesProgrammation, "Activites")
+                        getCodeIdByCode(typesProgrammation, "ACTIVITES")
                     )
                 );
             },
@@ -80,7 +78,7 @@ export default function ProgrammationLogements({
             type: "date",
             layers: [],
             source: () => values,
-            change: (value) => setValues({...values, plh: {...values.plh, date: value}}),
+            change: (value) => setValues({plh: {...values.plh, date: value}}),
             readOnly: false
         },
         {
@@ -90,7 +88,7 @@ export default function ProgrammationLogements({
             type: "text",
             layers: [],
             source: () => values,
-            change: (value) => setValues({...values, plh: {...values.plh, description: value}}),
+            change: (value) => setValues({plh: {...values.plh, description: value}}),
             readOnly: false
         },
         {
@@ -100,7 +98,7 @@ export default function ProgrammationLogements({
             type: "number",
             layers: [],
             source: () => values,
-            change: (value) => setValues({...values, plh: {...values.plh, logementsPrevus: value}}),
+            change: (value) => setValues({plh: {...values.plh, logementsPrevus: value}}),
             readOnly: false
         },
         {
@@ -110,7 +108,7 @@ export default function ProgrammationLogements({
             type: "number",
             layers: [],
             source: () => values,
-            change: (value) => setValues({...values, plh: {...values.plh, logementsLivres: value}}),
+            change: (value) => setValues({plh: {...values.plh, logementsLivres: value}}),
             readOnly: false
         },
         {
@@ -123,7 +121,7 @@ export default function ProgrammationLogements({
             api: getVocationZa,
             layers: [],
             source: () => values,
-            change: (value) => setValues({...values, vocationZa: {...values.vocationZa, libelle: value}}),
+            change: (value) => setValues({vocationZa: value}),
             code: "Autres",
             readOnly: false
         },
@@ -134,7 +132,7 @@ export default function ProgrammationLogements({
             type: "checkbox",
             layers: ["layerOA"],
             source: () => values,
-            change: () => setValues({...values, scot: !values.scot}),
+            change: () => setValues({scot: !values.scot}),
             readOnly: false
         },
         {
@@ -144,7 +142,7 @@ export default function ProgrammationLogements({
             type: "number",
             layers: [],
             source: () => values,
-            change: (value) => setValues({...values, densiteScot: value}),
+            change: (value) => setValues({densiteScot: value}),
             readOnly: false
         },
         {
@@ -154,7 +152,7 @@ export default function ProgrammationLogements({
             type: "number",
             layers: [],
             source: () => values,
-            change: (value) => setValues({...values, plui: {...values.plui, densiteOap: value}}),
+            change: (value) => setValues({plui: {...values.plui, densiteOap: value}}),
             readOnly: false
         }
     ];
@@ -165,7 +163,7 @@ export default function ProgrammationLogements({
         >
             <Row className="attributeInfos">
                 <h4>
-                    <strong><Message msgId="tabou2.vocation.progHousing"/></strong>
+                    <strong><Message msgId="tabou2.vocation.progMixte"/></strong>
                 </h4>
                 {
                     getFields().filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map((item, i) => (
@@ -227,7 +225,7 @@ export default function ProgrammationLogements({
                                         />
                                     ) : null
                                 } {item.type === "date" && (
-                                    <DateTimePicker
+                                    <Tabou2Date
                                         type="date"
                                         className="identifyDate"
                                         placeholder={i18n(messages, item.label)}

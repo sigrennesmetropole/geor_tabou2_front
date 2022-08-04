@@ -1,14 +1,14 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, memo } from 'react';
 import { PanelGroup, Panel, Row, Grid } from 'react-bootstrap';
 import { some, isEmpty, isEqual } from 'lodash';
 import Tabou2IdentAccord from '@js/extension/components/form/identify/Tabou2IdentAccord';
 import Tabou2DescribeAccord from '@js/extension/components/form/identify/Tabou2DescribeAccord';
 import Tabou2GouvernanceAccord from '@js/extension/components/form/identify/Tabou2GouvernanceAccord';
-import Tabou2ProgActiviteAccord from '@js/extension/components/form/identify/Tabou2ProgActiviteAccord';
-import Tabou2ProgHabitAccord from '@js/extension/components/form/identify/Tabou2ProgHabitAccord';
-import Tabou2SuiviOpAccord from '@js/extension/components/form/identify/Tabou2SuiviOpAccord';
 import Tabou2DdsAccord from '@js/extension/components/form/identify/Tabou2DdsAccord';
 import Tabou2SecProgLiesAccord from '@js/extension/components/form/identify/Tabou2SecProgLiesAccord';
+import Tabou2SuiviOpAccord from '@js/extension/components/form/identify/Tabou2SuiviOpAccord';
+import Tabou2CadreAccord from '../form/identify/Tabou2CadreAccord';
+import Tabou2ProgHabitAccord from '@js/extension/components/form/identify/Tabou2ProgHabitAccord';
 import { ACCORDIONS } from '@js/extension/constants';
 import Tabou2IdentifyToolbar from './Tabou2IdentifyToolbar';
 import Loader from '@mapstore/components/misc/Loader';
@@ -21,16 +21,17 @@ import "@js/extension/css/tabou.css";
  * @param {any} param
  * @returns component
  */
-export default function Tabou2IdentifyContent({
+const Tabou2IdentifyContent = ({
     response,
     tabouLayer,
     feature,
     featureId,
+    typesFicheInfos,
     ...props
-}) {
+}) => {
     const [accordions, setAccordions] = useState([]);
     // first accordions will be open
-    const [openedAccordions, setOpened] = useState({0: true});
+    const [openedAccordions, setOpened] = useState({ 0: true });
     const [operation, setOperation] = useState({});
     const [mapFeature, setMapFeature] = useState({});
     const [infos, setInfos] = useState({});
@@ -41,7 +42,6 @@ export default function Tabou2IdentifyContent({
         openedAccordions[idx] = openedAccordions[idx] ? false : true;
         setOpened(openedAccordions);
     };
-
     // hooks to refresh if necessary if user change selected layer or if response change
     useEffect(() => {
         setAccordions(ACCORDIONS.filter(acc => !acc.layers || acc?.layers.indexOf(tabouLayer) > -1));
@@ -53,12 +53,7 @@ export default function Tabou2IdentifyContent({
                 setMapFeature(props?.tabouInfos?.mapFeature);
             }
         }
-    }, [tabouLayer, props.tabouInfos]);
-
-    const onChange = (values, required) => {
-        mandatory.current = {...mandatory.current, ...required};
-        setInfos({...infos, ...values});
-    };
+    }, [tabouLayer, props.tabouInfos.uuid, JSON.stringify(typesFicheInfos)]);
 
     const save = () => {
         props.changeFeature({
@@ -77,23 +72,43 @@ export default function Tabou2IdentifyContent({
                 <Tabou2Information
                     isVisible
                     glyph=""
-                    message={<Message msgId="tabou2.identify.getInfos"/>}
-                    title={<Message msgId="tabou2.load"/>}/>
+                    message={<Message msgId="tabou2.identify.getInfos" />}
+                    title={<Message msgId="tabou2.load" />} />
                 <Loader size={size} style={{ padding: size / 10, margin: "auto", display: "flex" }} />
             </>
         );
     }
     const tabsProps = {
-        programme: props.tabouInfos.programme,
+        programme: props.tabouInfos?.programme,
         operation: operation,
         mapFeature: mapFeature,
         initialItem: infos,
-        change: onChange,
-        changeVocation: (newOA) => {
-            setInfos({...infos, ...newOA});
+        change: (values, required) => {
+            console.log(values);
+            mandatory.current = { ...mandatory.current, ...required };
+            let oldInfos = { ...infos };
+            setInfos({ ...oldInfos, ...values });
         },
-        ...props
+        changeProp: (newOA) => {
+            console.log(newOA);
+            let oldInfos = { ...infos };
+            setInfos({ ...oldInfos, ...newOA });
+        },
+        tiers: props.tiers,
+        types: typesFicheInfos,
+        authent: props.authent,
+        apiCfg: props.pluginCfg,
+        layer: props.selection?.layer,
+        setTiersFilter: props.setTiersFilter,
+        permisElement: props.tabouInfos?.permis?.elements,
+        programmesElement: props.tabouInfos?.programmes?.elements,
+        help: props.help,
+        agapeo: props.tabouInfos?.agapeo,
+        vocationsInfos: props.vocationsInfos,
+        messages: props.messages,
+        i18n: props.i18n
     };
+
     return (
         <div className="tabou-identify-panel">
             <Row className="text-center tabou-tbar-panel">
@@ -117,19 +132,19 @@ export default function Tabou2IdentifyContent({
                                 header={(
                                     <span onClick={() => toggleAccordion(index)}>
                                         <label>
-                                            <Message msgId={item.title}/>
+                                            <Message msgId={item.title} />
                                         </label>
                                     </span>
                                 )}
                                 eventKey={index.toString()}>
-                                {item.id === "ident" ? <Tabou2IdentAccord {...tabsProps}/> : null}
-                                {item.id === "describe" ? <Tabou2DescribeAccord {...tabsProps}/> : null}
-                                {item.id === "gouvernance" ? <Tabou2GouvernanceAccord {...tabsProps}/> : null}
-                                {item.id === "suivi" ? <Tabou2SuiviOpAccord {...tabsProps}/> : null}
-                                {item.id === "dds" ? <Tabou2DdsAccord {...tabsProps}/> : null}
-                                {item.id === "habitat" ? <Tabou2ProgHabitAccord {...tabsProps}/> : null}
-                                {item.id === "activite" ? <Tabou2ProgActiviteAccord {...tabsProps}/> : null}
-                                {item.id === "secteursprog" ? <Tabou2SecProgLiesAccord {...tabsProps}/> : null}
+                                {item.id === "ident" ? <Tabou2IdentAccord {...tabsProps} /> : null}
+                                {item.id === "describe" ? <Tabou2DescribeAccord {...tabsProps} /> : null}
+                                {item.id === "gouvernance" ? <Tabou2GouvernanceAccord {...tabsProps} /> : null}
+                                {item.id === "suivi" ? <Tabou2SuiviOpAccord {...tabsProps} /> : null}
+                                {item.id === "dds" ? <Tabou2DdsAccord {...tabsProps} /> : null}
+                                {item.id === "habitat" ? <Tabou2ProgHabitAccord {...tabsProps} /> : null}
+                                {item.id === "secteursprog" ? <Tabou2SecProgLiesAccord {...tabsProps} /> : null}
+                                {item.id === "cadre" ? <Tabou2CadreAccord {...tabsProps} /> : null}
                             </Panel>
                         </PanelGroup>
                     ))
@@ -137,4 +152,6 @@ export default function Tabou2IdentifyContent({
             </Grid>
         </div>
     );
-}
+};
+
+export default memo(Tabou2IdentifyContent);

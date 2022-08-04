@@ -1,6 +1,6 @@
 import React, {useEffect, useState } from "react";
-import { isEmpty, isEqual, pick, get } from "lodash";
-import { Col, Row, Grid, Glyphicon, ControlLabel } from "react-bootstrap";
+import { isEmpty, isEqual, pick, get, find } from "lodash";
+import { Col, Row, Grid, Glyphicon, ControlLabel, FormControl } from "react-bootstrap";
 import Tabou2Combo from '@js/extension/components/form/Tabou2Combo';
 import { getRequestApi } from "@js/extension/api/requests";
 import { Multiselect } from "react-widgets";
@@ -11,23 +11,65 @@ import Message from "@mapstore/components/I18N/Message";
 import ButtonRB from '@mapstore/components/misc/Button';
 import tooltip from '@mapstore/components/misc/enhancers/tooltip';
 const Button = tooltip(ButtonRB);
+
 /**
  * Accordion to display info for Gouvernance panel section - only for feature linked with id tabou
  * @param {any} param
  * @returns component
  */
-export default function Tabou2GouvernanceAccord({ initialItem, programme, operation, mapFeature, ...props }) {
-    let layer = props?.selection?.layer;
-    const [values, setValues] = useState({});
-    const [fields, setFields] = useState([]);
-    const [required, setRequired] = useState({});
+const Tabou2GouvernanceAccord = ({
+    initialItem,
+    programme,
+    operation,
+    layer,
+    messages,
+    types,
+    tiers,
+    setTiersFilter,
+    authent,
+    change = () => { },
+    apiCfg,
+    i18n = () => { }
+}) => {
 
-    const getFields = () => [{
+    let changeInfos = () => { };
+
+    let changeAction = (t, fieldArray, search, field, value, src) => {
+        // get item by type code
+        let itemByCode = find(get(src, fieldArray), search);
+        if (!itemByCode) {
+            itemByCode = { typeAction: find(t.typesAction, ['code', search[1]]) };
+        }
+        // change value
+        itemByCode[field] = value;
+        // filter others item whithout changed item
+        const othersItems = src[fieldArray].filter(item => item.typeAction.code !== itemByCode.typeAction.code);
+        // send to parent
+        const concatAll = [...othersItems, itemByCode];
+        changeInfos({ actions: concatAll });
+    };
+
+    let changeActeur = (t, fieldArray, search, field, value, src) => {
+        // get item by type code
+        let itemByCode = find(get(src, fieldArray), search);
+        if (!itemByCode) {
+            itemByCode = { typeActeur: find(t.typesActeurs, ['code', search[1]]) };
+        }
+        // change value
+        itemByCode[field] = value;
+        // filter others item whithout changed item
+        const othersItems = src[fieldArray].filter(item => item.typeActeur.code !== itemByCode.typeActeur.code);
+        // send to parent
+        const concatAll = [...othersItems, itemByCode];
+        changeInfos({ acteurs: concatAll });
+    };
+
+    const fields = [{
         name: "promoteur",
         label: "tabou2.identify.accordions.promoteur",
         layers: ["layerPA"],
         type: "multi",
-        data: props.tiers.filter(t => t.typeTiers.id === 1).map(t => t.tiers.nom),
+        data: tiers.filter(t => t.typeTiers.id === 1).map(t => t.tiers.nom),
         readOnly: true
     }, {
         name: "decision",
@@ -65,44 +107,57 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
         label: "tabou2.identify.accordions.amenageur",
         layers: ["layerSA", "layerOA"],
         type: "multi",
-        data: props.tiers.filter(t => t.typeTiers.id === 1).map(t => t.tiers.nom),
+        data: tiers.filter(t => t.typeTiers.id === 1).map(t => t.tiers.nom),
         readOnly: true
     }, {
         name: "moe",
         label: "tabou2.identify.accordions.moe",
         type: "multi",
-        data: props.tiers.filter(t => t.typeTiers.id === 2).map(t => t.tiers.nom),
+        data: tiers.filter(t => t.typeTiers.id === 2).map(t => t.tiers.nom),
         readOnly: true
+    }, {
+        name: "actions",
+        type: "text",
+        layers: ["layerSA", "layerOA"],
+        label: "tabou2.identify.accordions.rmActions",
+        field: "actions.description",
+        readOnly: false,
+        value: find(initialItem.actions, ["typeAction.code", "ACTION"])?.description,
+        change: (v, t, src) => changeAction(t, "actions", ["typeAction.code", "ACTION"], "description", v, src)
+    }, {
+        name: "acteurs",
+        type: "text",
+        layers: ["layerSA", "layerOA"],
+        label: "tabou2.identify.accordions.acteursInt",
+        field: "acteurs.description",
+        readOnly: false,
+        value: find(initialItem.acteurs, ["typeActeur.code", "ACT_INT"])?.description,
+        change: (v, t, src) => changeActeur(t, "acteurs", ["typeActeur.code", "ACT_INT"], "description", v, src)
+    }, {
+        name: "acteurs",
+        type: "text",
+        layers: ["layerSA", "layerOA"],
+        label: "tabou2.identify.accordions.acteursExt",
+        field: "acteurs.description",
+        readOnly: false,
+        value: find(initialItem.acteurs, ["typeActeur.code", "ACT_EXT"])?.description,
+        change: (v, t, src) => changeActeur(t, "acteurs", ["typeActeur.code", "ACT_EXT"], "description", v, src)
     }].filter(el => el?.layers?.includes(layer) || !el?.layers);
+    const required = fields.filter(f => f.require).map(f => f.name);
 
-    const allowChange = props.authent.isContrib || props.authent.isReferent;
-    /**
-     * Effect
-     */
-    // return writable fields as object-keys
+    const allowChange = authent.isContrib || authent.isReferent;
 
-    useEffect(() => {
-        const calculFields = getFields();
-        const mandatoryFields = calculFields.filter(f => f.require).map(f => f.name);
-        if (!isEqual(initialItem, values)) {
-            setValues(initialItem);
-            setFields(calculFields);
-            setRequired(mandatoryFields);
-        }
-    }, [initialItem]);
-
-    const changeInfos = (item) => {
-        let newValues = {...values, ...item};
-        setValues(newValues);
+    changeInfos = (item) => {
+        // get readOnly field name
+        let editableFields = fields.filter(f => !f.readOnly).map(f => f.name);
         // send to parent to save
-        let accordValues = pick(newValues, getFields().filter(f => !f.readOnly).map(f => f.name));
-        props.change(accordValues, pick(accordValues, required));
+        change(item, pick(editableFields, required));
     };
 
     const openTierModal = (type) => {
         let tiersBtn = document.getElementById('tiers');
-        if (props.setTiersFilter && type && tiersBtn) {
-            props.setTiersFilter(operation?.id || programme?.id, type);
+        if (setTiersFilter && type && tiersBtn) {
+            setTiersFilter(operation?.id || programme?.id, type);
             tiersBtn.click();
         }
     };
@@ -132,47 +187,60 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
                     <Row className="attributeInfos">
                         <Col xs={4}>
                             {
-                                item.label && (<ControlLabel><Message msgId={item.label}/></ControlLabel>)
+                                item.label && (<ControlLabel><Message msgId={item.label} /></ControlLabel>)
                             }
                         </Col>
                         <Col xs={allTiersButtons[item.name] ? 7 : 8}>
                             {
+                                item.type === "text" || item.type === "number" ?
+                                    (<FormControl
+                                        componentClass={item.isArea ? "textarea" : "input"}
+                                        placeholder={i18n(messages, item?.placeholder || item.label)}
+                                        style={{ height: item.isArea ? "100px" : "auto" }}
+                                        type={item.type}
+                                        min="0"
+                                        step={item?.step}
+                                        value={item.value || ""}
+                                        readOnly={item.readOnly || !allowChange}
+                                        onChange={(v) => item.change(v.target.value, types, initialItem)}
+                                    />) : null
+                            }{
                                 item.type === "button" && (
                                     <Button
-                                        tooltip={props.i18n(props.messages, item.tooltip || "")}
-                                        onClick={() => item.click() }
+                                        tooltip={i18n(messages, item.tooltip || "")}
+                                        onClick={() => item.click()}
                                         bsStyle="primary"
                                         bsSize={item.size || "xs"}>
-                                        <Glyphicon glyph="user"/>
+                                        <Glyphicon glyph="user" />
                                     </Button>
                                 )
                             }{
                                 item.type === "combo" && (
                                     <Tabou2Combo
-                                        load={() => getRequestApi(item.api, props.pluginCfg.apiCfg, {})}
-                                        placeholder={props.i18n(props.messages, item?.label || "")}
+                                        load={() => getRequestApi(item.api, apiCfg, {})}
+                                        placeholder={i18n(messages, item?.label || "")}
                                         filter="contains"
                                         textField={item.apiLabel}
                                         disabled={item?.readOnly || !allowChange}
                                         onLoad={(r) => r?.elements || r}
                                         name={item.name}
-                                        value={get(values, item.name)}
-                                        onSelect={(v) => changeInfos({[item.name]: v})}
-                                        onChange={(v) => !v ? changeInfos({[item.name]: v}) : null}
+                                        value={get(initialItem, item.name)}
+                                        onSelect={(v) => changeInfos({ [item.name]: v })}
+                                        onChange={(v) => !v ? changeInfos({ [item.name]: v }) : null}
                                         messages={{
-                                            emptyList: props.i18n(props.messages, "tabou2.emptyList"),
-                                            openCombobox: props.i18n(props.messages, "tabou2.displayList")
+                                            emptyList: i18n(messages, "tabou2.emptyList"),
+                                            openCombobox: i18n(messages, "tabou2.displayList")
                                         }}
                                     />
                                 )
                             }{
                                 item.type === "multi" && (
                                     <Multiselect
-                                        placeholder={props.i18n(props.messages, item?.label || "")}
+                                        placeholder={i18n(messages, item?.label || "")}
                                         readOnly={item.readOnly || !allowChange}
                                         value={item.data}
-                                        className={ item.readOnly ? "tagColor noClick" : "tagColor"}
-                                        onChange={() => {}}
+                                        className={item.readOnly ? "tagColor noClick" : "tagColor"}
+                                        onChange={() => { }}
                                     />
                                 )
                             }
@@ -181,11 +249,11 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
                             allTiersButtons[item.name] && (
                                 <Col xs={1} className="no-padding">
                                     <Button
-                                        tooltip={props.i18n(props.messages, allTiersButtons[item.name].tooltip || "")}
-                                        onClick={() => allTiersButtons[item.name].click() }
+                                        tooltip={i18n(messages, allTiersButtons[item.name].tooltip || "")}
+                                        onClick={() => allTiersButtons[item.name].click()}
                                         bsStyle="primary"
                                         bsSize="small">
-                                        <Glyphicon glyph="user"/>
+                                        <Glyphicon glyph="user" />
                                     </Button>
                                 </Col>
                             )
@@ -195,4 +263,6 @@ export default function Tabou2GouvernanceAccord({ initialItem, programme, operat
             }
         </Grid>
     );
-}
+};
+
+export default Tabou2GouvernanceAccord;

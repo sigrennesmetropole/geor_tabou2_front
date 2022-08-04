@@ -27,7 +27,8 @@ import {
     TABOU_CHANGE_FEATURES,
     SET_TABOU_DOCUMENTS,
     SET_TABOU_VOCATIONS_INFOS,
-    DISPLAY_TABOU_MARKER
+    DISPLAY_TABOU_MARKER,
+    SET_TABOU_FICHE_INFOS
 } from '../actions/tabou2';
 
 const initialState = {
@@ -57,7 +58,10 @@ const initialState = {
     featureSelected: undefined,
     typesContribution: [],
     typesProgrammation: [],
-    typesVocation: []
+    typesVocation: [],
+    typesFonciers: [],
+    typesAction: [],
+    typesActeur: []
 };
 
 export default function tabou2(state = initialState, action) {
@@ -143,6 +147,8 @@ export default function tabou2(state = initialState, action) {
     case SET_TABOU_DOCUMENTS:
         return set("documents", action?.documents || {}, state);
     case SET_TABOU_VOCATIONS_INFOS:
+        return set(action.key, action.data || {}, state);
+    case SET_TABOU_FICHE_INFOS:
         return set(action.key, action.data || {}, state);
     default:
         return state;

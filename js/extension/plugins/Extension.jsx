@@ -21,7 +21,7 @@ import init from "../utils/init";
 import { onTabouMapClick, onSelectionUpdate, showTabouClickMarker } from "../epics/layer";
 import { tabouApplyFilter, tabouResetFilter, tabouGetSearchIds } from "../epics/search";
 import { tabouLoadIdentifyContent, printProgramme, createChangeFeature,
-    displayFeatureInfos, dipslayPASAByOperation } from '../epics/identify';
+    displayFeatureInfos, dipslayPASAByOperation, getFicheInfoValues } from '../epics/identify';
 import { getSelectionInfos, createTabouFeature, onLayerReload } from '../epics/featureEvents';
 import { updateTabou2Tier, addCreateTabou2Tier, getTiersElements, associateTabou2Tier } from '../epics/tiers';
 import { updateTabou2Logs, getEventsElements } from "../epics/logs";
@@ -119,7 +119,8 @@ export default {
         addNewDocument: addNewDocument,
         updateDocument: updateDocument,
         onUpdateOperation: onUpdateOperation,
-        onGetInfos: onGetInfos
+        onGetInfos: onGetInfos,
+        getFicheInfoValues: getFicheInfoValues
     },
     containers: {
         Toolbar: {

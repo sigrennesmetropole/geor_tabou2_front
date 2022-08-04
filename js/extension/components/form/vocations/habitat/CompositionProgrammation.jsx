@@ -20,10 +20,11 @@ export default function AutreProgrammation({
             name: "compositionProgrammation",
             label: "tabou2.vocation.compoProg",
             field: "operation",
+            isArea: true,
             type: "text",
             layers: [],
             source: () => values,
-            change: (value) => setValues({...values, operation: value}),
+            change: (value) => setValues({operation: value}),
             readOnly: false
         }
     ];
@@ -34,7 +35,7 @@ export default function AutreProgrammation({
         >
             <Row className="attributeInfos">
                 <h4>
-                    <strong><Message msgId="tabou2.vocation.compoProg"/></strong>
+                    <strong><Message msgId="tabou2.vocation.compoTitle"/></strong>
                 </h4>
                 {
                     getFields().filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map((item, i) => (

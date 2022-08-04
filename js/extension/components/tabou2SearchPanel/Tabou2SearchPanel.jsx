@@ -11,10 +11,7 @@ import { setTabouFilterObj, setTabouFilters, resetSearchFilters } from '../../ac
 import { getNewFilter, getSpatialCQL, getCQL, getTabouLayersInfos, createWfsPostRequest } from '../../utils/search';
 import { SEARCH_ITEMS, SEARCH_CALENDARS } from '@js/extension/constants';
 import Message from "@mapstore/components/I18N/Message";
-import moment from 'moment';
-import momentLocalizer from 'react-widgets/lib/localizers/moment';
-momentLocalizer(moment);
-import { DateTimePicker } from 'react-widgets';
+import Tabou2Date from '../common/Tabou2Date';
 import "@js/extension/css/tabou.css";
 
 function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, changeFiltersObj, changeFilters, currentFilters, ...props }) {
@@ -216,7 +213,7 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
         return (
             <Col xs={6}>
                 <FormGroup className="tabou-form-group">
-                    <DateTimePicker
+                    <Tabou2Date
                         type="date"
                         className="tabou-search-combo"
                         dropUp

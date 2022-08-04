@@ -7,7 +7,7 @@ import {
     CHANGE_FEATURE_EVENT,
     getApiEvents,
     GET_EVENTS
-} from '@ext/actions/tabou2';
+} from '../actions/tabou2';
 
 import {
     getFeatureEvents,
@@ -16,7 +16,7 @@ import {
     changeFeatureEvent
 } from '../api/requests';
 
-import { isTabou2Activate, getInfos } from '@ext/selectors/tabou2';
+import { isTabou2Activate, getInfos } from '../selectors/tabou2';
 
 // get service to request according to action type
 const actionOnUpdate = {

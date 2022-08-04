@@ -7,7 +7,7 @@ import "@js/extension/css/tabou.css";
 import { findValueByType, changeByType, getCodeIdByCode } from "../utils";
 import Tabou2Combo from '@js/extension/components/form/Tabou2Combo';
 import { getVocationZa } from "@js/extension/api/requests";
-export default function ProgrammationLogements({
+export default function ProgrammationActivite({
     operation = {},
     layer = "",
     typesProgrammation,
@@ -26,20 +26,21 @@ export default function ProgrammationLogements({
                 label: "tabou2.vocation.progActivity",
                 field: "description",
                 type: "text",
+                isArea: true,
                 layers: [],
-                source: () => findValueByType(getCodeIdByCode(typesProgrammation, "Activites"), values, "informationsProgrammation"),
+                source: () => findValueByType(getCodeIdByCode(typesProgrammation, "ACTIVITES"), values, "informationsProgrammation"),
                 change: (value) => {
                     setValues(
                         changeByType(
-                            getCodeIdByCode(typesProgrammation, "Activites"),
+                            getCodeIdByCode(typesProgrammation, "ACTIVITES"),
                             value,
                             values,
                             "informationsProgrammation",
-                            getCodeIdByCode(typesProgrammation, "Activites")
+                            getCodeIdByCode(typesProgrammation, "ACTIVITES")
                         )
                     );
                 },
-                code: "Activites",
+                code: "ACTIVITES",
                 readOnly: false
             },
             {
@@ -52,7 +53,7 @@ export default function ProgrammationLogements({
                 api: getVocationZa,
                 layers: [],
                 source: () => values,
-                change: (value) => setValues({ ...values, vocationZa: { ...values.vocationZa, libelle: value } }),
+                change: (value) => setValues({ vocationZa: value }),
                 code: "Autres",
                 readOnly: false
             },
@@ -63,7 +64,7 @@ export default function ProgrammationLogements({
                 type: "checkbox",
                 layers: ["layerOA"],
                 source: () => values,
-                change: () => setValues({ ...values, scot: !values.scot }),
+                change: () => setValues({ scot: !values.scot }),
                 readOnly: false
             },
             {
@@ -73,7 +74,7 @@ export default function ProgrammationLogements({
                 type: "number",
                 layers: [],
                 source: () => values,
-                change: (value) => setValues({ ...values, densiteScot: value }),
+                change: (value) => setValues({ densiteScot: value }),
                 readOnly: false
             },
             {
@@ -83,7 +84,7 @@ export default function ProgrammationLogements({
                 type: "number",
                 layers: [],
                 source: () => values,
-                change: (value) => setValues({ ...values, plui: { ...values.plui, densiteOap: value } }),
+                change: (value) => setValues({ plui: { ...values.plui, densiteOap: value } }),
                 readOnly: false
             }
         ];
@@ -96,7 +97,7 @@ export default function ProgrammationLogements({
         >
             <Row className="attributeInfos">
                 <h4>
-                    <strong><Message msgId="tabou2.vocation.progHousing"/></strong>
+                    <strong><Message msgId="tabou2.vocation.progActivity"/></strong>
                 </h4>
                 {
                     getFields().filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map((item, i) => (

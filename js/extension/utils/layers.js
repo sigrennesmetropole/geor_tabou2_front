@@ -1,5 +1,6 @@
 import { reproject } from '@mapstore/utils/CoordinatesUtils';
 import GeoJSON from 'ol/format/GeoJSON';
+import Polygon from 'ol/geom/Polygon';
 
 export const featuresToJSON = (features) => {
     let writer = new GeoJSON();
@@ -54,5 +55,15 @@ export const readFeatures = (data, from, to) => {
         defaultDataProjection: from
     });
     let features = reader.readFeatures(data, from && to ? { dataProjection: from, featureProjection: to } : {});
-    return JSON.parse(featuresToJSON(features));
+    features.forEach(f => f.setProperties({ area: f.getGeometry().getArea() }));
+    return features;
 };
+
+export const getAreaFeature = (featureJson, from, to) => {
+    return readFeatures(featureJson, from, to)[0].getGeometry().getArea();
+};
+
+export const getJsonFeatures = (data, from, to) => {
+    let features = readFeatures(data, from, to);
+    return JSON.parse(featuresToJSON(features));
+}

@@ -37,7 +37,16 @@ export function listTabouDocuments(action$, store) {
             let { featureId, layerUrl } = getInfos(store.getState());
             let observable$ = Rx.Observable.empty();
             if (action.load && featureId) {
-                observable$ = Rx.Observable.defer(() => getTabouDocuments(layerUrl, featureId, action.page, resultByPage, action.text))
+                observable$ = Rx.Observable.defer(
+                    () => getTabouDocuments(
+                        layerUrl,
+                        featureId,
+                        action.page,
+                        resultByPage,
+                        action.nom,
+                        action.libelleTypeDocument,
+                        action.typeMime
+                    ))
                     .catch(e => {
                         console.log("Error - Get list of documents");
                         console.log(e);

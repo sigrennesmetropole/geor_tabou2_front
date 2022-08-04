@@ -1,17 +1,30 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, memo } from "react";
 import { isEmpty, isEqual, pick, has, get } from "lodash";
 import { Checkbox, Col, Row, FormControl, Grid, ControlLabel } from "react-bootstrap";
 import "@js/extension/css/identify.css";
 import Message from "@mapstore/components/I18N/Message";
+
+const avoidReRender = (prevProps, nextProps) => {
+    if (isEqual(prevProps.initialItem, nextProps.initialItem)) {
+        return true;
+    }
+    return false; // re render
+};
 /**
  * Accordion to display info for this specific panel section - only for feature linked with id tabou
  * This component is only use and display for OA, SA entity
  * @param {any} param
  * @returns component
  */
-export default function Tabou2ProgActiviteAccord({ initialItem, programme, operation, mapFeature, ...props }) {
-    let layer = props?.selection?.layer;
-
+const Tabou2ProgActiviteAccord = ({
+    initialItem,
+    operation,
+    layer,
+    authent,
+    change = () => { },
+    i18n = () => { },
+    messages
+}) => {
     const [values, setValues] = useState({});
     const [fields, setFields] = useState([]);
     const [required, setRequired] = useState({});
@@ -57,10 +70,10 @@ export default function Tabou2ProgActiviteAccord({ initialItem, programme, opera
         setValues(newValues);
         // send to parent to save
         let accordValues = pick(newValues, getFields().filter(f => !f.readOnly).map(f => f.name));
-        props.change(accordValues, pick(accordValues, required));
+        change(accordValues, pick(accordValues, required));
     };
 
-    const allowChange = props.authent.isContrib || props.authent.isReferent;
+    const allowChange = authent.isContrib || authent.isReferent;
     return (
         <Grid style={{ width: "100%" }} className={""}>
             {
@@ -88,7 +101,7 @@ export default function Tabou2ProgActiviteAccord({ initialItem, programme, opera
                             {
                                 item.type === "text" ?
                                     (<FormControl
-                                        placeholder={props.i18n(props.messages, item?.label || "")}
+                                        placeholder={i18n(messages, item?.label || "")}
                                         value={getValue(item) || ""}
                                         readOnly={item.readOnly || !allowChange}
                                         onChange={(v) => changeInfos({[item.name]: v.target.value})}
@@ -100,4 +113,5 @@ export default function Tabou2ProgActiviteAccord({ initialItem, programme, opera
             }
         </Grid>
     );
-}
+};
+export default memo(Tabou2ProgActiviteAccord, avoidReRender);

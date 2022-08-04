@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import ResizableModal from '@mapstore/components/misc/ResizableModal';
 import Message from "@mapstore/components/I18N/Message";
 import { DropdownList } from 'react-widgets';
-import { Col, Tabs, Tab } from 'react-bootstrap';
+import { Col } from 'react-bootstrap';
 import "@js/extension/css/vocation.css";
 import Activites from "../../form/vocations/activites/Activites";
 import Habitat from "../../form/vocations/habitat/Habitat";
 import Mixte from "../../form/vocations/mixte/Mixte";
-import { isEqual } from "lodash";
 export default function Tabou2VocationModal({
     operation,
+    initialItems,
     opened,
     close,
     update,
@@ -20,16 +20,31 @@ export default function Tabou2VocationModal({
     i18n = () => { },
     messages
 }) {
-    const showCodeVocations = ["ACTIVITE", "HABITAT", "MIXTE"];
+    const [vocation, setVocation] = useState(initialItems.vocation || {});
+    const fieldsToFollow = [
+        "contributions",
+        "operation",
+        "vocation",
+        "plui",
+        "nbLogementsPrevu",
+        "informationsProgrammation",
+        "vocationZa",
+        "plh",
+        "scot",
+        "densiteScot",
+        "contributions"
+    ];
+    const [newOperation, setNewOperation] = useState(Object.assign({}, ...fieldsToFollow.map(f => ({[f]: initialItems[f]}))));
 
-    const [vocation, setVocation] = useState(operation.vocation || {});
-    const [newOperation, setNewOperation] = useState(operation);
-    const propsTab = {
+    let propsTab = {
         operation: operation,
-        update: setNewOperation,
+        update: update,
         typesContribution: typesContribution,
         values: newOperation,
-        setValues: setNewOperation,
+        setValues: (t) => {
+            const newOA = { ...newOperation, ...t };
+            setNewOperation({...newOA});
+        },
         typesProgrammation: typesProgrammation,
         allowChange: allowChange,
         i18n: i18n,
@@ -38,7 +53,7 @@ export default function Tabou2VocationModal({
 
     const changeVocation = (v) => {
         setVocation(v);
-        setNewOperation({ ...newOperation, vocation: v });
+        update({ vocation: v });
     };
 
     return (
@@ -52,16 +67,14 @@ export default function Tabou2VocationModal({
                     text: <Message msgId="tabou2.vocation.back" />,
                     style: {marginRight: "5px"},
                     onClick: () => {
-                        if (!isEqual(newOperation, operation)) {
-                            update(newOperation);
-                        }
+                        update(newOperation);
                         close();
                     }
                 },
                 {
                     text: <Message msgId="tabou2.vocation.reset" />,
                     visible: allowChange,
-                    onClick: () => setNewOperation(operation)
+                    onClick: () => setNewOperation(initialItems)
                 }
             ]}
             onClose={() => close()}
@@ -71,26 +84,19 @@ export default function Tabou2VocationModal({
                     <label><Message msgId="tabou2.vocation.selectVoc" /></label>
                     <DropdownList
                         style={{width: "30%"}}
-                        data={typesVocation.filter(v => showCodeVocations.includes(v.code))}
+                        data={typesVocation}
                         dataKey="code"
                         textField="libelle"
-                        defaultValue={newOperation?.vocation?.libelle || ""}
+                        defaultValue={{...initialItems, ...newOperation}?.vocation?.libelle || ""}
                         onSelect={val => changeVocation(val)}
                         placeholder="Choisir une vocation..."
                     />
                 </div>
             </Col>
             <Col xs={12}>
-                <Tabs defaultActiveKey={1} id="vocation-tabs" className="voc-tabs">
-                    <Tab
-                        className="voc-tab-select"
-                        key={1} eventKey={1} title={vocation?.libelle || ""}
-                    >
-                        {vocation?.code === "ACTIVITE" && (<Activites {...propsTab} />)}
-                        {vocation?.code === "HABITAT" && (<Habitat {...propsTab} />)}
-                        {vocation?.code === "MIXTE" && (<Mixte {...propsTab}/>)}
-                    </Tab>
-                </Tabs>
+                {vocation?.code === "ACTIVITE" && (<Activites {...propsTab} />)}
+                {vocation?.code === "HABITAT" && (<Habitat {...propsTab} />)}
+                {vocation?.code === "MIXTE" && (<Mixte {...propsTab}/>)}
             </Col>
         </ResizableModal>
     );

@@ -1,7 +1,7 @@
 import * as Rx from 'rxjs';
 import { CONTROL_NAME, ID_TABOU, URL_ADD } from '../constants';
 
-import { get, keys, find, isEmpty, has, pickBy } from 'lodash';
+import { get, keys, find, isEmpty, pickBy } from 'lodash';
 
 import {
     generalInfoFormatSelector, identifyOptionsSelector, clickPointSelector
@@ -39,15 +39,16 @@ import {
     CHANGE_FEATURE,
     DISPLAY_FEATURE,
     reloadLayer,
-    displayFeature,
+    LOAD_FICHE_INFOS,
     DISPLAY_PA_SA_BY_OA,
     setTabouFilterObj,
     applyFilterObj,
     cleanTabouInfos,
     TABOU_CHANGE_FEATURES,
-    setSelectedFeature
+    setSelectedFeature,
+    setTabouFicheInfos
 } from "../actions/tabou2";
-import { getPDFProgramme, getPDFOperation, putRequestApi } from '../api/requests';
+import { getPDFProgramme, getPDFOperation, putRequestApi, getTypesFoncier, getTypesActeurs, getTypesActions } from '../api/requests';
 
 import { getFeatureInfo } from "@mapstore/api/identify";
 
@@ -158,7 +159,7 @@ export function createChangeFeature(action$, store) {
                     console.log(e);
                     return Rx.Observable.of(e);
                 })
-                .switchMap((el) => {
+                .switchMap(() => {
                     return Rx.Observable.of(
                         // success message
                         success({
@@ -256,3 +257,32 @@ export function dipslayPASAByOperation(action$, store) {
             );
         });
 }
+
+export const getFicheInfoValues = (action$, store) =>
+    action$.ofType(LOAD_FICHE_INFOS)
+        .filter(() => isTabou2Activate(store.getState()))
+        .switchMap(({ id }) => {
+            return Rx.Observable.from([
+                { name: "typesFonciers", api: getTypesFoncier },
+                { name: "typesActeur", api: getTypesActeurs },
+                { name: "typesAction", api: getTypesActions}
+            ]).map(r =>
+                Rx.Observable.defer(() => r.api(id))
+                    .catch(e => {
+                        console.log("Error on get getTabouVocationsInfos data request");
+                        console.log(e);
+                        return Rx.Observable.of({ data: [] });
+                    })
+                    .switchMap(({ data }) => {
+                        return Rx.Observable.of({...r, data: data?.elements || [] });
+                    })
+            ).toArray().switchMap((requestArray) => {
+                return Rx.Observable.forkJoin(requestArray).flatMap((elementArray) => {
+                    return Rx.Observable.of(
+                        setTabouFicheInfos(elementArray[0].name, elementArray[0].data),
+                        setTabouFicheInfos(elementArray[1].name, elementArray[1].data),
+                        setTabouFicheInfos(elementArray[2].name, elementArray[2].data),
+                    );
+                });
+            });
+        });

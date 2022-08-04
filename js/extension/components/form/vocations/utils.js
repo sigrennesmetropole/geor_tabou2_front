@@ -17,9 +17,13 @@ export const changeByType = (codeId, value = "", values, type) => {
     }
     // set or update description value
     newInfos.push({ ...findThisCode, description: value });
-    return { ...values, [type]: newInfos };
+    return {[type]: newInfos };
 };
 
 export const getCodeIdByCode = (ids, code) => {
-    return ids.filter(el => el.code === code)[0].id;
+    const codeToUse = ids.filter(el => el.code === code);
+    if (!codeToUse.length) {
+        console.log("This code don't exists : " + code);
+    }
+    return ids.filter(el => el.code === code)[0]?.id;
 };

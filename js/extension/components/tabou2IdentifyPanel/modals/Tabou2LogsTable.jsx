@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Glyphicon, Grid, Row, Col, Checkbox, FormControl } from 'react-bootstrap';
-import { orderBy, isEmpty, find, set } from 'lodash';
+import { orderBy, isEmpty, find, set, get } from 'lodash';
 import ButtonRB from '@mapstore/components/misc/Button';
 import Tabou2Combo from '@js/extension/components/form/Tabou2Combo';
 import { getTypesEvents } from "@js/extension/api/requests";
 import tooltip from '@mapstore/components/misc/enhancers/tooltip';
 import Message from "@mapstore/components/I18N/Message";
-import moment from 'moment';
-import momentLocalizer from 'react-widgets/lib/localizers/moment';
-momentLocalizer(moment);
-import { DateTimePicker } from 'react-widgets';
+import Tabou2Date from '../../common/Tabou2Date';
 
 const Button = tooltip(ButtonRB);
 
@@ -21,7 +18,6 @@ export default function Tabou2LogsTable({
     readOnly,
     sortField,
     changeSort = () => {},
-    saveEvent = () => {},
     cancelChange = () => {},
     ...props
 }) {
@@ -46,7 +42,7 @@ export default function Tabou2LogsTable({
             setAllLogs(readLogs);
         }
         return;
-    }, [logInChange?.id, editionActivate]);
+    }, [logInChange?.id, editionActivate.current]);
 
     useEffect(() => {
         setAllLogs(logs);
@@ -65,6 +61,11 @@ export default function Tabou2LogsTable({
         // avoid to change props.tiers directly and broke ref memory
         let logChanged = set(copyLog, field, value);
         setLogInChange(logChanged);
+    };
+
+    const saveEvent = () => {
+        props.saveEvent(logInChange);
+        setLogInChange(null);
     };
 
     // manage sort style
@@ -112,7 +113,7 @@ export default function Tabou2LogsTable({
                                             </td>
                                             <td>
                                                 {
-                                                    log.new || log.edit ? (<DateTimePicker
+                                                    log.new || log.edit ? (<Tabou2Date
                                                         type="date"
                                                         dropDown
                                                         calendar
@@ -132,7 +133,7 @@ export default function Tabou2LogsTable({
                                                         <Tabou2Combo
                                                             load={() => getTypesEvents()}
                                                             valueField={"id"}
-                                                            defaultValue={logInChange?.edit ? logInChange?.typeEvenement.id : null}
+                                                            defaultValue={get(logInChange, "typeEvenement.id")}
                                                             placeholder={props.i18n(props.messages, "tabou2.logsModal.typePlaceholder")}
                                                             filter="contains"
                                                             dropUp={i < 6 ? false : true}
@@ -176,23 +177,23 @@ export default function Tabou2LogsTable({
                                                 }
                                             </td>
                                             {
-                                                !readOnly &&
+                                                readOnly ? null :
                                                     (<td>
                                                         {
-                                                            (log.new || log.edit) && (
+                                                            (log.new || log.edit) ? (
                                                                 <Button
                                                                     tooltip={props.i18n(props.messages, "tabou2.save")}
                                                                     disabled={!logInChange?.typeEvenement || isEmpty(logInChange?.typeEvenement) || !logInChange?.description}
                                                                     style={{ borderColor: "rgba(0,0,0,0)"}}
-                                                                    onClick={() => saveEvent(logInChange)}>
+                                                                    onClick={() => saveEvent()}>
                                                                     <span style={{ color: "rgb(40, 167, 69)" }}>
                                                                         <Glyphicon glyph="ok"/>
                                                                     </span>
                                                                 </Button>
-                                                            )
+                                                            ) : null
                                                         }
                                                         {
-                                                            (log.edit && !log.new) && (
+                                                            (log.edit && !log.new) ? (
                                                                 <Button
                                                                     tooltip={props.i18n(props.messages, "tabou2.cancel")}
                                                                     style={{ borderColor: "rgba(0,0,0,0)"}}
@@ -201,10 +202,10 @@ export default function Tabou2LogsTable({
                                                                         <Glyphicon glyph="remove"/>
                                                                     </span>
                                                                 </Button>
-                                                            )
+                                                            ) : null
                                                         }
                                                         {
-                                                            (!log.systeme && !log.new && isEmpty(logInChange)) && (
+                                                            (!log.systeme && !log.new && isEmpty(logInChange)) ? (
                                                                 <Button
                                                                     tooltip={props.i18n(props.messages, "tabou2.change")}
                                                                     style={{ borderColor: "rgba(0,0,0,0)"}}
@@ -213,10 +214,10 @@ export default function Tabou2LogsTable({
                                                                         <Glyphicon glyph="pencil"/>
                                                                     </span>
                                                                 </Button>
-                                                            )
+                                                            ) : null
                                                         }
                                                         {
-                                                            (log.new || isEmpty(logInChange) && !log.systeme) && (
+                                                            ((log.new || isEmpty(logInChange)) && !log.systeme) ? (
                                                                 <Button
                                                                     tooltip={props.i18n(props.messages, "tabou2.delete")}
                                                                     style={{ borderColor: "rgba(0,0,0,0)"}}
@@ -225,7 +226,7 @@ export default function Tabou2LogsTable({
                                                                         <Glyphicon glyph="trash"/>
                                                                     </span>
                                                                 </Button>
-                                                            )
+                                                            ) : null
                                                         }
                                                     </td>)
                                             }

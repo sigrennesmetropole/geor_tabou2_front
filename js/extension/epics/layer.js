@@ -4,7 +4,7 @@ import { updateAdditionalLayer } from '@mapstore/actions/additionallayers';
 import { CLICK_ON_MAP } from '@mapstore/actions/map';
 import { get, keys, isEmpty } from "lodash";
 import { TABOU_VECTOR_ID, TABOU_OWNER, TABOU_MARKER_LAYER_ID } from '../constants';
-import { createParams, readFeatures } from '../utils/layers';
+import { createParams, getJsonFeatures } from '../utils/layers';
 import {
     cleanTabouSelection,
     updateVectorTabouFeatures,
@@ -75,7 +75,7 @@ export const onSelectionUpdate = (action$, store) =>
             if (!isEmpty(responses) && !isEmpty(userFeaturesSelection)) {
                 // only style selected layer's features
                 const features = userFeaturesSelection.map(d => {
-                    let newFeatures =  readFeatures(d, "EPSG:3857", "EPSG:4326");
+                    let newFeatures =  getJsonFeatures(d, "EPSG:3857", "EPSG:4326");
                     return newFeatures.features.map(f => ({
                         ...f,
                         style: f?.id === selectedId ? styles.selection : styles.default

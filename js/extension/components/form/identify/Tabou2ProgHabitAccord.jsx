@@ -1,164 +1,149 @@
-import React, {useEffect, useState } from "react";
+import React, {useEffect, useState, memo } from "react";
 import { isEmpty, isEqual, pick, has, get, capitalize } from "lodash";
 import { Col, Row, Table, FormControl, Grid, ControlLabel, Alert, Glyphicon } from "react-bootstrap";
-import { DateTimePicker } from "react-widgets";
+import Tabou2Date from '@js/extension/components/common/Tabou2Date';
 import "@js/extension/css/identify.css";
 import "@js/extension/css/tabou.css";
 import Message from "@mapstore/components/I18N/Message";
 
-import moment from 'moment';
-import momentLocalizer from 'react-widgets/lib/localizers/moment';
 import ControlledPopover from '@mapstore/components/widgets/widget/ControlledPopover';
-momentLocalizer(moment);
 
-export default function Tabou2ProgHabitatAccord({ initialItem, programme, operation, mapFeature, ...props }) {
-    let layer = props?.selection?.layer;
+const avoidReRender = (prevProps, nextProps) => {
+    if (isEqual(prevProps.initialItem, nextProps.initialItem)) {
+        return true;
+    }
+    return false; // re render
+};
 
+const Tabou2ProgHabitatAccord = ({
+    initialItem,
+    programme,
+    operation,
+    layer,
+    authent,
+    change = () => { },
+    i18n = () => { },
+    messages,
+    help,
+    agapeo
+}) => {
     const [values, setValues] = useState({});
     const [fields, setFields] = useState([]);
     const [required, setRequired] = useState({});
     // create fields from const func
-    const getFields = () => [{
-    // OPERATION
-        name: "nbLogementsPrevu",
-        layers: ["layerSA", "layerOA"],
-        label: "tabou2.identify.accordions.logementPlan",
-        field: "nbLogementsPrevu",
-        type: "number",
-        min: 0,
-        source: values?.nbLogementsPrevu ? values : operation,
-        readOnly: false
-    }, {
-        name: "plhLogementsPrevus",
-        layers: ["layerSA", "layerOA"],
-        label: "tabou2.identify.accordions.plhPlan",
-        field: "plhLogementsPrevus",
-        type: "number",
-        min: 0,
-        source: values?.plhLogementsPrevus ? values : operation,
-        readOnly: false
-    }, {
-        name: "plhLogementsLivres",
-        layers: ["layerSA", "layerOA"],
-        label: "tabou2.identify.accordions.plhLiv",
-        field: "plhLogementsLivres",
-        type: "number",
-        min: 0,
-        source: values?.plhLogementsLivres ? values : operation,
-        readOnly: false
-    }, // PROGRAMME
-    {
-        name: "attributionFonciereAnnee",
-        label: "tabou2.identify.accordions.yearAttrib",
-        field: "attributionFonciereAnnee",
-        layers: ["layerPA"],
-        type: "number",
-        min: 1950,
-        max: 2100,
-        step: 1,
-        source: has(values, "attributionFonciereAnnee") ? values : programme,
-        valid: (v) => {
-            return v > 1000;
-        },
-        errorMsg: "tabou2.identify.accordions.errorFormatYear",
-        readOnly: false
-    }, {
-        name: "attributionDate",
-        label: "tabou2.identify.accordions.dateAttrib",
-        field: "attributionDate",
-        type: "date",
-        layers: ["layerPA"],
-        source: has(values, "attributionDate") ? values : programme,
-        readOnly: false
-    }, {
-        name: "commercialisationDate",
-        label: "tabou2.identify.accordions.dateCom",
-        field: "commercialisationDate",
-        type: "date",
-        layers: ["layerPA"],
-        source: has(values, "commercialisationDate") ? values : programme,
-        readOnly: false
-    }, {
-        name: "logementsTotal",
-        label: "tabou2.identify.accordions.totalLog",
-        field: "logementsTotal",
-        layers: ["layerPA"],
-        type: "number",
-        min: 0,
-        source: has(values, "logementsTotal") ? values : programme,
-        readOnly: false
-    }, {
-        name: "logementsAccessAidePrevu",
-        label: "tabou2.identify.accordions.helpAccess",
-        field: "logementsAccessAidePrevu",
-        layers: ["layerPA"],
-        type: "number",
-        min: 0,
-        source: has(values, "logementsAccessAidePrevu") ? values : programme,
-        readOnly: false
-    }, {
-        name: "logementsAccessLibrePrevu",
-        label: "tabou2.identify.accordions.freeAccess",
-        field: "logementsAccessLibrePrevu",
-        layers: ["layerPA"],
-        type: "number",
-        min: 0,
-        source: has(values, "logementsAccessLibrePrevu") ? values : programme,
-        readOnly: false
-    }, {
-        name: "logementsAccessMaitrisePrevu",
-        label: "tabou2.identify.accordions.controlAccess",
-        field: "logementsAccessMaitrisePrevu",
-        layers: ["layerPA"],
-        type: "number",
-        min: 0,
-        source: has(values, "logementsAccessMaitrisePrevu") ? values : programme,
-        readOnly: false
-    }, {
-        name: "logementsLocatifAidePrevu",
-        label: "tabou2.identify.accordions.locHelp",
-        field: "logementsLocatifAidePrevu",
-        layers: ["layerPA"],
-        type: "number",
-        min: 0,
-        source: has(values, "logementsLocatifAidePrevu") ? values : programme,
-        readOnly: false
-    }, {
-        name: "logementsLocatifReguleHlmPrevu",
-        label: "tabou2.identify.accordions.locHlm",
-        field: "logementsLocatifReguleHlmPrevu",
-        layers: ["layerPA"],
-        type: "number",
-        min: 0,
-        source: has(values, "logementsLocatifReguleHlmPrevu") ? values : programme,
-        readOnly: false
-    }, {
-        name: "logementsLocatifRegulePrivePrevu",
-        label: "tabou2.identify.accordions.privateLoc",
-        field: "logementsLocatifRegulePrivePrevu",
-        layers: ["layerPA"],
-        type: "number",
-        min: 0,
-        source: has(values, "logementsLocatifRegulePrivePrevu") ? values : programme,
-        readOnly: false
-    }, {
-        name: "agapeo",
-        label: "tabou2.identify.accordions.agapeoData",
-        msg: ["tabou2.getHelp", props.help.agapeo || props.help?.url || ""],
-        type: "table",
-        fields: ["anneeProg", "numDossier", "logementsLocatAide", "logementsLocatRegulHlm", "logementsLocatRegulPrive", "logementsAccessAide"],
-        labels: [
-            "tabou2.identify.accordions.progYear",
-            "tabou2.identify.accordions.numFolder",
-            "tabou2.identify.accordions.locHelpTitle",
-            "tabou2.identify.accordions.locRegHlm",
-            "tabou2.identify.accordions.locRegPriv",
-            "tabou2.identify.accordions.accessHelpTitle"
-        ],
-        layers: ["layerPA"],
-        source: props?.tabouInfos?.agapeo || [],
-        readOnly: true
-    }].filter(el => el?.layers?.includes(layer) || !el?.layers);
+    const getFields = () => [ // PROGRAMME
+        {
+            name: "attributionFonciereAnnee",
+            label: "tabou2.identify.accordions.yearAttrib",
+            field: "attributionFonciereAnnee",
+            layers: ["layerPA"],
+            type: "number",
+            min: 1950,
+            max: 2100,
+            step: 1,
+            source: has(values, "attributionFonciereAnnee") ? values : programme,
+            valid: (v) => {
+                return v > 1000;
+            },
+            errorMsg: "tabou2.identify.accordions.errorFormatYear",
+            readOnly: false
+        }, {
+            name: "attributionDate",
+            label: "tabou2.identify.accordions.dateAttrib",
+            field: "attributionDate",
+            type: "date",
+            layers: ["layerPA"],
+            source: has(values, "attributionDate") ? values : programme,
+            readOnly: false
+        }, {
+            name: "commercialisationDate",
+            label: "tabou2.identify.accordions.dateCom",
+            field: "commercialisationDate",
+            type: "date",
+            layers: ["layerPA"],
+            source: has(values, "commercialisationDate") ? values : programme,
+            readOnly: false
+        }, {
+            name: "logementsTotal",
+            label: "tabou2.identify.accordions.totalLog",
+            field: "logementsTotal",
+            layers: ["layerPA"],
+            type: "number",
+            min: 0,
+            source: has(values, "logementsTotal") ? values : programme,
+            readOnly: false
+        }, {
+            name: "logementsAccessAidePrevu",
+            label: "tabou2.identify.accordions.helpAccess",
+            field: "logementsAccessAidePrevu",
+            layers: ["layerPA"],
+            type: "number",
+            min: 0,
+            source: has(values, "logementsAccessAidePrevu") ? values : programme,
+            readOnly: false
+        }, {
+            name: "logementsAccessLibrePrevu",
+            label: "tabou2.identify.accordions.freeAccess",
+            field: "logementsAccessLibrePrevu",
+            layers: ["layerPA"],
+            type: "number",
+            min: 0,
+            source: has(values, "logementsAccessLibrePrevu") ? values : programme,
+            readOnly: false
+        }, {
+            name: "logementsAccessMaitrisePrevu",
+            label: "tabou2.identify.accordions.controlAccess",
+            field: "logementsAccessMaitrisePrevu",
+            layers: ["layerPA"],
+            type: "number",
+            min: 0,
+            source: has(values, "logementsAccessMaitrisePrevu") ? values : programme,
+            readOnly: false
+        }, {
+            name: "logementsLocatifAidePrevu",
+            label: "tabou2.identify.accordions.locHelp",
+            field: "logementsLocatifAidePrevu",
+            layers: ["layerPA"],
+            type: "number",
+            min: 0,
+            source: has(values, "logementsLocatifAidePrevu") ? values : programme,
+            readOnly: false
+        }, {
+            name: "logementsLocatifReguleHlmPrevu",
+            label: "tabou2.identify.accordions.locHlm",
+            field: "logementsLocatifReguleHlmPrevu",
+            layers: ["layerPA"],
+            type: "number",
+            min: 0,
+            source: has(values, "logementsLocatifReguleHlmPrevu") ? values : programme,
+            readOnly: false
+        }, {
+            name: "logementsLocatifRegulePrivePrevu",
+            label: "tabou2.identify.accordions.privateLoc",
+            field: "logementsLocatifRegulePrivePrevu",
+            layers: ["layerPA"],
+            type: "number",
+            min: 0,
+            source: has(values, "logementsLocatifRegulePrivePrevu") ? values : programme,
+            readOnly: false
+        }, {
+            name: "agapeo",
+            label: "tabou2.identify.accordions.agapeoData",
+            msg: ["tabou2.getHelp", help.agapeo || help?.url || ""],
+            type: "table",
+            fields: ["anneeProg", "numDossier", "logementsLocatAide", "logementsLocatRegulHlm", "logementsLocatRegulPrive", "logementsAccessAide"],
+            labels: [
+                "tabou2.identify.accordions.progYear",
+                "tabou2.identify.accordions.numFolder",
+                "tabou2.identify.accordions.locHelpTitle",
+                "tabou2.identify.accordions.locRegHlm",
+                "tabou2.identify.accordions.locRegPriv",
+                "tabou2.identify.accordions.accessHelpTitle"
+            ],
+            layers: ["layerPA"],
+            source: agapeo || [],
+            readOnly: true
+        }].filter(el => el?.layers?.includes(layer) || !el?.layers);
 
     // hooks
     useEffect(() => {
@@ -194,39 +179,39 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
 
     // manage change info
     const changeInfos = (item) => {
-        let newValues = {...values, ...item};
+        let newValues = { ...values, ...item };
         setValues(newValues);
         // send to parent to save
         let accordValues = pick(newValues, getFields().filter(f => !f.readOnly).map(f => f.name));
-        props.change(accordValues, pick(accordValues, required));
+        change(accordValues, pick(accordValues, required));
     };
 
     const changeDate = (field, str) => {
         // TODO : valid with moment like that
         // let isValid = moment(str, "DD/MM/YYYY", true);
-        changeInfos({[field.name]: str ? new Date(str).toISOString() : ""});
+        changeInfos({ [field.name]: str ? new Date(str).toISOString() : "" });
     };
 
-    const allowChange = props.authent.isContrib || props.authent.isReferent;
+    const allowChange = authent.isContrib || authent.isReferent;
     return (
         <Grid style={{ width: "100%" }} className={""}>
             {
                 fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(item => (
-                    <Row className = {item.type === "table" ? "tableDisplay" : ""}>
+                    <Row className={item.type === "table" ? "tableDisplay" : ""}>
                         {
                             has(item, "valid") && getValue(item) && !item.valid(getValue(item)) ? (
                                 <Alert className="alert-danger">
                                     <Glyphicon glyph="warning-sign" />
-                                    <Message msgId={props.i18n(props.messages, item?.errorMsg || "")}/>
+                                    <Message msgId={i18n(messages, item?.errorMsg || "")} />
                                 </Alert>) : null
                         }
                         <Col xs={item.type === "table" ? 12 : 5}>
                             <ControlLabel>
-                                <Message msgId={item.label}/>
+                                <Message msgId={item.label} />
                                 {
                                     item.msg && (
                                         <a href={item.msg[1]} className="link-deactivate" target="_blank">
-                                            <ControlledPopover text={<Message msgId={ item.msg[0] }/>} />
+                                            <ControlledPopover text={<Message msgId={item.msg[0]} />} />
                                         </a>
                                     )
                                 } :
@@ -235,13 +220,17 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
                         <Col xs={7}>
                             {
                                 item.type === "date" && (
-                                    <DateTimePicker
+                                    <Tabou2Date
                                         type="date"
+                                        refreshValue={initialItem}
+                                        refresh={(o, n) => {
+                                            return isEqual(o, n);
+                                        }}
                                         className="identifyDate"
                                         inline
                                         readOnly={!allowChange || item.readOnly}
                                         dropUp
-                                        placeholder={props.i18n(props.messages, item?.label || "")}
+                                        placeholder={i18n(messages, item?.label || "")}
                                         calendar
                                         time={false}
                                         culture="fr"
@@ -254,24 +243,24 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
                             }
                             {
                                 (item.type === "text" || item.type === "number") &&
-                                    (<FormControl
-                                        type={item.type}
-                                        min={item?.min}
-                                        max={item?.max}
-                                        step={item?.step}
-                                        placeholder={props.i18n(props.messages, item?.label || "")}
-                                        value={getValue(item) || ""}
-                                        readOnly={!allowChange || item.readOnly}
-                                        onChange={(v) => changeInfos({[item.name]: v.target.value})}
-                                        onKeyDown={(v) => {
-                                            if (item.type !== "number") return;
-                                            // only keep numeric and special key control as "Delete" or "Backspace"
-                                            if (!new RegExp('^[0-9]+$').test(v.key) && v.key.length < 2 && v.key !== ",") {
-                                                v.returnValue = false;
-                                                if (v.preventDefault) v.preventDefault();
-                                            }
-                                        }}
-                                    />)
+                                (<FormControl
+                                    type={item.type}
+                                    min={item?.min}
+                                    max={item?.max}
+                                    step={item?.step}
+                                    placeholder={i18n(messages, item?.label || "")}
+                                    value={getValue(item) || ""}
+                                    readOnly={!allowChange || item.readOnly}
+                                    onChange={(v) => changeInfos({ [item.name]: v.target.value })}
+                                    onKeyDown={(v) => {
+                                        if (item.type !== "number") return;
+                                        // only keep numeric and special key control as "Delete" or "Backspace"
+                                        if (!new RegExp('^[0-9]+$').test(v.key) && v.key.length < 2 && v.key !== ",") {
+                                            v.returnValue = false;
+                                            if (v.preventDefault) v.preventDefault();
+                                        }
+                                    }}
+                                />)
                             }
                         </Col>
                         {
@@ -282,7 +271,7 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
                                             <tr>
                                                 {item.fields.map((fieldName, i) =>
                                                     (
-                                                        <th>{capitalize(props.i18n(props.messages, item.labels[i]))}</th>
+                                                        <th>{capitalize(i18n(messages, item.labels[i]))}</th>
                                                     )
                                                 )}
                                             </tr>
@@ -309,4 +298,6 @@ export default function Tabou2ProgHabitatAccord({ initialItem, programme, operat
             }
         </Grid>
     );
-}
+};
+
+export default memo(Tabou2ProgHabitatAccord, avoidReRender);
