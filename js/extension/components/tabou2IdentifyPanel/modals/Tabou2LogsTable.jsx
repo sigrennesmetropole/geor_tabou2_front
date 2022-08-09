@@ -7,6 +7,7 @@ import { getTypesEvents } from "@js/extension/api/requests";
 import tooltip from '@mapstore/components/misc/enhancers/tooltip';
 import Message from "@mapstore/components/I18N/Message";
 import Tabou2Date from '../../common/Tabou2Date';
+import moment from 'moment';
 
 const Button = tooltip(ButtonRB);
 
