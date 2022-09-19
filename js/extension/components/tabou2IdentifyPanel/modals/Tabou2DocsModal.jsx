@@ -1,7 +1,6 @@
 import React, {useEffect, useState, useRef} from 'react';
 import { connect } from 'react-redux';
 import { isEmpty } from "lodash";
-import { Row } from 'react-bootstrap';
 
 import ResizableModal from '@mapstore/components/misc/ResizableModal';
 import Message from "@mapstore/components/I18N/Message";

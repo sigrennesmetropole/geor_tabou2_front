@@ -19,7 +19,7 @@ export default function Tabou2DocsForm({
     onClick = () => {},
     translate
 }) {
-    const metadataSchema = {nom: "", libelleTypeDocument: "", date: new Date().toISOString()};
+    const metadataSchema = {nom: "", libelleTypeDocument: "", dateDocument: new Date().toISOString()};
     const [file, setFile] = useState({});
     const [metadata, setMetadata] = useState(metadataSchema);
     const [searchText, setSearchText] = useState("");
@@ -111,7 +111,7 @@ export default function Tabou2DocsForm({
 
     const clearSearch = (key) => {
         setSearchText("");
-        changeMeta(key, "");
+        changeMeta(key, "", metadata);
     };
 
     return (
