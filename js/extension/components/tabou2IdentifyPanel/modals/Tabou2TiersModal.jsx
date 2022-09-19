@@ -58,7 +58,7 @@ export default function Tabou2TiersModal({
         } else {
             editionActivate.current = true;
             setOpened(id);
-            setTiers([...tiers.filter(t => t.id !== tier.id), {...tier, edit: true}]);
+            setTiers([...tiers.filter(t => t.id !== tier.id), {...tier, edit: true, "new": false}]);
         }
     };
 

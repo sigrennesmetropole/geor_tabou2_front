@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Glyphicon, Grid, Row, Col, Checkbox, FormControl } from 'react-bootstrap';
-import { orderBy, isEmpty, find, set, get } from 'lodash';
+import { orderBy, isEmpty, find, set, get, isEqual } from 'lodash';
 import ButtonRB from '@mapstore/components/misc/Button';
 import Tabou2Combo from '@js/extension/components/form/Tabou2Combo';
 import { getTypesEvents } from "@js/extension/api/requests";
@@ -40,7 +40,7 @@ export default function Tabou2LogsTable({
         if (logInChange?.id || editionActivate.current) {
             setAllLogs([...readLogs, { ...logInChange, edit: true }]);
         } else {
-            setAllLogs(readLogs);
+            setAllLogs(readLogs.filter(r => !r.new));
         }
         return;
     }, [logInChange?.id, editionActivate.current]);
@@ -119,6 +119,10 @@ export default function Tabou2LogsTable({
                                                         dropDown
                                                         calendar
                                                         time={false}
+                                                        refreshValue={logInChange}
+                                                        refresh={(o, n) => {
+                                                            return isEqual(o, n);
+                                                        }}
                                                         culture="fr"
                                                         value={!isEmpty(logInChange) &&  logInChange?.eventDate ? new Date(logInChange?.eventDate) : new Date()}
                                                         format="DD/MM/YYYY"
