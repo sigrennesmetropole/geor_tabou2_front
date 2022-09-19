@@ -2,7 +2,7 @@ import React, {useState, useEffect} from "react";
 import { Col, FormGroup, Row, FormControl, ControlLabel, Glyphicon} from "react-bootstrap";
 import Toolbar from '@mapstore/components/misc/toolbar/Toolbar';
 import "../../css/tabou.css";
-import { has, get, set, isEmpty } from "lodash";
+import { has, get, set, isEmpty, isEqual } from "lodash";
 import Message from "@mapstore/components/I18N/Message";
 import Dropzone from 'react-dropzone';
 import SearchCombo from '@js/extension/components/form/SearchCombo';
@@ -28,19 +28,13 @@ export default function Tabou2DocsForm({
         setMetadata({ ...metadataSchema, ...document });
     }, [action, document?.id]);
 
-    const changeMeta = (field, value) => {
+    const changeMeta = (field, value, metaValues) => {
         let copyField = {
-            ...metadata, [field]: value
+            ...metaValues, [field]: value
         };
         // avoid to change props.tiers directly and broke ref memory
         let metaChanged = set(copyField, field, value);
         setMetadata(metaChanged);
-    };
-
-    const changeDate = (field, str) => {
-        // TODO : valid with moment like that
-        // let isValid = moment(str, "DD/MM/YYYY", true);
-        changeMeta(field.key, str ? new Date(str).toISOString() : new Date().toISOString());
     };
 
     const marginTop = "10px";
@@ -168,7 +162,7 @@ export default function Tabou2DocsForm({
                                     readOnly={field?.readOnly || false}
                                     value={get(metadata, field?.key)}
                                     placeholder={translate.i18n(translate.messages, field.libelle)}
-                                    onChange={(t) => changeMeta(field.key, t.target.value)}
+                                    onChange={(t) => changeMeta(field.key, t.target.value, metadata)}
                                 />)}
                                 {field.type === "search" && (
                                     <SearchCombo
@@ -186,7 +180,7 @@ export default function Tabou2DocsForm({
                                         }
                                         onSelect={(t) => {
                                             if (t) {
-                                                changeMeta(field.key, t.libelle);
+                                                changeMeta(field.key, t.libelle, metadata);
                                                 setSearchText(t.libelle);
                                             } else {
                                                 clearSearch(field.key);
@@ -202,7 +196,7 @@ export default function Tabou2DocsForm({
                                         placeholder={translate.i18n(translate.messages, "tabou2.docsModal.docsForm.selectType")}
                                     />
                                 )}
-                                {field.type === "date" && (
+                                {field.type === "date" &&
                                     <Tabou2Date
                                         type="date"
                                         className="identifyDate"
@@ -213,10 +207,20 @@ export default function Tabou2DocsForm({
                                         time={false}
                                         value={has(metadata, field?.key) && get(metadata, field?.key)  ? new Date(get(metadata, field?.key)) : null}
                                         format="DD/MM/YYYY"
-                                        onSelect={(v) => changeDate(field, v)}
-                                        onChange={(v) => changeDate(field, v)}
+                                        onSelect={(v) => {
+                                            const val = v ? new Date(v).toISOString() : new Date().toISOString();
+                                            changeMeta(field.key, val, metadata);
+                                        }}
+                                        refreshValue={metadata}
+                                        refresh={(o, n) => {
+                                            return isEqual(o, n);
+                                        }}
+                                        onChange={(v) => {
+                                            const val = v ? new Date(v).toISOString() : new Date().toISOString();
+                                            changeMeta(field.key, val, metadata);
+                                        }}
                                     />
-                                )}
+                                }
                             </Col>
                         </Col>
                     ))}
@@ -228,7 +232,7 @@ export default function Tabou2DocsForm({
                         className="alert alert-info col-xs-12"
                         onDrop={(f) => {
                             if (!metadata.nom) {
-                                changeMeta("nom", f[0].name);
+                                changeMeta("nom", f[0].name, metadata);
                             }
                             setFile(f[0]);
                         }}
