@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Glyphicon, Grid, Row, Col, Checkbox, FormControl } from 'react-bootstrap';
-import { orderBy, isEmpty, find, set, get, isEqual } from 'lodash';
+import { orderBy, isEmpty, find, set, get, isEqual, has } from 'lodash';
 import ButtonRB from '@mapstore/components/misc/Button';
 import Tabou2Combo from '@js/extension/components/form/Tabou2Combo';
 import { getTypesEvents } from "@js/extension/api/requests";
@@ -124,10 +124,14 @@ export default function Tabou2LogsTable({
                                                             return isEqual(o, n);
                                                         }}
                                                         culture="fr"
-                                                        value={!isEmpty(logInChange) &&  logInChange?.eventDate ? new Date(logInChange?.eventDate) : new Date()}
+                                                        value={has(logInChange, "eventDate") ? new Date(logInChange?.eventDate) : null}
                                                         format="DD/MM/YYYY"
                                                         onSelect={(e) => modifyLog("eventDate", new Date(e).toISOString(e))}
-                                                        onChange={(t) => !t ? modifyLog("eventDate", null) : null}
+                                                        // onChange={(t) => !t ? modifyLog("eventDate", null) : null}
+                                                        onChange={(v) => {
+                                                            const val = v ? new Date(v).toISOString() : null;
+                                                            modifyLog("eventDate", val);
+                                                        }}
                                                     />)
                                                         : new Date(log.eventDate).toLocaleDateString()
                                                 }
