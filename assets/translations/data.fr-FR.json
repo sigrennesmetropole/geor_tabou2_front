@@ -79,7 +79,7 @@
         "maxSearchLimit": " Trop de résultats : Veuillez ajouter un filtre supplémentaire !",
         "noResultLayer": " Une ou plusieurs couche ne retournent aucun résultat à filtrer",
         "warning": "Avertissement",
-        "requestSuccess": "Filtre appliqué !",
+        "requestSuccess": "Préparation du filtre réussie !",
         "filterLayer": "Filtre de couche"
       },
       "identify": {
