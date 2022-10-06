@@ -73,6 +73,7 @@ export function tabouGetSearchIds(action$, store) {
         .switchMap((action) => {
             let messages = store.getState()?.locale.messages;
             let observable$ = Rx.Observable.empty();
+            let displayNoResult$ = Rx.Observable.empty();
             observable$ = Rx.Observable.from((action.params)).mergeMap( filter => {
                 return Rx.Observable.defer(() => createOGCRequest(filter.params, getPluginCfg(store.getState()).geoserverURL))
                     .catch(e => {
@@ -100,13 +101,17 @@ export function tabouGetSearchIds(action$, store) {
                             return Rx.Observable.of(setTabouErrors(true, "filter", "danger", getMessageById(messages, "tabou2.search.maxSearchLimit")));
                         } else {
                             // no result to filter
-                            return Rx.Observable.of(setTabouErrors(false, "filter", "warning", getMessageById(messages, "tabou2.search.noResultLayer")));
+                            idsCql = [-1].map(id => `${filter.idField} = ${id}`).join(' OR ');
+                            displayNoResult$ = Rx.Observable.of(setTabouErrors(false, "filter", "warning", getMessageById(messages, "tabou2.search.noResultLayer")));
                         }
                         // affect filter
-                        return Rx.Observable.of(setTabouFilterObj({
-                            ...getLayerFilterObj(store.getState()),
-                            [layer]: newfilterLayerByList(layer, ids, "id_tabou", idsCql)
-                        }));
+                        return Rx.Observable.of(
+                            displayNoResult$,
+                            setTabouFilterObj({
+                                ...getLayerFilterObj(store.getState()),
+                                [layer]: newfilterLayerByList(layer, ids, "id_tabou", idsCql)
+                            })
+                        );
                     });
             });
             return observable$.let(
