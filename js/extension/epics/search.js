@@ -5,7 +5,7 @@ import { layersSelector } from '@mapstore/selectors/layers';
 import { currentTabouFilters, getLayerFilterObj, isTabou2Activate, getPluginCfg } from '../selectors/tabou2';
 import { changeLayerParams, changeLayerProperties } from "@mapstore/actions/layers";
 import { wrapStartStop } from "@mapstore/observables/epics";
-import { error } from "@mapstore/actions/notifications";
+import { error, warning, success } from "@mapstore/actions/notifications";
 import {getMessageById} from "@mapstore/utils/LocaleUtils";
 import { newfilterLayerByList } from "../utils/search";
 import { createOGCRequest } from "../api/requests";
@@ -73,7 +73,6 @@ export function tabouGetSearchIds(action$, store) {
         .switchMap((action) => {
             let messages = store.getState()?.locale.messages;
             let observable$ = Rx.Observable.empty();
-            let displayNoResult$ = Rx.Observable.empty();
             observable$ = Rx.Observable.from((action.params)).mergeMap( filter => {
                 return Rx.Observable.defer(() => createOGCRequest(filter.params, getPluginCfg(store.getState()).geoserverURL))
                     .catch(e => {
@@ -85,6 +84,7 @@ export function tabouGetSearchIds(action$, store) {
                         if (response?.fail) {
                             return Rx.Observable.empty();
                         }
+                        let displayNoResult = false;
                         let layer = filter.layer;
                         let ids = [0];
                         let idsCql = "";
@@ -102,11 +102,16 @@ export function tabouGetSearchIds(action$, store) {
                         } else {
                             // no result to filter
                             idsCql = [-1].map(id => `${filter.idField} = ${id}`).join(' OR ');
-                            displayNoResult$ = Rx.Observable.of(setTabouErrors(false, "filter", "warning", getMessageById(messages, "tabou2.search.noResultLayer")));
+                            displayNoResult = true;
                         }
                         // affect filter
                         return Rx.Observable.of(
-                            displayNoResult$,
+                            displayNoResult ?
+                                setTabouErrors(false, "filter", "warning", getMessageById(messages, "tabou2.search.noResultLayer"))
+                                : success({
+                                    title: getMessageById(messages, "tabou2.search.filterLayer"),
+                                    message: getMessageById(messages, "tabou2.search.requestSuccess")
+                                }),
                             setTabouFilterObj({
                                 ...getLayerFilterObj(store.getState()),
                                 [layer]: newfilterLayerByList(layer, ids, "id_tabou", idsCql)

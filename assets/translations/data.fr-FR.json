@@ -77,7 +77,10 @@
         "partThree": "3 - Définir les critères liés aux opérations",
         "partFour": "4 - Définir les critères liés aux programmes",
         "maxSearchLimit": " Trop de résultats : Veuillez ajouter un filtre supplémentaire !",
-        "noResultLayer": " Avertissement : Une ou plusieurs couche ne retournent aucun résultat à filtrer"
+        "noResultLayer": " Une ou plusieurs couche ne retournent aucun résultat à filtrer",
+        "warning": "Avertissement",
+        "requestSuccess": "Filtre appliqué !",
+        "filterLayer": "Filtre de couche"
       },
       "identify": {
         "copyMailTitle": "Copier l'adresse pour réaliser un copier / coller",
