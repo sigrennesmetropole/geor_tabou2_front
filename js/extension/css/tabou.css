@@ -76,6 +76,11 @@
     height: auto !important;
 }
 
+.tabou-doc-modal .react-grid-Canvas {
+    width: 100% !important;
+    overflow: hidden scroll !important;
+}
+
 .tabou-doc-modal {
     padding: 10px !important;
 }
