@@ -52,12 +52,14 @@ export default function Tabou2LogsTable({
 
     // hooks to manage feature logs if refreshed
     useEffect(() => {
-        if (!isEqual(logs, allLogs)) {
-            setAllLogs(logs);
+        if (!isEqual(logs, allLogs) && isEmpty(logInChange)) {
+            setAllLogs([...logs, ...allLogs.filter(x => editionActivate.current && x.new)]);
         }
     }, [logs]);
     useEffect(() => {
-        setAllLogs(logs);
+        if (!isEqual(logs, allLogs) && isEmpty(logInChange)) {
+            setAllLogs([...logs, ...allLogs.filter(x => editionActivate.current && x.new)]);
+        }
     }, [props.eventsId]);
 
     const cancel = () => {
@@ -75,8 +77,8 @@ export default function Tabou2LogsTable({
     };
 
     const saveEvent = () => {
-        cancelChange(logInChange);
         setLogInChange(null);
+        cancelChange(logInChange);
         props.saveEvent(logInChange);
     };
 
@@ -84,7 +86,7 @@ export default function Tabou2LogsTable({
     const getStyle = (name) => {
         return find(sortField, [0, name]) ? {color: "darkcyan"} : {color: "rgb(51, 51, 51)"};
     };
-    console.log(isEmpty(logInChange));
+
     return (
         <Grid fluid style={{overflow: "auto", height: "100%"}}>
             <Row>
