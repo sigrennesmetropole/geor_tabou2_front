@@ -18,9 +18,12 @@ export default function Tabou2LogsModal({
     // hooks to manage feature logs if refreshed
     useEffect(() => {
         if (!isEqual(logs, props.events)) {
-            setLogs([...props.events, ...logs.filter(lo => !find(props.events, ["id", lo.id]))]);
+            setLogs(props.events);
         }
     }, [props.events]);
+    useEffect(() => {
+        setLogs(props.events);
+    }, [props.eventsId]);
     // force to refresh
     useEffect(() => {
         return;
@@ -37,7 +40,7 @@ export default function Tabou2LogsModal({
         }
         disabledAdd.current = false;
         editionActivate.current = false;
-        setLogs([...logs.filter(lo => lo.id !== log.id)]);
+        setLogs([...logs.filter(lo => lo.id !== log.id && !log.new)]);
     };
 
     // create a new log - allow to pass some default params

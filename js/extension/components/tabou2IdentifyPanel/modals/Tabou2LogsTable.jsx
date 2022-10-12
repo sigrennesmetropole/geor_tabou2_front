@@ -48,7 +48,7 @@ export default function Tabou2LogsTable({
     useEffect(() => {
         setAllLogs(logs);
         return;
-    }, [logs.length]);
+    }, [logs]);
 
     const cancel = () => {
         cancelChange(logInChange);
@@ -65,8 +65,9 @@ export default function Tabou2LogsTable({
     };
 
     const saveEvent = () => {
-        props.saveEvent(logInChange);
+        cancelChange(logInChange);
         setLogInChange(null);
+        props.saveEvent(logInChange);
     };
 
     // manage sort style
