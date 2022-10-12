@@ -84,13 +84,11 @@ const Tabou2IdentifyContent = ({
         mapFeature: mapFeature,
         initialItem: infos,
         change: (values, required) => {
-            console.log(values);
             mandatory.current = { ...mandatory.current, ...required };
             let oldInfos = { ...infos };
             setInfos({ ...oldInfos, ...values });
         },
         changeProp: (newOA) => {
-            console.log(newOA);
             let oldInfos = { ...infos };
             setInfos({ ...oldInfos, ...newOA });
         },
