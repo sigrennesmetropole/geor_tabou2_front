@@ -159,16 +159,24 @@ export function createChangeFeature(action$, store) {
                     console.log(e);
                     return Rx.Observable.of(e);
                 })
-                .switchMap(() => {
+                .switchMap((response) => {
+                    if (response?.status === 200 && response?.data) {
+                        return Rx.Observable.of(
+                            // success message
+                            success({
+                                title: getMessageById(messages, "tabou2.infos.successApi"),
+                                message: getMessageById(messages, "tabou2.infos.successSaveInfos")
+                            }),
+                            // we just update last GFI request to refresh panel
+                            reloadLayer(layersToc.nom),
+                            setSelectedFeature(getSelection(store.getState()))
+                        );
+                    }
                     return Rx.Observable.of(
-                        // success message
-                        success({
-                            title: getMessageById(messages, "tabou2.infos.successApi"),
-                            message: getMessageById(messages, "tabou2.infos.successSaveInfos")
-                        }),
-                        // we just update last GFI request to refresh panel
-                        reloadLayer(layersToc.nom),
-                        setSelectedFeature(getSelection(store.getState()))
+                        error({
+                            title: getMessageById(messages, "tabou2.infos.failApi"),
+                            message: getMessageById(messages, "tabou2.infos.failChangeFeature")
+                        })
                     );
                 });
         });
