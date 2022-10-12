@@ -226,7 +226,7 @@ export default function Tabou2LogsTable({
                                                             ) : null
                                                         }
                                                         {
-                                                            ((log.new || isEmpty(logInChange)) && !log.systeme) ? (
+                                                            log.new  ? (
                                                                 <Button
                                                                     tooltip={props.i18n(props.messages, "tabou2.delete")}
                                                                     style={{ borderColor: "rgba(0,0,0,0)"}}
