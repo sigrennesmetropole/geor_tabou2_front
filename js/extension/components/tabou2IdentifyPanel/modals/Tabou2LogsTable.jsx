@@ -45,10 +45,20 @@ export default function Tabou2LogsTable({
         return;
     }, [logInChange?.id, editionActivate.current]);
 
+    // useEffect(() => {
+    //     setAllLogs(logs);
+    //     return;
+    // }, [logs.length, props.eventsId]);
+
+    // hooks to manage feature logs if refreshed
+    useEffect(() => {
+        if (!isEqual(logs, allLogs)) {
+            setAllLogs(logs);
+        }
+    }, [logs]);
     useEffect(() => {
         setAllLogs(logs);
-        return;
-    }, [logs]);
+    }, [props.eventsId]);
 
     const cancel = () => {
         cancelChange(logInChange);
@@ -74,6 +84,7 @@ export default function Tabou2LogsTable({
     const getStyle = (name) => {
         return find(sortField, [0, name]) ? {color: "darkcyan"} : {color: "rgb(51, 51, 51)"};
     };
+    console.log(isEmpty(logInChange));
     return (
         <Grid fluid style={{overflow: "auto", height: "100%"}}>
             <Row>
@@ -215,7 +226,7 @@ export default function Tabou2LogsTable({
                                                             ) : null
                                                         }
                                                         {
-                                                            (!log.systeme && !log.new && isEmpty(logInChange)) ? (
+                                                            (!log.systeme && !editionActivate.current && isEmpty(logInChange)) ? (
                                                                 <Button
                                                                     tooltip={props.i18n(props.messages, "tabou2.change")}
                                                                     style={{ borderColor: "rgba(0,0,0,0)"}}
