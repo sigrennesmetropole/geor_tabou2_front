@@ -1,8 +1,4 @@
 // this file contains configurations for dev proxy
-
-const DEV_PROTOCOL = "http";
-const DEV_HOST = "localhost:8081";
-
 module.exports = {
     '/rest': {
         target: "https://dev.mapstore.geo-solutions.it/mapstore",
@@ -37,13 +33,6 @@ module.exports = {
         secure: false,
         headers: {
             host: "portail-test.sig.rennesmetropole.fr"
-        }
-    },
-    '/stoplight': {
-        target: "https://jdev.stoplight.io",
-        secure: false,
-        headers: {
-            host: "jdev.stoplight.io"
         }
     }
 };

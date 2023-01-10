@@ -8,6 +8,8 @@ import { SETUP, CLOSE_TABOU, cleanTabouInfos } from "../actions/tabou2";
 import { get } from "lodash";
 import { defaultIconStyle } from "@mapstore/utils/SearchUtils";
 import iconUrl from "@mapstore/components/map/openlayers/img/marker-icon.png";
+
+const OFFSET = PANEL_SIZE;
 /**
  * Manage mapstore toolbar layout
  * @param {any} action$
@@ -22,12 +24,13 @@ export const setTbarPosition = (action$, store) =>
         })
         .map(({ layout }) => {
             const action = updateMapLayout({
-                layout,
-                right: PANEL_SIZE,
+                ...layout,
+                right: OFFSET + (layout?.boundingSidebarRect?.right ?? 0),
                 boundingMapRect: {
                     ...(layout.boundingMapRect || {}),
-                    right: PANEL_SIZE
-                }
+                    right: OFFSET + (layout?.boundingSidebarRect?.right ?? 0)
+                },
+                rightPanel: true
             });
             return { ...action, source: 'tabou2' }; // add an argument to avoid infinite loop.
         });
@@ -71,6 +74,11 @@ export const initMap = (action$, store) =>
                 )
             // disable click info right panel
             ]).concat([...(mapInfoEnabled ? [toggleMapInfoState(), hideMapinfoMarker()] : [])]);
+        }).startWith({
+            type: 'MAP_LAYOUT:UPDATE_DOCK_PANELS',
+            name: 'tabou2',
+            action: 'add',
+            location: 'right'
         });
     });
 
