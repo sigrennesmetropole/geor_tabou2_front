@@ -116,7 +116,7 @@ export default function Tabou2IdentifyToolbar({ response, isValid, ...props }) {
             />
             <Tabou2TiersModal visible={isOpenTiers} onClick={() => closeTiersModal()} {...props}/>
             <Tabou2DocsModal visible={isOpenDocs} onClick={() => setIsOpenDocs(false)} {...props} />
-            <Tabou2LogsModal visible={isOpenLogs} onClick={() => setIsOpenLogs(false)} {...props}/>
+            <Tabou2LogsModal visible={isOpenLogs} onClick={() => setIsOpenLogs(false)} {...props} eventsId={props.events.map(e => e.id)}/>
         </>
     );
 

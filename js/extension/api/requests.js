@@ -307,25 +307,18 @@ export function getTabouDocuments(url, id, page, result, nom = "", libelleTypeDo
         typeMime: typeMime ? `*${typeMime}*` : "**"
     }}).then(({ data }) => data);
 }
-export function addDocument(url, id, file, metadata, type) {
-    const idFieldName = {
-        "layerOA": "operationId",
-        "layerPA": "programmeId"
-    };
+export function addDocument(url, id, file, metadata) {
     let formData = new FormData();
     formData.append("fileToUpload", file);
-    formData.append(idFieldName[type], id);
-    formData.append("nom", metadata.nom);
-    formData.append("dateDocument", metadata.dateDocument);
-    formData.append("libelleTypeDocument", metadata.libelleTypeDocument);
-    /**
-     * idField in the path will be delete - see issue #189
-     * https://github.com/sigrennesmetropole/geor_tabou2_front/issues/189
-     */
-    return axios.post(`${baseURL}/${url}/${idFieldName[type]}/documents`,
+    return axios.post(`${baseURL}/${url}/${id}/documents`,
         formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
+            },
+            params: {
+                dateDocument: metadata.dateDocument,
+                nom: metadata.nom,
+                libelleTypeDocument: metadata.libelleTypeDocument
             }
         });
 }
@@ -345,10 +338,13 @@ export function updateMetadataDocument(type, id, metadata) {
 export function getDocumentContent(service, id, docId) {
     return axios.get(`${baseURL}/${service}/${id}/documents/${docId}/content`, {responseType: 'arraybuffer'}).then(( data ) => data);
 }
-export function updateDocumentContent(service, id, docId, file) {
+export function updateDocumentContent(service, id, metadata, file) {
     var formData = new FormData();
     formData.append("fileToUpload", file);
-    return axios.put(`${baseURL}/${service}/${id}/documents/${docId}/content`,
+    formData.append("nom", metadata.nom);
+    formData.append("libelleTypeDocument", metadata.libelleTypeDocument);
+    formData.append("dateDocument", metadata.dateDocument);
+    return axios.put(`${baseURL}/${service}/${id}/documents/${metadata.id}/content`,
         formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'

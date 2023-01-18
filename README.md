@@ -20,7 +20,12 @@ Une installation de NodeJS >= 12.16.1 est prérequise ([téléchargement](https:
 
 Pour les développements et les tests :
 
+
+
 ```
+cd MapStore2
+git checkout master
+cd ..
 npm install
 npm start
 ```

@@ -2,17 +2,6 @@
   "proxyUrl": {
     "url": "proxy/?url=",
     "useCORS": [
-      "https://gis.jdev.fr",
-      "https://portail-test.sig.rennesmetropole.fr",
-      "https://portail-test.sig.rennesmetropole.fr/geoserver",
-      "https://jdev.stoplight.io/",
-      "https://public.sig.rennesmetropole.fr/geonetwork/srv/fre/csw",
-      "https://public.sig.rennesmetropole.fr",
-      "http://localhost:3000",
-      "https://ifl.francophonelibre.org",
-      "https://ifl.francophonelibre.org/llg",
-      "https://ifl.francophonelibre.org/cpmmunaute",
-      "https://604732d49e5ab30017394597.mockapi.io/",
       "http://demo.geo-solutions.it/geoserver",
       "https://demo.geo-solutions.it:443/geoserver",
       "https://demo.geo-solutions.it/geoserver",
@@ -23,9 +12,6 @@
     ]
   },
   "geoStoreUrl": "rest/geostore/",
-  "miscSettings": {
-    "maxURLLength": 4000
-  },
   "mailingList": "https://groups.google.com/forum/#!forum/mapstore-users",
   "printUrl": "pdf/info.json",
   "bingApiKey": "AhuXBu7ipR1gNbBfXhtUAyCZ6rkC5PkWpxs2MnMRZ1ZupxQfivjLCch22ozKSCAn",
@@ -35,13 +21,6 @@
   "useAuthenticationRules": true,
   "loadAfterTheme": true,
   "defaultMapOptions": {
-    "cesium": {
-      "flyTo": true,
-      "navigationTools": true,
-      "terrainProvider": {
-        "type": "ellipsoid"
-      }
-    },
     "floatingIdentifyDelay": 1000
   },
   "localizedLayerStyles": {
@@ -60,38 +39,15 @@
       "urlPattern": "http(s)?\\:\\/\\/gs-stable\\.geo-solutions\\.it(\\:443|\\:80)?\\/geoserver/.*",
       "authkeyParamName": "authkey",
       "method": "authkey"
-    },
-    {
-      "urlPattern": "http(s)?\\:\\/\\/portail-test\\.sig\\.rennesmetropole\\.fr(\\:443|\\:80)?\\/geoserver/.*",
-      "authkeyParamName": "authkey",
-      "method": "authkey"
     }
   ],
   "monitorState": [
-    {
-      "name": "router",
-      "path": "router.location.pathname"
-    },
-    {
-      "name": "browser",
-      "path": "browser"
-    },
-    {
-      "name": "geostorymode",
-      "path": "geostory.mode"
-    },
-    {
-      "name": "featuregridmode",
-      "path": "featuregrid.mode"
-    },
-    {
-      "name": "userrole",
-      "path": "security.user.role"
-    },
-    {
-      "name": "printEnabled",
-      "path": "print.capabilities"
-    }
+    { "name": "router", "path": "router.location.pathname" },
+    { "name": "browser", "path": "browser" },
+    { "name": "geostorymode", "path": "geostory.mode" },
+    { "name": "featuregridmode", "path": "featuregrid.mode" },
+    { "name": "userrole", "path": "security.user.role" },
+    { "name": "printEnabled", "path": "print.capabilities" }
   ],
   "userSessions": {
     "enabled": true
@@ -220,193 +176,6 @@
   "plugins": {
     "mobile": [
       {
-        "name": "Tabou2",
-        "cfg": {
-          "geoserverURL": "https://gis.jdev.fr/geoserver",
-          "layersOrder": [
-            "Opérations",
-            "Secteurs",
-            "Programmes"
-          ],
-          "help": {
-            "url": "https://public.sig.rennesmetropole.fr/ressources/app/georchestra/Portail%20web%20guide%20rapide%20de%20prise%20en%20main.pdf",
-            "contact": "d.cottencin@rennesmetropole.fr"
-          },
-          "layersCfg": {
-            "layerPA": {
-              "nom": "tabou:tabou_v_oa_programme",
-              "geomField": "the_geom",
-              "idField": "objectid",
-              "idType": "number"
-            },
-            "layerOA": {
-              "nom": "tabou:tabou_v_oa_operation",
-              "geomField": "the_geom",
-              "idField": "objectid",
-              "idType": "number"
-            },
-            "layerSA": {
-              "nom": "tabou:tabou_v_oa_secteur",
-              "geomField": "the_geom",
-              "idField": "objectid",
-              "idType": "number"
-            }
-          },
-          "searchCfg": {
-            "limit": 100000,
-            "communes": {
-              "layer": "tabou2:commune_emprise",
-              "geom": "the_geom",
-              "placeholder": "Communes",
-              "filterField": "code_insee",
-              "apiField": "codeInsee",
-              "apiLabel": "nom"
-            },
-            "quartiers": {
-              "layer": "tabou2:quartier",
-              "geom": "the_geom",
-              "placeholder": "Quartiers",
-              "filterField": "nuquart",
-              "apiField": "nuQuart",
-              "apiLabel": "nom"
-            },
-            "iris": {
-              "layer": "tabou2:iris",
-              "geom": "the_geom",
-              "placeholder": "Iris",
-              "filterField": "code_iris",
-              "apiField": "codeIris",
-              "apiLabel": "nmiris"
-            },
-            "etapesoa": {
-              "layer": "tabou:tabou_v_oa_operation",
-              "geom": "the_geom",
-              "filterField": "etape",
-              "placeholder": "Etapes OA",
-              "apiField": "libelle",
-              "apiLabel": "libelle"
-            },
-            "etapespa": {
-              "layer": "tabou:tabou_v_oa_programme",
-              "geom": "the_geom",
-              "filterField": "etape",
-              "apiLabel": "libelle",
-              "apiField": "libelle",
-              "type": "string",
-              "placeholder": "Etapes PA"
-            },
-            "secteurs-sam": {
-              "layer": "tabou2:v_chargedoperation_secteur",
-              "geom": "the_geom",
-              "filterField": "nom_secteu",
-              "apiLabel": "nomSecteur",
-              "apiField": "nomSecteur",
-              "placeholder": "Sec. SAM"
-            },
-            "secteurs-speu": {
-              "layer": "tabou2:v_referent_urbaniste_secteur",
-              "geom": "the_geom",
-              "filterField": "nom_secteu",
-              "apiLabel": "nomSecteur",
-              "apiField": "nomSecteur",
-              "placeholder": "Sec. SPEU"
-            },
-            "secteurs-sds": {
-              "layer": "tabou2:v_instructeur_secteur",
-              "geom": "the_geom",
-              "filterField": "secteur",
-              "apiField": "secteur",
-              "apiLabel": "secteur",
-              "placeholder": "Sec. SDS"
-            },
-            "secteurs-foncier": {
-              "layer": "tabou2:v_negociateurfoncier_secteur",
-              "geom": "the_geom",
-              "filterField": "negociateu",
-              "apiField": "negociateur",
-              "apiLabel": "negociateur",
-              "placeholder": "Sec. Foncier"
-            },
-            "natures": {
-              "layer": "tabou:tabou_v_oa_operation",
-              "geom": "the_geom",
-              "service": "operations?nature",
-              "attribute": "layerOA",
-              "spatial": [
-                "layerPA",
-                "layerSA"
-              ],
-              "filterField": "nature",
-              "apiField": "libelle",
-              "apiLabel": "libelle",
-              "placeholder": "Natures"
-            },
-            "amenageurOA": {},
-            "promoteurOA": {},
-            "types-financements": {
-              "filterField": "code",
-              "apiField": "code",
-              "apiLabel": "libelle",
-              "placeholder": "Type de financement"
-            },
-            "plui": {
-              "layer": "tabou2:plui_plan_zonage_simplifie",
-              "geom": "the_geom",
-              "filterField": "etiquette",
-              "apiField": "libelle",
-              "apiLabel": "libelle",
-              "placeholder": "Zonage PLUI"
-            },
-            "daact": {
-              "layer": "tabou:tabou_v_oa_programme",
-              "geom": "the_geom",
-              "filterField": "daact_date",
-              "type": "date",
-              "placeholder": "Choisir une date"
-            },
-            "doc": {
-              "layer": "tabou:tabou_v_oa_programme",
-              "geom": "the_geom",
-              "filterField": "doc_date",
-              "type": "date",
-              "placeholder": "Choisir une date"
-            },
-            "livraison": {
-              "layer": "tabou:tabou_v_oa_programme",
-              "geom": "the_geom",
-              "filterField": "livraison_date",
-              "type": "date",
-              "placeholder": "Choisir une date"
-            },
-            "pbil": {
-              "layer": "tabou2:v_pbil0",
-              "geom": "the_geom"
-            }
-          },
-          "apiCfg": {
-            "apiURL": "/tabou2",
-            "extApiURL": "/tabou2",
-            "authent": ""
-          },
-          "styles": {
-            "selection": {
-              "fillColor": "red",
-              "opacity": 1,
-              "fillOpacity": 0.8,
-              "color": "red",
-              "weight": 2
-            },
-            "default": {
-              "fillColor": "#6f718e",
-              "opacity": 0.8,
-              "fillOpacity": 0.2,
-              "color": "orange",
-              "weight": 2
-            }
-          }
-        }
-      },
-      {
         "name": "Map",
         "cfg": {
           "mapOptions": {
@@ -416,10 +185,7 @@
                 "altShiftDragRotate": false
               }
             }
-          },
-          "tools": [
-            "locate"
-          ]
+          }
         }
       },
       "Version",
@@ -440,9 +206,7 @@
       },
       {
         "name": "Identify",
-        "showIn": [
-          "Settings"
-        ],
+        "showIn": ["Settings"],
         "cfg": {
           "showFullscreen": true,
           "position": "bottom",
@@ -495,10 +259,7 @@
         "name": "Search",
         "cfg": {
           "showOptions": false,
-          "withToggle": [
-            "max-width: 768px",
-            "min-width: 768px"
-          ]
+          "withToggle": ["max-width: 768px", "min-width: 768px"]
         }
       },
       {
@@ -529,7 +290,6 @@
       "OmniBar",
       "BurgerMenu",
       "Expander",
-      "GlobeViewSwitcher",
       {
         "name": "Cookie",
         "cfg": {
@@ -540,6 +300,7 @@
       "FeedbackMask"
     ],
     "desktop": [
+      "SidebarMenu",
       "Details",
       {
         "name": "Tabou2",
@@ -559,18 +320,11 @@
               "opacity": 0.8,
               "color": "yellow",
               "weight": 2,
-              "dashArray": [
-                5,
-                5
-              ]
+              "dashArray": [5, 5]
             }
           },
           "geoserverURL": "https://gis.jdev.fr/geoserver",
-          "layersOrder": [
-            "Opérations",
-            "Secteurs",
-            "Programmes"
-          ],
+          "layersOrder": ["Opérations", "Secteurs", "Programmes"],
           "help": {
             "url": "https://public.sig.rennesmetropole.fr/ressources/app/georchestra/Portail%20web%20guide%20rapide%20de%20prise%20en%20main.pdf",
             "contact": "d.cottencin@rennesmetropole.fr",
@@ -677,10 +431,7 @@
               "geom": "the_geom",
               "service": "operations?nature",
               "attribute": "layerOA",
-              "spatial": [
-                "layerPA",
-                "layerSA"
-              ],
+              "spatial": ["layerPA", "layerSA"],
               "filterField": "nature",
               "apiField": "libelle",
               "apiLabel": "libelle",
@@ -834,18 +585,12 @@
               "id": "Viewport",
               "name": "queryform.spatialfilter.methods.viewport"
             },
-            {
-              "id": "BBOX",
-              "name": "queryform.spatialfilter.methods.box"
-            },
+            { "id": "BBOX", "name": "queryform.spatialfilter.methods.box" },
             {
               "id": "Circle",
               "name": "queryform.spatialfilter.methods.circle"
             },
-            {
-              "id": "Polygon",
-              "name": "queryform.spatialfilter.methods.poly"
-            }
+            { "id": "Polygon", "name": "queryform.spatialfilter.methods.poly" }
           ]
         }
       },
@@ -895,9 +640,7 @@
       },
       {
         "name": "About",
-        "showIn": [
-          "BurgerMenu"
-        ]
+        "showIn": ["BurgerMenu"]
       },
       {
         "name": "MousePosition",
@@ -905,10 +648,7 @@
           "editCRS": true,
           "showLabels": true,
           "showToggle": true,
-          "filterAllowedCRS": [
-            "EPSG:4326",
-            "EPSG:3857"
-          ],
+          "filterAllowedCRS": ["EPSG:4326", "EPSG:3857"],
           "additionalCRS": {}
         }
       },
@@ -916,94 +656,14 @@
         "name": "CRSSelector",
         "cfg": {
           "additionalCRS": {},
-          "filterAllowedCRS": [
-            "EPSG:4326",
-            "EPSG:3857"
-          ],
-          "allowedRoles": [
-            "ADMIN"
-          ]
+          "filterAllowedCRS": ["EPSG:4326", "EPSG:3857"],
+          "allowedRoles": ["ADMIN"]
         }
       },
       {
         "name": "Search",
         "cfg": {
-          "withToggle": [
-            "max-width: 768px",
-            "min-width: 768px"
-          ],
-          "searchOptions": {
-            "services": [
-              {
-                "priority": 1,
-                "type": "wfs",
-                "name": "OA",
-                "displayName": "OA-ZAC-${properties.nomzac}",
-                "subTitle": " Opérations d'aménagement",
-                "options": {
-                  "url": "https://gis.jdev.fr/geoserver/wfs",
-                  "typeName": "tabou:tabou_v_oa_operation",
-                  "queriableAttributes": [
-                    "nomzac"
-                  ],
-                  "sortBy": "nomzac",
-                  "srsName": "EPSG:4326",
-                  "maxFeatures": 4
-                }
-              },
-              {
-                "priority": 2,
-                "type": "wfs",
-                "name": "PA",
-                "displayName": "${properties.nomopa}-PA-${properties.programme}",
-                "subTitle": " Programme d'aménagement",
-                "options": {
-                  "url": "https://gis.jdev.fr/geoserver/wfs",
-                  "typeName": "tabou:tabou_v_oa_programme",
-                  "queriableAttributes": [
-                    "nomopa"
-                  ],
-                  "sortBy": "programme",
-                  "srsName": "EPSG:4326",
-                  "maxFeatures": 10
-                }
-              },
-              {
-                "priority": 3,
-                "type": "wfs",
-                "name": "SA",
-                "displayName": "SA-${properties.secteur}",
-                "subTitle": " Secteur d'aménagement",
-                "options": {
-                  "url": "https://gis.jdev.Fr/geoserver/wfs",
-                  "typeName": "tabou:tabou_v_oa_secteur",
-                  "queriableAttributes": [
-                    "secteur"
-                  ],
-                  "sortBy": "secteur",
-                  "srsName": "EPSG:4326",
-                  "maxFeatures": 4
-                }
-              },
-              {
-                "priority": 4,
-                "type": "wfs",
-                "name": "PA",
-                "displayName": "${properties.nomopa}-PA-${properties.programme}",
-                "subTitle": " Programme d'aménagement",
-                "options": {
-                  "url": "https://gis.jdev.fr/geoserver/wfs",
-                  "typeName": "tabou:tabou_v_oa_programme",
-                  "queriableAttributes": [
-                    "programme"
-                  ],
-                  "sortBy": "programme",
-                  "srsName": "EPSG:4326",
-                  "maxFeatures": 4
-                }
-              }
-            ]
-          }
+          "withToggle": ["max-width: 768px", "min-width: 768px"]
         }
       },
       {
@@ -1062,7 +722,6 @@
       "Undo",
       "Redo",
       "FullScreen",
-      "GlobeViewSwitcher",
       "SearchServicesConfig",
       "SearchByBookmark",
       "WidgetsBuilder",
@@ -1078,9 +737,6 @@
       {
         "name": "Map",
         "cfg": {
-          "tools": [
-            "locate"
-          ],
           "mapOptions": {
             "openlayers": {
               "interactions": {
@@ -1171,10 +827,7 @@
         "name": "Search",
         "cfg": {
           "showOptions": false,
-          "withToggle": [
-            "max-width: 768px",
-            "min-width: 768px"
-          ]
+          "withToggle": ["max-width: 768px", "min-width: 768px"]
         }
       },
       {
@@ -1231,6 +884,7 @@
       "CreateNewMap",
       "FeaturedMaps",
       "ContentTabs",
+
       {
         "name": "Maps",
         "cfg": {

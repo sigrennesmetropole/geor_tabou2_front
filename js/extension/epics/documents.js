@@ -3,6 +3,7 @@ import { error, success } from "@mapstore/actions/notifications";
 import {getMessageById} from "@mapstore/utils/LocaleUtils";
 import { isTabou2Activate, getInfos, getPluginCfg } from "../selectors/tabou2";
 import { wrapStartStop } from "@mapstore/observables/epics";
+import { isEmpty } from "lodash";
 import { GET_TABOU_DOCUMENTS,
     setDocuments,
     TABOU_DOWNLOAD_DOC,
@@ -185,7 +186,7 @@ export function updateDocument(action$, store) {
         .switchMap((action) => {
             let messages = store.getState()?.locale.messages;
             let { featureId, layerUrl } = getInfos(store.getState());
-            return Rx.Observable.defer(() => updateDocumentContent(layerUrl, featureId, action.metadata.id, action.file))
+            return Rx.Observable.defer(() => isEmpty(action.file) ? {data: null} : updateDocumentContent(layerUrl, featureId, action.metadata, action.file))
                 .catch(e => {
                     console.log("Error on create documents");
                     console.log(e);
