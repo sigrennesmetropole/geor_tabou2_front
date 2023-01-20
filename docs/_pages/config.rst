@@ -77,7 +77,8 @@ Voici la liste des paramètres et les explications correspondantes.
         "geom","Pour le filtre par IRIS ==> shape","Nom du champ contenant la géométrie"
         "placeholder","","Texte à afficher quand le filtre est vide"
         "filterField","Pour croiser la couche IRIS avec la couche des opérations, on réalisera un filtre sur le champ code_iris de la couche IRIS","Nom du champ à filtrer au sein de la couche ciblée par l'intersection spatiale"
-        "apiField","","Nom du champ fourni par l'API qui contient la valeur à filtrer dans le champ de la couche cible de l'intersection spatial (voir paramètre filterField)"
+        "cqlCondition","Utiliser pour un mapping entre les valeur de la liste (e.g un code) fourni par l'API et un champ à utiliser dans le filtre", ""
+        "apiField","","Nom du champ fourni par l'API qui contient la valeur à filtrer dans le champ de la couche cible de l'intersection spatial (voir paramètre filterField)", "Voir exemple avec le filtre types de financements"
         "apiLabel","","Nom du champ de l'API qui contient la valeur à afficher dans le filtre dans le cas d'une liste ou d'une multiselection"
         "styles.default","", "Style des entités cliquées de la couche sélectionnée dans la fiche."
         "styles.selection","", "Style de l'entité en consultation dans la fiche."
@@ -171,6 +172,7 @@ c. filtrer dans MapStore2 les couches selon les IDs récupérés par l'intersect
         "type": "nous précisons le type car le système à besoin d'appliquer un filtre CQL particulier dans la requête d'intersection avec geoserver",
         "apiField","Inutile car nous n'utilisons pas l'API, c'est une sélection libre"
         "apiLabel","Inutile car nous n'utilisons pas l'API, c'est une sélection libre"
+        "cqlCondition","Inutile ici"
 
 Styles de la sélection
 ===============
@@ -226,186 +228,203 @@ Voici un exemple de configuration :
         {
             "cfg": {
                 "styles": {
-                    "showClick": true,
-                    "selection": {
+                "showClick": true,
+                "selection": {
                     "fillColor": "red",
-                    "fillOpacity": 0.8,
+                    "fillOpacity": 0.5,
                     "opacity": 1,
-                    "color": "yellow",
-                    "weight": 2
-                    },
-                    "default": {
+                    "color": "red",
+                    "weight": 4
+                },
+                "default": {
                     "fillColor": "#6f718e",
                     "fillOpacity": 0,
                     "opacity": 0.8,
-                    "color": "yellow",
+                    "color": "red",
                     "weight": 2,
-                    "dashArray": [5, 5]
-                    }
+                    "dashArray": [
+                    5,
+                    5
+                    ]
+                }
                 },
                 "help": {
-                    "url": "https://...main.pdf",
-                    "contact": "d.cottencin@rennesmetropole.fr",
-                    "ddc": "https://...main.pdf",
-                    "agapeo": "https://...main.pdf#page=26"
+                "url": "https://public.sig.rennesmetropole.fr/ressources/app/georchestra/Portail%20web%20guide%20rapide%20de%20prise%20en%20main.pdf",
+                "contact": "d.cottencin@rennesmetropole.fr",
+                "agapeo": "https://public.sig.rennesmetropole.fr/ressources/app/georchestra/Portail%20web%20guide%20rapide%20de%20prise%20en%20main.pdf",
+                "ddc": "https://public.sig.rennesmetropole.fr/ressources/app/georchestra/Portail%20web%20guide%20rapide%20de%20prise%20en%20main.pdf"
                 },
                 "geoserverURL": "/geoserver",
                 "showIdentify": false,
-                "layersOrder": ["Opérations", "Secteurs", "Programmes"],
+                "layersOrder": [
+                "Opérations",
+                "Secteurs",
+                "Programmes"
+                ],
                 "layersCfg": {
-                    "layerPA": {
-                        "nom": "app:tabou_v_oa_programme",
-                        "geomField": "shape",
-                        "idField": "objectid",
-                        "idType": "number"
-                    },
-                    "layerOA": {
-                        "nom": "app:tabou_v_oa_operation",
-                        "geomField": "shape",
-                        "idField": "objectid",
-                        "idType": "number"
-                    },
-                    "layerSA": {
-                        "nom": "app:tabou_v_oa_secteur",
-                        "geomField": "shape",
-                        "idField": "objectid",
-                        "idType": "number"
-                    }
+                "layerPA": {
+                    "nom": "tabou_test_v_oa_programme",
+                    "geomField": "shape",
+                    "idField": "objectid",
+                    "idType": "number"
+                },
+                "layerOA": {
+                    "nom": "tabou_test_v_oa_operation",
+                    "geomField": "shape",
+                    "idField": "objectid",
+                    "idType": "number"
+                },
+                "layerSA": {
+                    "nom": "tabou_test_v_oa_secteur",
+                    "geomField": "shape",
+                    "idField": "objectid",
+                    "idType": "number"
+                }
                 },
                 "searchCfg": {
-                    "limit": 150
-                    "communes": {
-                        "layer": "ladm_terri:commune_emprise",
-                        "geom": "shape",
-                        "placeholder": "Communes",
-                        "filterField": "code_insee",
-                        "apiField": "codeInsee",
-                        "apiLabel": "nom"
+                "limit": 1500,
+                "communes": {
+                    "layer": "ladm_terri:commune_emprise",
+                    "geom": "shape",
+                    "placeholder": "Communes",
+                    "filterField": "code_insee",
+                    "apiField": "codeInsee",
+                    "apiLabel": "nom"
+                },
+                "quartiers": {
+                    "layer": "ladm_terri:quartier",
+                    "geom": "shape",
+                    "placeholder": "Quartiers",
+                    "filterField": "nuquart",
+                    "apiField": "nuQuart",
+                    "apiLabel": "nom"
+                },
+                "iris": {
+                    "layer": "dem_stats:iris",
+                    "geom": "shape",
+                    "placeholder": "Iris",
+                    "filterField": "code_iris",
+                    "apiField": "codeIris",
+                    "apiLabel": "nmiris"
+                },
+                "etapesoa": {
+                    "layer": "tabou_test_v_oa_operation",
+                    "geom": "shape",
+                    "filterField": "etape",
+                    "placeholder": "Etapes OA",
+                    "apiField": "libelle",
+                    "apiLabel": "libelle"
+                },
+                "etapespa": {
+                    "layer": "tabou_test_v_oa_programme",
+                    "geom": "shape",
+                    "filterField": "etape",
+                    "apiLabel": "libelle",
+                    "apiField": "libelle",
+                    "type": "string",
+                    "placeholder": "Etapes PA"
+                },
+                "secteurs-sam": {
+                    "layer": "urba_zona:v_chargedoperation_secteur",
+                    "geom": "geom",
+                    "filterField": "nom_secteur",
+                    "apiLabel": "nomSecteur",
+                    "apiField": "nomSecteur",
+                    "placeholder": "Sec. SAM"
+                },
+                "secteurs-speu": {
+                    "layer": "urba_zona:v_referent_urbaniste_secteur",
+                    "geom": "geom",
+                    "filterField": "nom_secteur",
+                    "apiLabel": "nomSecteur",
+                    "apiField": "nomSecteur",
+                    "placeholder": "Sec. SPEU"
+                },
+                "secteurs-sds": {
+                    "layer": "urba_zona:v_instructeur_secteur",
+                    "geom": "geom",
+                    "filterField": "secteur",
+                    "apiField": "secteur",
+                    "apiLabel": "secteur",
+                    "placeholder": "Sec. SDS"
+                },
+                "secteurs-foncier": {
+                    "layer": "urba_zona:v_negociateurfoncier_secteur",
+                    "geom": "geom",
+                    "filterField": "negociateur",
+                    "apiField": "negociateur",
+                    "apiLabel": "negociateur",
+                    "placeholder": "Sec. Foncier"
+                },
+                "natures": {
+                    "layer": "tabou_test_v_oa_operation",
+                    "geom": "shape",
+                    "service": "operations?nature",
+                    "attribute": "layerOA",
+                    "spatial": [
+                    "layerPA",
+                    "layerSA"
+                    ],
+                    "filterField": "nature",
+                    "apiField": "libelle",
+                    "apiLabel": "libelle",
+                    "placeholder": "Natures"
+                },
+                "amenageurOA": {},
+                "promoteurOA": {},
+                "types-financements": {
+                    "cqlCcondition": {
+                    "ACC_AIDEE": "logements_access_aide > 0",
+                    "ACC_LIBRE": "logements_access_libre > 0",
+                    "ACC_MAITRISEE": "logements_access_maitrise > 0",
+                    "LOC_AIDE": "logements_locatif_aide_prevu > 0",
+                    "LOC_REGULE_HLM": "logements_locatif_regule_hlm_prevu > 0",
+                    "LOC_REGULE_PRIVE": "logements_locatif_regule_hlm_prevu > 0"
                     },
-                    "quartiers": {
-                        "layer": "ladm_terri:quartier",
-                        "geom": "shape",
-                        "placeholder": "Quartiers",
-                        "filterField": "nuquart",
-                        "apiField": "nuQuart",
-                        "apiLabel": "nom"
-                    },
-                    "iris": {
-                        "layer": "dem_stats:iris",
-                        "geom": "shape",
-                        "placeholder": "Iris",
-                        "filterField": "code_iris",
-                        "apiField": "codeIris",
-                        "apiLabel": "nmiris"
-                    },
-                    "etapesoa": {
-                        "layer": "app:tabou_v_oa_operation",
-                        "geom": "shape",
-                        "filterField": "etape",
-                        "placeholder": "Etapes OA",
-                        "apiField": "libelle",
-                        "apiLabel": "libelle"
-                    },
-                    "etapespa": {
-                        "layer": "app:tabou_v_oa_programme",
-                        "geom": "shape",
-                        "filterField": "etape",
-                        "apiLabel": "libelle",
-                        "apiField": "libelle",
-                        "type": "string",
-                        "placeholder": "Etapes PA"
-                    },
-                    "secteurs-sam": {
-                        "layer": "urba_zona:v_chargedoperation_secteur",
-                        "geom": "geom",
-                        "filterField": "nom_secteur",
-                        "apiLabel": "nomSecteur",
-                        "apiField": "nomSecteur",
-                        "placeholder": "Sec. SAM"
-                    },
-                    "secteurs-speu": {
-                        "layer": "urba_zona:v_referent_urbaniste_secteur",
-                        "geom": "geom",
-                        "filterField": "nom_secteur",
-                        "apiLabel": "nomSecteur",
-                        "apiField": "nomSecteur",
-                        "placeholder": "Sec. SPEU"
-                    },
-                    "secteurs-sds": {
-                        "layer": "urba_zona:v_instructeur_secteur",
-                        "geom": "geom",
-                        "filterField": "secteur",
-                        "apiField": "secteur",
-                        "apiLabel": "secteur",
-                        "placeholder": "Sec. SDS"
-                    },
-                    "secteurs-foncier": {
-                        "layer": "urba_zona:v_negociateurfoncier_secteur",
-                        "geom": "geom",
-                        "filterField": "negociateur",
-                        "apiField": "negociateur",
-                        "apiLabel": "negociateur",
-                        "placeholder": "Sec. Foncier"
-                    },
-                    "natures": {
-                        "layer": "app:tabou_v_oa_operation",
-                        "geom": "shape",
-                        "service": "operations?nature",
-                        "attribute": "layerOA",
-                        "spatial": [
-                        "layerPA",
-                        "layerSA"
-                        ],
-                        "filterField": "nature",
-                        "apiField": "libelle",
-                        "apiLabel": "libelle",
-                        "placeholder": "Natures"
-                    },
-                    "amenageurOA": {},
-                    "promoteurOA": {},
-                    "types-financements": {
-                        "filterField": "code",
-                        "apiField": "code",
-                        "apiLabel": "libelle",
-                        "placeholder": "Type de financement"
-                    },
-                    "plui": {
-                        "layer": "urba_docs_plui:plui_plan_zonage_simplifie",
-                        "geom": "shape",
-                        "filterField": "etiquette",
-                        "apiField": "libelle",
-                        "apiLabel": "libelle",
-                        "placeholder": "Zonage PLUI"
-                    },
-                    "daact": {
-                        "layer": "app:tabou_v_oa_programme",
-                        "geom": "shape",
-                        "filterField": "daact_date",
-                        "type": "date",
-                        "placeholder": "Choisir une date"
-                    },
-                    "doc": {
-                        "layer": "app:tabou_v_oa_programme",
-                        "geom": "shape",
-                        "filterField": "doc_date",
-                        "type": "date",
-                        "placeholder": "Choisir une date"
-                    },
-                    "livraison": {
-                        "layer": "app:tabou_v_oa_programme",
-                        "geom": "shape",
-                        "filterField": "livraison_date",
-                        "type": "date",
-                        "placeholder": "Choisir une date"
-                    },
-                    "pbil": {
-                        "layer": "app:tabou_v_pbil",
-                        "geom": "shape"
-                    }
+                    "layer": "tabou_test_v_oa_programme",
+                    "geom": "shape",
+                    "filterField": "code",
+                    "apiField": "code",
+                    "apiLabel": "libelle",
+                    "placeholder": "Type de financement"
+                },
+                "plui": {
+                    "layer": "urba_docs_plui:plui_plan_zonage_simplifie",
+                    "geom": "shape",
+                    "filterField": "etiquette",
+                    "apiField": "libelle",
+                    "apiLabel": "libelle",
+                    "placeholder": "Zonage PLUI"
+                },
+                "daact": {
+                    "layer": "tabou_test_v_oa_programme",
+                    "geom": "shape",
+                    "filterField": "daact_date",
+                    "type": "date",
+                    "placeholder": "Choisir une date"
+                },
+                "doc": {
+                    "layer": "tabou_test_v_oa_programme",
+                    "geom": "shape",
+                    "filterField": "doc_date",
+                    "type": "date",
+                    "placeholder": "Choisir une date"
+                },
+                "livraison": {
+                    "layer": "tabou_v_oa_programme",
+                    "geom": "shape",
+                    "filterField": "livraison_date",
+                    "type": "date",
+                    "placeholder": "Choisir une date"
+                },
+                "pbil": {
+                    "layer": "app:tabou_v_pbil",
+                    "geom": "shape"
+                }
                 },
                 "apiCfg": {
-                    "apiURL": "/tabou2",
-                    "documentsByPage": 5
+                "apiURL": "/tabou2",
+                "documentsByPage": 5
                 }
             },
             "override": {}
