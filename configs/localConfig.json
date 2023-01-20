@@ -441,6 +441,16 @@
             "amenageurOA": {},
             "promoteurOA": {},
             "types-financements": {
+              "cqlCcondition": {
+                "ACC_AIDEE": "logements_access_aide > 0",
+                "ACC_LIBRE": "logements_access_libre > 0",
+                "ACC_MAITRISEE": "logements_access_maitrise > 0",
+                "LOC_AIDE": "logements_locatif_aide_prevu > 0",
+                "LOC_REGULE_HLM": "logements_locatif_regule_hlm_prevu > 0",
+                "LOC_REGULE_PRIVE": "logements_locatif_regule_hlm_prevu > 0"
+              },
+              "layer": "tabou:tabou_v_oa_programme",
+              "geom": "the_geom",
               "filterField": "code",
               "apiField": "code",
               "apiLabel": "libelle",
