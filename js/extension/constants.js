@@ -1,5 +1,5 @@
 export const TABOU_VECTOR_ID = "__OA_OVRLAY_LAYER__";
-export const TABOU_OWNER = "Tabou2";
+export const TABOU_OWNER = "tabou2";
 export const TABOU_MARKER_LAYER_ID = "__OA_OVRLAY_MARKER__";
 
 export const TABS = [{
@@ -25,7 +25,7 @@ export const API_BASE_URL = 'http://localhost:3000';
 
 export const ID_SELECTOR = 'layerTabouId-selector';
 
-export const PANEL_SIZE = 600;
+export const SIZE = 600;
 
 export const URL_ADD = {
     "tabou2": "",

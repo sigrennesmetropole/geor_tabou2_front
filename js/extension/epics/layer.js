@@ -102,11 +102,19 @@ export const onTabouMapClick = (action$, store) =>
         .filter(() => isTabou2Activate(store.getState()))
         .switchMap(({ point }) => {
             let layers = getPluginCfg(store.getState()).layersCfg;
-            let list = keys(layers).map(l => ({
-                name: l,
-                params: createParams(point, get(layers, l).nom),
-                tocLayer: layersSelector(store.getState()).filter(lyr => lyr.name === get(layers, l).nom)[0]
-            })).filter(a => a.tocLayer.visibility);
+            let list = keys(layers).map(l => {
+                const tocLayer = layersSelector(store.getState()).filter(lyr => {
+                    const thisName = lyr.name;
+                    const thisConfigName = get(layers, l).nom;
+                    return thisName === thisConfigName;
+                });
+
+                return {
+                    name: l,
+                    params: createParams(point, get(layers, l).nom),
+                    tocLayer: tocLayer[0]
+                }
+            }).filter(a => a.tocLayer.visibility);
 
             return Rx.Observable.concat(
                 Rx.Observable.of(

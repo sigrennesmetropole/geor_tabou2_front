@@ -289,7 +289,6 @@
       },
       "Login",
       "OmniBar",
-      "BurgerMenu",
       "Expander",
       {
         "name": "Cookie",
@@ -304,7 +303,7 @@
       "SidebarMenu",
       "Details",
       {
-        "name": "Tabou2",
+        "name": "tabou2",
         "cfg": {
           "styles": {
             "showClick": true,
@@ -728,7 +727,6 @@
       "Login",
       "Save",
       "SaveAs",
-      "BurgerMenu",
       "Expander",
       "Undo",
       "Redo",

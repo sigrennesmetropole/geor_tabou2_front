@@ -3,13 +3,12 @@ import { UPDATE_MAP_LAYOUT, updateMapLayout } from '@mapstore/actions/maplayout'
 import { updateAdditionalLayer, removeAdditionalLayer } from '@mapstore/actions/additionallayers';
 import { hideMapinfoMarker, toggleMapInfoState } from '@mapstore/actions/mapInfo';
 import { isTabou2Activate } from '../selectors/tabou2';
-import { PANEL_SIZE, TABOU_VECTOR_ID, TABOU_OWNER, TABOU_MARKER_LAYER_ID } from '../constants';
+import { SIZE, TABOU_VECTOR_ID, TABOU_OWNER, TABOU_MARKER_LAYER_ID } from '../constants';
 import { SETUP, CLOSE_TABOU, cleanTabouInfos } from "../actions/tabou2";
 import { get } from "lodash";
 import { defaultIconStyle } from "@mapstore/utils/SearchUtils";
 import iconUrl from "@mapstore/components/map/openlayers/img/marker-icon.png";
 
-const OFFSET = PANEL_SIZE;
 /**
  * Manage mapstore toolbar layout
  * @param {any} action$
@@ -18,21 +17,23 @@ const OFFSET = PANEL_SIZE;
  */
 export const setTbarPosition = (action$, store) =>
     action$.ofType(UPDATE_MAP_LAYOUT)
-        .filter(() => isTabou2Activate(store.getState()))
+        .filter(() => {
+            return isTabou2Activate(store.getState());
+        })
         .filter(({ source }) => {
-            return source !== 'tabou2';
+            return source !== name;
         })
         .map(({ layout }) => {
             const action = updateMapLayout({
                 ...layout,
-                right: OFFSET + (layout?.boundingSidebarRect?.right ?? 0),
+                right: SIZE + (layout?.boundingSidebarRect?.right ?? 0),
                 boundingMapRect: {
                     ...(layout.boundingMapRect || {}),
-                    right: OFFSET + (layout?.boundingSidebarRect?.right ?? 0)
+                    right: SIZE + (layout?.boundingSidebarRect?.right ?? 0)
                 },
                 rightPanel: true
             });
-            return { ...action, source: 'tabou2' }; // add an argument to avoid infinite loop.
+            return { ...action, source: name }; // add an argument to avoid infinite loop.
         });
 /**
  * Create additional layers
@@ -45,7 +46,7 @@ export const initMap = (action$, store) =>
         const mapInfoEnabled = get(store.getState(), "mapInfo.enabled");
         return Rx.Observable.defer(() => {
             // replace red marker icon by default ol blue marker
-            let defaultStyle = {...defaultIconStyle, iconUrl: iconUrl};
+            let defaultStyle = { ...defaultIconStyle, iconUrl: iconUrl };
             return Rx.Observable.from([
                 updateAdditionalLayer(
                     TABOU_VECTOR_ID,
@@ -72,13 +73,8 @@ export const initMap = (action$, store) =>
                         style: defaultStyle
                     }
                 )
-            // disable click info right panel
+                // disable click info right panel
             ]).concat([...(mapInfoEnabled ? [toggleMapInfoState(), hideMapinfoMarker()] : [])]);
-        }).startWith({
-            type: 'MAP_LAYOUT:UPDATE_DOCK_PANELS',
-            name: 'tabou2',
-            action: 'add',
-            location: 'right'
         });
     });
 
