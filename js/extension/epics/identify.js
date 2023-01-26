@@ -261,7 +261,7 @@ export function dipslayPASAByOperation(action$, store) {
                 setTabouFilterObj(filters),
                 applyFilterObj(layerPA),
                 applyFilterObj(layerOA),
-                applyFilterObj(layerSA),
+                applyFilterObj(layerSA)
             );
         });
 }
@@ -289,7 +289,7 @@ export const getFicheInfoValues = (action$, store) =>
                     return Rx.Observable.of(
                         setTabouFicheInfos(elementArray[0].name, elementArray[0].data),
                         setTabouFicheInfos(elementArray[1].name, elementArray[1].data),
-                        setTabouFicheInfos(elementArray[2].name, elementArray[2].data),
+                        setTabouFicheInfos(elementArray[2].name, elementArray[2].data)
                     );
                 });
             });

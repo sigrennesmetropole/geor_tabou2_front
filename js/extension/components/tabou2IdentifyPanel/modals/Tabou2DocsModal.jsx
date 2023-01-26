@@ -251,7 +251,7 @@ function Tabou2DocsModal({
     const getRows = () => {
         return Data.Selectors.getRows({ rows, filters });
     };
-    const handleFilterChange = filter => filters => {
+    const handleFilterChange = filter => filters => { // eslint-disable-line no-shadow
         const newFilters = { ...filters };
         if (filter.filterTerm) {
             newFilters[filter.column.key] = filter;

@@ -13,7 +13,7 @@ export const CONTROL_NAME = 'tabou2';
 
 import {
     registerEventListener,
-    unRegisterEventListener,
+    unRegisterEventListener
 } from "@mapstore/actions/map";
 
 const OFFSET = PANEL_SIZE;
