@@ -1,0 +1,38 @@
+name: create latest release zip extension
+on:
+  push:
+    branches:
+      - main
+# This workflow will run tests for npm and java
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout branch"
+        uses: actions/checkout@v3
+        with:
+          ref: main
+      # only keep branche submodule version
+      - name: "Checkout submodules"
+        run: git submodule update --init --recursive
+
+      - name: "setting up npm"
+        uses: actions/setup-node@v2
+        with:
+            node-version: '12.x'
+
+      ###############
+      # NPM CHECKS
+      #############
+      - name: npm install
+        run: npm install
+
+      - name: build
+        run: npm run ext:build
+
+      - name: 'Upload Artifact'
+        uses: actions/upload-artifact@v2
+        with:
+          name: urbamap-last-release
+          path: dist/Tabou2.zip
+          retention-days: 5
