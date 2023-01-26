@@ -10,7 +10,7 @@ import { layersSelector } from '@mapstore/selectors/layers';
 import { selectedLayerIdSelector } from '@mapstore/selectors/featuregrid';
 import {getMessageById} from "@mapstore/utils/LocaleUtils";
 
-import iconUrbamap from "@js/extension/assets/icon_urbamap.svg";
+import iconUrbamap from "@js/extension/assets/iconUrbamap.svg";
 
 import { isTabou2Activate, mapLayoutValuesSelector } from "../selectors/tabou2";
 import { setUp, closeTabou, updateVectorTabouStyle } from "../actions/tabou2";
