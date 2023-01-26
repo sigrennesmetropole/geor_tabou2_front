@@ -91,7 +91,7 @@
         "search": { "url": "https://gis.jdev.fr/geoserver/wfs", "type": "wfs" },
         "name": "tabou:tabou_v_oa_operation",
         "description": "tabou_v_oa_operation",
-        "title": "tabou_v_oa_operation",
+        "title": "Opérations",
         "type": "wms",
         "url": "https://gis.jdev.fr/geoserver/ows",
         "bbox": {
@@ -134,7 +134,7 @@
         "search": { "url": "https://gis.jdev.fr/geoserver/wfs", "type": "wfs" },
         "name": "tabou:tabou_v_oa_secteur",
         "description": "tabou_v_oa_secteur",
-        "title": "tabou_v_oa_secteur",
+        "title": "Secteurs",
         "type": "wms",
         "url": "https://gis.jdev.fr/geoserver/ows",
         "bbox": {
@@ -177,7 +177,7 @@
         "search": { "url": "https://gis.jdev.fr/geoserver/wfs", "type": "wfs" },
         "name": "tabou:tabou_v_oa_programme",
         "description": "tabou_v_oa_programme",
-        "title": "tabou_v_oa_programme",
+        "title": "Programmes",
         "type": "wms",
         "url": "https://gis.jdev.fr/geoserver/ows",
         "bbox": {
