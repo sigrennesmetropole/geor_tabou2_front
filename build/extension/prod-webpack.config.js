@@ -24,4 +24,4 @@ const plugins = [
         }
     })
 ];
-module.exports = createExtensionWebpackConfig({ prod: true, name, ...commons, plugins});
+module.exports = createExtensionWebpackConfig({ prod: false === 'false', name, ...commons, plugins});
