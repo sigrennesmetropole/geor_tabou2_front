@@ -11,6 +11,7 @@ import { layersSelector } from '@mapstore/selectors/layers';
 import { selectedLayerIdSelector } from '@mapstore/selectors/featuregrid';
 import {getMessageById} from "@mapstore/utils/LocaleUtils";
 
+import icon_urbamap from "@js/extension/assets/icon_urbamap.svg";
 
 import { isTabou2Activate, mapLayoutValuesSelector } from "../selectors/tabou2";
 import { setUp, closeTabou, updateVectorTabouStyle } from "../actions/tabou2";
@@ -126,21 +127,21 @@ export default {
         getFicheInfoValues: getFicheInfoValues
     },
     containers: {
-        Toolbar: {
-            name: "Tabou2",
-            position: 1,
-            icon: <Glyphicon glyph="th" />,
-            doNotHide: true,
-            alwaysVisible: true,
-            action: toggleControl.bind(null, CONTROL_NAME, null),
-            priority: 1,
-            tooltip: "tabou2.btnTooltip"
-        },
+        // Toolbar: {
+        //     name: "Tabou2",
+        //     position: 1,
+        //     icon: <Glyphicon glyph="th" />,
+        //     doNotHide: true,
+        //     alwaysVisible: true,
+        //     action: toggleControl.bind(null, CONTROL_NAME, null),
+        //     priority: 1,
+        //     tooltip: "tabou2.btnTooltip"
+        // },
         SidebarMenu: {
             name: "Tabou2",
             position: 10,
-            icon: <Glyphicon glyph="th" />,
-            tooltip: "extension.tooltip",
+            icon: <img src={ icon_urbamap } />,
+            tooltip: "tabou2.btnTooltip",
             doNotHide: true,
             action: toggleControl.bind(null, CONTROL_NAME, null),
             priority: 1

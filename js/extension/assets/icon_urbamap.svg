@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="25"
+   height="25.952761"
+   viewBox="0 0 6.6145833 6.8666695"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
+   sodipodi:docname="icon_urbamap.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:pageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="true"
+     inkscape:document-units="mm"
+     showgrid="false"
+     units="px"
+     height="317.95276px"
+     width="230px"
+     inkscape:zoom="5.9295174"
+     inkscape:cx="-16.949103"
+     inkscape:cy="28.5858"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="1912"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer4" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="Calque 3"
+     style="display:none" />
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     style="display:none" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Calque 2"
+     style="display:inline">
+    <g
+       id="g10910"
+       transform="matrix(1.71218,0,0,1.4106269,8.0972105,-6.1695029)"
+       style="stroke:#ffffff;stroke-opacity:1;fill:#4d4d4d;fill-opacity:1">
+      <rect
+         style="fill:#4d4d4d;fill-opacity:1;stroke:#ffffff;stroke-width:0.0511456;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         id="rect10779"
+         width="0.56793761"
+         height="0.95741951"
+         x="-3.1236567"
+         y="7.7509575" />
+      <rect
+         style="fill:#4d4d4d;fill-opacity:1;stroke:#ffffff;stroke-width:0.0872465;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         id="rect10779-8"
+         width="0.56793761"
+         height="2.7860074"
+         x="-2.3664067"
+         y="5.9282708" />
+      <rect
+         style="fill:#4d4d4d;fill-opacity:1;stroke:#ffffff;stroke-width:0.0670098;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         id="rect10779-8-8"
+         width="0.56793761"
+         height="1.6434757"
+         x="-3.8809071"
+         y="7.0708022" />
+    </g>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer4"
+     inkscape:label="Calque 4"
+     style="display:inline">
+    <path
+       d="m 3.506314,0.2191557 c -0.1207404,-0.0690011 -0.2698232,-0.0690011 -0.3917985,0 L 0.35467856,1.7962052 C 0.2327093,1.866434 0.15631508,1.997032 0.15631508,2.1387201 V 6.081346 c 0,0.2180764 0.17618583,0.394262 0.39426203,0.394262 0.21807629,0 0.39426341,-0.1761856 0.39426341,-0.394262 V 2.3678861 L 3.3104156,1.0163044 5.675989,2.3678861 V 6.081346 c 0,0.2180764 0.1761871,0.394262 0.3942634,0.394262 0.2180763,0 0.394262,-0.1761856 0.394262,-0.394262 V 2.1387201 c 0,-0.1416881 -0.076389,-0.2722866 -0.1983635,-0.3425149 z"
+       id="path10995"
+       style="fill:#4d4d4d;fill-opacity:1;stroke:#ffffff;stroke-width:0.147931;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       sodipodi:nodetypes="sccsssscccsssscs" />
+  </g>
+</svg>
