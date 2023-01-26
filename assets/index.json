@@ -1,7 +1,7 @@
 {
   "plugins": [
     {
-      "name": "tabou2",
+      "name": "Tabou2",
       "dependencies": [
         "SidebarMenu"
       ]

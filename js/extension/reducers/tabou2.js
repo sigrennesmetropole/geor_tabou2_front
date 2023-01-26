@@ -37,7 +37,6 @@ const initialState = {
     response: {},
     selectorsIndex: {},
     filterObj: {},
-    tabs: [],
     layerFilterObj: {},
     layerToFilter: "",
     pluginCfg: {},
@@ -65,7 +64,7 @@ const initialState = {
     typesActeur: []
 };
 
-export default (state = initialState, action) => {
+export default function tabou2(state = initialState, action) {
     switch (action.type) {
     case SETUP:
         const { pluginCfg } = action;
@@ -154,4 +153,4 @@ export default (state = initialState, action) => {
     default:
         return state;
     }
-};
+}

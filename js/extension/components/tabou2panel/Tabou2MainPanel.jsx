@@ -3,7 +3,7 @@ import { Row, Col, Glyphicon } from 'react-bootstrap';
 import Message from "@mapstore/components/I18N/Message";
 import Tabou2MainTabs from './Tabou2MainTabs';
 import Tabou2MainToolContainer from './Tabou2MainToolContainer';
-import { SIZE } from '../../constants';
+import { PANEL_SIZE } from '../../constants';
 import "@js/extension/css/tabou.css";
 
 import {getMessageById} from "@mapstore/utils/LocaleUtils";
@@ -33,7 +33,7 @@ export default function Tabou2MainPanel({
             className="urbamap-dock-panel"
             containerStyle={dockStyle}
             open={enabled}
-            size={SIZE}
+            size={PANEL_SIZE}
             position="right"
             bsStyle="primary"
             title={<Message msgId="tabou2.windowTitle" />}

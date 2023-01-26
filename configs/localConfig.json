@@ -22,6 +22,13 @@
   "useAuthenticationRules": true,
   "loadAfterTheme": true,
   "defaultMapOptions": {
+    "cesium": {
+      "flyTo": true,
+      "navigationTools": true,
+      "terrainProvider": {
+        "type": "ellipsoid"
+      }
+    },
     "floatingIdentifyDelay": 1000
   },
   "localizedLayerStyles": {
@@ -289,7 +296,9 @@
       },
       "Login",
       "OmniBar",
+      "SidebarMenu",
       "Expander",
+      "GlobeViewSwitcher",
       {
         "name": "Cookie",
         "cfg": {
@@ -300,10 +309,9 @@
       "FeedbackMask"
     ],
     "desktop": [
-      "SidebarMenu",
       "Details",
       {
-        "name": "tabou2",
+        "name": "Tabou2",
         "cfg": {
           "styles": {
             "showClick": true,
@@ -650,7 +658,7 @@
       },
       {
         "name": "About",
-        "showIn": ["BurgerMenu"]
+        "showIn": ["SidebarMenu"]
       },
       {
         "name": "MousePosition",
@@ -727,10 +735,12 @@
       "Login",
       "Save",
       "SaveAs",
+      "SidebarMenu",
       "Expander",
       "Undo",
       "Redo",
       "FullScreen",
+      "GlobeViewSwitcher",
       "SearchServicesConfig",
       "SearchByBookmark",
       "WidgetsBuilder",
@@ -988,7 +998,7 @@
           "containerPosition": "columns"
         }
       },
-      "BurgerMenu",
+      "SidebarMenu",
       "Dashboard",
       "Notifications",
       {
@@ -1023,7 +1033,7 @@
         }
       },
       "Login",
-      "BurgerMenu",
+      "SidebarMenu",
       "Language",
       "NavMenu",
       "Attribution",
