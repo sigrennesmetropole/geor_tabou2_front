@@ -11,6 +11,7 @@ import { selectedLayerIdSelector } from '@mapstore/selectors/featuregrid';
 import {getMessageById} from "@mapstore/utils/LocaleUtils";
 
 import iconUrbamap from "@js/extension/assets/iconUrbamap.svg";
+import iconUrbamapToolbar from "@js/extension/assets/iconUrbamapToolbar.svg";
 
 import { isTabou2Activate, mapLayoutValuesSelector } from "../selectors/tabou2";
 import { setUp, closeTabou, updateVectorTabouStyle } from "../actions/tabou2";
@@ -129,7 +130,7 @@ export default {
         // Toolbar: {
         //     name: "Tabou2",
         //     position: 1,
-        //     icon: <Glyphicon glyph="th" />,
+        //     icon: <img src={ iconUrbamapToolbar } />,
         //     doNotHide: true,
         //     alwaysVisible: true,
         //     action: toggleControl.bind(null, CONTROL_NAME, null),

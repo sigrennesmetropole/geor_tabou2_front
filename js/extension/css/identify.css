@@ -34,3 +34,7 @@
     max-height: 100% !important;
     overflow: auto;
 }
+
+#urbamap-container .ms-resizable-modal {
+    background: rgba(0, 0, 0, 0) !important;
+}
