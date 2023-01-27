@@ -160,7 +160,7 @@ export function createChangeFeature(action$, store) {
                     return Rx.Observable.of(e);
                 })
                 .switchMap((response) => {
-                    if (response?.status === 200 && !isEmpty(response)) {
+                    if (!isEmpty(response)) {
                         return Rx.Observable.of(
                             // success message
                             success({
