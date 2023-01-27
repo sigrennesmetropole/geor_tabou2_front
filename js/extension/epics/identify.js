@@ -143,7 +143,9 @@ export function printProgramme(action$, store) {
 }
 
 /**
- * Epic to create PA, OA, SA Feature. This action will create new Tabou feature from selected geom.
+ * Epic send new info on change or create PA, OA, SA Feature.
+ * On create, this action will create new Tabou feature from selected geom.
+ * 
  * @param {any} action$
  * @param {any} store
  * @returns empty
