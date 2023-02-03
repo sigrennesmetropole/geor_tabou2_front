@@ -267,12 +267,14 @@ const Tabou2CadreAccord = ({
         placeholder: "tabou2.identify.accordions.emptySelect",
         readOnly: false,
         value: get(initialItem, "financements[0].typeFinancement.libelle"),
-        change: (v, src) => changeInfos({
+        change: (v, src) => {
+            return changeInfos({
             financements: v ? [{ ...src.financements[0], typeFinancement: v }] : []
-        }),
-        select: (v, t, src) => changeInfos({
-            financements: v ? [{ ...src.financements[0], typeFinancement: v }] : []
-        })
+        })},
+        select: (v, src) => {
+            return changeInfos({
+                financements: v ? [{ ...src.financements[0], typeFinancement: v }] : []
+        })}
     }, {
         name: "financements",
         type: "text",
@@ -282,7 +284,7 @@ const Tabou2CadreAccord = ({
         readOnly: false,
         isArea: false,
         value: get(initialItem, "financements[0]")?.description,
-        change: (v, t, src) => changeInfos({
+        change: (v, src) => changeInfos({
             financements: src.financements[0] ? [{ ...src.financements[0], description: v }] : [{description: v}]
         })
     }];
@@ -370,8 +372,8 @@ const Tabou2CadreAccord = ({
                                                 onLoad={(r) => r?.elements || r}
                                                 name={item.name}
                                                 value={item.value}
-                                                onSelect={item.select ? item.select : (v) => changeInfos({ [item.name]: v })}
-                                                onChange={item.change ? (v) => item.change(v, initialItem) : (v) => !v ? changeInfos({ [item.name]: v }) : null}
+                                                onSelect={item.select ? (v) => item.select(v, initialItem) : null}
+                                                onChange={(v) => !v ? item.change(v, initialItem) : null}
                                                 messages={{
                                                     emptyList: i18n(messages, "tabou2.emptyList"),
                                                     openCombobox: i18n(messages, "tabou2.displayList")
