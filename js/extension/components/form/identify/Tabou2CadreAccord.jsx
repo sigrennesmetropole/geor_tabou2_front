@@ -55,8 +55,8 @@ const Tabou2CadreAccord = ({
         label: "tabou2.identify.accordions.foncierPublicDescription",
         field: "descriptionsFoncier.description",
         readOnly: false,
-        value: find(initialItem?.descriptionsFoncier, ["typeFoncier.code", "PUBLIQUE"])?.description,
-        change: (v, t, src) => changeFoncier(t, "descriptionsFoncier", ["typeFoncier.code", "PUBLIQUE"], "description", v, src)
+        value: find(initialItem?.descriptionsFoncier, ["typeFoncier.code", "DPUCOM"])?.description,
+        change: (v, t, src) => changeFoncier(t, "descriptionsFoncier", ["typeFoncier.code", "DPUCOM"], "description", v, src)
     }, {
         name: "descriptionsFoncier",
         type: "number",
@@ -64,8 +64,8 @@ const Tabou2CadreAccord = ({
         label: "tabou2.identify.accordions.foncierPublicTaux",
         field: "descriptionsFoncier.taux",
         readOnly: false,
-        value: find(initialItem?.descriptionsFoncier, ["typeFoncier.code", "PUBLIQUE"])?.taux,
-        change: (v, t, src) => changeFoncier(t, "descriptionsFoncier", ["typeFoncier.code", "PUBLIQUE"], "taux", v, src)
+        value: find(initialItem?.descriptionsFoncier, ["typeFoncier.code", "DPUCOM"])?.taux,
+        change: (v, t, src) => changeFoncier(t, "descriptionsFoncier", ["typeFoncier.code", "DPUCOM"], "taux", v, src)
     }, {
         name: "descriptionsFoncier",
         type: "text",
@@ -73,8 +73,8 @@ const Tabou2CadreAccord = ({
         label: "tabou2.identify.accordions.foncierPriveDescription",
         field: "descriptionsFoncier.description",
         readOnly: false,
-        value: find(initialItem?.descriptionsFoncier, ["typeFoncier.code", "PRIVEE"])?.description,
-        change: (v, t, src) => changeFoncier(t, "descriptionsFoncier", ["typeFoncier.code", "PRIVEE"], "description", v, src)
+        value: find(initialItem?.descriptionsFoncier, ["typeFoncier.code", "DPUAME"])?.description,
+        change: (v, t, src) => changeFoncier(t, "descriptionsFoncier", ["typeFoncier.code", "DPUAME"], "description", v, src)
     }, {
         name: "descriptionsFoncier",
         type: "number",
@@ -82,8 +82,8 @@ const Tabou2CadreAccord = ({
         label: "tabou2.identify.accordions.foncierPriveTaux",
         field: "descriptionsFoncier.taux",
         readOnly: false,
-        value: find(initialItem?.descriptionsFoncier, ["typeFoncier.code", "PRIVEE"])?.taux,
-        change: (v, t, src) => changeFoncier(t, "descriptionsFoncier", ["typeFoncier.code", "PRIVEE"], "taux", v, src)
+        value: find(initialItem?.descriptionsFoncier, ["typeFoncier.code", "DPUAME"])?.taux,
+        change: (v, t, src) => changeFoncier(t, "descriptionsFoncier", ["typeFoncier.code", "DPUAME"], "taux", v, src)
     }, {
         name: "typeOccupation",
         field: "typeOccupation",
