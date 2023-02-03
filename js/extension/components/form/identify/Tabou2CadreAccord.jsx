@@ -284,9 +284,11 @@ const Tabou2CadreAccord = ({
         readOnly: false,
         isArea: false,
         value: get(initialItem, "financements[0]")?.description,
-        change: (v, src) => changeInfos({
-            financements: src.financements[0] ? [{ ...src.financements[0], description: v }] : [{description: v}]
-        })
+        change: (v, t, src) => {
+            return changeInfos({
+                financements: src.financements[0] ? [{ ...src.financements[0], description: v }] : [{description: v}]
+            })
+        }
     }];
 
     const required = fields.filter(f => f.require).map(f => f.name);
