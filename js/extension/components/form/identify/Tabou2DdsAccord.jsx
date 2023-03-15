@@ -36,6 +36,17 @@ const Tabou2DdsAccord = ({
     const [fields, setFields] = useState([]);
     const [required, setRequired] = useState({});
 
+    const DDC_FIELD_VALUES = {
+        fields: ["numAds", "depotDossier", "adsDate", "docDate", "datDate"],
+        labels: [
+            "tabou2.identify.accordions.numAds",
+            "tabou2.identify.accordions.depotDossier",
+            "tabou2.identify.accordions.adsDate",
+            "tabou2.identify.accordions.docDate",
+            "tabou2.identify.accordions.daactDate"
+        ]
+    };
+
     /**
      * Effect
     */
@@ -82,14 +93,8 @@ const Tabou2DdsAccord = ({
         label: "tabou2.identify.accordions.ddcData",
         msg: ["tabou2.getHelp", help?.ddc || help?.url || ""],
         type: "table",
-        fields: ["numAds", "depotDossier", "adsDate", "docDate", "datDate"],
-        labels: [
-            "tabou2.identify.accordions.numAds",
-            "tabou2.identify.accordions.depotDossier",
-            "tabou2.identify.accordions.adsDate",
-            "tabou2.identify.accordions.docDate",
-            "tabou2.identify.accordions.daactDate"
-        ],
+        fields: DDC_FIELD_VALUES.fields,
+        labels: DDC_FIELD_VALUES.labels,
         layers: ["layerPA"],
         source: permisElement || [],
         readOnly: true
@@ -102,7 +107,7 @@ const Tabou2DdsAccord = ({
      * @returns any
      */
     const getValueByField = (field, val) => {
-        let isDate = ["depotDossier", "adsDate", "docDate", "datDatePrevu"].includes(field);
+        let isDate = DDC_FIELD_VALUES.fields.includes(field);
         return isDate && val ? new Date(val).toLocaleDateString() : val;
     };
 
