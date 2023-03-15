@@ -82,7 +82,7 @@ const Tabou2DdsAccord = ({
         label: "tabou2.identify.accordions.ddcData",
         msg: ["tabou2.getHelp", help?.ddc || help?.url || ""],
         type: "table",
-        fields: ["numAds", "depotDossier", "adsDate", "docDate", "datDatePrevu "],
+        fields: ["numAds", "depotDossier", "adsDate", "docDate", "datDatePrevu"],
         labels: [
             "tabou2.identify.accordions.numAds",
             "tabou2.identify.accordions.depotDossier",
