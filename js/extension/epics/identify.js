@@ -143,7 +143,9 @@ export function printProgramme(action$, store) {
 }
 
 /**
- * Epic to create PA, OA, SA Feature. This action will create new Tabou feature from selected geom.
+ * Epic send new info on change or create PA, OA, SA Feature.
+ * On create, this action will create new Tabou feature from selected geom.
+ * 
  * @param {any} action$
  * @param {any} store
  * @returns empty
@@ -160,7 +162,7 @@ export function createChangeFeature(action$, store) {
                     return Rx.Observable.of(e);
                 })
                 .switchMap((response) => {
-                    if (response?.status === 200 && response?.data) {
+                    if (!isEmpty(response)) {
                         return Rx.Observable.of(
                             // success message
                             success({
@@ -261,7 +263,7 @@ export function dipslayPASAByOperation(action$, store) {
                 setTabouFilterObj(filters),
                 applyFilterObj(layerPA),
                 applyFilterObj(layerOA),
-                applyFilterObj(layerSA),
+                applyFilterObj(layerSA)
             );
         });
 }
@@ -289,7 +291,7 @@ export const getFicheInfoValues = (action$, store) =>
                     return Rx.Observable.of(
                         setTabouFicheInfos(elementArray[0].name, elementArray[0].data),
                         setTabouFicheInfos(elementArray[1].name, elementArray[1].data),
-                        setTabouFicheInfos(elementArray[2].name, elementArray[2].data),
+                        setTabouFicheInfos(elementArray[2].name, elementArray[2].data)
                     );
                 });
             });

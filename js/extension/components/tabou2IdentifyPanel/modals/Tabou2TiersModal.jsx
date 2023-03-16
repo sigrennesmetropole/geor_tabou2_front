@@ -25,7 +25,7 @@ export default function Tabou2TiersModal({
     ...props
 }) {
     const [tiers, setTiers] = useState([]);
-    const [sortField, setSortField] = useState([["id"], ["asc"]]);
+    const [sortField, setSortField] = useState([["id"], ["asc"]]); // eslint-disable-line no-unused-vars
     const editionActivate = useRef(false);
     const [associateTier, setAssociateTier] = useState({});
     const [opened, setOpened] = useState(-1);

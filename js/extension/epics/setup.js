@@ -1,13 +1,20 @@
 import Rx from 'rxjs';
 import { UPDATE_MAP_LAYOUT, updateMapLayout } from '@mapstore/actions/maplayout';
 import { updateAdditionalLayer, removeAdditionalLayer } from '@mapstore/actions/additionallayers';
-import { hideMapinfoMarker, toggleMapInfoState } from '@mapstore/actions/mapInfo';
+import { hideMapinfoMarker, purgeMapInfoResults, toggleMapInfoState } from '@mapstore/actions/mapInfo';
 import { isTabou2Activate } from '../selectors/tabou2';
 import { PANEL_SIZE, TABOU_VECTOR_ID, TABOU_OWNER, TABOU_MARKER_LAYER_ID } from '../constants';
 import { SETUP, CLOSE_TABOU, cleanTabouInfos } from "../actions/tabou2";
 import { get } from "lodash";
 import { defaultIconStyle } from "@mapstore/utils/SearchUtils";
 import iconUrl from "@mapstore/components/map/openlayers/img/marker-icon.png";
+
+export const CONTROL_NAME = 'tabou2';
+
+import {
+    registerEventListener,
+    unRegisterEventListener
+} from "@mapstore/actions/map";
 
 const OFFSET = PANEL_SIZE;
 /**
@@ -47,6 +54,9 @@ export const initMap = (action$, store) =>
             // replace red marker icon by default ol blue marker
             let defaultStyle = {...defaultIconStyle, iconUrl: iconUrl};
             return Rx.Observable.from([
+                purgeMapInfoResults(),
+                hideMapinfoMarker(),
+                registerEventListener("click", CONTROL_NAME),
                 updateAdditionalLayer(
                     TABOU_VECTOR_ID,
                     TABOU_OWNER,
@@ -73,7 +83,7 @@ export const initMap = (action$, store) =>
                     }
                 )
             // disable click info right panel
-            ]).concat([...(mapInfoEnabled ? [toggleMapInfoState(), hideMapinfoMarker()] : [])]);
+            ]).concat([...(mapInfoEnabled ? [toggleMapInfoState()] : [])]);
         }).startWith({
             type: 'MAP_LAYOUT:UPDATE_DOCK_PANELS',
             name: 'tabou2',
@@ -87,6 +97,9 @@ export const closeTabouExt = (action$, {getState = ()=>{}}) =>
         const mapInfoEnabled = get(getState(), "mapInfo.enabled");
         return Rx.Observable.from([
             cleanTabouInfos(),
+            purgeMapInfoResults(),
+            hideMapinfoMarker(),
+            unRegisterEventListener("click", CONTROL_NAME),
             removeAdditionalLayer({id: TABOU_VECTOR_ID, owner: TABOU_OWNER})
         // enable click info right panel if needed
         ]).concat([...(!mapInfoEnabled ? [toggleMapInfoState()] : [])]);

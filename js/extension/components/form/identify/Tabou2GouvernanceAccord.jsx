@@ -1,5 +1,5 @@
-import React, {useEffect, useState } from "react";
-import { isEmpty, isEqual, pick, get, find } from "lodash";
+import React from "react";
+import { isEmpty, pick, get, find } from "lodash";
 import { Col, Row, Grid, Glyphicon, ControlLabel, FormControl } from "react-bootstrap";
 import Tabou2Combo from '@js/extension/components/form/Tabou2Combo';
 import { getRequestApi } from "@js/extension/api/requests";

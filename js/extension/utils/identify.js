@@ -4,6 +4,13 @@ import { get, find } from 'lodash';
 /**
  * Create data to display into layer identify selector - combobox.
  * Will be available if a user click into many layers (OA, PA, SA Layers only) .
+ * !! WARNING !! 
+ * labels TOC layers have to be exactly : 
+ * Opérations
+ * Programmes
+ * Secteurs
+ * 
+ * Is not, no data will be return in request info panel.
  * @param {*} response
  * @returns
  */

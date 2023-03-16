@@ -89,6 +89,7 @@ export const SEARCH_ITEMS = [{
     name: 'types-financements',
     placeholder: 'tabou2.search.allFinancement',
     disabled: false,
+    type: 'string',
     group: 4
 }, {
     name: "natures",

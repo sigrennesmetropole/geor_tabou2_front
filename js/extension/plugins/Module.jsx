@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Glyphicon } from 'react-bootstrap';
 import { connect } from "react-redux";
 
 import { toggleControl } from "@mapstore/actions/controls";
@@ -11,9 +10,11 @@ import { layersSelector } from '@mapstore/selectors/layers';
 import { selectedLayerIdSelector } from '@mapstore/selectors/featuregrid';
 import {getMessageById} from "@mapstore/utils/LocaleUtils";
 
+import iconUrbamap from "@js/extension/assets/iconUrbamap.svg";
+import iconUrbamapToolbar from "@js/extension/assets/iconUrbamapToolbar.svg";
 
 import { isTabou2Activate, mapLayoutValuesSelector } from "../selectors/tabou2";
-import { setUp, closeTabou } from "../actions/tabou2";
+import { setUp, closeTabou, updateVectorTabouStyle } from "../actions/tabou2";
 import Tabou2MainPanel from "../components/tabou2Panel/Tabou2MainPanel";
 import tabou2 from "../reducers/tabou2";
 import init from "../utils/init";
@@ -74,7 +75,8 @@ const Tabou2Plugin = compose(
         changeLayerProperties: changeLayerProperties,
         onSyncLayers: syncLayers,
         onSelectLayers: selectLayers,
-        onQuery: search
+        onQuery: search,
+        updateVectorTabouStyle: updateVectorTabouStyle
     }),
     // setup and teardown due to open/close
     compose(
@@ -125,15 +127,24 @@ export default {
         getFicheInfoValues: getFicheInfoValues
     },
     containers: {
-        Toolbar: {
+        // Toolbar: {
+        //     name: "Tabou2",
+        //     position: 1,
+        //     icon: <img src={ iconUrbamapToolbar } />,
+        //     doNotHide: true,
+        //     alwaysVisible: true,
+        //     action: toggleControl.bind(null, CONTROL_NAME, null),
+        //     priority: 1,
+        //     tooltip: "tabou2.btnTooltip"
+        // },
+        SidebarMenu: {
             name: "Tabou2",
-            position: 1,
-            icon: <Glyphicon glyph="th" />,
+            position: 10,
+            icon: <img src={ iconUrbamap } />,
+            tooltip: "tabou2.btnTooltip",
             doNotHide: true,
-            alwaysVisible: true,
             action: toggleControl.bind(null, CONTROL_NAME, null),
-            priority: 1,
-            tooltip: "tabou2.btnTooltip"
+            priority: 1
         }
     }
 };

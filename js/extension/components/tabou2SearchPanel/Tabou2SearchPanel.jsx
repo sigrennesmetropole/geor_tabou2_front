@@ -62,15 +62,19 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
      * @return -
      */
     const changeCqlFilter = (type, filter, value, filterConf) => {
+        let cqlCondition = "";
+        if (filterConf.cqlCcondition) {
+            cqlCondition = filterConf.cqlCcondition[value];
+        }
         const layers = keys(layersInfos);
         let filtersObj = getFiltersObj;
         let filters = [];
         layers.forEach(lyr => {
             let cql = "";
             if (lyr === filterConf.layer) {
-                cql = getCQL(type, filterConf.filterField, value);
+                cql = getCQL(type, filterConf.filterField, value, cqlCondition);
             } else {
-                cql = getSpatialCQL(type, layersInfos[lyr].geom, filterConf.layer, filterConf.geom,  filterConf.filterField, value, layers.includes(filterConf.layer));
+                cql = getSpatialCQL(type, layersInfos[lyr].geom, filterConf.layer, filterConf.geom,  filterConf.filterField, value, layers.includes(filterConf.layer), cqlCondition);
             }
             if (!currentFilters[lyr]) {
                 currentFilters[lyr] = {};
@@ -205,7 +209,6 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
     /**
      * Create date form component with nativ mapstore2 UTCDateTimePicker component
      * @param {object} item
-     * @param {string} type
      * @returns
      */
     const getDate = (item) => {
@@ -298,10 +301,7 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
                             <Checkbox inline><Message msgId="tabou2.search.isHelp"/></Checkbox>
                         </div>
                         {
-                            SEARCH_ITEMS.filter(f => f.group === 4).map((el, i) =>  i < 1 ? getCombo(el, i) : null)
-                        }
-                        {
-                            SEARCH_ITEMS.filter(f => f.group === 4).map((el, i) =>  i > 0 ? getCombo(el, i) : null)
+                            SEARCH_ITEMS.filter(f => f.group === 4).map((el, i) =>  (i < 1 || i > 0) ? getCombo(el, i) : null)
                         }
                         {
                             SEARCH_CALENDARS.filter((el, i) => i < 4 ).map(els => (

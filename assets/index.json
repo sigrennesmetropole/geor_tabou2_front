@@ -3,7 +3,7 @@
     {
       "name": "Tabou2",
       "dependencies": [
-        "Toolbar"
+        "SidebarMenu"
       ]
     }
   ]

@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from "react";
 import { Col, FormGroup, FormControl, ControlLabel, Row, Checkbox } from "react-bootstrap";
-import { get, has, set, clone } from "lodash";
+import { get, has, set } from "lodash";
 import Toolbar from '@mapstore/components/misc/toolbar/Toolbar';
 import Message from "@mapstore/components/I18N/Message";
 import "../../css/tabou.css";

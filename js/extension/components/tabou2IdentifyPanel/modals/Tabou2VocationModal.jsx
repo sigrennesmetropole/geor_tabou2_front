@@ -53,7 +53,8 @@ export default function Tabou2VocationModal({
 
     const changeVocation = (v) => {
         setVocation(v);
-        update({ vocation: v });
+        const newOAVocation = { ...newOperation, vocation: v };
+        setNewOperation({...newOAVocation});
     };
 
     return (

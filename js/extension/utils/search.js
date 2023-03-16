@@ -99,9 +99,13 @@ export function getFilterField(field, values, valueType, operator, groupId) {
  * @param {string} type layer expected from config as layerOA, layerPA, layer SA values
  * @param {any} field to filter
  * @param {*} value to apply
+ * @param {string} condition - pass a condition directly
  * @returns
  */
-export function getCQL(type, field, value) {
+export function getCQL(type, field, value, condition) {
+    if (condition) {
+        return condition;
+    }
     if (type === "date" && (value.start || value.end)) {
         let vals = [
             value.start ? `"${field}" >='${value.start}'` : "",
@@ -123,9 +127,13 @@ export function getCQL(type, field, value) {
  * @param {string} geomB - geom field name from use as filter
  * @param {string} field - optionnal - Limit layer use as filter by cql expression.
  * @param {string} value - optionnal. Value for previous field param.
+ * @param {string} condition - pass a condition directly
  * @returns {string} CQL expression
  */
-export function getSpatialCQL(type, geomA, layer, geomB, field, value, onlyTabou) {
+export function getSpatialCQL(type, geomA, layer, geomB, field, value, onlyTabou, condition) {
+    if (condition) {
+        return `(INTERSECTS(${geomA},collectGeometries(queryCollection('${layer}', '${geomB}','(${onlyTabou ? "id_tabou IS NOT NULL AND " : ""}${condition})'))))`;
+    }
     if (type === "date" && (value.start || value.end)) {
         // allow to input only one date filter
         let vals = [
