@@ -263,7 +263,7 @@
         "logsModal": {
           "isSystem": "Système",
           "createEvent": "Créer un événement",
-          "title": "Journal des événements",
+          "title": "Journal de bord",
           "date": "Date",
           "owner": "Auteur",
           "type": "Type",
@@ -347,4 +347,3 @@
       }
     }
   }
-  
