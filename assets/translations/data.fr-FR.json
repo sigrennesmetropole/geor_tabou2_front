@@ -92,7 +92,7 @@
           "logs": "Journal de bord",
           "fromSelection": "Saisir à partir de la sélection",
           "msgCreateEmprise": "Pour saisir les informations de cette emprise, cliquez sur l'onglet Ajouter ou cliquez directement sur ce bouton",
-          "msgNeedCreateEmprise": "Cette entité ne fait pas l'objet d'un suivi dans Tabou et n'est donc pas disponible. Pour en savoir plus et activer le suivi, merci de contacter le service SPEU/UCUF via l'e-mail ci-dessous.",
+          "msgNeedCreateEmprise": "Cette entité ne fait pas l'objet d'un suivi dans Urb@map et n'est donc pas disponible. Pour en savoir plus et activer le suivi, merci de contacter le service SPEU/UCUF via l'e-mail ci-dessous.",
           "titleCreateEmprise": "Entité non suivie",
           "tiers": {
             "title": "Tiers associés",
@@ -347,4 +347,3 @@
       }
     }
   }
-  
