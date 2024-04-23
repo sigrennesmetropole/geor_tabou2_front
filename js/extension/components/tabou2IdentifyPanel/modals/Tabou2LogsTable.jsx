@@ -244,7 +244,10 @@ export default function Tabou2LogsTable({
                                                                 <Button
                                                                     tooltip={props.i18n(props.messages, "tabou2.delete")}
                                                                     style={{ borderColor: "rgba(0,0,0,0)"}}
-                                                                    onClick={() => deleteLog(log) }>
+                                                                    onClick={() => {
+                                                                        setLogInChange(null);
+                                                                        deleteLog(log);
+                                                                    } }>
                                                                     <span style={{color: "rgb(229,0,0)"}}>
                                                                         <Glyphicon glyph="trash"/>
                                                                     </span>
