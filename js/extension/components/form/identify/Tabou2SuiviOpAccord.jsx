@@ -60,7 +60,38 @@ const Tabou2SuiviOpAccord = ({
         type: "date",
         source: values?.clotureDate ? values : operation,
         readOnly: false
-    }].filter(el => el?.layers?.includes(layer) || !el?.layers);
+    }, {
+        name: "attributionFonciereAnnee",
+        label: "tabou2.identify.accordions.yearAttrib",
+        field: "attributionFonciereAnnee",
+        layers: ["layerPA"],
+        type: "number",
+        min: 1950,
+        max: 2100,
+        step: 1,
+        source: has(values, "attributionFonciereAnnee") ? values : programme,
+        valid: (v) => {
+        return v > 1000;
+    },
+        errorMsg: "tabou2.identify.accordions.errorFormatYear",
+        readOnly: false
+    }, {
+        name: "attributionDate",
+        label: "tabou2.identify.accordions.dateAttrib",
+        field: "attributionDate",
+        type: "date",
+        layers: ["layerPA"],
+        source: has(values, "attributionDate") ? values : programme,
+        readOnly: false
+    }, {
+        name: "commercialisationDate",
+            label: "tabou2.identify.accordions.dateCom",
+            field: "commercialisationDate",
+            type: "date",
+            layers: ["layerPA"],
+            source: has(values, "commercialisationDate") ? values : programme,
+            readOnly: false
+    },].filter(el => el?.layers?.includes(layer) || !el?.layers);
 
     // hooks
     useEffect(() => {
