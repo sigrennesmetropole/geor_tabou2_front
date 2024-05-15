@@ -179,7 +179,8 @@ export const ACCORDIONS = [
     //
     {title: 'tabou2.identify.accordions.dds', id: 'dds', layers: ['layerPA']},
     {title: 'tabou2.identify.accordions.secProg', id: 'secteursprog', layers: []},
-    {title: 'tabou2.identify.accordions.cadre', id: 'cadre', layers: ['layerOA', 'layerSA']}
+    {title: 'tabou2.identify.accordions.cadre', id: 'cadre', layers: ['layerOA', 'layerSA']},
+    {title: 'tabou2.identify.accordions.projetUrbain.section', id: 'projetUrbain', layers: ['layerOA']}
 ];
 
 export const LAYER_FIELD_OPTION = [

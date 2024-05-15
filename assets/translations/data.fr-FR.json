@@ -173,6 +173,14 @@
             "dateClose": "Date de clôture",
             "errorFormatYear": " Année incorrecte ! (ex: 2010)",
             "cadre": "Cadre / montage opérationnel",
+            "projetUrbain": {
+              "section": "Information publique",
+              "title": "Titre",
+              "chapeau": "Chapeau",
+              "projet": "Projet",
+              "actualites": "Actualités",
+              "savoir": "Le saviez-vous"
+            },
             "pluiAdaptation": "Adaptations PLUI",
             "pluiDisposition": "Dispositions réglementaires",
             "outilFoncier": "Outil foncier existant",
