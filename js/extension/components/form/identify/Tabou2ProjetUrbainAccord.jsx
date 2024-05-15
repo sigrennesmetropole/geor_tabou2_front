@@ -36,7 +36,7 @@ const Tabou2ProjetUrbainAccord = ({
         readOnly: false,
         isArea: false,
         value: get(initialItem, "projetUrbain.title"),
-        change: (v) => changeInfos({ title: v })
+        change: (v, t, src) => changeInfos({ projetUrbain: { ...src.projetUrbain, title: v }})
     },  {
         name: "chapeau",
         type: "text",
@@ -46,7 +46,7 @@ const Tabou2ProjetUrbainAccord = ({
         readOnly: false,
         isArea: true,
         value: get(initialItem, "projetUrbain.chapeau"),
-        change: (v) => changeInfos({ chapeau: v })
+        change: (v, t, src) => changeInfos({ projetUrbain: { ...src.projetUrbain, chapeau: v }})
     },  {
         name: "projet",
         type: "text",
@@ -56,7 +56,7 @@ const Tabou2ProjetUrbainAccord = ({
         readOnly: false,
         isArea: true,
         value: get(initialItem, "projetUrbain.projet"),
-        change: (v) => changeInfos({ projet: v })
+        change: (v, t, src) => changeInfos({ projetUrbain: { ...src.projetUrbain, projet: v }})
     },  {
         name: "actualites",
         type: "text",
@@ -66,7 +66,7 @@ const Tabou2ProjetUrbainAccord = ({
         readOnly: false,
         isArea: true,
         value: get(initialItem, "projetUrbain.actualites"),
-        change: (v) => changeInfos({ actualites: v })
+        change: (v, t, src) => changeInfos({ projetUrbain: { ...src.projetUrbain, actualites: v }})
     },  {
         name: "savoir",
         type: "text",
@@ -76,7 +76,7 @@ const Tabou2ProjetUrbainAccord = ({
         readOnly: false,
         isArea: true,
         value: get(initialItem, "projetUrbain.savoir"),
-        change: (v) => changeInfos({ savoir: v })
+        change: (v, t, src) => changeInfos({ projetUrbain: { ...src.projetUrbain, savoir: v }})
     }];
 
     const required = fields.filter(f => f.require).map(f => f.name);
