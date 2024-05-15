@@ -168,6 +168,7 @@
             "liProg": "Liste des programmes",
             "step": "Etape",
             "dateLiv": "Date de livraison",
+            "dateCancelStep": "Date annulation",
             "dateAuth": "Date d'autorisation",
             "dateStart": "Date de démarrage",
             "dateClose": "Date de clôture",

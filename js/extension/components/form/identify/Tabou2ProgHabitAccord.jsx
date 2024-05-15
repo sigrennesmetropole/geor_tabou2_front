@@ -170,6 +170,9 @@ const Tabou2ProgHabitatAccord = ({
         case "dateLiv":
             fieldVal = val ? new Date(val).toLocaleDateString() : val;
             break;
+        case "dateCancelStep":
+            fieldVal = val ? new Date(val).toLocaleDateString() : val;
+            break;
         default:
             fieldVal = val;
             break;
