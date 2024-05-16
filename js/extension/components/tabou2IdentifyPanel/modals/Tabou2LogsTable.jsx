@@ -182,7 +182,9 @@ export default function Tabou2LogsTable({
                                                 {
                                                     log.new || log.edit ? (
                                                         <FormControl
-                                                            type="text"
+                                                            as="textarea"
+                                                            rows={3}
+                                                            //type="text"
                                                             required="false"
                                                             value={logInChange?.description}
                                                             placeholder={props.i18n(props.messages, "tabou2.logsModal.notePlaceholder")}
