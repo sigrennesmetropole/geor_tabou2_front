@@ -22,6 +22,7 @@ const avoidReRender = (prevProps, nextProps) => {
 const Tabou2SuiviOpAccord = ({
     initialItem,
     operation,
+    programme,
     layer,
     authent,
     change = () => { },
