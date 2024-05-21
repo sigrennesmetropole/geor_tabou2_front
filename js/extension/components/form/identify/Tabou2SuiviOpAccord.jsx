@@ -190,6 +190,26 @@ const Tabou2SuiviOpAccord = ({
                                         onChange={(v) => changeDate(item, v)}
                                     />
                                 ) : null
+                            } {
+                                (item.type === "text" || item.type === "number") &&
+                                (<FormControl
+                                    type={item.type}
+                                    min={item?.min}
+                                    max={item?.max}
+                                    step={item?.step}
+                                    placeholder={i18n(messages, item?.label || "")}
+                                    value={getValue(item) || ""}
+                                    readOnly={!allowChange || item.readOnly}
+                                    onChange={(v) => changeInfos({ [item.name]: v.target.value })}
+                                    onKeyDown={(v) => {
+                                        if (item.type !== "number") return;
+                                        // only keep numeric and special key control as "Delete" or "Backspace"
+                                        if (!new RegExp('^[0-9]+$').test(v.key) && v.key.length < 2 && v.key !== ",") {
+                                            v.returnValue = false;
+                                            if (v.preventDefault) v.preventDefault();
+                                        }
+                                    }}
+                                />)
                             }
                         </Col>
                     </Row>
