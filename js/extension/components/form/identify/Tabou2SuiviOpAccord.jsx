@@ -1,6 +1,6 @@
 import React, { useEffect, useState, memo } from "react";
 import { isEmpty, isEqual, pick, get, has } from "lodash";
-import { Col, Row, Grid, ControlLabel } from "react-bootstrap";
+import { Col, Row, FormControl, Grid, ControlLabel } from "react-bootstrap";
 import Tabou2Combo from '@js/extension/components/form/Tabou2Combo';
 import { getRequestApi } from "@js/extension/api/requests";
 import { Multiselect } from "react-widgets";
@@ -80,8 +80,8 @@ const Tabou2SuiviOpAccord = ({
         step: 1,
         source: has(values, "attributionFonciereAnnee") ? values : programme,
         valid: (v) => {
-        return v > 1000;
-    },
+            return v > 1000;
+        },
         errorMsg: "tabou2.identify.accordions.errorFormatYear",
         readOnly: false
     }, {
@@ -94,13 +94,14 @@ const Tabou2SuiviOpAccord = ({
         readOnly: false
     }, {
         name: "commercialisationDate",
-            label: "tabou2.identify.accordions.dateCom",
-            field: "commercialisationDate",
-            type: "date",
-            layers: ["layerPA"],
-            source: has(values, "commercialisationDate") ? values : programme,
-            readOnly: false
-    },].filter(el => el?.layers?.includes(layer) || !el?.layers);
+        label: "tabou2.identify.accordions.dateCom",
+        field: "commercialisationDate",
+        type: "date",
+        layers: ["layerPA"],
+        source: has(values, "commercialisationDate") ? values : programme,
+        readOnly: false
+    }
+    ].filter(el => el?.layers?.includes(layer) || !el?.layers);
 
     // hooks
     useEffect(() => {
@@ -121,7 +122,12 @@ const Tabou2SuiviOpAccord = ({
         let accordValues = pick(newValues, getFields().filter(f => !f.readOnly).map(f => f.name));
         change(accordValues, pick(accordValues, required));
     };
-
+    // get value for a specific item
+    const getValue = (item) => {
+        if (isEmpty(values) || isEmpty(operation)) return null;
+        let itemSrc = getFields().filter(f => f.name === item.name)[0]?.source;
+        return get(itemSrc, item?.field);
+    };
     const changeDate = (field, str) => {
         // TODO : valid with moment like that
         // let isValid = moment(str, "DD/MM/YYYY", true);

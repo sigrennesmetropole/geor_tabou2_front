@@ -182,9 +182,8 @@ export default function Tabou2LogsTable({
                                                 {
                                                     log.new || log.edit ? (
                                                         <FormControl
-                                                            as="textarea"
+                                                            componentClass="textarea"
                                                             rows={3}
-                                                            //type="text"
                                                             required="false"
                                                             value={logInChange?.description}
                                                             placeholder={props.i18n(props.messages, "tabou2.logsModal.notePlaceholder")}
@@ -193,7 +192,16 @@ export default function Tabou2LogsTable({
                                                             }}
                                                         />
 
-                                                    ) : log.description
+                                                    ) : <FormControl
+                                                        style={{
+                                                            backgroundColor: "white",
+                                                            color: "black",
+                                                            cursor: "text"
+                                                        }}
+                                                        componentClass="textarea"
+                                                        disabled="true"
+                                                        value={log.description}
+                                                    />
                                                 }
                                             </td>
                                             <td>
