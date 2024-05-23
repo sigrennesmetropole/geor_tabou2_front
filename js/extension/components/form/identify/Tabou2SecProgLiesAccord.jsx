@@ -24,11 +24,12 @@ const Tabou2SecProgLiesAccord = ({
     const getFields = () => [{
         name: "programmes",
         type: "table",
-        fields: ["nom", "promoteur", "etape", "dateLiv"],
+        fields: ["nom", "promoteur", "etape", "dateCancelStep", "dateLiv"],
         labels: [
             "tabou2.identify.accordions.name",
             "tabou2.identify.accordions.promoteur",
             "tabou2.identify.accordions.step",
+            "tabou2.identify.accordions.dateCancelStep",
             "tabou2.identify.accordions.dateLiv"
         ],
         layers: ["layerOA", "layerSA"],
@@ -41,6 +42,9 @@ const Tabou2SecProgLiesAccord = ({
         let fieldVal;
         switch (field) {
         case "dateLiv":
+            fieldVal = val ? new Date(val).toLocaleDateString() : val;
+            break;
+        case "dateCancelStep":
             fieldVal = val ? new Date(val).toLocaleDateString() : val;
             break;
         default:

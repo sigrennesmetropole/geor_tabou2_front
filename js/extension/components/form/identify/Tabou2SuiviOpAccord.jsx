@@ -1,6 +1,6 @@
 import React, { useEffect, useState, memo } from "react";
 import { isEmpty, isEqual, pick, get, has } from "lodash";
-import { Col, Row, Grid, ControlLabel } from "react-bootstrap";
+import { Col, Row, FormControl, Grid, ControlLabel } from "react-bootstrap";
 import Tabou2Combo from '@js/extension/components/form/Tabou2Combo';
 import { getRequestApi } from "@js/extension/api/requests";
 import { Multiselect } from "react-widgets";
@@ -22,6 +22,7 @@ const avoidReRender = (prevProps, nextProps) => {
 const Tabou2SuiviOpAccord = ({
     initialItem,
     operation,
+    programme,
     layer,
     authent,
     change = () => { },
@@ -45,6 +46,14 @@ const Tabou2SuiviOpAccord = ({
         source: values?.etape ? values : initialItem,
         readOnly: false
     }, {
+        name: "annulationDate",
+        label: "tabou2.identify.accordions.dateCancelStep",
+        field: "annulationDate",
+        layers: ["layerPA"],
+        type: "date",
+        source: values?.annulationDate ? values : operation,
+        readOnly: false
+    }, {
         name: "livraisonDate",
         label: "tabou2.identify.accordions.dateLiv",
         field: "livraisonDate",
@@ -60,7 +69,39 @@ const Tabou2SuiviOpAccord = ({
         type: "date",
         source: values?.clotureDate ? values : operation,
         readOnly: false
-    }].filter(el => el?.layers?.includes(layer) || !el?.layers);
+    }, {
+        name: "attributionFonciereAnnee",
+        label: "tabou2.identify.accordions.yearAttrib",
+        field: "attributionFonciereAnnee",
+        layers: ["layerPA"],
+        type: "number",
+        min: 1950,
+        max: 2100,
+        step: 1,
+        source: has(values, "attributionFonciereAnnee") ? values : programme,
+        valid: (v) => {
+            return v > 1000;
+        },
+        errorMsg: "tabou2.identify.accordions.errorFormatYear",
+        readOnly: false
+    }, {
+        name: "attributionDate",
+        label: "tabou2.identify.accordions.dateAttrib",
+        field: "attributionDate",
+        type: "date",
+        layers: ["layerPA"],
+        source: has(values, "attributionDate") ? values : programme,
+        readOnly: false
+    }, {
+        name: "commercialisationDate",
+        label: "tabou2.identify.accordions.dateCom",
+        field: "commercialisationDate",
+        type: "date",
+        layers: ["layerPA"],
+        source: has(values, "commercialisationDate") ? values : programme,
+        readOnly: false
+    }
+    ].filter(el => el?.layers?.includes(layer) || !el?.layers);
 
     // hooks
     useEffect(() => {
@@ -81,7 +122,12 @@ const Tabou2SuiviOpAccord = ({
         let accordValues = pick(newValues, getFields().filter(f => !f.readOnly).map(f => f.name));
         change(accordValues, pick(accordValues, required));
     };
-
+    // get value for a specific item
+    const getValue = (item) => {
+        if (isEmpty(values) || isEmpty(operation)) return null;
+        let itemSrc = getFields().filter(f => f.name === item.name)[0]?.source;
+        return get(itemSrc, item?.field);
+    };
     const changeDate = (field, str) => {
         // TODO : valid with moment like that
         // let isValid = moment(str, "DD/MM/YYYY", true);
@@ -150,6 +196,26 @@ const Tabou2SuiviOpAccord = ({
                                         onChange={(v) => changeDate(item, v)}
                                     />
                                 ) : null
+                            } {
+                                (item.type === "text" || item.type === "number") &&
+                                (<FormControl
+                                    type={item.type}
+                                    min={item?.min}
+                                    max={item?.max}
+                                    step={item?.step}
+                                    placeholder={i18n(messages, item?.label || "")}
+                                    value={getValue(item) || ""}
+                                    readOnly={!allowChange || item.readOnly}
+                                    onChange={(v) => changeInfos({ [item.name]: v.target.value })}
+                                    onKeyDown={(v) => {
+                                        if (item.type !== "number") return;
+                                        // only keep numeric and special key control as "Delete" or "Backspace"
+                                        if (!new RegExp('^[0-9]+$').test(v.key) && v.key.length < 2 && v.key !== ",") {
+                                            v.returnValue = false;
+                                            if (v.preventDefault) v.preventDefault();
+                                        }
+                                    }}
+                                />)
                             }
                         </Col>
                     </Row>

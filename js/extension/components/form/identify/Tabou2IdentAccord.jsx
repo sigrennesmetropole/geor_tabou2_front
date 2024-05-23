@@ -10,6 +10,7 @@ import Tabou2Combo from '@js/extension/components/form/Tabou2Combo';
 
 import ButtonRB from '@mapstore/components/misc/Button';
 import tooltip from '@mapstore/components/misc/enhancers/tooltip';
+import Tabou2Date from "@js/extension/components/common/Tabou2Date";
 const Button = tooltip(ButtonRB);
 
 const avoidReRender = (prevProps, nextProps) => {
@@ -35,7 +36,8 @@ const Tabou2IdentAccord = ({
     change = () => { },
     apiCfg,
     i18n = () => { },
-    messages
+    messages,
+    changeProp = () => {}
 }) => {
     const [values, setValues] = useState({});
     const [fields, setFields] = useState([]);
@@ -150,7 +152,15 @@ const Tabou2IdentAccord = ({
         value: () => get(values, "etape"),
         select: (v) => changeInfos({etape: v}),
         change: (v) => changeInfos(v ? {etape: v} : {etape: null})
-    },    {
+    }, {
+        name: "annulationDate",
+        label: "tabou2.identify.accordions.dateCancelStep",
+        field: "annulationDate",
+        layers: ["layerSA", "layerOA"],
+        type: "date",
+        source: values?.annulationDate ? values : operation,
+        readOnly: false
+    }, {
         name: "numAds",
         label: "tabou2.identify.accordions.numAds",
         field: "numAds",
@@ -193,6 +203,16 @@ const Tabou2IdentAccord = ({
         if (isEmpty(values) || isEmpty(operation)) return null;
         let itemSrc = getFields().filter(f => f.name === item.name)[0]?.source;
         return get(itemSrc, item?.field) || [];
+    };
+
+    const getDateValue = (item, src) => {
+        let defaultValue = null;
+        if (item.name !== item.field) {
+            defaultValue = get(src, `${item.name}.${item.field}`);
+        } else if (src[item.name]) {
+            defaultValue = get(src, item.name);
+        }
+        return defaultValue ? new Date(defaultValue) : null;
     };
 
     // manage change info
@@ -279,6 +299,52 @@ const Tabou2IdentAccord = ({
                                                 messages={{
                                                     emptyList: i18n(messages, "tabou2.emptyList"),
                                                     openCombobox: i18n(messages, "tabou2.displayList")
+                                                }}
+                                            />
+                                        ) : null
+                                    }{
+                                        item.type === "date" ? (
+                                            <Tabou2Date
+                                                type="date"
+                                                className="identifyDate"
+                                                inline="true"
+                                                dropUp
+                                                placeholder={i18n(messages, item?.label || "")}
+                                                readOnly={item.readOnly || !allowChange}
+                                                calendar
+                                                time={false}
+                                                culture="fr"
+                                                value={getDateValue(item, initialItem) || null}
+                                                format="DD/MM/YYYY"
+                                                refreshValue={initialItem}
+                                                refresh={(o, n) => {
+                                                    return isEqual(o, n);
+                                                }}
+                                                onSelect={(v) => {
+                                                    if (item.name !== item.field) {
+                                                        // only to change a key inside object as field.child
+                                                        changeProp({
+                                                            [item.name]: {
+                                                                ...initialItem[item.name],
+                                                                [item.field]: v ? new Date(v).toISOString() : ""
+                                                            }
+                                                        });
+                                                    } else {
+                                                        changeProp({ [item.name]: v ? new Date(v).toISOString() : "" });
+                                                    }
+                                                }}
+                                                onChange={(v) => {
+                                                    if (item.name !== item.field) {
+                                                        // only to change a key inside object as field.child
+                                                        changeProp({
+                                                            [item.name]: {
+                                                                ...initialItem[item.name],
+                                                                [item.field]: v ? new Date(v).toISOString() : ""
+                                                            }
+                                                        });
+                                                    } else {
+                                                        changeProp({ [item.name]: v ? new Date(v).toISOString() : "" });
+                                                    }
                                                 }}
                                             />
                                         ) : null

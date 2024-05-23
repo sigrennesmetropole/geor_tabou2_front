@@ -99,7 +99,7 @@ const Tabou2DescribeAccord = ({
         label: layer === "layerSA" ? "tabou2.identify.accordions.sectorSpace" : "tabou2.identify.accordions.totalSpace",
         type: "number",
         step: 0.1,
-        layers: ["layerSA", "layerOA"],
+        layers: ["layerPA", "layerSA", "layerOA"],
         source: initialItem
     }, {
         name: "usageActuel",

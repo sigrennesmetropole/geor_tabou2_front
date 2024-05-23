@@ -1,5 +1,5 @@
 import React from "react";
-import { isEmpty, pick, get, find, isEqual } from "lodash";
+import { isEmpty, pick, get, isEqual } from "lodash";
 import { Col, Row, FormControl, Grid, ControlLabel } from "react-bootstrap";
 import { getRequestApi } from "@js/extension/api/requests";
 import "@js/extension/css/identify.css";
@@ -12,7 +12,7 @@ import Tabou2Date from "../../common/Tabou2Date";
  * @param {any} param
  * @returns component
  */
-const Tabou2CadreAccord = ({
+const Tabou2ProjetUrbainAccord = ({
     initialItem,
     layer,
     authent,
@@ -26,269 +26,57 @@ const Tabou2CadreAccord = ({
 
     let changeInfos = () => { };
 
-    // ex : "descriptionsFoncier", ["typesFonciers.code", "FONCIER_PUBLIC"], "description", "myNewvValue"
-    let changeFoncier = (t, fieldArray, search, field, value, src) => {
-        // get item by type code
-        let itemByCode = find(src[fieldArray], search);
-        if (!itemByCode) {
-            itemByCode = { typeFoncier: find(t.typesFonciers, ['code', search[1]]) };
-        }
-        // change value
-        itemByCode[field] = value;
-        // filter others item whithout changed item
-        const othersItems = src[fieldArray].filter(item => item.typeFoncier.code !== itemByCode.typeFoncier.code);
-        // send to parent
-        const concatAll = [...othersItems, itemByCode];
-        changeInfos({ descriptionsFoncier: concatAll });
-    };
-
     // create fields from const func
     const fields = [{
-        type: "title",
-        label: "tabou2.identify.accordions.foncierOccTitle",
-        layers: ["layerSA", "layerOA"]
-    }, {
-        // BLOC Foncier et occupation
-        name: "descriptionsFoncier",
+        name: "title",
         type: "text",
-        layers: ["layerSA", "layerOA"],
-        label: "tabou2.identify.accordions.foncierPublicDescription",
-        field: "descriptionsFoncier.description",
-        readOnly: false,
-        value: find(initialItem?.descriptionsFoncier, ["typeFoncier.code", "DPUCOM"])?.description,
-        change: (v, t, src) => changeFoncier(t, "descriptionsFoncier", ["typeFoncier.code", "DPUCOM"], "description", v, src)
-    }, {
-        name: "descriptionsFoncier",
-        type: "number",
-        layers: ["layerSA"],
-        label: "tabou2.identify.accordions.foncierPublicTaux",
-        field: "descriptionsFoncier.taux",
-        readOnly: false,
-        value: find(initialItem?.descriptionsFoncier, ["typeFoncier.code", "DPUCOM"])?.taux,
-        change: (v, t, src) => changeFoncier(t, "descriptionsFoncier", ["typeFoncier.code", "DPUCOM"], "taux", v, src)
-    }, {
-        name: "descriptionsFoncier",
-        type: "text",
-        layers: ["layerSA"],
-        label: "tabou2.identify.accordions.foncierPriveDescription",
-        field: "descriptionsFoncier.description",
-        readOnly: false,
-        value: find(initialItem?.descriptionsFoncier, ["typeFoncier.code", "DPUAME"])?.description,
-        change: (v, t, src) => changeFoncier(t, "descriptionsFoncier", ["typeFoncier.code", "DPUAME"], "description", v, src)
-    }, {
-        name: "descriptionsFoncier",
-        type: "number",
-        layers: ["layerSA"],
-        label: "tabou2.identify.accordions.foncierPriveTaux",
-        field: "descriptionsFoncier.taux",
-        readOnly: false,
-        value: find(initialItem?.descriptionsFoncier, ["typeFoncier.code", "DPUAME"])?.taux,
-        change: (v, t, src) => changeFoncier(t, "descriptionsFoncier", ["typeFoncier.code", "DPUAME"], "taux", v, src)
-    }, {
-        name: "typeOccupation",
-        field: "typeOccupation",
-        label: "tabou2.identify.accordions.typeOccupation",
-        layers: ["layerSA"],
-        type: "combo",
-        autocomplete: false,
-        api: `types-occupations?asc=true`,
-        apiLabel: "libelle",
-        placeholder: "tabou2.identify.accordions.emptySelect",
-        readOnly: false,
-        value: get(initialItem, "typeOccupation.libelle"),
-        select: (v) => changeInfos({ typeOccupation: v }),
-        change: (v) => changeInfos(v ? { typeOccupation: v } : { typeOccupation: null })
-    }, {
-        name: "outilFoncier",
-        field: "outilFoncier",
-        label: "tabou2.identify.accordions.outilFoncier",
-        layers: ["layerSA", "layerOA"],
-        type: "combo",
-        autocomplete: false,
-        api: `outils-fonciers?asc=true`,
-        apiLabel: "libelle",
-        placeholder: "tabou2.identify.accordions.emptySelect",
-        readOnly: false,
-        value: get(initialItem, "outilFoncier.libelle"),
-        select: (v) => changeInfos({ outilFoncier: v }),
-        change: (v) => changeInfos(v ? { outilFoncier: v } : { outilFoncier: null })
-    }, {
-        type: "title",
-        label: "tabou2.identify.accordions.pluiTitle",
-        layers: ["layerSA", "layerOA"]
-    }, {
-        name: "plui",
-        type: "text",
-        label: "tabou2.identify.accordions.pluiDisposition",
-        field: "plui.pluiDisposition",
-        layers: ["layerSA", "layerOA"],
-        readOnly: false,
-        isArea: true,
-        value: get(initialItem, "plui.pluiDisposition"),
-        change: (v, t, src) => changeInfos({ plui: { ...src.plui, pluiDisposition: v } })
-    }, {
-        name: "plui",
-        type: "text",
-        label: "tabou2.identify.accordions.pluiAdaptation",
-        field: "plui.pluiAdaptation",
-        layers: ["layerSA", "layerOA"],
-        readOnly: false,
-        isArea: true,
-        value: get(initialItem, "plui.pluiAdaptation"),
-        change: (v, t, src) => changeInfos({ plui: { ...src.plui, pluiAdaptation: v } })
-    }, {
-        type: "title",
-        label: "tabou2.identify.accordions.processOpTitle",
-        layers: ["layerSA", "layerOA"]
-    }, {
-        name: "etude",
-        type: "text",
-        label: "tabou2.identify.accordions.studyToPlan",
-        field: "etude",
-        layers: ["layerSA", "layerOA"],
-        readOnly: false,
-        isArea: true,
-        value: get(initialItem, "etude"),
-        change: (v) => changeInfos({ etude: v })
-    }, {
-        name: "autorisationDate",
-        field: "autorisationDate",
-        label: "tabou2.identify.accordions.dateAuth",
-        layers: ["layerSA", "layerOA"],
-        type: "date",
-        value: get(initialItem, "autorisationDate"),
-        readOnly: false
-    }, {
-        name: "operationnelDate",
-        label: "tabou2.identify.accordions.dateStart",
-        field: "operationnelDate",
-        layers: ["layerSA", "layerOA"],
-        type: "date",
-        value: initialItem?.operationnelDate || null,
-        readOnly: false
-    }, {
-        name: "clotureDate",
-        label: "tabou2.identify.accordions.dateClose",
-        field: "clotureDate",
-        type: "date",
-        value: initialItem?.clotureDate || null,
-        readOnly: false
-    }, {
-        name: "amenageurs",
-        field: "amenageurs.typeAmenageur",
-        label: "tabou2.identify.accordions.typeAmenageur",
-        layers: ["layerSA"],
-        type: "combo",
-        autocomplete: false,
-        api: `types-amenageurs?asc=true`,
-        apiLabel: "libelle",
-        placeholder: "tabou2.identify.accordions.emptySelect",
-        readOnly: false,
-        value: get(initialItem, "amenageurs")[0]?.typeAmenageur?.libelle,
-        change: (v) => changeInfos({
-            amenageurs: v ? [{ nom: "", typeAmenageur: v }] : []
-        }),
-        select: (v) => changeInfos({
-            amenageurs: v ? [{ nom: "", typeAmenageur: v }] : []
-        })
-    }, {
-        name: "amenageurs",
-        type: "text",
-        label: "tabou2.identify.accordions.nameAmenageur",
-        field: "amenageurs",
-        layers: ["layerSA"],
+        label: "tabou2.identify.accordions.projetUrbain.title",
+        field: "projetUrbain.title",
+        layers: ["layerOA"],
         readOnly: false,
         isArea: false,
-        value: get(initialItem, "amenageurs")[0]?.nom,
-        change: (v, t, src) => !isEmpty(src.amenageurs) ? changeInfos({ amenageurs: [{ ...src.amenageurs[0], nom: v }] }) : null
-    }, {
-        name: "outilAmenagement",
+        value: get(initialItem, "projetUrbain.title"),
+        change: (v, t, src) => changeInfos({ projetUrbain: { ...src.projetUrbain, title: v }})
+    },  {
+        name: "chapeau",
         type: "text",
-        label: "tabou2.identify.accordions.outilAmenagement",
-        field: "outilAmenagement",
-        layers: ["layerSA", "layerOA"],
-        readOnly: false,
-        isArea: false,
-        value: get(initialItem, "outilAmenagement"),
-        change: (v) => changeInfos({ outilAmenagement: v })
-    }, {
-        name: "concertation",
-        label: "tabou2.identify.accordions.dateDebut",
-        field: "dateDebut",
-        type: "date",
-        value: initialItem?.concertation?.dateDebut || null,
-        readOnly: false
-    }, {
-        name: "concertation",
-        label: "tabou2.identify.accordions.dateFin",
-        field: "dateFin",
-        type: "date",
-        value: initialItem?.concertation?.dateFin || null,
-        readOnly: false
-    }, {
-        name: "avancementAdministratif",
-        type: "text",
-        label: "tabou2.identify.accordions.avancementAdministratif",
-        field: "avancementAdministratif",
-        layers: ["layerSA", "layerOA"],
+        label: "tabou2.identify.accordions.projetUrbain.chapeau",
+        field: "projetUrbain.chapeau",
+        layers: ["layerOA"],
         readOnly: false,
         isArea: true,
-        value: get(initialItem, "avancementAdministratif"),
-        change: (v) => changeInfos({ avancementAdministratif: v })
-    }, {
-        name: "surfaceRealisee",
-        type: "number",
-        label: "tabou2.identify.accordions.surfaceRealisee",
-        field: "surfaceRealisee",
-        layers: ["layerSA", "layerOA"],
-        readOnly: false,
-        isArea: false,
-        value: get(initialItem, "surfaceRealisee"),
-        change: (v) => changeInfos({ surfaceRealisee: v })
-    }, {
-        name: "environnement",
+        value: get(initialItem, "projetUrbain.chapeau"),
+        change: (v, t, src) => changeInfos({ projetUrbain: { ...src.projetUrbain, chapeau: v }})
+    },  {
+        name: "projet",
         type: "text",
-        label: "tabou2.identify.accordions.environnement",
-        field: "environnement",
-        layers: ["layerSA", "layerOA"],
+        label: "tabou2.identify.accordions.projetUrbain.projet",
+        field: "projetUrbain.projet",
+        layers: ["layerOA"],
         readOnly: false,
         isArea: true,
-        value: get(initialItem, "environnement"),
-        change: (v) => changeInfos({ environnement: v })
-    }, {
-        name: "financements",
-        field: "financements[0].typesFinancement",
-        label: "tabou2.identify.accordions.typesFinancement",
-        layers: ["layerSA"],
-        type: "combo",
-        autocomplete: false,
-        api: `types-financements-operations?asc=true`,
-        apiLabel: "libelle",
-        placeholder: "tabou2.identify.accordions.emptySelect",
-        readOnly: false,
-        value: get(initialItem, "financements[0].typeFinancement.libelle"),
-        change: (v, src) => {
-            return changeInfos({
-            financements: v ? [{ ...src.financements[0], typeFinancement: v }] : []
-        })},
-        select: (v, src) => {
-            return changeInfos({
-                financements: v ? [{ ...src.financements[0], typeFinancement: v }] : []
-        })}
-    }, {
-        name: "financements",
+        value: get(initialItem, "projetUrbain.projet"),
+        change: (v, t, src) => changeInfos({ projetUrbain: { ...src.projetUrbain, projet: v }})
+    },  {
+        name: "actualites",
         type: "text",
-        label: "tabou2.identify.accordions.financements",
-        field: "financements[0].description",
-        layers: ["layerSA", "layerOA"],
+        label: "tabou2.identify.accordions.projetUrbain.actualites",
+        field: "projetUrbain.actualites",
+        layers: ["layerOA"],
         readOnly: false,
-        isArea: false,
-        value: get(initialItem, "financements[0]")?.description,
-        change: (v, t, src) => {
-            return changeInfos({
-                financements: src.financements[0] ? [{ ...src.financements[0], description: v }] : [{description: v}]
-            })
-        }
+        isArea: true,
+        value: get(initialItem, "projetUrbain.actualites"),
+        change: (v, t, src) => changeInfos({ projetUrbain: { ...src.projetUrbain, actualites: v }})
+    },  {
+        name: "savoir",
+        type: "text",
+        label: "tabou2.identify.accordions.projetUrbain.savoir",
+        field: "projetUrbain.savoir",
+        layers: ["layerOA"],
+        readOnly: false,
+        isArea: true,
+        value: get(initialItem, "projetUrbain.savoir"),
+        change: (v, t, src) => changeInfos({ projetUrbain: { ...src.projetUrbain, savoir: v }})
     }];
 
     const required = fields.filter(f => f.require).map(f => f.name);
@@ -440,4 +228,4 @@ const Tabou2CadreAccord = ({
     );
 };
 
-export default Tabou2CadreAccord;
+export default Tabou2ProjetUrbainAccord;

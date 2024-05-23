@@ -33,37 +33,6 @@ const Tabou2ProgHabitatAccord = ({
     // create fields from const func
     const getFields = () => [ // PROGRAMME
         {
-            name: "attributionFonciereAnnee",
-            label: "tabou2.identify.accordions.yearAttrib",
-            field: "attributionFonciereAnnee",
-            layers: ["layerPA"],
-            type: "number",
-            min: 1950,
-            max: 2100,
-            step: 1,
-            source: has(values, "attributionFonciereAnnee") ? values : programme,
-            valid: (v) => {
-                return v > 1000;
-            },
-            errorMsg: "tabou2.identify.accordions.errorFormatYear",
-            readOnly: false
-        }, {
-            name: "attributionDate",
-            label: "tabou2.identify.accordions.dateAttrib",
-            field: "attributionDate",
-            type: "date",
-            layers: ["layerPA"],
-            source: has(values, "attributionDate") ? values : programme,
-            readOnly: false
-        }, {
-            name: "commercialisationDate",
-            label: "tabou2.identify.accordions.dateCom",
-            field: "commercialisationDate",
-            type: "date",
-            layers: ["layerPA"],
-            source: has(values, "commercialisationDate") ? values : programme,
-            readOnly: false
-        }, {
             name: "logementsTotal",
             label: "tabou2.identify.accordions.totalLog",
             field: "logementsTotal",
@@ -168,6 +137,9 @@ const Tabou2ProgHabitatAccord = ({
         let fieldVal;
         switch (field) {
         case "dateLiv":
+            fieldVal = val ? new Date(val).toLocaleDateString() : val;
+            break;
+        case "dateCancelStep":
             fieldVal = val ? new Date(val).toLocaleDateString() : val;
             break;
         default:

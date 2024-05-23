@@ -15,6 +15,7 @@ import Loader from '@mapstore/components/misc/Loader';
 import Tabou2Information from '@js/extension/components/common/Tabou2Information';
 import Message from "@mapstore/components/I18N/Message";
 import "@js/extension/css/tabou.css";
+import Tabou2ProjetUrbainAccord from "@js/extension/components/form/identify/Tabou2ProjetUrbainAccord";
 
 /**
  * Content of identify panel component - separate to be more readable
@@ -143,6 +144,7 @@ const Tabou2IdentifyContent = ({
                                 {item.id === "habitat" ? <Tabou2ProgHabitAccord {...tabsProps} /> : null}
                                 {item.id === "secteursprog" ? <Tabou2SecProgLiesAccord {...tabsProps} /> : null}
                                 {item.id === "cadre" ? <Tabou2CadreAccord {...tabsProps} /> : null}
+                                {item.id === "projetUrbain" ? <Tabou2ProjetUrbainAccord {...tabsProps} /> : null}
                             </Panel>
                         </PanelGroup>
                     ))
