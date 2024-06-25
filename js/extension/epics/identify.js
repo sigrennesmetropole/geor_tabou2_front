@@ -48,7 +48,15 @@ import {
     setSelectedFeature,
     setTabouFicheInfos
 } from "../actions/tabou2";
-import { getPDFProgramme, getPDFOperation, putRequestApi, getTypesFoncier, getTypesActeurs, getTypesActions } from '../api/requests';
+import {
+    getPDFProgramme,
+    getPDFOperation,
+    getPDFSecteur,
+    putRequestApi,
+    getTypesFoncier,
+    getTypesActeurs,
+    getTypesActions
+} from '../api/requests';
 
 import { getFeatureInfo } from "@mapstore/api/identify";
 
@@ -111,7 +119,15 @@ export function printProgramme(action$, store) {
         .switchMap((action) => {
             let messages = store.getState()?.locale.messages;
             let feature = getSelection(store.getState())?.feature.properties;
-            return Rx.Observable.defer(() => action.layer === "layerPA" ? getPDFProgramme(action.id) : getPDFOperation(action.id))
+
+            let functionGetPdf;
+            switch (action.layer) {
+                case "layerPA" : functionGetPdf = getPDFProgramme; break;
+                case "layerOA" : functionGetPdf = getPDFOperation; break;
+                case "layerSA" : functionGetPdf = getPDFSecteur; break;
+            }
+
+            return Rx.Observable.defer(() => functionGetPdf(action.id))
                 .catch(e => {
                     console.log("Error on get PDF request");
                     console.log(e);
@@ -145,7 +161,7 @@ export function printProgramme(action$, store) {
 /**
  * Epic send new info on change or create PA, OA, SA Feature.
  * On create, this action will create new Tabou feature from selected geom.
- * 
+ *
  * @param {any} action$
  * @param {any} store
  * @returns empty
