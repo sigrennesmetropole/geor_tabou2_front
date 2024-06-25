@@ -4,7 +4,7 @@ import { keys } from "lodash";
 const baseURL = "/tabou2";
 
 /**
- * Create geoserver request to get featrures IDs
+ * Create geoserver request to get features IDs
  * @param {*} params - request params
  * @param {*} geoserverURL - Geoserver URL or path
  * @returns - geoserver response
@@ -71,7 +71,7 @@ export function postRequestApi(name, apiCfg, body) {
 }
 /**
  * Get events by tabou feature
- * @param {string} type - service type name
+ * @param {string} service - service type name
  * @param {integer} id - id tabou
  * @return {object} - API response
  */
@@ -79,9 +79,9 @@ export function getFeatureEvents(service, id) {
     return axios.get(`${baseURL}/${service}/${id}/evenements`, null, {});
 }
 /**
- * Add event to tabou feature
- * @param {string} type - service type name
- * @param {integer} id - id tabou
+ * Add event to Tabou feature
+ * @param {string} service - service type name
+ * @param {integer} id - id Tabou
  * @param {object} event - event infos
  * @returns
  */
@@ -90,7 +90,7 @@ export function addFeatureEvent(service, id, event) {
 }
 /**
  * Change event for a given tabou feature
- * @param {string} type - service type name
+ * @param {string} service - service type name
  * @param {integer} id - id tabou
  * @param {object} event - event infos
  * @returns {any} - API response
@@ -100,7 +100,7 @@ export function changeFeatureEvent(service, id, event) {
 }
 /**
  *
- * @param {string} type - service type name
+ * @param {string} service - service type name
  * @param {integer} id - id tabou
  * @param {integer} eventId - event id
  * @returns {object} - API response
@@ -125,7 +125,7 @@ export function getTiers(params = {}) {
 }
 /**
  * Get all tiers for a given tabou feature
- * @param {string} type - service type name
+ * @param {string} service - service type name
  * @param {integer} id - id tabou
  * @returns {object} - API response
  */
@@ -133,7 +133,7 @@ export function getFeatureTiers(service, id) {
     return axios.get(`${baseURL}/${service}/${id}/tiers?asc=true`, null, {});
 }
 /**
- * Get all teirs types from API
+ * Get all tiers types from API
  * @returns {object} - all tiers type
  */
 export function getTypesTiers() {
@@ -141,7 +141,7 @@ export function getTypesTiers() {
 }
 /**
  * Create association between tiers and feature
- * @param {string} type - service type name
+ * @param {string} service - service type name
  * @param {integer} id - feature's id tabou
  * @param {integer} idTier - targeted tiers id to change
  * @param {string} idType - id's tiers type
@@ -155,7 +155,7 @@ export function associateFeatureTier(service, id, idTier, idType) {
 }
 /**
  * Modify tiers association info
- * @param {string} type - service type name
+ * @param {string} service - service type name
  * @param {integer} id - feature's id tabou
  * @param {integer} idTier - targeted tiers id to change
  * @param {integer} idType - id's tiers type
@@ -186,7 +186,7 @@ export function changeFeatureTier(tiers) {
 }
 /**
  * Dissociate tiers from tabou feature
- * @param {string} type - service type name
+ * @param {string} service - service type name
  * @param {integer} id - id tabou
  * @param {*} associationId - association id
  * @returns {object} - axios response
@@ -219,6 +219,14 @@ export function getPDFOperation(id) {
     return axios.get(`${baseURL}/operations/${id}/fiche-suivi`, {responseType: 'arraybuffer'});
 }
 /**
+ * Call PDF document
+ * @param {integer} id - tabou feature id
+ * @returns {object} - contain pdf document as buffer
+ */
+export function getPDFSecteur(id) {
+    return axios.get(`${baseURL}/secteurs-speu/${id}/fiche-suivi`, {responseType: 'arraybuffer'});
+}
+/**
  * Get programme by id tabou
  * @param {integer} id - id tabou
  * @returns {object} - axios response
@@ -243,7 +251,7 @@ export function getProgrammePermis(id) {
     return axios.get(`${baseURL}/programmes/${id}/permis`);
 }
 /**
- * Get every operations for a given programme id
+ * Get all the operations for a given programme id
  * @param {integer} id - id tabou
  * @returns {object} - axios response
  */
@@ -269,7 +277,7 @@ export function getSecteur(id) {
 }
 /**
  * Create new tabou feature from unknown selected map feature
- * @param {string} layer - service type name
+ * @param {string} service - service type name
  * @param {object} params - tabou feature infos
  * @returns {object} - axios response
  */
@@ -339,7 +347,7 @@ export function getDocumentContent(service, id, docId) {
     return axios.get(`${baseURL}/${service}/${id}/documents/${docId}/content`, {responseType: 'arraybuffer'}).then(( data ) => data);
 }
 export function updateDocumentContent(service, id, metadata, file) {
-    var formData = new FormData();
+    let formData = new FormData();
     formData.append("fileToUpload", file);
     formData.append("nom", metadata.nom);
     formData.append("libelleTypeDocument", metadata.libelleTypeDocument);
@@ -357,7 +365,7 @@ export function searchDocumentsTypes(text) {
 }
 
 /**
- * Autocomplete vocaitons-za combo
+ * Autocomplete vocations-za combo
  * @param {string} text - string to search
  * @returns {object} - autocompletion result
  */
