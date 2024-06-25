@@ -29,7 +29,6 @@ const Tabou2DdsAccord = ({
     messages,
     help,
     permisElement,
-    operation
 }) => {
     let getFields;
 
@@ -38,14 +37,15 @@ const Tabou2DdsAccord = ({
     const [required, setRequired] = useState({});
 
     const DDC_FIELD_VALUES = {
-        fields: ["numAds", "depotDossier", "adsDate", "docDate", "datDate", "decision"],
+        dateFields: ["depotDossier", "adsDate", "docDate", "datDate"],
+        fields: ["numAds", "depotDossier", "adsDate", "docDate", "datDate", "decisionDossier"],
         labels: [
             "tabou2.identify.accordions.numAds",
             "tabou2.identify.accordions.depotDossier",
             "tabou2.identify.accordions.adsDate",
             "tabou2.identify.accordions.docDate",
             "tabou2.identify.accordions.daactDate",
-            "tabou2.identify.accordions.decision"
+            "tabou2.identify.accordions.decisionDossier"
         ]
     };
 
@@ -100,16 +100,6 @@ const Tabou2DdsAccord = ({
         layers: ["layerPA"],
         source: permisElement || [],
         readOnly: true
-    }, {
-        name: "decision",
-        label: "tabou2.identify.accordions.decision",
-        field: "decision.libelle",
-        layers: ["layerSA", "layerOA"],
-        type: "combo",
-        apiLabel: "libelle",
-        api: "decisions",
-        source: operation,
-        readOnly: false
     }].filter(el => el?.layers?.includes(layer) || !el?.layers);
 
     /**
@@ -119,7 +109,7 @@ const Tabou2DdsAccord = ({
      * @returns any
      */
     const getValueByField = (field, val) => {
-        let isDate = DDC_FIELD_VALUES.fields.includes(field);
+        let isDate = DDC_FIELD_VALUES.dateFields.includes(field);
         return isDate && val ? new Date(val).toLocaleDateString() : val;
     };
 
