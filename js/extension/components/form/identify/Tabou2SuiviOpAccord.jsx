@@ -46,14 +46,6 @@ const Tabou2SuiviOpAccord = ({
         source: values?.etape ? values : initialItem,
         readOnly: false
     }, {
-        name: "annulationDate",
-        label: "tabou2.identify.accordions.dateCancelStep",
-        field: "annulationDate",
-        layers: ["layerPA"],
-        type: "date",
-        source: values?.annulationDate ? values : operation,
-        readOnly: false
-    }, {
         name: "livraisonDate",
         label: "tabou2.identify.accordions.dateLiv",
         field: "livraisonDate",
@@ -68,6 +60,14 @@ const Tabou2SuiviOpAccord = ({
         layers: ["layerPA"],
         type: "date",
         source: values?.clotureDate ? values : operation,
+        readOnly: false
+    }, {
+        name: "annulationDate",
+        label: "tabou2.identify.accordions.dateCancelStep",
+        field: "annulationDate",
+        layers: ["layerPA"],
+        type: "date",
+        source: values?.annulationDate ? values : operation,
         readOnly: false
     }, {
         name: "attributionFonciereAnnee",

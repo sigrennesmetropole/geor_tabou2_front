@@ -58,47 +58,6 @@ const Tabou2CadreAccord = ({
         value: find(initialItem?.descriptionsFoncier, ["typeFoncier.code", "DPUCOM"])?.description,
         change: (v, t, src) => changeFoncier(t, "descriptionsFoncier", ["typeFoncier.code", "DPUCOM"], "description", v, src)
     }, {
-        name: "descriptionsFoncier",
-        type: "number",
-        layers: ["layerSA"],
-        label: "tabou2.identify.accordions.foncierPublicTaux",
-        field: "descriptionsFoncier.taux",
-        readOnly: false,
-        value: find(initialItem?.descriptionsFoncier, ["typeFoncier.code", "DPUCOM"])?.taux,
-        change: (v, t, src) => changeFoncier(t, "descriptionsFoncier", ["typeFoncier.code", "DPUCOM"], "taux", v, src)
-    }, {
-        name: "descriptionsFoncier",
-        type: "text",
-        layers: ["layerSA"],
-        label: "tabou2.identify.accordions.foncierPriveDescription",
-        field: "descriptionsFoncier.description",
-        readOnly: false,
-        value: find(initialItem?.descriptionsFoncier, ["typeFoncier.code", "DPUAME"])?.description,
-        change: (v, t, src) => changeFoncier(t, "descriptionsFoncier", ["typeFoncier.code", "DPUAME"], "description", v, src)
-    }, {
-        name: "descriptionsFoncier",
-        type: "number",
-        layers: ["layerSA"],
-        label: "tabou2.identify.accordions.foncierPriveTaux",
-        field: "descriptionsFoncier.taux",
-        readOnly: false,
-        value: find(initialItem?.descriptionsFoncier, ["typeFoncier.code", "DPUAME"])?.taux,
-        change: (v, t, src) => changeFoncier(t, "descriptionsFoncier", ["typeFoncier.code", "DPUAME"], "taux", v, src)
-    }, {
-        name: "typeOccupation",
-        field: "typeOccupation",
-        label: "tabou2.identify.accordions.typeOccupation",
-        layers: ["layerSA"],
-        type: "combo",
-        autocomplete: false,
-        api: `types-occupations?asc=true`,
-        apiLabel: "libelle",
-        placeholder: "tabou2.identify.accordions.emptySelect",
-        readOnly: false,
-        value: get(initialItem, "typeOccupation.libelle"),
-        select: (v) => changeInfos({ typeOccupation: v }),
-        change: (v) => changeInfos(v ? { typeOccupation: v } : { typeOccupation: null })
-    }, {
         name: "outilFoncier",
         field: "outilFoncier",
         label: "tabou2.identify.accordions.outilFoncier",
@@ -173,6 +132,14 @@ const Tabou2CadreAccord = ({
         type: "date",
         value: initialItem?.clotureDate || null,
         readOnly: false
+    },{
+        name: "annulationDate",
+        label: "tabou2.identify.accordions.dateCancelStep",
+        field: "annulationDate",
+        layers: ["layerSA", "layerOA"],
+        type: "date",
+        value: initialItem?.annulationDate || null,
+        readOnly: false
     }, {
         name: "amenageurs",
         field: "amenageurs.typeAmenageur",
@@ -191,16 +158,6 @@ const Tabou2CadreAccord = ({
         select: (v) => changeInfos({
             amenageurs: v ? [{ nom: "", typeAmenageur: v }] : []
         })
-    }, {
-        name: "amenageurs",
-        type: "text",
-        label: "tabou2.identify.accordions.nameAmenageur",
-        field: "amenageurs",
-        layers: ["layerSA"],
-        readOnly: false,
-        isArea: false,
-        value: get(initialItem, "amenageurs")[0]?.nom,
-        change: (v, t, src) => !isEmpty(src.amenageurs) ? changeInfos({ amenageurs: [{ ...src.amenageurs[0], nom: v }] }) : null
     }, {
         name: "outilAmenagement",
         type: "text",
@@ -255,26 +212,6 @@ const Tabou2CadreAccord = ({
         isArea: true,
         value: get(initialItem, "environnement"),
         change: (v) => changeInfos({ environnement: v })
-    }, {
-        name: "financements",
-        field: "financements[0].typesFinancement",
-        label: "tabou2.identify.accordions.typesFinancement",
-        layers: ["layerSA"],
-        type: "combo",
-        autocomplete: false,
-        api: `types-financements-operations?asc=true`,
-        apiLabel: "libelle",
-        placeholder: "tabou2.identify.accordions.emptySelect",
-        readOnly: false,
-        value: get(initialItem, "financements[0].typeFinancement.libelle"),
-        change: (v, src) => {
-            return changeInfos({
-            financements: v ? [{ ...src.financements[0], typeFinancement: v }] : []
-        })},
-        select: (v, src) => {
-            return changeInfos({
-                financements: v ? [{ ...src.financements[0], typeFinancement: v }] : []
-        })}
     }, {
         name: "financements",
         type: "text",
