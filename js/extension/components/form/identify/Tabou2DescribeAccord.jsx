@@ -66,7 +66,7 @@ const Tabou2DescribeAccord = ({
         isArea: true
     }, {
         name: "description",
-        label: "tabou2.identify.accordions.describe",
+        label: "tabou2.identify.accordions.publicDescribe",
         type: "text",
         field: "description",
         source: has(values, "description") ? values : initialItem,
