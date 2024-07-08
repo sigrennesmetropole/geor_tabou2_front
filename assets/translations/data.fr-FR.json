@@ -122,6 +122,7 @@
             "emptySelect": "Choisir une valeur...",
             "totalSpace": "Surface totale (ha)",
             "sectorSpace": "Surface secteur (ha) ",
+            "SHABSpace": "SHAB (m2)",
             "programme": "Programme",
             "adsDate": "Date décision",
             "docDate": "Date doc",
