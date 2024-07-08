@@ -92,6 +92,16 @@ const Tabou2GouvernanceAccord = ({
         source: operation,
         readOnly: false
     }, {
+        name: "listeOutilAmenagement",
+        label: "tabou2.identify.accordions.outilAmenagement",
+        field: "listeOutilAmenagement.libelle",
+        layers: ["layerSA", "layerOA"],
+        type: "combo",
+        apiLabel: "libelle",
+        api: "liste-outil-amenagement",
+        source: operation,
+        readOnly: false
+    }, {
         layers: ["layerSA", "layerOA"],
         name: "modeAmenagement",
         label: "tabou2.identify.accordions.modeAmenagement",
