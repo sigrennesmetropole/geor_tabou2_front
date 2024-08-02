@@ -1,5 +1,6 @@
 stages:
   - build
+  - test
 
 tabou2-front:build:
   stage: build
@@ -14,3 +15,15 @@ tabou2-front:build:
   artifacts:
     paths :
       - $CI_PROJECT_DIR/dist/Tabou2.zip
+
+
+tabou2-front:sonar-analysis:
+  stage: test
+  image: sonarsource/sonar-scanner-cli
+  script:
+    - >
+      sonar-scanner
+      -Dsonar.host.url=${SONAR_URL}
+      -Dsonar.login=${SONAR_TOKEN}
+      -Dsonar.projectKey=${SONAR_KEY}${CI_PROJECT_NAME}
+
