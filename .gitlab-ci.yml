@@ -4,7 +4,7 @@ stages:
 
 tabou2-front:build:
   stage: build
-  image: node:12
+  image: node:18.15.0
   only:
     refs:
       - develop
