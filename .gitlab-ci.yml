@@ -10,7 +10,7 @@ tabou2-front:build:
       - develop
   script:
     - git submodule update --init --recursive
-    - npm install
+    - npm ci
     - npm run ext:build
   artifacts:
     paths :
