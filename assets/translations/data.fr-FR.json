@@ -149,7 +149,7 @@
             "plhPlan": "PLH-Nombre de logements prévus",
             "plhLiv": "PLH-Nombre de logements livrés",
             "yearAttrib": "Année attribution foncière",
-            "dateAttrib": "Date attribution",
+            "dateAttrib": "Date d'attribution effective",
             "dataCom": "Date commercialisation",
             "totalLog": "Nombre de logements prévu (total)",
             "helpAccess": "Accession aidée",
