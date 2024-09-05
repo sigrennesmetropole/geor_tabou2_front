@@ -126,6 +126,14 @@ const Tabou2CadreAccord = ({
         value: initialItem?.operationnelDate || null,
         readOnly: false
     }, {
+        name: "livraisonDate",
+        label: "tabou2.identify.accordions.dateLiv",
+        field: "livraisonDate",
+        layers: ["layerSA", "layerOA"],
+        type: "date",
+        source: values?.livraisonDate ? values : operation,
+        readOnly: false
+    }, {
         name: "clotureDate",
         label: "tabou2.identify.accordions.dateClose",
         field: "clotureDate",
