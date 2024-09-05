@@ -85,20 +85,10 @@ const Tabou2GouvernanceAccord = ({
         name: "maitriseOuvrage",
         label: "tabou2.identify.accordions.moa",
         field: "maitriseOuvrage.libelle",
-        layers: ["layerSA", "layerOA"],
+        layers: ["layerOA"],
         type: "combo",
         apiLabel: "libelle",
         api: "maitrise-ouvrage",
-        source: operation,
-        readOnly: false
-    }, {
-        name: "listeOutilAmenagement",
-        label: "tabou2.identify.accordions.outilAmenagement",
-        field: "listeOutilAmenagement.libelle",
-        layers: ["layerSA", "layerOA"],
-        type: "combo",
-        apiLabel: "libelle",
-        api: "liste-outil-amenagement",
         source: operation,
         readOnly: false
     }, {
@@ -110,6 +100,16 @@ const Tabou2GouvernanceAccord = ({
         apiLabel: "libelle",
         api: "mode-amenagement",
         source: initialItem,
+        readOnly: false
+    }, {
+        name: "outilAmenagement",
+        label: "tabou2.identify.accordions.outilAmenagement",
+        field: "outilAmenagement.libelle",
+        layers: ["layerSA", "layerOA"],
+        type: "combo",
+        apiLabel: "libelle",
+        api: "outil-amenagement",
+        source: operation,
         readOnly: false
     }, {
         name: "amenageur",
