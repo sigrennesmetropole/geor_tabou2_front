@@ -159,16 +159,6 @@ const Tabou2CadreAccord = ({
             amenageurs: v ? [{ nom: "", typeAmenageur: v }] : []
         })
     }, {
-        name: "outilAmenagement",
-        type: "text",
-        label: "tabou2.identify.accordions.outilAmenagement",
-        field: "outilAmenagement",
-        layers: ["layerSA", "layerOA"],
-        readOnly: false,
-        isArea: false,
-        value: get(initialItem, "outilAmenagement"),
-        change: (v) => changeInfos({ outilAmenagement: v })
-    }, {
         name: "concertation",
         label: "tabou2.identify.accordions.dateDebut",
         field: "dateDebut",

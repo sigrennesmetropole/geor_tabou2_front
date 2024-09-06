@@ -102,6 +102,14 @@ const Tabou2DescribeAccord = ({
         layers: ["layerPA", "layerSA", "layerOA"],
         source: initialItem
     }, {
+        name: "surfaceSHAB",
+        field: "surfaceSHAB",
+        label: "tabou2.identify.accordions.SHABSpace",
+        type: "number",
+        step: 0.1,
+        layers: ["layerPA"],
+        source: initialItem
+    }, {
         name: "usageActuel",
         type: "text",
         label: "tabou2.identify.accordions.usageActuel",
