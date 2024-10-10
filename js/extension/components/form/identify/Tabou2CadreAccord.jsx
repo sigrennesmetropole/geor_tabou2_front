@@ -131,7 +131,7 @@ const Tabou2CadreAccord = ({
         field: "livraisonDate",
         layers: ["layerSA", "layerOA"],
         type: "date",
-        source: values?.livraisonDate ? values : operation,
+        source: initialItem?.livraisonDate || null,
         readOnly: false
     }, {
         name: "clotureDate",
