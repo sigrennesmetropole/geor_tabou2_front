@@ -149,24 +149,6 @@ const Tabou2CadreAccord = ({
         value: initialItem?.annulationDate || null,
         readOnly: false
     }, {
-        name: "amenageurs",
-        field: "amenageurs.typeAmenageur",
-        label: "tabou2.identify.accordions.typeAmenageur",
-        layers: ["layerSA"],
-        type: "combo",
-        autocomplete: false,
-        api: `types-amenageurs?asc=true`,
-        apiLabel: "libelle",
-        placeholder: "tabou2.identify.accordions.emptySelect",
-        readOnly: false,
-        value: get(initialItem, "amenageurs")[0]?.typeAmenageur?.libelle,
-        change: (v) => changeInfos({
-            amenageurs: v ? [{ nom: "", typeAmenageur: v }] : []
-        }),
-        select: (v) => changeInfos({
-            amenageurs: v ? [{ nom: "", typeAmenageur: v }] : []
-        })
-    }, {
         name: "concertation",
         label: "tabou2.identify.accordions.dateDebut",
         field: "dateDebut",
