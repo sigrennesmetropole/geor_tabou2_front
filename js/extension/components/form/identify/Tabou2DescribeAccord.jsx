@@ -100,7 +100,8 @@ const Tabou2DescribeAccord = ({
         type: "number",
         step: 0.1,
         layers: ["layerPA", "layerSA", "layerOA"],
-        source: initialItem
+        source: initialItem,
+        readOnly: layer === "layerPA"
     }, {
         name: "surfaceSHAB",
         field: "surfaceSHAB",
