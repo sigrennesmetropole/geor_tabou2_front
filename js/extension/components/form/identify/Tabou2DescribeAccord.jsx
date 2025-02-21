@@ -66,7 +66,7 @@ const Tabou2DescribeAccord = ({
         isArea: true
     }, {
         name: "description",
-        label: "tabou2.identify.accordions.describe",
+        label: "tabou2.identify.accordions.publicDescribe",
         type: "text",
         field: "description",
         source: has(values, "description") ? values : initialItem,
@@ -100,6 +100,15 @@ const Tabou2DescribeAccord = ({
         type: "number",
         step: 0.1,
         layers: ["layerPA", "layerSA", "layerOA"],
+        source: initialItem,
+        readOnly: layer === "layerPA"
+    }, {
+        name: "surfaceSHAB",
+        field: "surfaceSHAB",
+        label: "tabou2.identify.accordions.SHABSpace",
+        type: "number",
+        step: 0.1,
+        layers: ["layerPA"],
         source: initialItem
     }, {
         name: "usageActuel",

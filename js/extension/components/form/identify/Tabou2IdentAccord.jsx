@@ -153,14 +153,6 @@ const Tabou2IdentAccord = ({
         select: (v) => changeInfos({etape: v}),
         change: (v) => changeInfos(v ? {etape: v} : {etape: null})
     }, {
-        name: "annulationDate",
-        label: "tabou2.identify.accordions.dateCancelStep",
-        field: "annulationDate",
-        layers: ["layerSA", "layerOA"],
-        type: "date",
-        source: values?.annulationDate ? values : operation,
-        readOnly: false
-    }, {
         name: "numAds",
         label: "tabou2.identify.accordions.numAds",
         field: "numAds",

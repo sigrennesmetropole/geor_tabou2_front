@@ -1,16 +1,29 @@
 stages:
   - build
+  - test
 
 tabou2-front:build:
   stage: build
-  image: node:12
+  image: node:18.16.1
   only:
     refs:
       - develop
   script:
     - git submodule update --init --recursive
-    - npm install
+    - npm ci
     - npm run ext:build
   artifacts:
     paths :
       - $CI_PROJECT_DIR/dist/Tabou2.zip
+
+
+tabou2-front:sonar-analysis:
+  stage: test
+  image: sonarsource/sonar-scanner-cli
+  script:
+    - >
+      sonar-scanner
+      -Dsonar.host.url=${SONAR_URL}
+      -Dsonar.login=${SONAR_TOKEN}
+      -Dsonar.projectKey=${SONAR_KEY}${CI_PROJECT_NAME}
+
