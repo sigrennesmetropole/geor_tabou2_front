@@ -1,0 +1,94 @@
+.tabou-help-link {
+    padding: 5px;
+    margin-left: 13px;
+}
+
+.tabou-help-link:hover {
+    text-decoration: none !important;
+}
+
+.tabou-main-panel .ms2-border-layout-content {
+    padding: 5px 15px !important;
+    padding-bottom: 10% !important;
+    margin-bottom: 0% !important;
+    overflow: auto;
+}
+
+.tabou-main-panel .ms2-border-layout-body {
+    overflow: auto !important;
+}
+
+.tabou-form-group {
+    margin-bottom: 0px !important;
+}
+
+.tabou-panel {
+    margin: 0px !important;
+}
+
+.tabou-panel .panel-body {
+    margin: 0px !important;
+    padding: 4px !important;
+}
+
+.tabou-accordeon .panel-heading{
+    border-radius:4px !important;
+    color: white !important;
+    background-color:#078aa3 !important;
+    margin: 0px;
+    padding: 2px 10px;
+}
+
+.tabou-search-combo {
+    margin-top: 5px;
+}
+
+.tabou-tbar-panel {
+    display: flex;
+    margin: auto;
+    justify-content: center;
+}
+
+.tabou-identify-panel .panel-group, .tabou-identify-panel .panel-body .row {
+    margin-bottom: 5px;
+}
+
+
+.link-deactivate, .link-deactivate:hover, .link-deactivate:visited, .link-deactivate:active {
+    text-decoration: none;
+    padding-left:2px;
+}
+
+.no-margin {
+    margin: 0px !important;
+}
+
+.no-padding {
+    padding: 0px !important;
+}
+
+
+.mapToolbar, .nav-menu {
+    z-index: 999 !important;
+}
+
+.tabou-doc-modal .react-grid-Container {
+    height: auto !important;
+}
+
+.tabou-doc-modal .react-grid-Canvas {
+    width: 100% !important;
+    overflow: hidden scroll !important;
+}
+
+.tabou-doc-modal {
+    padding: 10px !important;
+}
+
+.doc-load-text span {
+    padding:5px;
+}
+
+.doc-load-text {
+    display: inline-flex;
+}

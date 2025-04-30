@@ -1,0 +1,46 @@
+.voc-tabs {
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+.voc-tabs > .nav-tabs > li.active > a {
+    background-color: #f1efefe7;
+    color: rgb(26, 157, 183);
+    font-weight: bold;
+    border-bottom: 3px solid rgb(26, 157, 183);
+    padding-right: 25px;
+    padding-left: 25px;
+    border-top: 0px solid transparent;
+    border-left: 0px solid transparent;
+    border-right: 0px solid transparent;
+}
+
+.voc-selector{
+    display: flex;
+    margin-left: 50px;
+    padding: 1%;
+    align-items: center;
+}
+
+.voc-selector label {
+    margin-right: 10px;
+}
+.contribPaddOap-style .panel-footer {
+    text-align: end;
+    margin-top: 15px;
+}
+
+#vocation-tabs ul {
+    margin-bottom: 5px;
+}
+
+.attributeInfos h4 {
+    margin-bottom: 20px;
+}
+
+.vocation-libelle {
+    display: inline;
+    margin-right: 2px;
+    width: 50%;
+    padding-top: 0px;
+}

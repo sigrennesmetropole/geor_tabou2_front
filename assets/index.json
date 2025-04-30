@@ -1,0 +1,10 @@
+{
+  "plugins": [
+    {
+      "name": "Tabou2",
+      "dependencies": [
+        "SidebarMenu"
+      ]
+    }
+  ]
+}

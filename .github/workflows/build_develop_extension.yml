@@ -1,0 +1,38 @@
+name: create develop zip extension
+on:
+  push:
+    branches:
+      - develop
+# This workflow will run tests for npm and java
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout branch"
+        uses: actions/checkout@v3
+        with:
+          ref: develop
+      # only keep branche submodule version
+      - name: "Checkout submodules"
+        run: git submodule update --init --recursive
+
+      - name: "setting up npm"
+        uses: actions/setup-node@v2
+        with:
+            node-version: '12.x'
+
+      ###############
+      # NPM CHECKS
+      #############
+      - name: npm install
+        run: npm install
+
+      - name: build
+        run: npm run ext:build
+
+      - name: 'Upload Artifact'
+        uses: actions/upload-artifact@v4.6.0
+        with:
+          name: urbamap-develop
+          path: dist/Tabou2.zip
+          retention-days: 5

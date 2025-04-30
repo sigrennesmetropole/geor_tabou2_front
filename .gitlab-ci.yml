@@ -1,0 +1,57 @@
+variables:
+  GITHUB_COMMIT_MESSAGE:
+    description: "Message du commit poussé vers le GitHub (cf job push-to-github). Par défaut : $CI_COMMIT_REF_NAME (nom de la branche ou du tag)."
+    value: $CI_COMMIT_REF_NAME
+
+stages:
+  - build
+  - test
+  - delivering
+
+tabou2-front:build:
+  stage: build
+  image: node:18.16.1
+  only:
+    refs:
+      - develop
+  script:
+    - git submodule update --init --recursive
+    - npm ci
+    - npm run ext:build
+  artifacts:
+    paths :
+      - $CI_PROJECT_DIR/dist/Tabou2.zip
+
+
+tabou2-front:sonar-analysis:
+  stage: test
+  image: sonarsource/sonar-scanner-cli
+  script:
+    - >
+      sonar-scanner
+      -Dsonar.host.url=${SONAR_URL}
+      -Dsonar.login=${SONAR_TOKEN}
+      -Dsonar.projectKey=${SONAR_KEY}${CI_PROJECT_NAME}
+
+## Livraison Github
+push-to-github:
+  image: maven:3.9.0-eclipse-temurin-17
+  stage: delivering
+  dependencies:
+    - tabou2-front:build
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      when: manual
+  before_script:
+    - apt update && apt install -y gettext-base
+    - envsubst '${MVN_GROUP} ${MVN_RELEASE} ${MVN_SNAPSHOTS}' < pom.xml > pom.subst && mv -f pom.subst pom.xml
+  script:
+    - cd ci
+    - apt install -y rsync
+    - chmod +x push-to-github.sh
+    - ./push-to-github.sh
+  variables:
+    SOURCE_REPOSITORY: $CI_PROJECT_DIR
+    # Les variables GITHUB_RM_ACCOUNT, GITHUB_RM_LOGIN et GIT_TOKEN sont à définir manuellement avant de lancer le job
+    GIT_REMOTE: "https://$GITHUB_RM_ACCOUNT:$GIT_TOKEN@github.com/sigrennesmetropole/geor_tabou2_front.git"
+    COMMIT_MESSAGE: $GITHUB_COMMIT_MESSAGE
