@@ -3,6 +3,7 @@ import { keys, pickBy, isEmpty, get, memoize } from 'lodash';
 import { userGroupSecuritySelector, userSelector } from '@mapstore/selectors/security';
 import { additionalLayersSelector } from '@mapstore/selectors/additionallayers';
 import {mapLayoutSelector} from "@mapstore/selectors/maplayout";
+import tabou2 from "@js/extension/reducers/tabou2";
 
 export const boundingSidebarRectSelector = (state) => state.maplayout && state.maplayout.boundingSidebarRect || {};
 
@@ -94,6 +95,10 @@ export function getTabouIndexSelectors(state) {
  */
 export function getLayerFilterObj(state) {
     return state?.tabou2.layerFilterObj;
+}
+
+export function getFilteredFeatures(state) {
+    return state?.tabou2.filteredFeatures;
 }
 /**
  * Get Tabou plugin config
@@ -316,4 +321,20 @@ export function getTypesFicheInfos(state) {
         typesAction: state.tabou2.typesAction,
         typesActeurs: state.tabou2.typesActeur
     };
+}
+
+export function selectTypesPLH(state) {
+    return state.tabou2?.typesPLH;
+}
+
+export function selectPLHsProgramme(state) {
+    return state.tabou2?.plhsProgramme;
+}
+
+export function selectPLHProgramme(state) {
+    return state.tabou2?.plhProgramme;
+}
+
+export function selectPLHIsLoading(state) {
+    return state.tabou2?.plhIsLoading;
 }

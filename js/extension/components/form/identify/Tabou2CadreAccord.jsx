@@ -193,6 +193,28 @@ const Tabou2CadreAccord = ({
         value: get(initialItem, "environnement"),
         change: (v) => changeInfos({ environnement: v })
     }, {
+        name: "financementPPI",
+        type: "combo",
+        autocomplete: false,
+        label: "tabou2.identify.accordions.financementPPI",
+        values: ["Oui", "Non"],
+        field: "financementPPI",
+        layers: ["layerSA", "layerOA"],
+        readOnly: false,
+        value: get(initialItem, "financementPPI"),
+        select: (v) => changeInfos({financementPPI: v === "Oui"}),
+        change: (v) => changeInfos(v ? {financementPPI: v === "Oui"} : {financementPPI: null})
+    }, {
+        name: "elementsFinanciers",
+        type: "text",
+        label: "tabou2.identify.accordions.elementsFinanciers",
+        field: "elementsFinanciers",
+        layers: ["layerSA", "layerOA"],
+        readOnly: false,
+        isArea: true,
+        value: get(initialItem, "elementsFinanciers"),
+        change: (v) => changeInfos({ elementsFinanciers: v })
+    }, {
         name: "financements",
         type: "text",
         label: "tabou2.identify.accordions.financements",
@@ -283,7 +305,7 @@ const Tabou2CadreAccord = ({
                                     }{
                                         item.type === "combo" && !item?.autocomplete ? (
                                             <Tabou2Combo
-                                                load={() => getRequestApi(item.api, apiCfg, {})}
+                                                load={() => item.values ?  Promise.resolve(item.values) : getRequestApi(item.api, apiCfg, {})}
                                                 placeholder={i18n(messages, item?.placeholder || "")}
                                                 filter="contains"
                                                 disabled={item.readOnly || !allowChange}

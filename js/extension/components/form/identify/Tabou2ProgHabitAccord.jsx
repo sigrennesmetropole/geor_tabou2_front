@@ -1,12 +1,13 @@
 import React, {useEffect, useState, memo } from "react";
 import { isEmpty, isEqual, pick, has, get, capitalize } from "lodash";
-import { Col, Row, Table, FormControl, Grid, ControlLabel, Alert, Glyphicon } from "react-bootstrap";
+import { Col, Row, Table, FormControl, Grid, ControlLabel, Alert, Glyphicon, Button } from "react-bootstrap";
 import Tabou2Date from '@js/extension/components/common/Tabou2Date';
 import "@js/extension/css/identify.css";
 import "@js/extension/css/tabou.css";
 import Message from "@mapstore/components/I18N/Message";
 
 import ControlledPopover from '@mapstore/components/widgets/widget/ControlledPopover';
+import Tabou2SuiviPLHModal from "@js/extension/components/tabou2IdentifyPanel/modals/Tabou2SuiviPLHModal";
 
 const avoidReRender = (prevProps, nextProps) => {
     if (isEqual(prevProps.initialItem, nextProps.initialItem)) {
@@ -30,6 +31,7 @@ const Tabou2ProgHabitatAccord = ({
     const [values, setValues] = useState({});
     const [fields, setFields] = useState([]);
     const [required, setRequired] = useState({});
+    const [suiviPlhOpened, setSuiviPlhOpened] = useState(false)
     // create fields from const func
     const getFields = () => [ // PROGRAMME
         {
@@ -95,7 +97,17 @@ const Tabou2ProgHabitatAccord = ({
             min: 0,
             source: has(values, "logementsLocatifRegulePrivePrevu") ? values : programme,
             readOnly: false
-        }, {
+        },
+        {
+            name: "suiviPLH",
+            label: "tabou2.identify.accordions.suiviPLH",
+            field: "suiviPLH",
+            layers: ["layerPA"],
+            type: "suiviPLH",
+            source: has(values, "suiviPLH") ? values : programme,
+            readOnly: false
+        },
+        {
             name: "agapeo",
             label: "tabou2.identify.accordions.agapeoData",
             msg: ["tabou2.getHelp", help.agapeo || help?.url || ""],
@@ -169,7 +181,7 @@ const Tabou2ProgHabitatAccord = ({
         <Grid style={{ width: "100%" }} className={""}>
             {
                 fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(item => (
-                    <Row className={item.type === "table" ? "tableDisplay" : ""}>
+                    <Row key={item.name} className={item.type === "table" ? "tableDisplay" : ""}>
                         {
                             has(item, "valid") && getValue(item) && !item.valid(getValue(item)) ? (
                                 <Alert className="alert-danger">
@@ -233,6 +245,27 @@ const Tabou2ProgHabitatAccord = ({
                                         }
                                     }}
                                 />)
+                            }
+                            {
+                                item.type === "suiviPLH" && (
+                                    <>
+                                        <FormControl readOnly value={get(values, "suiviPLH.libelle")} className={"vocation-libelle "} />
+                                        <Button
+                                            tooltip="Suivi PLH"
+                                            bsStyle="primary"
+                                            onClick={() => setSuiviPlhOpened(true)}>
+                                            {i18n(messages, "tabou2.suiviPLH.btnLabel")}
+                                        </Button>
+                                        <Tabou2SuiviPLHModal
+                                            i18n={i18n}
+                                            messages={messages}
+                                            programme={programme}
+                                            opened={suiviPlhOpened}
+                                            allowChange={allowChange}
+                                            close={() => setSuiviPlhOpened(false)}
+                                        />
+                                    </>
+                                )
                             }
                         </Col>
                         {

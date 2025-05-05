@@ -11,7 +11,6 @@ import { selectedLayerIdSelector } from '@mapstore/selectors/featuregrid';
 import {getMessageById} from "@mapstore/utils/LocaleUtils";
 
 import iconUrbamap from "@js/extension/assets/iconUrbamap.svg";
-import iconUrbamapToolbar from "@js/extension/assets/iconUrbamapToolbar.svg";
 
 import { isTabou2Activate, mapLayoutValuesSelector } from "../selectors/tabou2";
 import { setUp, closeTabou, updateVectorTabouStyle } from "../actions/tabou2";
@@ -33,6 +32,13 @@ import { setTbarPosition, initMap, closeTabouExt } from "../epics/setup";
 import "@js/extension/css/tabou.css";
 
 import { PANEL_SIZE, CONTROL_NAME } from '../constants';
+import {
+    addPLHProgrammeEpic,
+    deletePLHProgrammeEpic, getPLHProgrammeEpic,
+    getPLHSProgrammeEpic,
+    getTypesPLHAvailableEpic,
+    updatePLHProgrammeEpic
+} from "@js/extension/epics/plh";
 
 const compose = (...functions) => args => functions.reduceRight((arg, fn) => fn(arg), args);
 
@@ -124,7 +130,13 @@ export default {
         updateDocument: updateDocument,
         onUpdateOperation: onUpdateOperation,
         onGetInfos: onGetInfos,
-        getFicheInfoValues: getFicheInfoValues
+        getFicheInfoValues: getFicheInfoValues,
+        getTypesPLHAvailableEpic: getTypesPLHAvailableEpic,
+        getPLHSProgrammeEpic: getPLHSProgrammeEpic,
+        deletePLHProgrammeEpic: deletePLHProgrammeEpic,
+        updatePLHProgrammeEpic: updatePLHProgrammeEpic,
+        addPLHProgrammeEpic: addPLHProgrammeEpic,
+        getPLHProgrammeEpic: getPLHProgrammeEpic
     },
     containers: {
         // Toolbar: {

@@ -28,7 +28,13 @@ import {
     SET_TABOU_DOCUMENTS,
     SET_TABOU_VOCATIONS_INFOS,
     DISPLAY_TABOU_MARKER,
-    SET_TABOU_FICHE_INFOS
+    SET_TABOU_FICHE_INFOS,
+    SET_TABOU_FILTERED_FEATURES,
+    RESET_TABOU_FILTERED_FEATURES,
+    SET_TYPES_PLH,
+    SET_PLHS_PROGRAMME,
+    SET_PLH_PROGRAMME,
+    SET_PLH_IS_LOADING
 } from '../actions/tabou2';
 
 const initialState = {
@@ -46,6 +52,7 @@ const initialState = {
     tiers: [],
     ficheInfos: {},
     featureAdded: {},
+    filteredFeatures: [],
     identifyInfos: {},
     errors: {},
     tiersFilter: "",
@@ -61,7 +68,11 @@ const initialState = {
     typesVocation: [],
     typesFonciers: [],
     typesAction: [],
-    typesActeur: []
+    typesActeur: [],
+    typesPLH: [],
+    plhsProgramme: [],
+    plhProgramme: {},
+    plhIsLoading: false
 };
 
 export default function tabou2(state = initialState, action) {
@@ -89,6 +100,11 @@ export default function tabou2(state = initialState, action) {
     case SET_TABOU_FILTEROBJ:
         const { layerFilterObj } = action;
         return set('layerFilterObj', layerFilterObj, state);
+    case SET_TABOU_FILTERED_FEATURES:
+        const { newFilteredFeatures } = action;
+        return set('filteredFeatures', state.filteredFeatures.concat(newFilteredFeatures), state);
+    case RESET_TABOU_FILTERED_FEATURES:
+        return set('filteredFeatures', [], state);
     case RESET_SEARCH_FILTERS:
         return set('layerFilterObj', {}, state);
     case RESET_CQL_FILTERS:
@@ -150,6 +166,14 @@ export default function tabou2(state = initialState, action) {
         return set(action.key, action.data || {}, state);
     case SET_TABOU_FICHE_INFOS:
         return set(action.key, action.data || {}, state);
+    case SET_TYPES_PLH:
+        return set("typesPLH", action?.typesPLH || [], state);
+    case SET_PLHS_PROGRAMME:
+        return set("plhsProgramme", action?.plhsProgramme || [], state);
+    case SET_PLH_PROGRAMME:
+        return set("plhProgramme", action?.typePLH || {}, state);
+    case SET_PLH_IS_LOADING:
+        return set("plhIsLoading", action?.isLoading, state);
     default:
         return state;
     }

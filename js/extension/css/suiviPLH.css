@@ -1,0 +1,17 @@
+.suivi-plh-selector{
+    display: flex;
+    margin-left: 50px;
+    padding: 1%;
+    align-items: center;
+    margin-top: 15px;
+}
+
+.suivi-plh-selector label {
+    margin-right: 10px;
+}
+
+.suivi-plh-add-btn, .suivi-plh-edit-btn, .suivi-plh-cancel-btn {
+    margin-top: 20px;
+    margin-left: 15px;
+}
+

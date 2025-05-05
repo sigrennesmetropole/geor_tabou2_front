@@ -1,14 +1,35 @@
 import * as Rx from 'rxjs';
 import { keys } from 'lodash';
-import { resetCqlFilters, RESET_SEARCH_FILTERS, UPDATE_LAYER_PARAMS, SEARCH_IDS, setTabouFilterObj, loading, setTabouErrors } from '../actions/tabou2';
+import {
+    resetCqlFilters,
+    RESET_SEARCH_FILTERS,
+    UPDATE_LAYER_PARAMS,
+    SEARCH_IDS,
+    setTabouFilterObj,
+    loading,
+    setTabouErrors,
+    setTabouFilteredFeatures,
+    resetTabouFilteredFeatures
+} from '../actions/tabou2';
 import { layersSelector } from '@mapstore/selectors/layers';
-import { currentTabouFilters, getLayerFilterObj, isTabou2Activate, getPluginCfg } from '../selectors/tabou2';
+import {
+    currentTabouFilters,
+    getLayerFilterObj,
+    isTabou2Activate,
+    getPluginCfg,
+    getFilteredFeatures
+} from '../selectors/tabou2';
 import { changeLayerParams, changeLayerProperties } from "@mapstore/actions/layers";
 import { wrapStartStop } from "@mapstore/observables/epics";
 import { error, success } from "@mapstore/actions/notifications";
 import {getMessageById} from "@mapstore/utils/LocaleUtils";
 import { newfilterLayerByList } from "../utils/search";
 import { createOGCRequest } from "../api/requests";
+import VectorSource from 'ol/source/Vector';
+import MultiPolygon from 'ol/geom/MultiPolygon';
+import Feature from 'ol/Feature';
+import {zoomToExtent} from "@mapstore/actions/map";
+
 
 /**
  * From Tabou2 search panel, apply filter for each Tabou layers.
@@ -31,8 +52,17 @@ export function tabouApplyFilter(action$, store) {
             filterObj.filterFields = filterObj?.filterFields || [];
             filterObj.crossLayerFilter = filterObj?.crossLayerFilter || null;
             filterObj.spatialField = filterObj?.spatialField || null;
+            let filteredFeatures = getFilteredFeatures(store.getState());
+            let zoom = false;
+            let vectorSource = new VectorSource();
+            if (filteredFeatures !== undefined && filteredFeatures.length !== 0) {
+                const features = filteredFeatures.map(feature => new Feature(new MultiPolygon(feature.geometry.coordinates)));
+                vectorSource.addFeatures(features);
+                zoom = true;
+            }
             return Rx.Observable.of(
-                changeLayerProperties(layer.id, { layerFilter: filterObj.tocFilter })
+                changeLayerProperties(layer.id, { layerFilter: filterObj.tocFilter }),
+                zoom && zoomToExtent(vectorSource.getExtent(), 'EPSG:3948', 21, {})
             );
         });
 }
@@ -55,7 +85,8 @@ export function tabouResetFilter(action$, store) {
                     resetCqlFilters(),
                     changeLayerParams(id, { cql_filter: undefined }),
                     changeLayerProperties(id, { layerFilter: undefined }),
-                    setTabouErrors(false, "filter", "", "")
+                    setTabouErrors(false, "filter", "", ""),
+                    resetTabouFilteredFeatures()
                 );
             });
         });
@@ -71,6 +102,7 @@ export function tabouGetSearchIds(action$, store) {
     return action$.ofType(SEARCH_IDS)
         .filter(() => isTabou2Activate(store.getState()))
         .switchMap((action) => {
+            resetTabouFilteredFeatures();
             let messages = store.getState()?.locale.messages;
             let observable$ = Rx.Observable.empty();
             observable$ = Rx.Observable.from((action.params)).mergeMap( filter => {
@@ -115,8 +147,8 @@ export function tabouGetSearchIds(action$, store) {
                             setTabouFilterObj({
                                 ...getLayerFilterObj(store.getState()),
                                 [layer]: newfilterLayerByList(layer, ids, "id_tabou", idsCql)
-                            })
-                        );
+                            }),
+                            setTabouFilteredFeatures(response.features));
                     });
             });
             return observable$.let(

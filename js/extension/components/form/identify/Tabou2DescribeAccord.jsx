@@ -111,13 +111,12 @@ const Tabou2DescribeAccord = ({
         layers: ["layerPA"],
         source: initialItem
     }, {
-        name: "usageActuel",
+        name: "mos",
         type: "text",
-        label: "tabou2.identify.accordions.usageActuel",
-        field: "usageActuel",
-        source: has(values, "usageActuel") ? values : operation,
+        label: "tabou2.identify.accordions.mos",
+        field: "mos",
         layers: ["layerSA", "layerOA"],
-        readOnly: false,
+        readOnly: true,
         isArea: true
     }, {
         name: "objectifs",

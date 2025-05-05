@@ -8,6 +8,8 @@ export const SET_DEFAULT_INFO_FORMAT = "SET_DEFAULT_INFO_FORMAT";
 export const LOAD_TABOU_FEATURE_INFO = "LOAD_TABOU_FEATURE_INFO";
 export const SET_SELECTOR_INDEX = "SET_SELECTOR_INDEX";
 export const SET_TABOU_FILTEROBJ = "SET_TABOU_FILTEROBJ";
+export const SET_TABOU_FILTERED_FEATURES = "SET_TABOU_FILTERED_FEATURES";
+export const RESET_TABOU_FILTERED_FEATURES = "RESET_TABOU_FILTERED_FEATURES";
 export const UPDATE_LAYER_PARAMS = "UPDATE_LAYER_PARAMS";
 export const RESET_CQL_FILTERS = "RESET_CQL_FILTERS";
 export const SELECT_FEATURE = "SELECT_FEATURE";
@@ -58,7 +60,16 @@ export const UPDATE_OPERATION = "UPDATE_OPERATION";
 export const GET_TABOU_VOCATIONS_INFOS = "GET_TABOU_VOCATIONS_INFOS";
 export const SET_TABOU_VOCATIONS_INFOS = "SET_TABOU_VOCATIONS_INFOS";
 export const SET_TABOU_FICHE_INFOS = "SET_TABOU_FICHE_INFOS";
-
+export const GET_TYPES_PLH_AVAILABLE = "GET_TYPES_PLH_AVAILABLE";
+export const SET_TYPES_PLH = "SET_TYPES_PLH";
+export const GET_PLHS_PROGRAMME = "GET_PLHS_PROGRAMME";
+export const SET_PLHS_PROGRAMME = "SET_PLHS_PROGRAMME";
+export const DELETE_PLH_PROGRAMME = "DELETE_PLH_PROGRAMME";
+export const UPDATE_PLH_PROGRAMME = "UPDATE_PLH_PROGRAMME";
+export const ADD_PLH_PROGRAMME = "ADD_PLH_PROGRAMME";
+export const GET_PLH_PROGRAMME = "GET_PLH_PROGRAMME";
+export const SET_PLH_PROGRAMME = "SET_PLH_PROGRAMME";
+export const SET_PLH_IS_LOADING = "SET_PLH_IS_LOADING";
 
 export const setTabouFicheInfos = (key, data) => ({
     type: SET_TABOU_FICHE_INFOS,
@@ -171,6 +182,15 @@ export const setSelectorIndex = (selectorsIndex) => ({
 export const setTabouFilterObj = (layerFilterObj) => ({
     type: SET_TABOU_FILTEROBJ,
     layerFilterObj
+});
+
+export const setTabouFilteredFeatures = (newFilteredFeatures) => ({
+    type: SET_TABOU_FILTERED_FEATURES,
+    newFilteredFeatures
+});
+
+export const resetTabouFilteredFeatures = () => ({
+    type: RESET_TABOU_FILTERED_FEATURES
 });
 
 export const applyFilterObj = (layerToFilter) => ({
@@ -370,4 +390,52 @@ export const modifyDocument = (file, metadata) => ({
 export const updateOperation = (operation) => ({
     type: UPDATE_OPERATION,
     operation
+});
+
+export const getTypesPLHAvailable = () => ({
+    type: GET_TYPES_PLH_AVAILABLE
+});
+
+export const setTypesPLH = (typesPLH) => ({
+    type: SET_TYPES_PLH,
+    typesPLH
+});
+
+export const getPLHsProgramme = () => ({
+    type: GET_PLHS_PROGRAMME
+});
+
+export const setPLHsProgramme = (plhsProgramme) => ({
+    type: SET_PLHS_PROGRAMME,
+    plhsProgramme
+});
+
+export const deletePLHProgramme = (idTypePLH) => ({
+    type: DELETE_PLH_PROGRAMME,
+    idTypePLH
+});
+
+export const updatePLHProgramme = (plh) => ({
+    type: UPDATE_PLH_PROGRAMME,
+    plh
+});
+
+export const addPLHProgramme = (idTypePLH) => ({
+    type: ADD_PLH_PROGRAMME,
+    idTypePLH
+});
+
+export const getPLHProgramme = (idTypePLH) => ({
+    type: GET_PLH_PROGRAMME,
+    idTypePLH
+});
+
+export const setPLHProgramme = (typePLH) => ({
+    type: SET_PLH_PROGRAMME,
+    typePLH
+});
+
+export const setPLHIsLoading = (isLoading) => ({
+    type: SET_PLH_IS_LOADING,
+    isLoading
 });

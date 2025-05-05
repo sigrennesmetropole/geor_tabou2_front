@@ -389,3 +389,103 @@ export const getTypesFoncier = () => axios.get(`${baseURL}/types-fonciers`, { pa
 export const getTypesActions = () => axios.get(`${baseURL}/types-actions-operations`, { params: { asc: true } });
 
 export const getTypesActeurs = () => axios.get(`${baseURL}/types-acteurs`, { params: { asc: true } });
+
+
+/** SuiviPLH requests **/
+
+/**
+ * Get all typePLH
+ * @returns {object} - axios response
+ */
+export const getTypesPLH = (programmeId) => axios.get(`${baseURL}/type-plh`, { params: { programmeId: programmeId, asc: true } }).then(({ data }) => data);
+
+
+/**
+ * Add typePLH to a program
+ * @param {integer} programmeId - id program
+ * @param {integer} typePLHId - id typePLH
+ * @returns {object} - axios response
+ */
+export function createProgrammeTypePLH(programmeId, typePLHId) {
+    return axios.post(`${baseURL}/programmes/${programmeId}/plh/${typePLHId}`).then(data => data);
+}
+
+/**
+ * Update typePLH of a program
+ * @param {integer} programmeId - id program
+ * @param {object} data - typePLH
+ * @returns {object} - axios response
+ */
+export function updateProgrammeTypePLH(programmeId, data) {
+    return axios.put(`${baseURL}/programmes/${programmeId}/plh`, data).then(data => data);
+}
+
+
+/**
+ * Get typePLH of a given programme
+ * @param {integer} programmeId - id program
+ * @param {integer} typePLHId - id typePLH
+ * @returns {object} - axios response
+ */
+export function getProgrammeTypePLH(programmeId, typePLHId) {
+    return axios.get(`${baseURL}/programmes/${programmeId}/plh/${typePLHId}`).then(data => data);
+}
+
+
+/**
+ * Delete a typePLH of a programm
+ * @param {integer} programmeId - id tabou
+ * @param {integer} typePLHId - id typePLH
+ * @returns {object} - axios response
+ */
+export function deleteProgrammeTypePLH(programmeId, typePLHId) {
+    return axios.delete(`${baseURL}/programmes/${programmeId}/plh/${typePLHId}`).then(data => data);
+}
+
+/**--------------------------------------------------------------------------------------------------**/
+
+/**
+ * Update a typePLH
+ * @param {object} data - typePLH
+ * @returns {object} - axios response
+ */
+export function updateTypePLH(data) {
+    return axios.put(`${baseURL}/type-plh`, data);
+}
+
+/**
+ * Get a typePLH detail
+ * @param {integer} typePLHId - id typePLH
+ * @returns {object} - axios response
+ */
+export function getTypePLH(typePLHId) {
+    return axios.get(`${baseURL}/type-plh/${typePLHId}`);
+}
+
+
+/**
+ * Add typePLH to a parent
+ * @param {integer} typePLHId - id typePLH Parent
+ * @param {object} data - typePLH
+ * @returns {object} - axios response
+ */
+export function createTypePLHParent(typePLHId, data) {
+    return axios.post(`${baseURL}/type-plh/${typePLHId}`, data);
+}
+
+
+/**
+ * Get every typePLH
+ * @param {integer} typePLHId - id typePLH
+ * @returns {object} - axios response
+ */
+export function deleteTypePLH(typePLHId) {
+    return axios.delete(`${baseURL}/type-plh/${typePLHId}`);
+}
+
+/**
+ * Get every typePLH
+ * @param {integer} typePLHId - id typePLH
+ * @returns {object} - axios response
+ */
+export const getTypePLHParent = () => axios.get(`${baseURL}/type-plh/${typePLHId}/searchParent`);

@@ -7,6 +7,7 @@ import "@js/extension/css/vocation.css";
 import Activites from "../../form/vocations/activites/Activites";
 import Habitat from "../../form/vocations/habitat/Habitat";
 import Mixte from "../../form/vocations/mixte/Mixte";
+import Mobilite from "@js/extension/components/form/vocations/mobilite/Mobilite";
 export default function Tabou2VocationModal({
     operation,
     initialItems,
@@ -98,6 +99,7 @@ export default function Tabou2VocationModal({
                 {vocation?.code === "ACTIVITE" && (<Activites {...propsTab} />)}
                 {vocation?.code === "HABITAT" && (<Habitat {...propsTab} />)}
                 {vocation?.code === "MIXTE" && (<Mixte {...propsTab}/>)}
+                {vocation?.code === "MOBILITE" && (<Mobilite {...propsTab}/>)}
             </Col>
         </ResizableModal>
     );
