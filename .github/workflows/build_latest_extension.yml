@@ -2,7 +2,7 @@ name: create latest release zip extension
 on:
   push:
     branches:
-      - main
+      - master
 # This workflow will run tests for npm and java
 jobs:
   checks:
