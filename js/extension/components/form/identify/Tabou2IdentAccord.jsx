@@ -28,6 +28,7 @@ const Tabou2IdentAccord = ({
     initialItem,
     programme,
     operation,
+    operationParent,
     mapFeature,
     layer,
     tiers,
@@ -113,6 +114,20 @@ const Tabou2IdentAccord = ({
         apiLabel: "nom",
         api: "operations?estSecteur=false&asc=true",
         source: operation,
+        readOnly: false
+    }, {
+        layers: ["layerSA"],
+        name: "parentId",
+        label: "tabou2.identify.accordions.operation",
+        field: "parentId",
+        value: () => has(values, "parentName") ? values.parentName : operationParent?.nom,
+        select: (v) => changeInfos({parentId: v?.id || "", parentName: v?.nom || v}),
+        change: (v) => changeInfos({parentId: v?.id || "", parentName: v?.nom || v}),
+        type: "combo",
+        autocomplete: true,
+        apiLabel: "nom",
+        api: "operations?estSecteur=false&asc=true",
+        source: operationParent,
         readOnly: false
     }, {
         name: "nom",

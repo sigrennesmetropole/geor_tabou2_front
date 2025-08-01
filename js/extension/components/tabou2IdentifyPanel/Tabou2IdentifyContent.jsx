@@ -34,6 +34,7 @@ const Tabou2IdentifyContent = ({
     // first accordions will be open
     const [openedAccordions, setOpened] = useState({ 0: true });
     const [operation, setOperation] = useState({});
+    const [operationParent, setOperationParent] = useState({});
     const [mapFeature, setMapFeature] = useState({});
     const [infos, setInfos] = useState({});
     const mandatory = useRef({});
@@ -51,6 +52,7 @@ const Tabou2IdentifyContent = ({
             if (!isEqual(props?.tabouInfos?.operation, operation) || !isEqual(infos, selected)) {
                 setInfos(selected);
                 setOperation(props?.tabouInfos?.operation);
+                setOperationParent(props?.tabouInfos?.operationParent);
                 setMapFeature(props?.tabouInfos?.mapFeature);
             }
         }
@@ -82,6 +84,7 @@ const Tabou2IdentifyContent = ({
     const tabsProps = {
         programme: props.tabouInfos?.programme,
         operation: operation,
+        operationParent: operationParent,
         mapFeature: mapFeature,
         initialItem: infos,
         change: (values, required) => {

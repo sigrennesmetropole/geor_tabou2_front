@@ -5,7 +5,15 @@ import { get, has, isEmpty, keys, isEqual, isObject, find, omit } from 'lodash';
 import { getRequestApi } from '@js/extension/api/requests';
 import ControlledPopover from '@mapstore/components/widgets/widget/ControlledPopover';
 import Toolbar from '@mapstore/components/misc/toolbar/Toolbar';
-import { OA_SCHEMA, PA_SCHEMA, ADD_FIELDS, ADD_OA_FORM, ADD_PA_FORM } from '@js/extension/constants';
+import {
+    OA_SCHEMA,
+    PA_SCHEMA,
+    ADD_FIELDS,
+    ADD_OA_FORM,
+    ADD_PA_FORM,
+    ADD_SA_FORM,
+    SA_SCHEMA
+} from '@js/extension/constants';
 import { DropdownList} from 'react-widgets';
 import Message from "@mapstore/components/I18N/Message";
 import SearchCombo from '@js/extension/components/form/SearchCombo';
@@ -39,8 +47,11 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
         if ( type === "layerPA") {
             // to create PA object
             keysToFilter = keys(obj).filter(name => !["nomEmprise", "secteur", "nature", "limitPa"].includes(name));
+        } else if (type === "layerSA") {
+            // to create SA object
+            keysToFilter = keys(obj).filter(name => !["nomEmprise", "secteur", "limitPa"].includes(name));
         } else {
-            // to create OA or SA object
+            // to create OA object
             keysToFilter = keys(obj).filter(name => !["nomEmprise", "secteur", "limitPa", "parentoa"].includes(name));
         }
         // return empty fields
@@ -73,9 +84,13 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
             newFeatureObj = {...newFeatureObj, nom: value, idEmprise: selection?.id, nomEmprise: value};
             newInfos = {...newInfos, nom: value, idEmprise: selection?.id, nomEmprise: value};
         }
-        if (combo.name === "parentoa") {
+        if (type === "layerSA" && combo.name === "parentoa") {
+            newFeatureObj = {...newFeatureObj, parentId: selection?.id };
+            newInfos = {...newInfos, parentId: selection?.id };
+        } else if (type === "layerPA" && combo.name === "parentoa") {
             newFeatureObj = {...newFeatureObj, operationId: selection?.id };
             newInfos = {...newInfos, operationId: selection?.id };
+
         }
         if (combo.name === "nature") {
             natureId.current = selection.id;
@@ -116,7 +131,15 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
 
     // Send request to save new OA, PA, SA
     const handleSubmit = () => {
-        let dataSchema = type === "layerPA" ? PA_SCHEMA : OA_SCHEMA;
+        let dataSchema;
+        if (type === "layerOA") {
+            dataSchema = OA_SCHEMA;
+        }
+        else if (type === "layerSA") {
+            dataSchema = SA_SCHEMA;
+        } else {
+            dataSchema = PA_SCHEMA;
+        }
         let params = {
             ...dataSchema,
             ...newFeature,
@@ -183,7 +206,7 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
                 setChilds(ADD_PA_FORM);
                 break;
             case "layerSA":
-                setChilds(ADD_OA_FORM);
+                setChilds(ADD_SA_FORM);
                 break;
             case "layerOA":
                 setChilds(ADD_OA_FORM);

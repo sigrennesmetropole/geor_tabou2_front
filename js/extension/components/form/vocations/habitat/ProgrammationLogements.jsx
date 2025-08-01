@@ -94,11 +94,21 @@ export default function ProgrammationLogements({
             readOnly: false
         },
         {
+            name: "logtsHFV",
+            label: "tabou2.vocation.ageFriendlyHousing",
+            field: "logtsHFV",
+            type: "number",
+            layers: [],
+            source: () => values,
+            change: (value) => setValues({logtsHFV: value}),
+            readOnly: false
+        },
+        {
             name: "scot",
             label: "tabou2.vocation.scot",
             field: "scot",
             type: "checkbox",
-            layers: ["layerOA"],
+            layers: [],
             source: () => values,
             change: () => setValues({scot: !values.scot}),
             readOnly: false

@@ -31,6 +31,7 @@ const Tabou2DescribeAccord = ({
     initialItem,
     programme,
     operation,
+    operationParent,
     layer,
     authent,
     change = () => { },
@@ -85,23 +86,39 @@ const Tabou2DescribeAccord = ({
         readOnly: false
 
     }, {
-        name: "surfaceParent",
-        field: "surfaceParent",
+        layers: ["layerPA"],
+        name: "aireGeoHaParent",
         label: "tabou2.identify.accordions.totalSpace",
+        value: () => operation.surfaceTotale ? operation.surfaceTotale/10000 : null,
+        type: "number",
+        readOnly: true
+    },{
+        layers: ["layerSA"],
+        name: "aireGeoHaParent",
+        label: "tabou2.identify.accordions.totalSpace",
+        value: () => operationParent && operationParent.surfaceTotale ? operationParent.surfaceTotale/10000 : null,
+        type: "number",
+        readOnly: true
+    }, {
+        name: "aireGeoHa",
+        field: "aireGeoHa",
+        label: "tabou2.identify.accordions.totalSpace",
+        type: "number",
+        step: 0.1,
+        layers: ["layerOA"],
+        source: initialItem,
+        value: () => initialItem.surfaceTotale ? initialItem.surfaceTotale/10000 : null,
+        readOnly: true
+    }, {
+        name: "aireGeoHa",
+        field: "aireGeoHa",
+        label: "tabou2.identify.accordions.sectorSpace",
         type: "number",
         step: 0.1,
         layers: ["layerSA"],
         source: initialItem,
+        value: () => initialItem.surfaceTotale ? initialItem.surfaceTotale/10000 : null,
         readOnly: true
-    }, {
-        name: "surfaceTotale",
-        field: "surfaceTotale",
-        label: layer === "layerSA" ? "tabou2.identify.accordions.sectorSpace" : "tabou2.identify.accordions.totalSpace",
-        type: "number",
-        step: 0.1,
-        layers: ["layerPA", "layerSA", "layerOA"],
-        source: initialItem,
-        readOnly: layer === "layerPA"
     }, {
         name: "surfaceSHAB",
         field: "surfaceSHAB",

@@ -327,7 +327,7 @@ Voici un exemple de configuration :
                 "secteurs-sam": {
                     "layer": "urba_zona:v_chargedoperation_secteur",
                     "geom": "geom",
-                    "filterField": "nom_secteur",
+                    "filterField": "com_quart",
                     "apiLabel": "nomSecteur",
                     "apiField": "nomSecteur",
                     "placeholder": "Sec. SAM"

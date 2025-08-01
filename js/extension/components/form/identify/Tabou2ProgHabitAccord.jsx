@@ -97,8 +97,16 @@ const Tabou2ProgHabitatAccord = ({
             min: 0,
             source: has(values, "logementsLocatifRegulePrivePrevu") ? values : programme,
             readOnly: false
-        },
-        {
+        }, {
+            name: "nbLogementsHFV",
+            label: "tabou2.identify.accordions.nbLogementsHFV",
+            field: "nbLogementsHFV",
+            layers: ["layerPA"],
+            type: "number",
+            min: 0,
+            source: has(values, "nbLogementsHFV") ? values : programme,
+            readOnly: false
+        }, {
             name: "suiviPLH",
             label: "tabou2.identify.accordions.suiviPLH",
             field: "suiviPLH",

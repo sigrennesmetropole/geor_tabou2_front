@@ -1,5 +1,5 @@
 import React, { useEffect, useState, memo } from "react";
-import { isEmpty, isEqual, pick, has, get, capitalize } from "lodash";
+import { isEmpty, isEqual, pick, has, get } from "lodash";
 import { Col, Row, Grid, ControlLabel, Table } from "react-bootstrap";
 import Tabou2Date from "../../common/Tabou2Date";
 import "@js/extension/css/identify.css";
@@ -28,7 +28,7 @@ const Tabou2DdsAccord = ({
     i18n,
     messages,
     help,
-    permisElement,
+    permisElement
 }) => {
     let getFields;
 
@@ -38,14 +38,14 @@ const Tabou2DdsAccord = ({
 
     const DDC_FIELD_VALUES = {
         dateFields: ["depotDossier", "adsDate", "docDate", "datDate"],
-        fields: ["numAds", "depotDossier", "adsDate", "docDate", "datDate", "decisionDossier"],
+        fields: ["numAds", "depotDossier", "decisionDossier", "adsDate", "docDate", "datDate"],
         labels: [
             "tabou2.identify.accordions.numAds",
             "tabou2.identify.accordions.depotDossier",
+            "tabou2.identify.accordions.decisionDossier",
             "tabou2.identify.accordions.adsDate",
             "tabou2.identify.accordions.docDate",
-            "tabou2.identify.accordions.daactDate",
-            "tabou2.identify.accordions.decisionDossier"
+            "tabou2.identify.accordions.daactDate"
         ]
     };
 
@@ -195,7 +195,7 @@ const Tabou2DdsAccord = ({
                                         <thead>
                                             <tr>
                                                 {item.fields.map((fieldName, i) => (
-                                                    <th>{capitalize(i18n(messages, item.labels[i]))}</th>)
+                                                    <th>{i18n(messages, item.labels[i])}</th>)
                                                 )}
                                             </tr>
                                         </thead>

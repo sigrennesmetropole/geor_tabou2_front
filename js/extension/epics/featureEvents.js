@@ -89,7 +89,7 @@ export function getSelectionInfos(action$, store) {
              * - API GET operations/{id}/programmes not works for SA layer
              */
             let secondObservable$ = Rx.Observable.empty();
-            if (layerCfg === "layerOA" || layerCfg === "layerSA") {
+            if (layerCfg === "layerOA") {
                 // GET operation's programmes
                 secondObservable$ = Rx.Observable.defer(() => getOperationProgrammes(searchItem?.id))
                     .catch(e => {
@@ -104,8 +104,7 @@ export function getSelectionInfos(action$, store) {
                             uuid: uuid.v1(),
                             programmes: programmes.data,
                             operation: {
-                                ...searchItem,
-                                surfaceParent: parentArea
+                                ...searchItem
                             },
                             tiers: tiers,
                             mapFeature: mapFeature
@@ -113,6 +112,33 @@ export function getSelectionInfos(action$, store) {
                         return Rx.Observable.of(loadFicheInfos(identifyPanelInfos))
                             .concat(Rx.Observable.of(getTabouVocationsInfos(searchItem?.id)));
                     });
+            } else if (layerCfg === "layerSA") {
+                secondObservable$ = Rx.Observable.defer(() => {
+                    if (searchItem?.parentId) {
+                        return getOperation(searchItem.parentId);
+                    }
+                    return Rx.Observable.of(null);
+                }).catch(e => {
+                    console.log("Error retrieving get operation request");
+                    console.log(e);
+                    return Rx.Observable.of({ data: [] });
+                }).switchMap(parent => {
+                    // store data
+                    let identifyPanelInfos = {
+                        ...selectInfos,
+                        uuid: uuid.v1(),
+                        operation: {
+                            ...searchItem
+                        },
+                        operationParent: {
+                            ...parent?.data
+                        },
+                        tiers: tiers,
+                        mapFeature: mapFeature
+                    };
+                    return Rx.Observable.of(loadFicheInfos(identifyPanelInfos))
+                        .concat(Rx.Observable.of(getTabouVocationsInfos(searchItem?.id)));
+                })
             } else {
                 secondObservable$ = Rx.Observable.defer(() => getOperation(searchItem.operationId))
                     .catch(e => {

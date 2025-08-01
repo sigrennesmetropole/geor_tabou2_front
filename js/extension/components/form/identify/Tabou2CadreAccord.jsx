@@ -201,7 +201,7 @@ const Tabou2CadreAccord = ({
         field: "financementPPI",
         layers: ["layerSA", "layerOA"],
         readOnly: false,
-        value: get(initialItem, "financementPPI"),
+        value: get(initialItem, "financementPPI") !== null ? (get(initialItem, "financementPPI") ? "Oui" : "Non") : null,
         select: (v) => changeInfos({financementPPI: v === "Oui"}),
         change: (v) => changeInfos(v ? {financementPPI: v === "Oui"} : {financementPPI: null})
     }, {

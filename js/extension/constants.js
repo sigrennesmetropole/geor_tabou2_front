@@ -376,6 +376,74 @@ export const ADD_OA_FORM = [{
     type: "combo"
 }];
 
+export const ADD_SA_FORM = [{
+    label: "tabou2.add.selectPaParent",
+    api: "v1/operations?estSecteur=false&asc=true",
+    name: "parentoa",
+    autocomplete: "nom",
+    min: 3,
+    apiLabel: "nom",
+    apiField: "nom",
+    parent: null,
+    group: 1,
+    type: "combo"
+}, {
+    label: "tabou2.add.checkSector",
+    group: 1,
+    type: "alert",
+    name: "msgOaCondition",
+    icon: "info-sign",
+    variant: "info"
+}, {
+    label: "tabou2.add.sector",
+    name: "secteur",
+    apiField: "",
+    required: true,
+    group: 1,
+    type: "checkbox"
+}, {
+    label: "tabou2.add.nature",
+    api: "natures",
+    name: "nature",
+    group: 1,
+    apiField: "id",
+    apiLabel: "libelle",
+    parent: null,
+    type: "combo"
+}, {
+    label: "tabou2.add.emprise",
+    name: "nomEmprise",
+    group: 1,
+    autocomplete: "nom",
+    api: "operations/emprises",
+    apiField: "id",
+    apiLabel: "nom",
+    parent: (i) => !i.nature ? true : {nature: i.natureId, secteur: i.secteur},
+    type: "combo"
+}, {
+    label: "tabou2.add.name",
+    apiField: "",
+    name: "nom",
+    required: true,
+    type: "text"
+}, {
+    label: "tabou2.add.code",
+    apiField: "",
+    name: "code",
+    required: true,
+    type: "text"
+}, {
+    label: "tabou2.add.step",
+    apiField: "code",
+    apiLabel: "libelle",
+    api: "operations/etapes?orderBy=id&asc=true",
+    name: "etape",
+    placeholder: "Sélectionner une étape",
+    required: true,
+    distinct: false,
+    type: "combo"
+}];
+
 export const ADD_PA_FORM = [ {
     label: "tabou2.add.limiteEmprise",
     apiField: "",
@@ -456,6 +524,25 @@ export const OA_SCHEMA = {
     "etape": {
         "id": 0
     }
+};
+
+export const SA_SCHEMA = {
+    "diffusionRestreinte": false,
+    "nature": {
+        "id": 1
+    },
+    "idEmprise": 0,
+    "code": "",
+    "nom": "",
+    "operation": "",
+    "description": "",
+    "nbLogementsPrevu": 0,
+    "secteur": false,
+    "surfaceTotale": 0,
+    "etape": {
+        "id": 0
+    },
+    "parentId": 0
 };
 
 export const PA_SCHEMA = {

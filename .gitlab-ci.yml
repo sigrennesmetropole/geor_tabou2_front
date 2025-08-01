@@ -2,10 +2,16 @@ variables:
   GITHUB_COMMIT_MESSAGE:
     description: "Message du commit poussé vers le GitHub (cf job push-to-github). Par défaut : $CI_COMMIT_REF_NAME (nom de la branche ou du tag)."
     value: $CI_COMMIT_REF_NAME
+  OSS_MVN_DISABLE: "true"
+
+include:
+  - project: 'boost/template-ci/pipelines/common'
+    file: 'securite/oss-index/oss-index-template.yml'
 
 stages:
   - build
   - test
+  - sast  
   - delivering
 
 tabou2-front:build:

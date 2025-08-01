@@ -1,4 +1,4 @@
-FROM tomcat:8.5-jdk8-openjdk
+FROM tomcat:10.0.23-jdk8-openjdk
 MAINTAINER geosolutions<info@geo-solutions.it>
 
 # Tomcat specific options
