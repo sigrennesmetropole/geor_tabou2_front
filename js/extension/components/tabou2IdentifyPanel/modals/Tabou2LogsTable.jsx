@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Table, Glyphicon, Grid, Row, Col, Checkbox, FormControl } from 'react-bootstrap';
-import { orderBy, isEmpty, find, set, get, isEqual, has } from 'lodash';
+import React, {useState, useEffect} from 'react';
+import {Table, Glyphicon, Grid, Row, Col, Checkbox, FormControl} from 'react-bootstrap';
+import {orderBy, isEmpty, find, set, get, isEqual, has} from 'lodash';
 import ButtonRB from '@mapstore/components/misc/Button';
-import Tabou2Combo from '@js/extension/components/form/Tabou2Combo';
-import { getTypesEvents } from "@js/extension/api/requests";
+import Tabou2Select from '@js/extension/components/form/Tabou2Select';
+import {getTypesEvents} from "@js/extension/api/requests";
 import tooltip from '@mapstore/components/misc/enhancers/tooltip';
 import Message from "@mapstore/components/I18N/Message";
 import Tabou2Date from '../../common/Tabou2Date';
@@ -14,12 +14,15 @@ const Button = tooltip(ButtonRB);
 export default function Tabou2LogsTable({
     editionActivate,
     disabledAdd,
-    deleteLog = () => {},
+    deleteLog = () => {
+    },
     logs,
     readOnly,
     sortField,
-    changeSort = () => {},
-    cancelChange = () => {},
+    changeSort = () => {
+    },
+    cancelChange = () => {
+    },
     ...props
 }) {
     // Manage sort icon
@@ -29,7 +32,7 @@ export default function Tabou2LogsTable({
         if (idx > -1) {
             icon = sortField[1][idx] === "asc" ? "sort-by-attributes" : "sort-by-attributes-alt";
         }
-        return (<Glyphicon onClick={() => changeSort(name) } glyph={icon} style={{marginLeft: "5px"}}/>);
+        return (<Glyphicon onClick={() => changeSort(name)} glyph={icon} style={{marginLeft: "5px"}}/>);
     };
 
     const [logInChange, setLogInChange] = useState({});
@@ -38,17 +41,11 @@ export default function Tabou2LogsTable({
     useEffect(() => {
         const readLogs = logs.filter(log => log.id !== logInChange?.id || log.new);
         if (logInChange?.id || editionActivate.current) {
-            setAllLogs([...readLogs, { ...logInChange, edit: true }]);
+            setAllLogs([...readLogs, {...logInChange, edit: true}]);
         } else {
             setAllLogs(readLogs.filter(r => !r.new));
         }
-        return;
     }, [logInChange?.id, editionActivate.current]);
-
-    // useEffect(() => {
-    //     setAllLogs(logs);
-    //     return;
-    // }, [logs.length, props.eventsId]);
 
     // hooks to manage feature logs if refreshed
     useEffect(() => {
@@ -87,6 +84,135 @@ export default function Tabou2LogsTable({
         return find(sortField, [0, name]) ? {color: "darkcyan"} : {color: "rgb(51, 51, 51)"};
     };
 
+    // Render date cell
+    const renderDateCell = (log) => {
+        if (log.new || log.edit) {
+            return (
+                <Tabou2Date
+                    type="date"
+                    dropDown
+                    calendar
+                    time={false}
+                    refreshValue={logInChange}
+                    refresh={(o, n) => isEqual(o, n)}
+                    culture="fr"
+                    value={has(logInChange, "eventDate") ? new Date(logInChange?.eventDate) : null}
+                    format="DD/MM/YYYY"
+                    onSelect={(e) => modifyLog("eventDate", new Date(e).toISOString(e))}
+                    onChange={(v) => {
+                        const val = v ? new Date(v).toISOString() : null;
+                        modifyLog("eventDate", val);
+                    }}
+                />
+            );
+        }
+        return new Date(log.eventDate).toLocaleDateString();
+    };
+
+    // Render type cell
+    const renderTypeCell = (log) => {
+        if (log.new || log.edit) {
+            return (
+                <Tabou2Select
+                    textField="libelle"
+                    valueField="id"
+                    value={get(logInChange, "typeEvenement")}
+                    search={() => {
+                        return getTypesEvents()
+                            .then(results => Array.isArray(results) ? results : (results.elements || []));
+                    }}
+                    onSelect={(t) => modifyLog("typeEvenement", t)}
+                    onChange={(t) => !t ? modifyLog("typeEvenement", null) : null}
+                    placeholder={props.i18n(props.messages, "tabou2.logsModal.typePlaceholder")}
+                    allowClear
+                />
+            );
+        }
+        return log.typeEvenement?.libelle;
+    };
+
+    // Render description cell
+    const renderDescriptionCell = (log) => {
+        if (log.new || log.edit) {
+            return (
+                <FormControl
+                    componentClass="textarea"
+                    rows={3}
+                    required="false"
+                    value={logInChange?.description}
+                    placeholder={props.i18n(props.messages, "tabou2.logsModal.notePlaceholder")}
+                    onChange={(e) => modifyLog("description", e.target.value)}
+                />
+            );
+        }
+        return (
+            <FormControl
+                style={{
+                    backgroundColor: "white",
+                    color: "black",
+                    cursor: "text"
+                }}
+                componentClass="textarea"
+                disabled="true"
+                value={log.description}
+            />
+        );
+    };
+
+    // Render action buttons
+    const renderActionButtons = (log) => {
+        if (readOnly) return null;
+
+        return (
+            <td>
+                {(log.new || log.edit) && (
+                    <Button
+                        tooltip={props.i18n(props.messages, "tabou2.save")}
+                        disabled={!logInChange?.typeEvenement || isEmpty(logInChange?.typeEvenement) || !logInChange?.description}
+                        style={{borderColor: "rgba(0,0,0,0)"}}
+                        onClick={() => saveEvent()}>
+                        <span style={{color: "rgb(40, 167, 69)"}}>
+                            <Glyphicon glyph="ok"/>
+                        </span>
+                    </Button>
+                )}
+                {(log.edit && !log.new) && (
+                    <Button
+                        tooltip={props.i18n(props.messages, "tabou2.cancel")}
+                        style={{borderColor: "rgba(0,0,0,0)"}}
+                        onClick={() => cancel()}>
+                        <span style={{color: "rgb(229,0,0)"}}>
+                            <Glyphicon glyph="remove"/>
+                        </span>
+                    </Button>
+                )}
+                {(!log.systeme && !editionActivate.current && isEmpty(logInChange)) && (
+                    <Button
+                        tooltip={props.i18n(props.messages, "tabou2.change")}
+                        style={{borderColor: "rgba(0,0,0,0)"}}
+                        onClick={() => setLogInChange(log)}>
+                        <span style={{color: "rgb(137,178,211)"}}>
+                            <Glyphicon glyph="pencil"/>
+                        </span>
+                    </Button>
+                )}
+                {(log.new || log.edit) && (
+                    <Button
+                        tooltip={props.i18n(props.messages, "tabou2.delete")}
+                        style={{borderColor: "rgba(0,0,0,0)"}}
+                        onClick={() => {
+                            setLogInChange(null);
+                            deleteLog(log);
+                        }}>
+                        <span style={{color: "rgb(229,0,0)"}}>
+                            <Glyphicon glyph="trash"/>
+                        </span>
+                    </Button>
+                )}
+            </td>
+        );
+    };
+
     return (
         <Grid fluid style={{overflow: "auto", height: "100%"}}>
             <Row>
@@ -97,12 +223,14 @@ export default function Tabou2LogsTable({
                                 <th className="col-xs-1">
                                     <Message msgId="tabou2.logsModal.isSystem"/>
                                 </th>
-                                <th className="col-xs-2" style={getStyle("eventDate")}><Message msgId="tabou2.logsModal.date"/>
-                                    {
-                                        getSortIcon("eventDate")
-                                    }
+                                <th className="col-xs-2" style={getStyle("eventDate")}><Message
+                                    msgId="tabou2.logsModal.date"/>
+                                {
+                                    getSortIcon("eventDate")
+                                }
                                 </th>
-                                <th className="col-xs-2" style={getStyle("idType")}><Message msgId="tabou2.logsModal.type"/>
+                                <th className="col-xs-2" style={getStyle("idType")}><Message
+                                    msgId="tabou2.logsModal.type"/>
                                 </th>
                                 <th><Message msgId="tabou2.logsModal.note"/></th>
                                 <th style={getStyle("modifUser")}><Message msgId="tabou2.logsModal.owner"/>
@@ -118,156 +246,33 @@ export default function Tabou2LogsTable({
                         <tbody style={{overflow: "auto"}}>
                             {
                                 orderBy(allLogs, sortField[0], sortField[1]).filter(log => !isEmpty(log)).map((log, i) => (
-                                    <>
-                                        <tr>
-                                            <td>
-                                                <Checkbox
-                                                    style={{marginTop: "0px", textAlign: "center"}}
-                                                    checked={log.systeme}
-                                                />
-                                            </td>
-                                            <td>
-                                                {
-                                                    log.new || log.edit ? (<Tabou2Date
-                                                        type="date"
-                                                        dropDown
-                                                        calendar
-                                                        time={false}
-                                                        refreshValue={logInChange}
-                                                        refresh={(o, n) => {
-                                                            return isEqual(o, n);
-                                                        }}
-                                                        culture="fr"
-                                                        value={has(logInChange, "eventDate") ? new Date(logInChange?.eventDate) : null}
-                                                        format="DD/MM/YYYY"
-                                                        onSelect={(e) => modifyLog("eventDate", new Date(e).toISOString(e))}
-                                                        // onChange={(t) => !t ? modifyLog("eventDate", null) : null}
-                                                        onChange={(v) => {
-                                                            const val = v ? new Date(v).toISOString() : null;
-                                                            modifyLog("eventDate", val);
-                                                        }}
-                                                    />)
-                                                        : new Date(log.eventDate).toLocaleDateString()
-                                                }
-                                            </td>
-                                            <td>
-                                                {
-                                                    log.new || log.edit ? (
-                                                        <Tabou2Combo
-                                                            load={() => getTypesEvents()}
-                                                            valueField={"id"}
-                                                            defaultValue={get(logInChange, "typeEvenement.id")}
-                                                            placeholder={props.i18n(props.messages, "tabou2.logsModal.typePlaceholder")}
-                                                            filter="contains"
-                                                            dropUp={i < 6 ? false : true}
-                                                            textField={"libelle"}
-                                                            onLoad={(r) => r?.elements || r}
-                                                            onSelect={(t) => {
-                                                                modifyLog("typeEvenement", t);
-                                                            }}
-                                                            onChange={(t) => !t ? modifyLog("typeEvenement", null) : null}
-                                                            messages={{
-                                                                emptyList: props.i18n(props.messages, "tabou2.emptyList"),
-                                                                openCombobox: props.i18n(props.messages, "tabou2.displaylist")
-                                                            }}
-                                                        />
-                                                    ) : log.typeEvenement?.libelle
-                                                }
-                                            </td>
-                                            <td style={{
-                                                wordBreak: "break-word",
-                                                overflow: "auto",
-                                                maxWidth: "200px"
-                                            }}>
-                                                {
-                                                    log.new || log.edit ? (
-                                                        <FormControl
-                                                            componentClass="textarea"
-                                                            rows={3}
-                                                            required="false"
-                                                            value={logInChange?.description}
-                                                            placeholder={props.i18n(props.messages, "tabou2.logsModal.notePlaceholder")}
-                                                            onChange={(e) => {
-                                                                modifyLog("description", e.target.value);
-                                                            }}
-                                                        />
-
-                                                    ) : <FormControl
-                                                        style={{
-                                                            backgroundColor: "white",
-                                                            color: "black",
-                                                            cursor: "text"
-                                                        }}
-                                                        componentClass="textarea"
-                                                        disabled="true"
-                                                        value={log.description}
-                                                    />
-                                                }
-                                            </td>
-                                            <td>
-                                                {
-                                                    !log.new && `${log.modifUser} le ${moment(log.modifDate).format("DD/MM/YYYY")}`
-                                                }
-                                            </td>
+                                    <tr key={log.id || i}>
+                                        <td>
+                                            <Checkbox
+                                                style={{marginTop: "0px", textAlign: "center"}}
+                                                checked={log.systeme}
+                                            />
+                                        </td>
+                                        <td>
+                                            {renderDateCell(log)}
+                                        </td>
+                                        <td>
+                                            {renderTypeCell(log)}
+                                        </td>
+                                        <td style={{
+                                            wordBreak: "break-word",
+                                            overflow: "auto",
+                                            maxWidth: "200px"
+                                        }}>
+                                            {renderDescriptionCell(log)}
+                                        </td>
+                                        <td>
                                             {
-                                                readOnly ? null :
-                                                    (<td>
-                                                        {
-                                                            (log.new || log.edit) ? (
-                                                                <Button
-                                                                    tooltip={props.i18n(props.messages, "tabou2.save")}
-                                                                    disabled={!logInChange?.typeEvenement || isEmpty(logInChange?.typeEvenement) || !logInChange?.description}
-                                                                    style={{ borderColor: "rgba(0,0,0,0)"}}
-                                                                    onClick={() => saveEvent()}>
-                                                                    <span style={{ color: "rgb(40, 167, 69)" }}>
-                                                                        <Glyphicon glyph="ok"/>
-                                                                    </span>
-                                                                </Button>
-                                                            ) : null
-                                                        }
-                                                        {
-                                                            (log.edit && !log.new) ? (
-                                                                <Button
-                                                                    tooltip={props.i18n(props.messages, "tabou2.cancel")}
-                                                                    style={{ borderColor: "rgba(0,0,0,0)"}}
-                                                                    onClick={() => cancel() }>
-                                                                    <span style={{color: "rgb(229,0,0)"}}>
-                                                                        <Glyphicon glyph="remove"/>
-                                                                    </span>
-                                                                </Button>
-                                                            ) : null
-                                                        }
-                                                        {
-                                                            (!log.systeme && !editionActivate.current && isEmpty(logInChange)) ? (
-                                                                <Button
-                                                                    tooltip={props.i18n(props.messages, "tabou2.change")}
-                                                                    style={{ borderColor: "rgba(0,0,0,0)"}}
-                                                                    onClick={() => setLogInChange(log) }>
-                                                                    <span style={{color: "rgb(137,178,211)"}}>
-                                                                        <Glyphicon glyph="pencil"/>
-                                                                    </span>
-                                                                </Button>
-                                                            ) : null
-                                                        }
-                                                        {
-                                                            (log.new || log.edit)  ? (
-                                                                <Button
-                                                                    tooltip={props.i18n(props.messages, "tabou2.delete")}
-                                                                    style={{ borderColor: "rgba(0,0,0,0)"}}
-                                                                    onClick={() => {
-                                                                        setLogInChange(null);
-                                                                        deleteLog(log);
-                                                                    } }>
-                                                                    <span style={{color: "rgb(229,0,0)"}}>
-                                                                        <Glyphicon glyph="trash"/>
-                                                                    </span>
-                                                                </Button>
-                                                            ) : null
-                                                        }
-                                                    </td>)
+                                                !log.new && `${log.modifUser} le ${moment(log.modifDate).format("DD/MM/YYYY")}`
                                             }
-                                        </tr>
-                                    </>
+                                        </td>
+                                        {renderActionButtons(log)}
+                                    </tr>
                                 ))
                             }
                         </tbody>

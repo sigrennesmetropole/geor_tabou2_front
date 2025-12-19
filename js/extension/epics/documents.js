@@ -1,10 +1,11 @@
 import Rx from 'rxjs';
-import { error, success } from "@mapstore/actions/notifications";
+import {error, success} from "@mapstore/actions/notifications";
 import {getMessageById} from "@mapstore/utils/LocaleUtils";
-import { isTabou2Activate, getInfos, getPluginCfg } from "../selectors/tabou2";
-import { wrapStartStop } from "@mapstore/observables/epics";
-import { isEmpty } from "lodash";
-import { GET_TABOU_DOCUMENTS,
+import {isTabou2Activate, getInfos, getPluginCfg} from "../selectors/tabou2";
+import {wrapStartStop} from "@mapstore/observables/epics";
+import {isEmpty} from "lodash";
+import {
+    GET_TABOU_DOCUMENTS,
     setDocuments,
     TABOU_DOWNLOAD_DOC,
     DELETE_TABOU_DOCUMENTS,
@@ -21,8 +22,9 @@ import {
     updateDocumentContent,
     updateMetadataDocument
 } from "../api/requests";
-import { downloadToBlob } from "../utils/identify";
+import {downloadToBlob} from "../utils/identify";
 import uuid from 'uuid';
+
 /**
  * Epics to reload features events
  * @param {any} action$
@@ -35,8 +37,8 @@ export function listTabouDocuments(action$, store) {
         .switchMap((action) => {
             let messages = store.getState()?.locale.messages;
             const resultByPage = getPluginCfg(store.getState()).apiCfg.documentsByPage;
-            let { featureId, layerUrl } = getInfos(store.getState());
-            let observable$ = Rx.Observable.empty();
+            let {featureId, layerUrl} = getInfos(store.getState());
+            let observable$;
             if (action.load && featureId) {
                 observable$ = Rx.Observable.defer(
                     () => getTabouDocuments(
@@ -153,7 +155,7 @@ export function addNewDocument(action$, store) {
         .filter(() => isTabou2Activate(store.getState()))
         .switchMap((action) => {
             let messages = store.getState()?.locale.messages;
-            let { featureId, layerUrl, layerCfg } = getInfos(store.getState());
+            let {featureId, layerUrl, layerCfg} = getInfos(store.getState());
             return Rx.Observable.defer(() => addDocument(layerUrl, featureId, action.file, action.metadata, layerCfg))
                 .catch(e => {
                     console.log("Error on create documents");
@@ -185,10 +187,10 @@ export function updateDocument(action$, store) {
         .filter(() => isTabou2Activate(store.getState()))
         .switchMap((action) => {
             let messages = store.getState()?.locale.messages;
-            let { featureId, layerUrl } = getInfos(store.getState());
-            return Rx.Observable.defer(() => isEmpty(action.file) ? {data: null} : updateDocumentContent(layerUrl, featureId, action.metadata, action.file))
+            let {featureId, layerUrl} = getInfos(store.getState());
+            return Rx.Observable.defer(() => isEmpty(action.file) ? Promise.resolve({data: null}) : updateDocumentContent(layerUrl, featureId, action.metadata, action.file))
                 .catch(e => {
-                    console.log("Error on create documents");
+                    console.log("Error on update document content");
                     console.log(e);
                     // fail message
                     return Rx.Observable.of(
@@ -202,24 +204,34 @@ export function updateDocument(action$, store) {
                 .switchMap(() => {
                     return Rx.Observable.defer(() => updateMetadataDocument(layerUrl, featureId, action.metadata))
                         .catch(e => {
-                            console.log("Error on create documents");
+                            console.log("Error on update metadata documents");
                             console.log(e);
                             // fail message
                             return Rx.Observable.of(
                                 error({
                                     title: getMessageById(messages, "tabou2.infos.failApi"),
                                     message: getMessageById(messages, "tabou2.infos.failDocChange")
-                                }),
-                                {...e, data: null}
+                                })
                             );
                         })
-                        .switchMap(() => {
+                        .switchMap((response) => {
+                            // Vérifier que la mise à jour a réussi avant de rafraîchir
+                            if (response && (response.status === 200 || response.status === 204)) {
+                                // Rafraîchir immédiatement la liste
+                                return Rx.Observable.of(
+                                    success({
+                                        title: getMessageById(messages, "tabou2.infos.successApi"),
+                                        message: getMessageById(messages, "tabou2.infos.successDocChange")
+                                    }),
+                                    getDocuments(true, 0, {})
+                                );
+                            }
+                            // Si la réponse n'indique pas un succès
                             return Rx.Observable.of(
-                                success({
-                                    title: getMessageById(messages, "tabou2.infos.successApi"),
-                                    message: getMessageById(messages, "tabou2.infos.successDocChange")
-                                }),
-                                getDocuments()
+                                error({
+                                    title: getMessageById(messages, "tabou2.infos.failApi"),
+                                    message: getMessageById(messages, "tabou2.infos.failDocChange")
+                                })
                             );
                         });
                 });

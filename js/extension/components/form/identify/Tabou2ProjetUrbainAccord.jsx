@@ -1,12 +1,16 @@
 import React from "react";
-import { isEmpty, pick, get, isEqual } from "lodash";
-import { Col, Row, FormControl, Grid, ControlLabel } from "react-bootstrap";
-import { getRequestApi } from "@js/extension/api/requests";
+import {isEmpty, pick, get} from "lodash";
+import {Col, Row, Grid, ControlLabel} from "react-bootstrap";
+import {getRequestApi} from "@js/extension/api/requests";
 import "@js/extension/css/identify.css";
 import Message from "@mapstore/components/I18N/Message";
-import SearchCombo from '@js/extension/components/form/SearchCombo';
-import Tabou2Combo from '@js/extension/components/form/Tabou2Combo';
-import Tabou2Date from "../../common/Tabou2Date";
+import {
+    renderIdentifyDateField,
+    renderIdentifyAutoCompleteCombo,
+    renderIdentifyStandardCombo,
+    renderIdentifyTextOrNumberField
+} from "../vocations/utils";
+
 /**
  * Accordion to display info for Identity panel section - only for feature linked with id tabou
  * @param {any} param
@@ -16,15 +20,18 @@ const Tabou2ProjetUrbainAccord = ({
     initialItem,
     layer,
     authent,
-    change = () => { },
-    i18n = () => { },
+    change = () => {
+    },
+    i18n = () => {
+    },
     messages,
     apiCfg,
     types,
-    changeProp = () => {}
+    changeProp = () => {
+    }
 }) => {
 
-    let changeInfos = () => { };
+    let changeInfos;
 
     // create fields from const func
     const fields = [{
@@ -36,8 +43,8 @@ const Tabou2ProjetUrbainAccord = ({
         readOnly: false,
         isArea: false,
         value: get(initialItem, "projetUrbain.title"),
-        change: (v, t, src) => changeInfos({ projetUrbain: { ...src.projetUrbain, title: v }})
-    },  {
+        change: (v, t, src) => changeInfos({projetUrbain: {...src.projetUrbain, title: v}})
+    }, {
         name: "chapeau",
         type: "text",
         label: "tabou2.identify.accordions.projetUrbain.chapeau",
@@ -46,8 +53,8 @@ const Tabou2ProjetUrbainAccord = ({
         readOnly: false,
         isArea: true,
         value: get(initialItem, "projetUrbain.chapeau"),
-        change: (v, t, src) => changeInfos({ projetUrbain: { ...src.projetUrbain, chapeau: v }})
-    },  {
+        change: (v, t, src) => changeInfos({projetUrbain: {...src.projetUrbain, chapeau: v}})
+    }, {
         name: "projet",
         type: "text",
         label: "tabou2.identify.accordions.projetUrbain.projet",
@@ -56,8 +63,8 @@ const Tabou2ProjetUrbainAccord = ({
         readOnly: false,
         isArea: true,
         value: get(initialItem, "projetUrbain.projet"),
-        change: (v, t, src) => changeInfos({ projetUrbain: { ...src.projetUrbain, projet: v }})
-    },  {
+        change: (v, t, src) => changeInfos({projetUrbain: {...src.projetUrbain, projet: v}})
+    }, {
         name: "actualites",
         type: "text",
         label: "tabou2.identify.accordions.projetUrbain.actualites",
@@ -66,8 +73,8 @@ const Tabou2ProjetUrbainAccord = ({
         readOnly: false,
         isArea: true,
         value: get(initialItem, "projetUrbain.actualites"),
-        change: (v, t, src) => changeInfos({ projetUrbain: { ...src.projetUrbain, actualites: v }})
-    },  {
+        change: (v, t, src) => changeInfos({projetUrbain: {...src.projetUrbain, actualites: v}})
+    }, {
         name: "savoir",
         type: "text",
         label: "tabou2.identify.accordions.projetUrbain.savoir",
@@ -76,7 +83,7 @@ const Tabou2ProjetUrbainAccord = ({
         readOnly: false,
         isArea: true,
         value: get(initialItem, "projetUrbain.savoir"),
-        change: (v, t, src) => changeInfos({ projetUrbain: { ...src.projetUrbain, savoir: v }})
+        change: (v, t, src) => changeInfos({projetUrbain: {...src.projetUrbain, savoir: v}})
     }];
 
     const required = fields.filter(f => f.require).map(f => f.name);
@@ -91,136 +98,58 @@ const Tabou2ProjetUrbainAccord = ({
         change(item, pick(editableFields, required));
     };
 
-    const getDateValue = (item, src) => {
-        let defaultValue = null;
-        if (item.name !== item.field) {
-            defaultValue = get(src, `${item.name}.${item.field}`);
-        } else if (src[item.name]) {
-            defaultValue = get(src, item.name);
+    const handleApiSearch = (item) => (text) => {
+        return getRequestApi(item.api, apiCfg, {[item.autocomplete]: `${text}*`})
+            .then(results => results.elements);
+    };
+
+    // Render field input based on type
+    const renderFieldInput = (item) => {
+        if (item.type === "combo" && item?.autocomplete) {
+            return renderIdentifyAutoCompleteCombo(item, handleApiSearch, i18n, messages, initialItem);
         }
-        return defaultValue ? new Date(defaultValue) : null;
+        if (item.type === "text" || item.type === "number") {
+            return renderIdentifyTextOrNumberField(item, i18n, messages, allowChange, types, initialItem);
+        }
+        if (item.type === "combo" && !item?.autocomplete) {
+            return renderIdentifyStandardCombo(item, apiCfg, i18n, messages, allowChange, initialItem);
+        }
+        if (item.type === "date") {
+            return renderIdentifyDateField(item, initialItem, changeProp, i18n, messages, allowChange);
+        }
+        return null;
+    };
+
+    // Render field row
+    const renderFieldRow = (item) => {
+        if (item.type === "title") {
+            return (
+                <Col xs={12}>
+                    <h4 style={{borderBottom: "1px solid"}}>
+                        <ControlLabel><Message msgId={item.label}/></ControlLabel>
+                    </h4>
+                </Col>
+            );
+        }
+
+        return (
+            <>
+                <Col xs={4}>
+                    <ControlLabel><Message msgId={item.label}/></ControlLabel>
+                </Col>
+                <Col xs={8}>
+                    {renderFieldInput(item)}
+                </Col>
+            </>
+        );
     };
 
     return (
-        <Grid style={{ width: "100%" }}>
+        <Grid style={{width: "100%"}}>
             {
                 fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(item => (
-                    <Row className="attributeInfos">
-                        {
-                            item.type === "title" ? (
-                                <Col xs={12}>
-                                    <h4 style={{ borderBottom: "1px solid" }}>
-                                        <ControlLabel><Message msgId={item.label} /></ControlLabel>
-                                    </h4>
-                                </Col>
-                            ) : (<>
-                                <Col xs={4}>
-                                    <ControlLabel><Message msgId={item.label} /></ControlLabel>
-                                </Col>
-                                <Col xs={8}>
-                                    {
-                                        item.type === "combo" && item?.autocomplete ? (
-                                            <SearchCombo
-                                                minLength={3}
-                                                textField={item.apiLabel}
-                                                valueField={item.apiField}
-                                                forceSelection
-                                                value={item.value}
-                                                search={
-                                                    text => getRequestApi(item.api, apiCfg, { [item.autocomplete]: `${text}*` })
-                                                        .then(results =>
-                                                            results.elements.map(v => v)
-                                                        )
-                                                }
-                                                onSelect={(e) => item.select(e, initialItem)}
-                                                onChange={(e) => item.change(e, initialItem)}
-                                                name={item.name}
-                                                placeholder={i18n(messages, item?.label || "")}
-                                            />
-                                        ) : null
-                                    }
-                                    {
-                                        item.type === "text" || item.type === "number" ?
-                                            (<FormControl
-                                                componentClass={item.isArea ? "textarea" : "input"}
-                                                placeholder={i18n(messages, item?.label || "")}
-                                                value={item.value}
-                                                type={item.type}
-                                                min="0"
-                                                style={{ height: item.isArea ? "100px" : "auto" }}
-                                                readOnly={item.readOnly || !allowChange}
-                                                onChange={(v) => item.change(v.target.value, types, initialItem)}
-                                            />) : null
-                                    }{
-                                        item.type === "combo" && !item?.autocomplete ? (
-                                            <Tabou2Combo
-                                                load={() => getRequestApi(item.api, apiCfg, {})}
-                                                placeholder={i18n(messages, item?.placeholder || "")}
-                                                filter="contains"
-                                                disabled={item.readOnly || !allowChange}
-                                                textField={item.apiLabel}
-                                                onLoad={(r) => r?.elements || r}
-                                                name={item.name}
-                                                value={item.value}
-                                                onSelect={item.select ? (v) => item.select(v, initialItem) : null}
-                                                onChange={(v) => !v ? item.change(v, initialItem) : null}
-                                                messages={{
-                                                    emptyList: i18n(messages, "tabou2.emptyList"),
-                                                    openCombobox: i18n(messages, "tabou2.displayList")
-                                                }}
-                                            />
-                                        ) : null
-                                    }{
-                                        item.type === "date" ? (
-                                            <Tabou2Date
-                                                type="date"
-                                                className="identifyDate"
-                                                inline="true"
-                                                dropUp
-                                                placeholder={i18n(messages, item?.label || "")}
-                                                readOnly={item.readOnly || !allowChange}
-                                                calendar
-                                                time={false}
-                                                culture="fr"
-                                                value={getDateValue(item, initialItem) || null}
-                                                format="DD/MM/YYYY"
-                                                refreshValue={initialItem}
-                                                refresh={(o, n) => {
-                                                    return isEqual(o, n);
-                                                }}
-                                                onSelect={(v) => {
-                                                    if (item.name !== item.field) {
-                                                        // only to change a key inside object as field.child
-                                                        changeProp({
-                                                            [item.name]: {
-                                                                ...initialItem[item.name],
-                                                                [item.field]: v ? new Date(v).toISOString() : ""
-                                                            }
-                                                        });
-                                                    } else {
-                                                        changeProp({ [item.name]: v ? new Date(v).toISOString() : "" });
-                                                    }
-                                                }}
-                                                onChange={(v) => {
-                                                    if (item.name !== item.field) {
-                                                        // only to change a key inside object as field.child
-                                                        changeProp({
-                                                            [item.name]: {
-                                                                ...initialItem[item.name],
-                                                                [item.field]: v ? new Date(v).toISOString() : ""
-                                                            }
-                                                        });
-                                                    } else {
-                                                        changeProp({ [item.name]: v ? new Date(v).toISOString() : "" });
-                                                    }
-                                                }}
-                                            />
-                                        ) : null
-                                    }
-                                </Col></>
-                            )
-                        }
-
+                    <Row className="attributeInfos" key={item.name}>
+                        {renderFieldRow(item)}
                     </Row>
                 ))
             }

@@ -1,6 +1,7 @@
 .tagColor {
     color: black !important;
 }
+
 .noClick {
     pointer-events: none;
 }
@@ -37,4 +38,89 @@
 
 #urbamap-container .ms-resizable-modal {
     background: rgba(0, 0, 0, 0) !important;
+}
+
+/* Styles pour Tabou2Select (react-select uniquement) */
+.tabou2select-input {
+    cursor: pointer;
+    background-color: white;
+    color: #6c757d; /* couleur placeholder par défaut */
+}
+
+.tabou2select-input--disabled {
+    cursor: default;
+    background-color: #e9ecef;
+}
+
+.tabou2select-input--readonly {
+    background-color: #e9ecef !important;
+    cursor: not-allowed;
+}
+
+.tabou2select-input--has-value {
+    color: #495057;
+}
+
+.tabou2select-addon-clear {
+    cursor: pointer;
+    background-color: white;
+    border-left: none;
+}
+
+.tabou2select-addon-chevron {
+    cursor: pointer;
+}
+
+.tabou2select-addon-chevron--disabled {
+    cursor: default;
+}
+
+
+/* Styles pour la rubrique Autre programmation */
+.autre-prog-row {
+    margin-bottom: 10px !important;
+    display: flex;
+    align-items: center;
+}
+
+.autre-prog-row .form-control.readonly-field {
+    background-color: #e9ecef !important;
+    cursor: not-allowed;
+}
+
+.autre-prog-row .control-label {
+    font-weight: normal;
+    margin-bottom: 0;
+    padding-top: 7px;
+    display: inline-block;
+}
+
+/* Cacher les boutons d'incrémentation/décrémentation pour les champs number */
+.number-input-no-spinner::-webkit-outer-spin-button,
+.number-input-no-spinner::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0;
+}
+
+.number-input-no-spinner[type=number] {
+    appearance: textfield;
+}
+
+/* Styles pour les champs de date en readonly */
+.rw-widget.rw-datetimepicker[style*="not-allowed"] .rw-input,
+.rw-widget.rw-datetimepicker[style*="not-allowed"] input {
+    background-color: #e9ecef !important;
+    cursor: not-allowed !important;
+    color: #495057 !important;
+}
+
+.rw-widget.rw-datetimepicker[style*="not-allowed"] .rw-btn {
+    background-color: #e9ecef !important;
+    cursor: not-allowed !important;
+    pointer-events: none;
+}
+
+.rw-widget.rw-datetimepicker[style*="not-allowed"] {
+    opacity: 1 !important;
 }

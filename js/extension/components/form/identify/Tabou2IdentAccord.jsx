@@ -1,23 +1,19 @@
-import React, {useEffect, useState, memo } from "react";
-import { isEmpty, isEqual, pick, get, has } from "lodash";
-import { Col, Row, FormControl, Grid, ControlLabel, Glyphicon } from "react-bootstrap";
-import { Multiselect } from "react-widgets";
-import { getRequestApi } from "@js/extension/api/requests";
+import React, {useEffect, useState, memo} from "react";
+import {isEmpty, isEqual, pick, get, has} from "lodash";
+import {Col, Row, FormControl, Grid, ControlLabel, Glyphicon} from "react-bootstrap";
+import {getRequestApi} from "@js/extension/api/requests";
 import "@js/extension/css/identify.css";
 import Message from "@mapstore/components/I18N/Message";
-import SearchCombo from '@js/extension/components/form/SearchCombo';
-import Tabou2Combo from '@js/extension/components/form/Tabou2Combo';
+import Tabou2Select from '@js/extension/components/form/Tabou2Select';
 
 import ButtonRB from '@mapstore/components/misc/Button';
 import tooltip from '@mapstore/components/misc/enhancers/tooltip';
 import Tabou2Date from "@js/extension/components/common/Tabou2Date";
+
 const Button = tooltip(ButtonRB);
 
 const avoidReRender = (prevProps, nextProps) => {
-    if (isEqual(prevProps.initialItem, nextProps.initialItem)) {
-        return true;
-    }
-    return false; // re render
+    return isEqual(prevProps.initialItem, nextProps.initialItem);
 };
 /**
  * Accordion to display info for Identity panel section - only for feature linked with id tabou
@@ -34,16 +30,21 @@ const Tabou2IdentAccord = ({
     tiers,
     setTiersFilter,
     authent,
-    change = () => { },
+    change = () => {
+    },
     apiCfg,
-    i18n = () => { },
+    i18n = () => {
+    },
     messages,
-    changeProp = () => {}
+    changeProp = () => {
+    }
 }) => {
     const [values, setValues] = useState({});
     const [fields, setFields] = useState([]);
     const [required, setRequired] = useState({});
-    let changeInfos = () => {};
+    let changeInfos = () => {
+    };
+
 
     // create fields from const func
     const getFields = () => [{
@@ -68,13 +69,15 @@ const Tabou2IdentAccord = ({
         label: "tabou2.identify.accordions.entiteRefLib",
         layers: ["layerSA", "layerOA"],
         type: "combo",
-        autocomplete: false,
+        autocomplete: true,
         api: `entites-referentes`,
         apiLabel: "libelle",
+        valueField: "id",
         placeholder: "tabou2.identify.accordions.emptySelect",
         source: operation,
         readOnly: false,
-        value: () => get(values, "entiteReferente"),
+        isSearchable: true,
+        value: () => values.entiteReferente || initialItem.entiteReferente,
         select: (v) => changeInfos({entiteReferente: v}),
         change: (v) => changeInfos(v ? {entiteReferente: v} : {entiteReferente: null})
     }, {
@@ -91,7 +94,19 @@ const Tabou2IdentAccord = ({
         label: "tabou2.identify.accordions.city",
         type: "multi",
         source: mapFeature,
-        readOnly: true
+        readOnly: true,
+        api: "communes",
+        apiLabel: "nom",
+        valueField: "id",
+        value: () => {
+            return values.commune || get(mapFeature, "properties.commune") || "";
+        },
+        select: (v) => {
+            changeInfos({commune: v});
+        },
+        change: (v) => {
+            changeInfos({commune: v});
+        }
     }, {
         name: "nature",
         label: "tabou2.identify.accordions.nature",
@@ -105,30 +120,29 @@ const Tabou2IdentAccord = ({
         layers: ["layerPA"],
         name: "operationId",
         label: "tabou2.identify.accordions.operation",
-        field: "operationId",
-        value: () => has(values, "operationName") ? values.operationName : operation.nom,
-        select: (v) => changeInfos({operationId: v?.id || "", operationName: v?.nom || v}),
-        change: (v) => changeInfos({operationId: v?.id || "", operationName: v?.nom || v}),
-        type: "combo",
-        autocomplete: true,
-        apiLabel: "nom",
-        api: "operations?estSecteur=false&asc=true",
+        field: "nom",
+        type: "text",
         source: operation,
-        readOnly: false
+        readOnly: true
     }, {
         layers: ["layerSA"],
         name: "parentId",
         label: "tabou2.identify.accordions.operation",
         field: "parentId",
-        value: () => has(values, "parentName") ? values.parentName : operationParent?.nom,
-        select: (v) => changeInfos({parentId: v?.id || "", parentName: v?.nom || v}),
-        change: (v) => changeInfos({parentId: v?.id || "", parentName: v?.nom || v}),
+        value: () => has(values, "parentName") ? {nom: values.parentName, id: values.parentId} : operationParent,
+        select: (v) => changeInfos({parentId: v?.id || "", parentName: v?.nom || ""}),
+        change: (v) => changeInfos(v ? {parentId: v?.id || "", parentName: v?.nom || ""} : {
+            parentId: "",
+            parentName: ""
+        }),
         type: "combo",
         autocomplete: true,
         apiLabel: "nom",
+        valueField: "id",
         api: "operations?estSecteur=false&asc=true",
         source: operationParent,
-        readOnly: false
+        readOnly: false,
+        isSearchable: true
     }, {
         name: "nom",
         field: "nom",
@@ -143,13 +157,15 @@ const Tabou2IdentAccord = ({
         label: "tabou2.identify.accordions.consoSpace",
         layers: ["layerSA", "layerOA"],
         type: "combo",
-        autocomplete: false,
+        autocomplete: true,
         api: `consommation-espace?asc=true`,
         apiLabel: "libelle",
+        valueField: "id",
         placeholder: "tabou2.identify.accordions.emptySelect",
         source: operation,
         readOnly: false,
-        value: () => get(values, "consommationEspace"),
+        isSearchable: true,
+        value: () => values.consommationEspace || initialItem.consommationEspace,
         select: (v) => changeInfos({consommationEspace: v}),
         change: (v) => changeInfos(v ? {consommationEspace: v} : {consommationEspace: null})
     }, {
@@ -158,13 +174,16 @@ const Tabou2IdentAccord = ({
         label: "tabou2.identify.accordions.step",
         field: "etape.libelle",
         type: "combo",
+        autocomplete: true,
         apiLabel: "libelle",
+        valueField: "id",
         filter: false,
         api: `operations/${initialItem.id}/etapes?orderBy=id&asc=true`,
         source: operation,
         readOnly: false,
         require: true,
-        value: () => get(values, "etape"),
+        isSearchable: true,
+        value: () => values.etape || initialItem.etape,
         select: (v) => changeInfos({etape: v}),
         change: (v) => changeInfos(v ? {etape: v} : {etape: null})
     }, {
@@ -207,6 +226,10 @@ const Tabou2IdentAccord = ({
 
     // get value for specific item
     const getValue = (item) => {
+        // Pour les champs combo avec une fonction value personnalisée, l'utiliser
+        if (item.value && typeof item.value === 'function') {
+            return item.value();
+        }
         if (isEmpty(values) || isEmpty(operation)) return null;
         let itemSrc = getFields().filter(f => f.name === item.name)[0]?.source;
         return get(itemSrc, item?.field) || [];
@@ -222,163 +245,238 @@ const Tabou2IdentAccord = ({
         return defaultValue ? new Date(defaultValue) : null;
     };
 
+    const handleApiSearch = (item) => (text) => {
+        // Pour les champs avec autocomplétion, utiliser le bon nom de champ pour la recherche
+        const searchField = item.name === 'parentId' ? 'nom' : item.apiLabel;
+        return getRequestApi(item.api, apiCfg, {[searchField]: `${text}*`})
+            .then(results => Array.isArray(results) ? results : (results.elements || []));
+    };
+
     // manage change info
     changeInfos = (item) => {
         let newValues = {...values, ...item};
         setValues(newValues);
+
         // send to parent to save
         let accordValues = pick(newValues, getFields().filter(f => !f.readOnly).map(f => f.name));
         change(accordValues, pick(accordValues, required));
     };
 
-    return (
-        <Grid style={{ width: "100%" }}>
-            {
-                fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(item => (
-                    <Row className="attributeInfos">
-                        {
-                            item.type === "title" ? (
-                                <Col xs={12}>
-                                    <ControlLabel><Message msgId={item.label}/></ControlLabel>
-                                </Col>
-                            ) : (<>
-                                <Col xs={4}>
-                                    <ControlLabel><Message msgId={item.label}/></ControlLabel>
-                                </Col>
-                                <Col xs={allTiersButtons[item.name] ? 7 : 8}>
-                                    {
-                                        item.type === "combo" && item?.autocomplete ? (
-                                            <SearchCombo
-                                                minLength={3}
-                                                textField={item.apiLabel}
-                                                valueField={item.apiField}
-                                                forceSelection
-                                                value={item.value()}
-                                                search={
-                                                    text => getRequestApi(item.api, apiCfg, {[item.autocomplete]: `${text}*`})
-                                                        .then(results =>
-                                                            results.elements.map(v => v)
-                                                        )
-                                                }
-                                                onSelect={item.select}
-                                                onChange={item.change}
-                                                name={item.name}
-                                                placeholder={i18n(messages, item?.label || "")}
-                                            />
-                                        ) : null
-                                    }
-                                    {
-                                        item.type === "text" ?
-                                            (<FormControl
-                                                placeholder={i18n(messages, item?.label || "")}
-                                                value={getValue(item) || ""}
-                                                readOnly={item.readOnly || !allowChange}
-                                                onChange={(v) => changeInfos({[item.name]: v.target.value})}
-                                            />) : null
-                                    }{
-                                        item.type === "multi" && has(item.source, item.field) ? (
-                                            <Multiselect
-                                                style={{ color: "black !important", paddingRight: "0px" }}
-                                                placeholder={i18n(messages, item?.label || "")}
-                                                value={getValue(item).length ? getValue(item).split(";") : [] }
-                                                readOnly={item.readOnly || !allowChange}
-                                                onChange={() => null}
-                                                messages={{
-                                                    emptyList: item.readOnly ? "tabou2.identify.accordions.notAvailable" : "tabou2.emptyList",
-                                                    openCombobox: "tabou2.displayList"
-                                                }}
-                                                className={ item.readOnly ? "tagColor noClick" : "tagColor"}
-                                            />
-                                        ) : null
-                                    }{
-                                        item.type === "combo" && !item?.autocomplete ? (
-                                            <Tabou2Combo
-                                                load={() => getRequestApi(item.api, apiCfg, {})}
-                                                placeholder={i18n(messages, item?.placeholder || "")}
-                                                filter="contains"
-                                                disabled={item.readOnly || !allowChange}
-                                                textField={item.apiLabel}
-                                                onLoad={(r) => r?.elements || r}
-                                                name={item.name}
-                                                value={get(values, item.field)}
-                                                onSelect={(v) => changeInfos({[item.name]: v})}
-                                                onChange={(v) => !v ? changeInfos({[item.name]: v}) : null}
-                                                messages={{
-                                                    emptyList: i18n(messages, "tabou2.emptyList"),
-                                                    openCombobox: i18n(messages, "tabou2.displayList")
-                                                }}
-                                            />
-                                        ) : null
-                                    }{
-                                        item.type === "date" ? (
-                                            <Tabou2Date
-                                                type="date"
-                                                className="identifyDate"
-                                                inline="true"
-                                                dropUp
-                                                placeholder={i18n(messages, item?.label || "")}
-                                                readOnly={item.readOnly || !allowChange}
-                                                calendar
-                                                time={false}
-                                                culture="fr"
-                                                value={getDateValue(item, initialItem) || null}
-                                                format="DD/MM/YYYY"
-                                                refreshValue={initialItem}
-                                                refresh={(o, n) => {
-                                                    return isEqual(o, n);
-                                                }}
-                                                onSelect={(v) => {
-                                                    if (item.name !== item.field) {
-                                                        // only to change a key inside object as field.child
-                                                        changeProp({
-                                                            [item.name]: {
-                                                                ...initialItem[item.name],
-                                                                [item.field]: v ? new Date(v).toISOString() : ""
-                                                            }
-                                                        });
-                                                    } else {
-                                                        changeProp({ [item.name]: v ? new Date(v).toISOString() : "" });
-                                                    }
-                                                }}
-                                                onChange={(v) => {
-                                                    if (item.name !== item.field) {
-                                                        // only to change a key inside object as field.child
-                                                        changeProp({
-                                                            [item.name]: {
-                                                                ...initialItem[item.name],
-                                                                [item.field]: v ? new Date(v).toISOString() : ""
-                                                            }
-                                                        });
-                                                    } else {
-                                                        changeProp({ [item.name]: v ? new Date(v).toISOString() : "" });
-                                                    }
-                                                }}
-                                            />
-                                        ) : null
-                                    }
-                                </Col>
-                                {
-                                    allTiersButtons[item.name] && (
-                                        <Col xs={1} className="no-padding">
-                                            <Button
-                                                tooltip={i18n(messages, allTiersButtons[item.name].tooltip || "")}
-                                                onClick={() => allTiersButtons[item.name].click() }
-                                                bsStyle="primary"
-                                                bsSize="small">
-                                                <Glyphicon glyph="user"/>
-                                            </Button>
-                                        </Col>
-                                    )
-                                }</>
-                            )
-                        }
+    // Handle date change
+    const handleDateChange = (item, v) => {
+        if (item.name !== item.field) {
+            // only to change a key inside object as field.child
+            changeProp({
+                [item.name]: {
+                    ...initialItem[item.name],
+                    [item.field]: v ? new Date(v).toISOString() : ""
+                }
+            });
+        } else {
+            changeProp({[item.name]: v ? new Date(v).toISOString() : ""});
+        }
+    };
 
-                    </Row>
-                ))
+    // Render field input based on type
+    const renderFieldInput = (item) => {
+        if (item.type === "combo" && item?.autocomplete) {
+            const currentValue = item.value ? item.value() : null;
+
+            return (
+                <Tabou2Select
+                    textField={item.apiLabel}
+                    valueField={item.valueField || "id"}
+                    value={currentValue}
+                    search={(text) => {
+                        // Si pas de texte, charger toutes les options
+                        if (!text || text.length < 1) {
+                            return getRequestApi(item.api, apiCfg, {})
+                                .then(results => Array.isArray(results) ? results : (results.elements || []))
+                                .catch(() => {
+                                    return [];
+                                });
+                        }
+                        // Sinon utiliser la recherche avec le texte
+                        return handleApiSearch(item)(text).then(results => {
+                            return results;
+                        }).catch(() => {
+                            return [];
+                        });
+                    }}
+                    onSelect={(v) => {
+                        if (item.select) {
+                            item.select(v);
+                        } else {
+                            changeInfos({[item.name]: v});
+                        }
+                    }}
+                    onChange={item.change}
+                    placeholder={i18n(messages, item?.label || "")}
+                    disabled={item.readOnly || !allowChange}
+                />
+            );
+        }
+
+        if (item.type === "text") {
+            return (
+                <FormControl
+                    placeholder={i18n(messages, item?.label || "")}
+                    value={getValue(item) || ""}
+                    readOnly={item.readOnly || !allowChange}
+                    onChange={(v) => changeInfos({[item.name]: v.target.value})}
+                />
+            );
+        }
+
+        if (item.type === "multi") {
+            // Vérifier si le champ existe ou si c'est un champ avec API (éditable)
+            const hasValue = has(item.source, item.field);
+            const isEditableWithApi = item.api && !item.readOnly && allowChange;
+
+            // Afficher le composant si le champ a une valeur OU si c'est éditable avec API
+            if (hasValue || isEditableWithApi) {
+                // Convertir la valeur string (séparée par "," ou ";") en tableau d'objets
+                const rawValue = getValue(item);
+                const multiValues = rawValue && rawValue.length ?
+                    rawValue.split(/[,;]/).map(val => val.trim()).filter(Boolean).map(val => ({
+                        id: val,
+                        [item.apiLabel || 'label']: val
+                    })) : [];
+
+                return (
+                    <Tabou2Select
+                        isMulti
+                        textField={item.apiLabel || 'label'}
+                        valueField="id"
+                        value={multiValues}
+                        search={item.api ? (text) => {
+                            return getRequestApi(item.api, apiCfg, text ? {[item.apiLabel]: `${text}*`} : {})
+                                .then(results => Array.isArray(results) ? results : (results.elements || []));
+                        } : () => Promise.resolve(multiValues)}
+                        onSelect={(selectedItems) => {
+                            // Convertir le tableau d'objets en string séparée par ";"
+                            const newValue = selectedItems.map(selectedItem =>
+                                typeof selectedItem === 'object' ? selectedItem[item.apiLabel || 'label'] : selectedItem
+                            ).join(";");
+                            if (item.select) {
+                                item.select(newValue);
+                            } else {
+                                changeInfos({[item.name]: newValue});
+                            }
+                        }}
+                        placeholder={i18n(messages, item?.label || "")}
+                        disabled={item.readOnly || !allowChange}
+                        separator="; "
+                        maxDisplayItems={3}
+                    />
+                );
             }
+            return null;
+        }
+
+        if (item.type === "combo" && !item?.autocomplete) {
+            const currentValue = item.value ? item.value() : get(values, item.field);
+            return (
+                <Tabou2Select
+                    key={`${item.name}-${JSON.stringify(currentValue)}`}
+                    textField={item.apiLabel}
+                    valueField={item.valueField || "id"}
+                    value={currentValue}
+                    search={() => {
+                        return getRequestApi(item.api, apiCfg, {})
+                            .then(results => Array.isArray(results) ? results : (results.elements || []));
+                    }}
+                    onSelect={(v) => {
+                        if (item.select) {
+                            item.select(v);
+                        } else {
+                            changeInfos({[item.name]: v});
+                        }
+                    }}
+                    onChange={(v) => {
+                        if (item.change) {
+                            item.change(v);
+                        } else if (!v) {
+                            changeInfos({[item.name]: v});
+                        }
+                    }}
+                    placeholder={i18n(messages, item?.placeholder || "")}
+                    disabled={item.readOnly || !allowChange}
+                    allowClear
+                />
+            );
+        }
+
+        if (item.type === "date") {
+            return (
+                <Tabou2Date
+                    type="date"
+                    className="identifyDate"
+                    inline="true"
+                    dropUp
+                    placeholder={i18n(messages, item?.label || "")}
+                    readOnly={item.readOnly || !allowChange}
+                    calendar
+                    time={false}
+                    culture="fr"
+                    value={getDateValue(item, initialItem) || null}
+                    format="DD/MM/YYYY"
+                    refreshValue={initialItem}
+                    refresh={(o, n) => isEqual(o, n)}
+                    onSelect={(v) => handleDateChange(item, v)}
+                    onChange={(v) => handleDateChange(item, v)}
+                />
+            );
+        }
+
+        return null;
+    };
+
+    // Render field row
+    const renderFieldRow = (item) => {
+        if (item.type === "title") {
+            return (
+                <Col xs={12}>
+                    <ControlLabel><Message msgId={item.label}/></ControlLabel>
+                </Col>
+            );
+        }
+
+        return (
+            <>
+                <Col xs={4}>
+                    <ControlLabel><Message msgId={item.label}/></ControlLabel>
+                </Col>
+                <Col xs={allTiersButtons[item.name] ? 7 : 8}>
+                    {renderFieldInput(item)}
+                </Col>
+                {allTiersButtons[item.name] && (
+                    <Col xs={1} className="no-padding">
+                        <Button
+                            tooltip={i18n(messages, allTiersButtons[item.name].tooltip || "")}
+                            onClick={() => allTiersButtons[item.name].click()}
+                            bsStyle="primary"
+                            bsSize="small">
+                            <Glyphicon glyph="user"/>
+                        </Button>
+                    </Col>
+                )}
+            </>
+        );
+    };
+
+    // Filter fields by layer
+    const visibleFields = fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1);
+
+    return (
+        <Grid style={{width: "100%"}}>
+            {visibleFields.map(item => (
+                <Row className="attributeInfos" key={item.name}>
+                    {renderFieldRow(item)}
+                </Row>
+            ))}
         </Grid>
     );
 };
 
 export default memo(Tabou2IdentAccord, avoidReRender);
-

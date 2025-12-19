@@ -1,4 +1,4 @@
-import { keys, get } from 'lodash';
+import {keys, get} from 'lodash';
 
 /**
  * Utils to format string
@@ -31,7 +31,7 @@ export function containEmpty(obj) {
  * @param {string} layerTypeName
  * @param {object} spatialFilter
  * @param {object} textFilters
- * @param {object} crossLayer
+ * @param {object} crossLayerFilter
  * @returns {object}
  */
 export function getNewFilter(layerTypeName = '', spatialFilter = {}, textFilters = [], crossLayerFilter = null) {
@@ -64,7 +64,7 @@ export function getNewFilter(layerTypeName = '', spatialFilter = {}, textFilters
  * @returns cross layer filter object
  */
 export function getNewCrossLayerFilter(operation, geom, cqlFilter, filterFields, crossGeom, crossName) {
-    let crossFilter =  {
+    let crossFilter = {
         operation: operation || "INTERSECTS",
         attribute: geom,
         collectGeometries: {
@@ -94,6 +94,7 @@ export function getFilterField(field, values, valueType, operator, groupId) {
         value: value
     }));
 }
+
 /**
  * Create a simple CQL syntax without spatial query
  * @param {string} type layer expected from config as layerOA, layerPA, layer SA values
@@ -127,10 +128,11 @@ export function getCQL(type, field, value, condition) {
  * @param {string} geomB - geom field name from use as filter
  * @param {string} field - optionnal - Limit layer use as filter by cql expression.
  * @param {string} value - optionnal. Value for previous field param.
+ * @param {boolean} onlyTabou - optionnal - filter only tabou layer.
  * @param {string} condition - pass a condition directly
  * @returns {string} CQL expression
  */
-export function getSpatialCQL(type, geomA, layer, geomB, field, value, onlyTabou, condition) {
+export function getSpatialCQL({type, geomA, layer, geomB, field, value, onlyTabou, condition}) {
     if (condition) {
         return `(INTERSECTS(${geomA},collectGeometries(queryCollection('${layer}', '${geomB}','(${onlyTabou ? "id_tabou IS NOT NULL AND " : ""}${condition})'))))`;
     }
@@ -186,6 +188,7 @@ export function getGeoServerUrl(props) {
  * @param {Array} values - list of values to filter
  * @param {String} field - field name to filterFields
  * @param {String} cql - optional cql expression like list
+ * @param {object} crossLayer - optionnal - filter by cross layer
  * @returns filter object to apply as MapStore TOC filter
  */
 export function newfilterLayerByList(layer, values, field, cql, crossLayer) {

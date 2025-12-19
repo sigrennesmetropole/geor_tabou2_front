@@ -1,22 +1,22 @@
 import React from 'react';
 import Message from "@mapstore/components/I18N/Message";
-import { Col, Tabs, Tab } from 'react-bootstrap';
-import AutreProgrammation from './AutreProgrammation';
-import ContributionPaddOap from './ContributionPaddOap';
-import CompositionProgrammation from './CompositionProgrammation';
+import {Col, Tabs, Tab} from 'react-bootstrap';
+import AutreProgrammation from '../AutreProgrammation';
+import ContributionPaddOap from '../ContributionPaddOap';
+import CompositionProgrammation from '../CompositionProgrammation';
 import ProgrammationLogements from './ProgrammationLogements';
 
 export default function Habitat({...props}) {
     const tabs = [
-        <Message msgId="tabou2.vocation.tabComposition" />,
-        <Message msgId="tabou2.vocation.tabHousing" />,
-        <Message msgId="tabou2.vocation.tabOtherProg" />,
-        <Message msgId="tabou2.vocation.tabContrib" />
+        <Message msgId="tabou2.vocation.tabComposition"/>,
+        <Message msgId="tabou2.vocation.tabHousing"/>,
+        <Message msgId="tabou2.vocation.tabOtherProg"/>,
+        <Message msgId="tabou2.vocation.tabContrib"/>
     ];
 
     const subFormProps = {
-        ... props,
-        owner: { isReferent: true }
+        ...props,
+        owner: {isReferent: true}
     };
     return (
         <Col xs={12}>

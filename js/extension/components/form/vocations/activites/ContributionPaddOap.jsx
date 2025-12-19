@@ -1,22 +1,25 @@
 import React from 'react';
 import Message from "@mapstore/components/I18N/Message";
-import { get, isEmpty } from "lodash";
-import { Col, Row, FormControl, ControlLabel, Panel } from "react-bootstrap";
+import isEmpty from "lodash/isEmpty";
+import {Panel, Row} from "react-bootstrap";
 import "@js/extension/css/vocation.css";
-import { findValueByType, changeByType, getCodeIdByCode } from "../utils";
+import {findValueByType, changeByType, getCodeIdByCode, renderField, shouldShowField} from "../utils";
 
 
 export default function ContributionPaddOap({
     operation = {},
     layer = "",
     typesContribution,
-    setValues = () => {},
-    i18n = () => {},
+    setValues = () => {
+    },
+    i18n = () => {
+    },
     messages,
     values,
     allowChange
 }) {
     if (isEmpty(operation)) return <Message msgId={"tabou2.vocation.noDisplay"}/>;
+
     const getFields = () => [
         {
             name: "enjeux",
@@ -83,39 +86,7 @@ export default function ContributionPaddOap({
                     <strong><Message msgId="tabou2.vocation.contribPADDOAP"/></strong>
                 </h4>
                 {
-                    getFields().filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map((item, i) => (
-                        <Row key={`${item.name}-${i}`}>
-                            <Col xs={4}>
-                                <ControlLabel><Message msgId={item.label}/></ControlLabel>
-                            </Col>
-                            <Col xs={4}>
-                                {
-                                    ["text", "number"].includes(item.type) ?
-                                        (<FormControl
-                                            componentClass={item.isArea ? "textarea" : "input"}
-                                            placeholder={i18n(messages, item.label)}
-                                            style={{height: item.isArea ? "100px" : "auto"}}
-                                            type={item.type}
-                                            min="0"
-                                            step={item?.step}
-                                            value={get(item.source(), item.field) || ""}
-                                            readOnly={item.readOnly || !allowChange}
-                                            onChange={(v) => {
-                                                return item.change(item.type === "number" && v.target.value < 0 ? "" : v.target.value);
-                                            }}
-                                            onKeyDown={(v) => {
-                                                if (item.type !== "number") return;
-                                                // only keep numeric and special key control as "Delete" or "Backspace"
-                                                if (!new RegExp('^[0-9\.\,]').test(v.key) && v.key.length < 2) {
-                                                    v.returnValue = false;
-                                                    if (v.preventDefault) v.preventDefault();
-                                                }
-                                            }}
-                                        />) : null
-                                }
-                            </Col>
-                        </Row>
-                    ))
+                    getFields().filter(field => shouldShowField(field, layer)).map(item => renderField(item, i18n, messages, allowChange))
                 }
             </Row>
 

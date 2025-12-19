@@ -169,13 +169,15 @@ export const SEARCH_CALENDARS = [{
 }];
 
 export const ACCORDIONS = [
+    {title: 'tabou2.identify.accordions.indicateurs', id: 'indicateurs'},
     {title: 'tabou2.identify.accordions.identify', id: 'ident'},
     {title: 'tabou2.identify.accordions.describe', id: 'describe'},
-    { title: 'tabou2.identify.accordions.gouv', id: 'gouvernance', layers: ['layerPA'] },
-    { title: 'tabou2.identify.accordions.real', id: 'gouvernance', layers: ['layerOA', "layerSA"]},
+    {title: 'tabou2.identify.accordions.gouv', id: 'gouvernance', layers: ['layerPA']},
+    {title: 'tabou2.identify.accordions.real', id: 'gouvernance', layers: ['layerOA', "layerSA"]},
     // TO DELETE OA SA FIELDS
     {title: 'tabou2.identify.accordions.opTracking', id: 'suivi', layers: ['layerPA']},
     {title: 'tabou2.identify.accordions.progHabitat', id: 'habitat', layers: ['layerPA']},
+    {title: 'tabou2.identify.accordions.autreProg', id: 'autreProg', layers: ['layerPA']},
     //
     {title: 'tabou2.identify.accordions.dds', id: 'dds', layers: ['layerPA']},
     {title: 'tabou2.identify.accordions.secProg', id: 'secteursprog', layers: []},
@@ -444,7 +446,7 @@ export const ADD_SA_FORM = [{
     type: "combo"
 }];
 
-export const ADD_PA_FORM = [ {
+export const ADD_PA_FORM = [{
     label: "tabou2.add.limiteEmprise",
     apiField: "",
     name: "limitPa",
@@ -520,6 +522,7 @@ export const OA_SCHEMA = {
     "description": "",
     "nbLogementsPrevu": 0,
     "secteur": false,
+    "aire_geo_ha": 0,
     "surfaceTotale": 0,
     "etape": {
         "id": 0
@@ -538,6 +541,8 @@ export const SA_SCHEMA = {
     "description": "",
     "nbLogementsPrevu": 0,
     "secteur": false,
+    "aire_geo_ha": 0,
+    "aire_geo_ha_parent": 0,
     "surfaceTotale": 0,
     "etape": {
         "id": 0
@@ -553,6 +558,8 @@ export const PA_SCHEMA = {
     "nom": "",
     "description": "",
     "programme": "",
+    "aire_geo_ha": 0,
+    "aire_geo_ha_parent": 0,
     "etape": {
         "id": 0
     },

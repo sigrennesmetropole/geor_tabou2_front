@@ -1,20 +1,35 @@
-import React, { useState, useEffect } from 'react';
-import { keys, get, isEmpty } from 'lodash';
-import { connect } from 'react-redux';
-import { Checkbox, Col, Row, FormGroup, Grid, Panel, Glyphicon, Alert } from 'react-bootstrap';
-import { currentActiveTabSelector, currentTabouFilters, getLayerFilterObj, searchLoading, getTabouErrors } from '../../selectors/tabou2';
+import React, {useState, useEffect} from 'react';
+import {keys, get, isEmpty} from 'lodash';
+import {connect} from 'react-redux';
+import {Checkbox, Col, Row, FormGroup, Grid, Panel, Glyphicon, Alert} from 'react-bootstrap';
+import {
+    currentActiveTabSelector,
+    currentTabouFilters,
+    getLayerFilterObj,
+    searchLoading,
+    getTabouErrors
+} from '../../selectors/tabou2';
 import Tabou2SearchToolbar from './Tabou2SearchToolbar';
 import SearchCombo from '@js/extension/components/form/SearchCombo';
-import Tabou2Combo from '../form/Tabou2Combo';
-import { getRequestApi, searchPlui } from '../../api/requests';
-import { setTabouFilterObj, setTabouFilters, resetSearchFilters } from '../../actions/tabou2';
-import { getNewFilter, getSpatialCQL, getCQL, getTabouLayersInfos, createWfsPostRequest } from '../../utils/search';
-import { SEARCH_ITEMS, SEARCH_CALENDARS } from '@js/extension/constants';
+import Tabou2Select from '../form/Tabou2Select';
+import {getRequestApi, searchPlui} from '../../api/requests';
+import {setTabouFilterObj, setTabouFilters, resetSearchFilters} from '../../actions/tabou2';
+import {getNewFilter, getSpatialCQL, getCQL, getTabouLayersInfos, createWfsPostRequest} from '../../utils/search';
+import {SEARCH_ITEMS, SEARCH_CALENDARS} from '@js/extension/constants';
 import Message from "@mapstore/components/I18N/Message";
 import Tabou2Date from '../common/Tabou2Date';
 import "@js/extension/css/tabou.css";
 
-function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, changeFiltersObj, changeFilters, currentFilters, ...props }) {
+function Tabou2SearchPanel({
+    change,
+    searchState,
+    getFiltersObj,
+    currentTab,
+    changeFiltersObj,
+    changeFilters,
+    currentFilters,
+    ...props
+}) {
     if (currentTab !== 'search') return null;
     const layersInfos = getTabouLayersInfos(props?.pluginCfg?.layersCfg || {});
     const config = props.pluginCfg.searchCfg;
@@ -44,8 +59,7 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
      * @returns
      */
     const isDisabled = (cb, p) => {
-        if (get(cb, 'disabled') || (cb.parent && !p)) return true;
-        return false;
+        return get(cb, 'disabled') || (cb.parent && !p);
     };
 
     /**
@@ -58,8 +72,7 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
      * @param {*} type
      * @param {*} filter
      * @param {*} value
-     * @param {*} value
-     * @return -
+     * @param {*} filterConf
      */
     const changeCqlFilter = (type, filter, value, filterConf) => {
         let cqlCondition = "";
@@ -70,11 +83,21 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
         let filtersObj = getFiltersObj;
         let filters = [];
         layers.forEach(lyr => {
-            let cql = "";
+            let cql;
             if (lyr === filterConf.layer) {
                 cql = getCQL(type, filterConf.filterField, value, cqlCondition);
             } else {
-                cql = getSpatialCQL(type, layersInfos[lyr].geom, filterConf.layer, filterConf.geom,  filterConf.filterField, value, layers.includes(filterConf.layer), cqlCondition);
+                const options = {
+                    type,
+                    geomA: layersInfos[lyr].geom,
+                    layer: filterConf.layer,
+                    geomB: filterConf.geom,
+                    field: filterConf.filterField,
+                    value,
+                    onlyTabou: layers.includes(filterConf.layer),
+                    condition: cqlCondition
+                };
+                cql = getSpatialCQL(options);
             }
             if (!currentFilters[lyr]) {
                 currentFilters[lyr] = {};
@@ -90,8 +113,7 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
             let CQLStr = keys(allFilters).map(k => allFilters[k]);
             if (!CQLStr.length) {
                 // Manage case when user select "All" value for each combo
-                let newFilter = getNewFilter(lyr, null, [], null);
-                filtersObj[lyr] = newFilter;
+                filtersObj[lyr] = getNewFilter(lyr, null, [], null);
                 // stock MapStore layer filter object
                 return changeFiltersObj(filtersObj);
             }
@@ -138,6 +160,10 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
         changeCqlFilter("boolean", name, isChecked, config[name]);
     };
 
+    const handlePluiSearch = (text) => {
+        return searchPlui(text).then(results => results.elements);
+    };
+
     /**
      * Create tabou2 search combobox loadable from api
      * @param {object} combo
@@ -156,7 +182,7 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
             if (!parents[combo.parent]) parents[combo.parent] = [];
             if (!parents[combo.parent].includes(combo.name)) {
                 parents[combo.parent].push(combo.name);
-                setParents(parents);
+                setParents({...parents});
             }
         }
         return (
@@ -170,35 +196,27 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
                                 valueField={get(config, `${combo.name}.apiField`)}
                                 value={comboValues[combo.name]}
                                 forceSelection
-                                search={
-                                    text => searchPlui(text)
-                                        .then(results =>
-                                            results.elements.map(v => v)
-                                        )
-                                }
+                                search={handlePluiSearch}
                                 onSelect={v => changeFilter(combo, v)}
                                 onChange={v => changeFilter(combo, v)}
                                 className="tabou-search-combo"
                                 name={combo.name}
                                 placeholder={props.i18n(props.messages, combo.placeholder)}
                             />)
-                            : (<Tabou2Combo
+                            : (<Tabou2Select
                                 className="tabou-search-combo"
-                                load={() => getRequestApi(get(combo, "api") || get(combo, "name"), props.pluginCfg.apiCfg, urlParams)}
-                                disabled={isDisabled(combo, urlParams)}
-                                placeholder={props.i18n(props.messages, combo.placeholder)}
-                                parentValue={parentValue}
                                 textField={get(config, `${combo.name}.apiLabel`)}
-                                valueField={get(config, `${combo.name}.apiField`)}
-                                onLoad={(r) => r?.elements || r}
-                                name={combo.name}
+                                valueField={get(config, `${combo.name}.apiField`) || "id"}
                                 value={comboValues[combo.name]}
+                                search={() => {
+                                    return getRequestApi(get(combo, "api") || get(combo, "name"), props.pluginCfg.apiCfg, urlParams)
+                                        .then(results => Array.isArray(results) ? results : (results.elements || []));
+                                }}
                                 onSelect={v => changeFilter(combo, v)}
                                 onChange={(v) => !v ? changeFilter(combo, v) : null}
-                                messages={{
-                                    emptyList: props.i18n(props.messages, "tabou2.emptyList"),
-                                    emptyFilter: props.i18n(props.messages, "tabou2.nodata")
-                                }}
+                                placeholder={props.i18n(props.messages, combo.placeholder)}
+                                disabled={isDisabled(combo, urlParams)}
+                                allowClear
                             />)
                     }
                 </FormGroup>
@@ -244,9 +262,9 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
                         apply={props.applyFilterObj}
                         reset={reset}/>
                 </div>
-                { props.getTabouErrors.msg ? (
+                {props.getTabouErrors.msg ? (
                     <Alert className={"alert-" + props.getTabouErrors.typeMsg}>
-                        <Glyphicon glyph="filter" />
+                        <Glyphicon glyph="filter"/>
                         <Message msgId={props.i18n(props.messages, props.getTabouErrors?.msg || " ")}/>
                     </Alert>) : null
                 }
@@ -257,7 +275,7 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
                         )}
                         className="tabou-panel"
                     >
-                        { SEARCH_ITEMS.filter(f => f.group === 1).map((cb) => getCombo(cb)) }
+                        {SEARCH_ITEMS.filter(f => f.group === 1).map((cb) => getCombo(cb))}
                         <div className="col-xs-12">
                             <Checkbox
                                 className="tabou-search-combo"
@@ -277,7 +295,7 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
                         )}
                         className="tabou-panel"
                     >
-                        { SEARCH_ITEMS.filter(f => f.group === 2).map((cb, i) => getCombo(cb, i, 2)) }
+                        {SEARCH_ITEMS.filter(f => f.group === 2).map((cb) => getCombo(cb))}
                     </Panel>
                 </Row>
                 <Row>
@@ -287,7 +305,7 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
                         )}
                         className="tabou-panel"
                     >
-                        { SEARCH_ITEMS.filter(f => f.group === 3).map((cb, i) => getCombo(cb, i, 1)) }
+                        {SEARCH_ITEMS.filter(f => f.group === 3).map((cb) => getCombo(cb))}
                     </Panel>
                 </Row>
                 <Row>
@@ -301,15 +319,15 @@ function Tabou2SearchPanel({ change, searchState, getFiltersObj, currentTab, cha
                             <Checkbox inline><Message msgId="tabou2.search.isHelp"/></Checkbox>
                         </div>
                         {
-                            SEARCH_ITEMS.filter(f => f.group === 4).map((el, i) =>  (i < 1 || i > 0) ? getCombo(el, i) : null)
+                            SEARCH_ITEMS.filter(f => f.group === 4).map((el) => getCombo(el))
                         }
                         {
-                            SEARCH_CALENDARS.filter((el, i) => i < 4 ).map(els => (
+                            SEARCH_CALENDARS.filter((el, i) => i < 4).map(els => (
                                 els.items.map(el => getDate(el))
                             ))
                         }
                         {
-                            SEARCH_CALENDARS.filter((el, i) => i > 3 ).map(els => (
+                            SEARCH_CALENDARS.filter((el, i) => i > 3).map(els => (
                                 els.items.map(el => getDate(el))
                             ))
                         }

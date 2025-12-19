@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { keys, isEmpty, get, find, pickBy } from 'lodash';
+import React, {useState, useEffect} from 'react';
+import {keys, isEmpty, get, find, pickBy} from 'lodash';
 
 import Tabou2IdentifyContent from './Tabou2IdentifyContent';
-import { LAYER_FIELD_OPTION } from '@js/extension/constants';
-import { createOptions, getFeaturesOptions } from '@js/extension/utils/identify';
+import {LAYER_FIELD_OPTION} from '@js/extension/constants';
+import {createOptions, getFeaturesOptions} from '@js/extension/utils/identify';
 import IdentifyDropDown from "./IdentifyDropDown";
-import { Glyphicon } from 'react-bootstrap';
+import {Glyphicon} from 'react-bootstrap';
 import Tabou2Information from "@js/extension/components/common/Tabou2Information";
 import ButtonRB from '@mapstore/components/misc/Button';
 import tooltip from '@mapstore/components/misc/enhancers/tooltip';
+
 const Button = tooltip(ButtonRB);
 
 
@@ -89,7 +90,7 @@ export default function Tabou2IdentifyPanel({
                                 disabled={false}
                                 visible={get(props.clickedFeatures, l).length > 1 && selectedLayer === l}
                                 data={options}
-                                value = {defaultFeature}
+                                value={defaultFeature}
                                 textField={"label"}
                                 valueField={"idx"}
                                 icon="glyphicon-list"
@@ -103,7 +104,7 @@ export default function Tabou2IdentifyPanel({
                     })
             }
             {
-                !isEmpty(props.featuresId) && feature && feature.properties.id_tabou ?
+                !isEmpty(props.featuresId) && feature?.properties?.id_tabou ?
                     (
                         <>
                             <Tabou2IdentifyContent
@@ -122,10 +123,10 @@ export default function Tabou2IdentifyPanel({
                 glyph="eye-close"
                 content={
                     <div>
-                        { props.authentInfos.isReferent ? (
+                        {props.authentInfos.isReferent ? (
                             <Button
                                 tooltip={props.i18n(props.messages, "tabou2.identify.fromSelection")}
-                                onClick={() => props.setTab("add") }
+                                onClick={() => props.setTab("add")}
                                 bsStyle="primary"
                                 bsSize="lg"
                                 style={{marginTop: "10%"}}>
@@ -136,7 +137,7 @@ export default function Tabou2IdentifyPanel({
                                 <Button
                                     tooltip={props.i18n(props.messages, "tabou2.identify.sendMail")}
                                     onClick={() => {
-                                        let contact = props.pluginCfg?.help && props.pluginCfg.help?.contact;
+                                        let contact = props.pluginCfg?.help?.contact;
                                         if (contact) return;
                                         let a = document.createElement('a');
                                         a.href = `mailto:${contact}`;
@@ -152,12 +153,25 @@ export default function Tabou2IdentifyPanel({
                                     title={props.i18n(props.messages, "tabou2.identify.copyMailTitle")}
                                     style={{cursor: "pointer"}}
                                     onClick={() => {
-                                        let contact = props.pluginCfg?.help && props.pluginCfg.help?.contact;
+                                        let contact = props.pluginCfg?.help?.contact;
                                         if (contact) {
                                             navigator.clipboard.writeText(contact);
                                         }
                                         props.displayMsg("warning", "tabou2.copy", "tabou2.copyAddress");
-                                    }}>
+                                    }}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' || e.key === ' ') {
+                                            e.preventDefault();
+                                            let contact = props.pluginCfg?.help?.contact;
+                                            if (contact) {
+                                                navigator.clipboard.writeText(contact);
+                                            }
+                                            props.displayMsg("warning", "tabou2.copy", "tabou2.copyAddress");
+                                        }
+                                    }}
+                                    role="button"
+                                    tabIndex={0}
+                                >
                                     {props.i18n(props.messages, "tabou2.identify.copyMail")}
                                 </a>
                             </>

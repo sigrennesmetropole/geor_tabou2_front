@@ -1,8 +1,8 @@
-import React, {useEffect, useState, memo } from "react";
-import { isEmpty, isEqual, pick, has, get } from "lodash";
-import { Col, Row, FormControl, Grid, ControlLabel, Button } from "react-bootstrap";
-import Tabou2Combo from '@js/extension/components/form/Tabou2Combo';
-import { getRequestApi } from "@js/extension/api/requests";
+import React, {useEffect, useState, memo} from "react";
+import {isEmpty, isEqual, pick, has, get} from "lodash";
+import {Col, Row, FormControl, Grid, ControlLabel, Button} from "react-bootstrap";
+import Tabou2Select from '@js/extension/components/form/Tabou2Select';
+import {getRequestApi} from "@js/extension/api/requests";
 import "@js/extension/css/identify.css";
 import "@js/extension/css/vocation.css";
 import Message from "@mapstore/components/I18N/Message";
@@ -13,10 +13,10 @@ const avoidReRender = (prevProps, nextProps) => {
     let avoid = false;
     if (
         isEqual(prevProps.initialItem, nextProps.initialItem)
-        && isEqual(prevProps.vocationsInfos, nextProps.vocationsInfos)
-        && isEqual(prevProps.operation, nextProps.operation)
-        && isEqual(prevProps.layer, nextProps.layer)
-        && isEqual(prevProps.programme, nextProps.programme)
+            && isEqual(prevProps.vocationsInfos, nextProps.vocationsInfos)
+            && isEqual(prevProps.operation, nextProps.operation)
+            && isEqual(prevProps.layer, nextProps.layer)
+            && isEqual(prevProps.programme, nextProps.programme)
     ) {
         avoid = true;
     }
@@ -29,23 +29,26 @@ const avoidReRender = (prevProps, nextProps) => {
  */
 const Tabou2DescribeAccord = ({
     initialItem,
+    mapFeature,
     programme,
     operation,
-    operationParent,
     layer,
     authent,
-    change = () => { },
-    changeProp = () => { },
+    change = () => {
+    },
+    changeProp = () => {
+    },
     messages,
     apiCfg,
-    i18n = () => { },
+    i18n = () => {
+    },
     vocationsInfos
 }) => {
     const [values, setValues] = useState({});
     const [fields, setFields] = useState([]);
     const [required, setRequired] = useState({});
     const [opened, setOpened] = useState(false);
-    let getValue = () => { };
+    let getValue;
 
     const getFields = () => [{
         name: "localisation",
@@ -57,20 +60,30 @@ const Tabou2DescribeAccord = ({
         readOnly: false,
         isArea: true
     }, {
-        name: "programme",
-        field: "programme",
-        label: "tabou2.identify.accordions.programme",
+        name: "description",
+        label: "tabou2.identify.accordions.describe",
         type: "text",
-        layers: ["layerPA"],
-        source: has(values, "programme") ? values : programme,
+        field: "description",
+        source: has(values, "description") ? values : initialItem,
+        layers: ["layerSA", "layerOA"],
         readOnly: false,
         isArea: true
     }, {
         name: "description",
-        label: "tabou2.identify.accordions.publicDescribe",
+        label: "tabou2.identify.accordions.localisation",
         type: "text",
         field: "description",
         source: has(values, "description") ? values : initialItem,
+        layers: ["layerPA"],
+        readOnly: false,
+        isArea: true
+    }, {
+        name: "programme",
+        field: "programme",
+        label: "tabou2.identify.accordions.describe",
+        type: "text",
+        layers: ["layerPA"],
+        source: has(values, "programme") ? values : programme,
         readOnly: false,
         isArea: true
     }, {
@@ -87,16 +100,23 @@ const Tabou2DescribeAccord = ({
 
     }, {
         layers: ["layerPA"],
-        name: "aireGeoHaParent",
-        label: "tabou2.identify.accordions.totalSpace",
-        value: () => operation.surfaceTotale ? operation.surfaceTotale/10000 : null,
+        name: "aireGeoHa",
+        label: "tabou2.identify.accordions.programSpace",
+        value: () => mapFeature?.properties?.aire_geo_ha ?? null,
         type: "number",
         readOnly: true
-    },{
+    }, {
+        layers: ["layerPA"],
+        name: "aireGeoHaParent",
+        label: "tabou2.identify.accordions.totalSpace",
+        value: () => mapFeature?.properties?.aire_geo_ha_parent ?? null,
+        type: "number",
+        readOnly: true
+    }, {
         layers: ["layerSA"],
         name: "aireGeoHaParent",
         label: "tabou2.identify.accordions.totalSpace",
-        value: () => operationParent && operationParent.surfaceTotale ? operationParent.surfaceTotale/10000 : null,
+        value: () => mapFeature?.properties?.aire_geo_ha_parent ?? null,
         type: "number",
         readOnly: true
     }, {
@@ -104,20 +124,15 @@ const Tabou2DescribeAccord = ({
         field: "aireGeoHa",
         label: "tabou2.identify.accordions.totalSpace",
         type: "number",
-        step: 0.1,
         layers: ["layerOA"],
-        source: initialItem,
-        value: () => initialItem.surfaceTotale ? initialItem.surfaceTotale/10000 : null,
+        value: () => mapFeature?.properties?.aire_geo_ha ?? null,
         readOnly: true
     }, {
         name: "aireGeoHa",
-        field: "aireGeoHa",
         label: "tabou2.identify.accordions.sectorSpace",
         type: "number",
-        step: 0.1,
         layers: ["layerSA"],
-        source: initialItem,
-        value: () => initialItem.surfaceTotale ? initialItem.surfaceTotale/10000 : null,
+        value: () => mapFeature?.properties?.aire_geo_ha ?? null,
         readOnly: true
     }, {
         name: "surfaceSHAB",
@@ -168,7 +183,7 @@ const Tabou2DescribeAccord = ({
     };
 
     const changeInfos = (item) => {
-        let newValues = { ...values, ...item };
+        let newValues = {...values, ...item};
         setValues(newValues);
         // send to parent to save
         let accordValues = pick(newValues, getFields().filter(f => !f.readOnly).map(f => f.name));
@@ -177,12 +192,12 @@ const Tabou2DescribeAccord = ({
 
     const allowChange = authent.isContrib || authent.isReferent;
     return (
-        <Grid style={{ width: "100%" }} className={""}>
+        <Grid style={{width: "100%"}} className={""}>
             {
                 fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(item => (
                     <Row className="attributeInfos">
                         <Col xs={4}>
-                            <ControlLabel><Message msgId={item.label} /></ControlLabel>
+                            <ControlLabel><Message msgId={item.label}/></ControlLabel>
                         </Col>
                         <Col xs={8}>
                             {
@@ -190,7 +205,7 @@ const Tabou2DescribeAccord = ({
                                     (<FormControl
                                         componentClass={item.isArea ? "textarea" : "input"}
                                         placeholder={i18n(messages, item?.placeholder || item.label)}
-                                        style={{ height: item.isArea ? "100px" : "auto" }}
+                                        style={{height: item.isArea ? "100px" : "auto"}}
                                         type={item.type}
                                         min="0"
                                         step={item?.step}
@@ -205,7 +220,7 @@ const Tabou2DescribeAccord = ({
                                         onKeyDown={(v) => {
                                             if (item.type !== "number") return;
                                             // only keep numeric and special key control as "Delete" or "Backspace"
-                                            if (!new RegExp('^[0-9\.\,]').test(v.key) && v.key.length < 2) {
+                                            if (!/^[0-9.,]/.test(v.key) && v.key.length < 2) {
                                                 v.returnValue = false;
                                                 if (v.preventDefault) v.preventDefault();
                                             }
@@ -213,27 +228,26 @@ const Tabou2DescribeAccord = ({
                                     />) : null
                             }{
                                 item.type === "combo" ? (
-                                    <Tabou2Combo
-                                        load={() => getRequestApi(item.api, apiCfg, {})}
-                                        placeholder={i18n(messages, item?.placeholder || "")}
-                                        filter="contains"
-                                        disabled={item.readOnly || !allowChange}
+                                    <Tabou2Select
                                         textField={item.apiLabel}
-                                        onLoad={(r) => r?.elements || r}
-                                        name={item.name}
+                                        valueField="id"
                                         value={get(values, item.name)}
-                                        onSelect={(v) => changeInfos({ [item.name]: v })}
-                                        onChange={(v) => !v ? changeInfos({ [item.name]: v }) : null}
-                                        messages={{
-                                            emptyList: i18n(messages, "tabou2.emptyList"),
-                                            openCombobox: i18n(messages, "tabou2.displayList")
+                                        search={() => {
+                                            return getRequestApi(item.api, apiCfg, {})
+                                                .then(results => Array.isArray(results) ? results : (results.elements || []));
                                         }}
+                                        onSelect={(v) => changeInfos({[item.name]: v})}
+                                        onChange={(v) => !v ? changeInfos({[item.name]: v}) : null}
+                                        placeholder={i18n(messages, item?.placeholder || "")}
+                                        disabled={item.readOnly || !allowChange}
+                                        allowClear
                                     />
                                 ) : null
                             }{
                                 item.type === "vocation" && (
                                     <>
-                                        <FormControl readOnly value={get(values, "vocation.libelle")} className={"vocation-libelle "} />
+                                        <FormControl readOnly value={get(values, "vocation.libelle")}
+                                            className={"vocation-libelle "}/>
                                         <Button
                                             tooltip="Vocations"
                                             className="vocation-btn"

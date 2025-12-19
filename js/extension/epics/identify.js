@@ -1,18 +1,18 @@
 import * as Rx from 'rxjs';
-import { CONTROL_NAME, ID_TABOU, URL_ADD } from '../constants';
+import {CONTROL_NAME, ID_TABOU, URL_ADD} from '../constants';
 
-import { get, keys, find, isEmpty, pickBy } from 'lodash';
+import {get, keys, find, isEmpty, pickBy} from 'lodash';
 
 import {
     generalInfoFormatSelector, identifyOptionsSelector, clickPointSelector
 } from '@mapstore/selectors/mapInfo';
-import { localizedLayerStylesEnvSelector } from "@mapstore/selectors/localizedLayerStyles";
-import { updateUserPlugin } from '@mapstore/actions/context';
-import { buildIdentifyRequest } from '@mapstore/utils/MapInfoUtils';
-import { layersSelector } from '@mapstore/selectors/layers';
-import { error, success } from "@mapstore/actions/notifications";
-import { getMessageById } from "@mapstore/utils/LocaleUtils";
-import { newfilterLayerByList, getNewCrossLayerFilter } from '../utils/search';
+import {localizedLayerStylesEnvSelector} from "@mapstore/selectors/localizedLayerStyles";
+import {updateUserPlugin} from '@mapstore/actions/context';
+import {buildIdentifyRequest} from '@mapstore/utils/MapInfoUtils';
+import {layersSelector} from '@mapstore/selectors/layers';
+import {error, success} from "@mapstore/actions/notifications";
+import {getMessageById} from "@mapstore/utils/LocaleUtils";
+import {newfilterLayerByList, getNewCrossLayerFilter} from '../utils/search';
 import {
     changeMapInfoFormat,
     updateFeatureInfoClickPoint
@@ -22,7 +22,7 @@ import {
     clickOnMap
 } from "@mapstore/actions/map";
 
-import { TOGGLE_CONTROL } from '@mapstore/actions/controls';
+import {TOGGLE_CONTROL} from '@mapstore/actions/controls';
 import {
     isTabou2Activate,
     defaultInfoFormat,
@@ -58,9 +58,10 @@ import {
     getTypesActions
 } from '../api/requests';
 
-import { getFeatureInfo } from "@mapstore/api/identify";
+import {getFeatureInfo} from "@mapstore/api/identify";
 
-import { downloadToBlob } from "../utils/identify";
+import {downloadToBlob} from "../utils/identify";
+
 /**
  * Catch GFI response on identify load event and close identify if Tabou2 identify tabs is selected
  * @param {*} action$
@@ -92,17 +93,17 @@ export function tabouSetGFIFormat(action$, store) {
         .switchMap((action) => {
             if (action.control !== CONTROL_NAME) return Rx.Observable.empty();
             if (store.getState().controls[CONTROL_NAME].enabled) {
-                // to save default info format from config or default MS2 config
+            // to save default info format from config or default MS2 config
                 const defaultMime = generalInfoFormatSelector(store.getState());
                 // change format to application/json
                 return Rx.Observable.of(setDefaultInfoFormat(defaultMime))
                     .concat(Rx.Observable.of(changeMapInfoFormat('application/json')))
-                    .concat(Rx.Observable.of(updateUserPlugin("Identify", { active: false })));
+                    .concat(Rx.Observable.of(updateUserPlugin("Identify", {active: false})));
             }
             // restore default info format
             const firstDefaultMime = defaultInfoFormat(store.getState());
             return Rx.Observable.of(changeMapInfoFormat(firstDefaultMime))
-                .concat(Rx.Observable.of(updateUserPlugin("Identify", { active: true })));
+                .concat(Rx.Observable.of(updateUserPlugin("Identify", {active: true})));
 
         });
 }
@@ -122,9 +123,17 @@ export function printProgramme(action$, store) {
 
             let functionGetPdf;
             switch (action.layer) {
-                case "layerPA" : functionGetPdf = getPDFProgramme; break;
-                case "layerOA" : functionGetPdf = getPDFOperation; break;
-                case "layerSA" : functionGetPdf = getPDFSecteur; break;
+            case "layerPA" :
+                functionGetPdf = getPDFProgramme;
+                break;
+            case "layerOA" :
+                functionGetPdf = getPDFOperation;
+                break;
+            case "layerSA" :
+                functionGetPdf = getPDFSecteur;
+                break;
+            default:
+                functionGetPdf = getPDFProgramme;
             }
 
             return Rx.Observable.defer(() => functionGetPdf(action.id))
@@ -132,14 +141,14 @@ export function printProgramme(action$, store) {
                     console.log("Error on get PDF request");
                     console.log(e);
                     // fail message
-                    return Rx.Observable.of({ ...e, data: null });
+                    return Rx.Observable.of({...e, data: null});
                 })
                 .switchMap(response => {
                     if (response?.status === 200 && response?.data) {
                         let nomOA = action.layer === "layerPA" ? feature.nomopa.split(" ")
                             .map(e => e[0].toUpperCase() + e.slice(1)).join('') : feature.nom;
                         let name =
-                            `FicheSuivi_${action.id}_${feature.code}_${nomOA}`;
+                        `FicheSuivi_${action.id}_${feature.code}_${nomOA}`;
                         downloadToBlob(response, response.data.type || 'application/pdf', name);
                         return Rx.Observable.of(
                             success({
@@ -180,7 +189,7 @@ export function createChangeFeature(action$, store) {
                 .switchMap((response) => {
                     if (!isEmpty(response)) {
                         return Rx.Observable.of(
-                            // success message
+                        // success message
                             success({
                                 title: getMessageById(messages, "tabou2.infos.successApi"),
                                 message: getMessageById(messages, "tabou2.infos.successSaveInfos")
@@ -212,12 +221,15 @@ export function displayFeatureInfos(action$, store) {
         .switchMap(action => {
 
             // only if user create tabou feature from clicked map feature
-            if (!action?.infos || !action.infos?.feature) return Rx.Observable.isEmpty();
+            if (!action.infos?.feature) return Rx.Observable.isEmpty();
 
             let tocLayer = layersSelector(store.getState()).filter(lyr => lyr.name === action.infos.layer)[0];
             let env = localizedLayerStylesEnvSelector(store.getState());
-            const identifyOptionsInfos = { ...identifyOptionsSelector(store.getState()), point: getSelectionPoint(store.getState()) };
-            let { url, request } = buildIdentifyRequest(tocLayer, { ...identifyOptionsInfos, env });
+            const identifyOptionsInfos = {
+                ...identifyOptionsSelector(store.getState()),
+                point: getSelectionPoint(store.getState())
+            };
+            let {url, request} = buildIdentifyRequest(tocLayer, {...identifyOptionsInfos, env});
             request.cql_filter = `${ID_TABOU} = ${action.infos.feature.id}`;
             request.info_format = "application/json";
             return Rx.Observable.defer(() => getFeatureInfo(url, request, tocLayer, {}))
@@ -287,20 +299,20 @@ export function dipslayPASAByOperation(action$, store) {
 export const getFicheInfoValues = (action$, store) =>
     action$.ofType(LOAD_FICHE_INFOS)
         .filter(() => isTabou2Activate(store.getState()))
-        .switchMap(({ id }) => {
+        .switchMap(({id}) => {
             return Rx.Observable.from([
-                { name: "typesFonciers", api: getTypesFoncier },
-                { name: "typesActeur", api: getTypesActeurs },
-                { name: "typesAction", api: getTypesActions}
+                {name: "typesFonciers", api: getTypesFoncier},
+                {name: "typesActeur", api: getTypesActeurs},
+                {name: "typesAction", api: getTypesActions}
             ]).map(r =>
                 Rx.Observable.defer(() => r.api(id))
                     .catch(e => {
                         console.log("Error on get getTabouVocationsInfos data request");
                         console.log(e);
-                        return Rx.Observable.of({ data: [] });
+                        return Rx.Observable.of({data: []});
                     })
-                    .switchMap(({ data }) => {
-                        return Rx.Observable.of({...r, data: data?.elements || [] });
+                    .switchMap(({data}) => {
+                        return Rx.Observable.of({...r, data: data?.elements || []});
                     })
             ).toArray().switchMap((requestArray) => {
                 return Rx.Observable.forkJoin(requestArray).flatMap((elementArray) => {

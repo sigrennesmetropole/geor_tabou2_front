@@ -2,6 +2,8 @@
   "plugins": [
     {
       "name": "Tabou2",
+	  "description": "A plugin that provides advanced feature for Urbanistic plannification.",
+	  "version": "@@VERSION@@",
       "dependencies": [
         "SidebarMenu"
       ]

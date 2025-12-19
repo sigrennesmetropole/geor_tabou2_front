@@ -1,6 +1,6 @@
-import React, { useRef } from 'react';
-import { connect } from 'react-redux';
-import { keys, isEmpty, get } from 'lodash';
+import React, {useRef} from 'react';
+import {connect} from 'react-redux';
+import {keys, isEmpty, get} from 'lodash';
 import Message from "@mapstore/components/I18N/Message";
 import {
     currentActiveTabSelector,
@@ -51,7 +51,7 @@ import {
     updateOperation
 } from "@js/extension/actions/tabou2";
 
-function toolContainer({...props }) {
+function toolContainer({...props}) {
     let isTabouFeature = false;
     const searchValues = useRef({});
 
@@ -77,75 +77,97 @@ function toolContainer({...props }) {
         searchValues.current = vals;
     };
 
-    isTabouFeature = isEmpty(props.queryData) || !props.identifyInfos.feature?.properties.id_tabou ? false : true;
+    isTabouFeature = !(isEmpty(props.queryData) || !props.identifyInfos.feature?.properties.id_tabou);
 
     const featuresIds = Object.values(props.clickedFeatures).flat().map(i => i.id);
 
+    // Render search panel
+    const renderSearchPanel = () => {
+        if (props.currentTab !== "search") return null;
+        return (
+            <Tabou2SearchPanel
+                change={changeSearch}
+                searchState={searchValues.current}
+                currentTab={props.currentTab}
+                allIndex={props.allIndex}
+                queryData={props.queryData}
+                {...props} />
+        );
+    };
+
+    // Render add panel based on authentication and feature state
+    const renderAddPanel = () => {
+        if (props.currentTab !== "add") return null;
+
+        if (!showAddPanel) {
+            return (
+                <Tabou2Information
+                    isVisible
+                    glyph="alert"
+                    message={<Message msgId="tabou2.add.addNoSecureMsg"/>}
+                    title={<Message msgId="tabou2.add.addNoSecureTitle"/>}
+                />
+            );
+        }
+
+        if (isTabouFeature && !isEmpty(props.queryData)) {
+            return (
+                <Tabou2AddPanel
+                    feature={{}}
+                    featureId={null}
+                    layer={""}
+                    {...props} />
+            );
+        }
+
+        if (!isTabouFeature) {
+            return (
+                <Tabou2AddPanel
+                    feature={isEmpty(props.queryData) ? {} : props.identifyInfos.feature}
+                    featureId={isEmpty(props.queryData) ? null : props.identifyInfos?.id}
+                    layer={isEmpty(props.queryData) ? "" : props.identifyInfos.layer}
+                    queryData={props.queryData}
+                    {...props} />
+            );
+        }
+
+        return null;
+    };
+
+    // Render identify panel or info message
+    const renderIdentifyPanel = () => {
+        if (props.currentTab !== "identify") return null;
+
+        if (isEmpty(props.queryData)) {
+            return (
+                <Tabou2Information
+                    isVisible={isEmpty(props.queryData)}
+                    glyph="info-sign"
+                    message={<Message msgId="tabou2.identify.selectFeatureMsg"/>}
+                    title={<Message msgId="tabou2.identify.selectFeatureTitle"/>}/>
+            );
+        }
+
+        if (keys(props.queryData).length) {
+            return (
+                <Tabou2IdentifyPanel
+                    reqId={get(props.queryData, keys(props.queryData)[0])?.reqId}
+                    authent={props.authentInfos}
+                    featuresId={featuresIds}
+                    responseLyr={keys(props.queryData)}
+                    {...props}
+                    onSelect={handleSelect}/>
+            );
+        }
+
+        return null;
+    };
+
     return (
         <>
-            {
-                props.currentTab === "search" ?
-                    (<Tabou2SearchPanel
-                        change={changeSearch}
-                        searchState={searchValues.current}
-                        currentTab={props.currentTab}
-                        allIndex={props.allIndex}
-                        queryData={props.queryData}
-                        {...props} />)
-                    : null
-            }
-            {
-                // display add panel
-                props.currentTab === "add" && showAddPanel && !isTabouFeature ? (
-                    <Tabou2AddPanel
-                        feature={isEmpty(props.queryData) ? {} : props.identifyInfos.feature}
-                        featureId={ isEmpty(props.queryData) ? null : props.identifyInfos?.id}
-                        layer={isEmpty(props.queryData) ? "" : props.identifyInfos.layer}
-                        queryData={props.queryData}
-                        {...props} />)
-                    : null
-            }
-            {
-                props.currentTab === "add" && !showAddPanel ? (
-                    <Tabou2Information
-                        isVisible
-                        glyph="alert"
-                        message={<Message msgId="tabou2.add.addNoSecureMsg"/>}
-                        title={<Message msgId="tabou2.add.addNoSecureTitle"/>}
-                    />
-                ) : null
-            }
-            {
-                props.currentTab === "add" && isTabouFeature && showAddPanel && !isEmpty(props.queryData) ? (
-                    <Tabou2AddPanel
-                        feature={{}}
-                        featureId={null}
-                        layer={""}
-                        {...props} />
-                ) : null
-            }
-            {
-                // Identify panel
-                props.currentTab === "identify" && !isEmpty(props.queryData) && keys(props.queryData).length &&
-                    (<Tabou2IdentifyPanel
-                        reqId={get(props.queryData, keys(props.queryData)[0])?.reqId}
-                        authent={props.authentInfos}
-                        featuresId={featuresIds}
-                        responseLyr={keys(props.queryData)}
-                        {...props}
-                        onSelect={handleSelect}/>)
-            }
-            {
-                // Identify info message if no results or no clicked realized
-                props.currentTab === "identify" && isEmpty(props.queryData) ?
-                    (<Tabou2Information
-                        isVisible={isEmpty(props.queryData)}
-                        glyph="info-sign"
-                        message={<Message msgId="tabou2.identify.selectFeatureMsg"/>}
-                        title={<Message msgId="tabou2.identify.selectFeatureTitle"/>}/>
-                    )
-                    : null
-            }
+            {renderSearchPanel()}
+            {renderAddPanel()}
+            {renderIdentifyPanel()}
         </>
     );
 }

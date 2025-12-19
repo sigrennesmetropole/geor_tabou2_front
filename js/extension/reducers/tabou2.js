@@ -1,5 +1,5 @@
-import { set } from '@mapstore/utils/ImmutableUtils';
-import { get, isNumber } from 'lodash';
+import {set} from '@mapstore/utils/ImmutableUtils';
+import {get, isNumber} from 'lodash';
 import {
     SETUP,
     SET_MAIN_ACTIVE_TAB,
@@ -75,34 +75,41 @@ const initialState = {
     plhIsLoading: false
 };
 
+function handleLoadingAction(state, action) {
+    let newValue = action.value;
+    if (action.mode === 'count') {
+        const oldValue = get(state, `loadFlags.${action.name}`) ?? 0;
+        if (!isNumber(newValue)) {
+            if (newValue) {
+                newValue = oldValue + 1;
+            } else {
+                newValue = Math.max(oldValue - 1, 0);
+            }
+        }
+    }
+    return set(action.name === "loading" ? "loading" : `loadFlags.${action.name}`, newValue, state);
+}
+
 export default function tabou2(state = initialState, action) {
     switch (action.type) {
     case SETUP:
-        const { pluginCfg } = action;
-        return set(`pluginCfg`, pluginCfg, state);
+        return set(`pluginCfg`, action.pluginCfg, state);
     case SET_MAIN_ACTIVE_TAB:
-        const { activeTab } = action;
-        return set(`activeTab`, activeTab, state);
+        return set(`activeTab`, action.activeTab, state);
     case SET_TABOU_FILTERS:
-        const { filterObj } = action;
-        return set(`filterObj`, filterObj, state);
+        return set(`filterObj`, action.filterObj, state);
     case SET_DEFAULT_INFO_FORMAT:
-        const { infoFormat } = action;
-        return set(`infoFormat`, infoFormat, state);
+        return set(`infoFormat`, action.infoFormat, state);
     case LOAD_TABOU_FEATURE_INFO:
-        const { response } = action;
-        return set('response', response, state);
+        return set('response', action.response, state);
     case CLEAN_TABOU_INFOS:
         return set('response', {}, state);
     case SET_SELECTOR_INDEX:
-        const { selectorsIndex } = action;
-        return set('index', selectorsIndex, state);
+        return set('index', action.selectorsIndex, state);
     case SET_TABOU_FILTEROBJ:
-        const { layerFilterObj } = action;
-        return set('layerFilterObj', layerFilterObj, state);
+        return set('layerFilterObj', action.layerFilterObj, state);
     case SET_TABOU_FILTERED_FEATURES:
-        const { newFilteredFeatures } = action;
-        return set('filteredFeatures', state.filteredFeatures.concat(newFilteredFeatures), state);
+        return set('filteredFeatures', state.filteredFeatures.concat(action.newFilteredFeatures), state);
     case RESET_TABOU_FILTERED_FEATURES:
         return set('filteredFeatures', [], state);
     case RESET_SEARCH_FILTERS:
@@ -110,52 +117,29 @@ export default function tabou2(state = initialState, action) {
     case RESET_CQL_FILTERS:
         return set('filterObj', {}, state);
     case UPDATE_LAYER_PARAMS:
-        const { layerToFilter } = action;
-        return set('layerToFilter', layerToFilter, state);
+        return set('layerToFilter', action.layerToFilter, state);
     case SELECT_FEATURE:
-        const { selectedFeature } = action;
-        return set('selectedFeature', selectedFeature, state);
+        return set('selectedFeature', action.selectedFeature, state);
     case SELECT_LAYER:
-        const { selectedLayer } = action;
-        return set('selectedLayer', selectedLayer, state);
+        return set('selectedLayer', action.selectedLayer, state);
     case LOAD_EVENTS:
-        const { events } = action;
-        return set('events', events, state);
+        return set('events', action.events, state);
     case LOAD_TIERS:
-        const { tiers } = action;
-        return set('tiers', tiers, state);
-    case LOAD_FICHE_INFOS :
-        const { ficheInfos } = action;
-        return set('ficheInfos', ficheInfos, state);
+        return set('tiers', action.tiers, state);
+    case LOAD_FICHE_INFOS:
+        return set('ficheInfos', action.ficheInfos, state);
     case DISPLAY_TABOU_MARKER:
         return set('point', action.point, state);
-    case LOADING: {
-        let newValue = action.value;
-        if (action.mode === 'count') {
-            const oldValue = get(state, `loadFlags.${action.name}`) ?? 0;
-            newValue = isNumber(newValue)
-                ? newValue // set with passed value if number
-                : newValue
-                    ? oldValue + 1 // increment if true
-                    : Math.max(oldValue - 1, 0); // decrement if false
-        }
-        // anyway sets loading to true
-        return set(action.name === "loading" ? "loading" : `loadFlags.${action.name}`, newValue, state);
-    }
     case SET_IDENTIFY_INFOS:
         return set('identifyInfos', action.infos, state);
     case DISPLAY_FEATURE:
-        const { featureAdded } = action;
-        return set('featureAdded', featureAdded, state);
+        return set('featureAdded', action.featureAdded, state);
     case SET_TABOU_ERROR:
         return set('errors', action, state);
     case SET_TIERS_FILTER:
         return set('tiersFilter', action, state);
     case UPDATE_TABOU_SELECTION:
-    {
-        const {infos} = action;
-        return set("features[0]", infos, state);
-    }
+        return set("features[0]", action.infos, state);
     case TABOU_CHANGE_FEATURES:
         return set('gfiData', action?.data, state);
     case CLEAN_TABOU_SELECTION:
@@ -163,7 +147,6 @@ export default function tabou2(state = initialState, action) {
     case SET_TABOU_DOCUMENTS:
         return set("documents", action?.documents || {}, state);
     case SET_TABOU_VOCATIONS_INFOS:
-        return set(action.key, action.data || {}, state);
     case SET_TABOU_FICHE_INFOS:
         return set(action.key, action.data || {}, state);
     case SET_TYPES_PLH:
@@ -174,6 +157,8 @@ export default function tabou2(state = initialState, action) {
         return set("plhProgramme", action?.typePLH || {}, state);
     case SET_PLH_IS_LOADING:
         return set("plhIsLoading", action?.isLoading, state);
+    case LOADING:
+        return handleLoadingAction(state, action);
     default:
         return state;
     }

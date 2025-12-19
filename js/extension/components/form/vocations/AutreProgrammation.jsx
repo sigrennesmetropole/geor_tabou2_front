@@ -3,8 +3,12 @@ import Message from "@mapstore/components/I18N/Message";
 import isEmpty from "lodash/isEmpty";
 import {Row, Panel} from "react-bootstrap";
 import "@js/extension/css/vocation.css";
-import {findValueByType, changeByType, getCodeIdByCode, renderField, shouldShowField} from "../utils";
+import {findValueByType, changeByType, getCodeIdByCode, renderField, shouldShowField} from "./utils";
 
+/**
+ * Composant partagé pour afficher les autres programmations (équipements, autre)
+ * Utilisé par habitat, activités, mixte et mobilité
+ */
 export default function AutreProgrammation({
     operation = {},
     allowChange = false,
@@ -13,7 +17,8 @@ export default function AutreProgrammation({
     setValues = () => {
     },
     values,
-    i18n,
+    i18n = () => {
+    },
     messages
 }) {
     if (isEmpty(operation)) return <Message msgId="tabou2.vocation.noDisplay"/>;
@@ -58,12 +63,10 @@ export default function AutreProgrammation({
     ];
 
     return (
-        <Panel
-            className="contribPaddOap-style"
-        >
+        <Panel className="contribPaddOap-style">
             <Row className="attributeInfos">
                 <h4>
-                    <strong><Message msgId="tabou2.vocation.tabOtherProg"/></strong>
+                    <strong><Message msgId="tabou2.vocation.otherProgTitle"/></strong>
                 </h4>
                 {
                     getFields().filter(field => shouldShowField(field, layer)).map(item => renderField(item, i18n, messages, allowChange))
@@ -72,3 +75,4 @@ export default function AutreProgrammation({
         </Panel>
     );
 }
+

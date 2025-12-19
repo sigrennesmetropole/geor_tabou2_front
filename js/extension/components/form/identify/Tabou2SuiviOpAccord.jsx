@@ -1,22 +1,15 @@
-import React, { useEffect, useState, memo } from "react";
-import { isEmpty, isEqual, pick, get, has } from "lodash";
-import { Col, Row, FormControl, Grid, ControlLabel } from "react-bootstrap";
-import Tabou2Combo from '@js/extension/components/form/Tabou2Combo';
-import { getRequestApi } from "@js/extension/api/requests";
-import { Multiselect } from "react-widgets";
+import React, {useEffect, useState, memo} from "react";
+import {isEmpty, isEqual, pick, get, has} from "lodash";
+import {Col, Row, FormControl, Grid, ControlLabel} from "react-bootstrap";
+import Tabou2Select from '@js/extension/components/form/Tabou2Select';
+import {getRequestApi} from "@js/extension/api/requests";
 import Tabou2Date from "../../common/Tabou2Date";
 import "@js/extension/css/identify.css";
 import Message from "@mapstore/components/I18N/Message";
 
-import moment from 'moment';
-import momentLocalizer from 'react-widgets/lib/localizers/moment';
-momentLocalizer(moment);
 
 const avoidReRender = (prevProps, nextProps) => {
-    if (isEqual(prevProps.initialItem, nextProps.initialItem)) {
-        return true;
-    }
-    return false; // re render
+    return isEqual(prevProps.initialItem, nextProps.initialItem);
 };
 
 const Tabou2SuiviOpAccord = ({
@@ -25,26 +18,43 @@ const Tabou2SuiviOpAccord = ({
     programme,
     layer,
     authent,
-    change = () => { },
-    i18n = () => { },
+    change = () => {
+    },
+    i18n = () => {
+    },
     messages,
     apiCfg
 }) => {
     const [values, setValues] = useState({});
     const [fields, setFields] = useState([]);
     const [required, setRequired] = useState({});
+
+    // manage change infos
+    const changeInfos = (item) => {
+        let newValues = {...values, ...item};
+        setValues(newValues);
+        // send to parent to save
+        let accordValues = pick(newValues, fields.filter(f => !f.readOnly).map(f => f.name));
+        change(accordValues, pick(accordValues, required));
+    };
+
     // get fields for this section
     const getFields = () => [{
         name: "etape",
         label: "tabou2.identify.accordions.step",
         field: "etape.libelle",
         type: "combo",
+        autocomplete: true,
         apiLabel: "libelle",
+        valueField: "id",
         layers: ["layerPA"],
         filter: false,
         api: `programmes/${initialItem.id}/etapes?orderBy=id&asc=true`,
         source: values?.etape ? values : initialItem,
-        readOnly: false
+        readOnly: false,
+        value: () => values.etape || initialItem.etape,
+        select: (v) => changeInfos({etape: v}),
+        change: (v) => changeInfos({etape: v || null})
     }, {
         name: "livraisonDate",
         label: "tabou2.identify.accordions.dateLiv",
@@ -105,23 +115,15 @@ const Tabou2SuiviOpAccord = ({
 
     // hooks
     useEffect(() => {
+        // Toujours synchroniser values avec initialItem si initialItem change (même si values a déjà été modifié)
+        setValues(initialItem);
         const calculFields = getFields();
         const mandatoryFields = calculFields.filter(f => f.require).map(f => f.name);
-        if (!isEqual(initialItem, values)) {
-            setValues(initialItem);
-            setFields(calculFields);
-            setRequired(mandatoryFields);
-        }
+        setFields(calculFields);
+        setRequired(mandatoryFields);
     }, [initialItem]);
 
-    // manage change infos
-    const changeInfos = (item) => {
-        let newValues = { ...values, ...item };
-        setValues(newValues);
-        // send to parent to save
-        let accordValues = pick(newValues, getFields().filter(f => !f.readOnly).map(f => f.name));
-        change(accordValues, pick(accordValues, required));
-    };
+
     // get value for a specific item
     const getValue = (item) => {
         if (isEmpty(values) || isEmpty(operation)) return null;
@@ -131,47 +133,74 @@ const Tabou2SuiviOpAccord = ({
     const changeDate = (field, str) => {
         // TODO : valid with moment like that
         // let isValid = moment(str, "DD/MM/YYYY", true);
-        changeInfos({ [field.name]: str ? new Date(str).toISOString() : "" });
+        changeInfos({[field.name]: str ? new Date(str).toISOString() : ""});
     };
 
     const allowChange = authent.isContrib || authent.isReferent;
 
     return (
-        <Grid style={{ width: "100%" }} className={""}>
+        <Grid style={{width: "100%"}} className={""}>
             {
                 fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(item => (
                     <Row className="attributeInfos">
                         <Col xs={4}>
-                            <ControlLabel><Message msgId={item.label} /></ControlLabel>
+                            <ControlLabel><Message msgId={item.label}/></ControlLabel>
                         </Col>
                         <Col xs={8}>
                             {
-                                item.type === "combo" ? (
-                                    <Tabou2Combo
-                                        load={() => getRequestApi(item.api, apiCfg, {})}
-                                        disabled={item?.readOnly || !allowChange}
-                                        placeholder={i18n(messages, item?.label || "")}
+                                item.type === "combo" && item?.autocomplete ? (
+                                    <Tabou2Select
                                         textField={item.apiLabel}
-                                        onLoad={(r) => r?.elements || r}
-                                        name={item.name}
-                                        filter={has(item, "filter") ? item.filter : "contains"}
-                                        readOnly={item.readOnly || !allowChange}
-                                        defaultValue={get(values, item.name)}
-                                        onSelect={(v) => changeInfos({ [item.name]: v })}
-                                        onChange={(v) => !v ? changeInfos({ [item.name]: v }) : null}
-                                        messages={{
-                                            emptyList: i18n(messages, "tabou2.emptyList"),
-                                            openCombobox: i18n(messages, "tabou2.displayList")
+                                        valueField={item.valueField || "id"}
+                                        value={values.etape || null}
+                                        search={(text) => {
+                                            if (!text || text.length < 1) {
+                                                return getRequestApi(item.api, apiCfg, {})
+                                                    .then(results => Array.isArray(results) ? results : (results.elements || []));
+                                            }
+                                            return getRequestApi(item.api, apiCfg, {[item.apiLabel]: `${text}*`})
+                                                .then(results => Array.isArray(results) ? results : (results.elements || []));
                                         }}
+                                        onSelect={v => changeInfos({etape: v})}
+                                        onChange={v => changeInfos({etape: v || null})}
+                                        placeholder={i18n(messages, item?.label || "")}
+                                        disabled={item?.readOnly || !allowChange}
+                                        allowClear
+                                    />
+                                ) : null
+                            }{
+                                item.type === "combo" && !item?.autocomplete ? (
+                                    <Tabou2Select
+                                        textField={item.apiLabel}
+                                        valueField={item.valueField || "id"}
+                                        value={get(values, item.name)}
+                                        search={() => {
+                                            return getRequestApi(item.api, apiCfg, {})
+                                                .then(results => Array.isArray(results) ? results : (results.elements || []));
+                                        }}
+                                        onSelect={(v) => changeInfos({[item.name]: v})}
+                                        onChange={(v) => !v ? changeInfos({[item.name]: v}) : null}
+                                        placeholder={i18n(messages, item?.label || "")}
+                                        disabled={item?.readOnly || !allowChange}
+                                        allowClear
                                     />
                                 ) : null
                             }{
                                 item.type === "multi" ? (
-                                    <Multiselect
-                                        readOnly={item.readOnly || !allowChange}
-                                        value={item.data}
-                                        className={item.readOnly ? "tagColor noClick" : "tagColor"}
+                                    <Tabou2Select
+                                        isMulti
+                                        disabled={item.readOnly || !allowChange}
+                                        value={Array.isArray(item.data) ? item.data.map(d => typeof d === 'string' ? {
+                                            label: d,
+                                            value: d
+                                        } : d) : []}
                                         placeholder={i18n(messages, item?.label || "")}
+                                        load={() => Promise.resolve(Array.isArray(item.data) ? item.data.map(d => typeof d === 'string' ? {
+                                            label: d,
+                                            value: d
+                                        } : d) : [])}
+                                        textField="label"
+                                        valueField="value"
                                     />
                                 ) : null
                             }{
@@ -198,24 +227,24 @@ const Tabou2SuiviOpAccord = ({
                                 ) : null
                             } {
                                 (item.type === "text" || item.type === "number") &&
-                                (<FormControl
-                                    type={item.type}
-                                    min={item?.min}
-                                    max={item?.max}
-                                    step={item?.step}
-                                    placeholder={i18n(messages, item?.label || "")}
-                                    value={getValue(item) || ""}
-                                    readOnly={!allowChange || item.readOnly}
-                                    onChange={(v) => changeInfos({ [item.name]: v.target.value })}
-                                    onKeyDown={(v) => {
-                                        if (item.type !== "number") return;
-                                        // only keep numeric and special key control as "Delete" or "Backspace"
-                                        if (!new RegExp('^[0-9]+$').test(v.key) && v.key.length < 2 && v.key !== ",") {
-                                            v.returnValue = false;
-                                            if (v.preventDefault) v.preventDefault();
-                                        }
-                                    }}
-                                />)
+                                        (<FormControl
+                                            type={item.type}
+                                            min={item?.min}
+                                            max={item?.max}
+                                            step={item?.step}
+                                            placeholder={i18n(messages, item?.label || "")}
+                                            value={getValue(item) || ""}
+                                            readOnly={!allowChange || item.readOnly}
+                                            onChange={(v) => changeInfos({[item.name]: v.target.value})}
+                                            onKeyDown={(v) => {
+                                                if (item.type !== "number") return;
+                                                // only keep numeric and special key control as "Delete" or "Backspace"
+                                                if (!new RegExp('^[0-9]+$').test(v.key) && v.key.length < 2 && v.key !== ",") {
+                                                    v.returnValue = false;
+                                                    if (v.preventDefault) v.preventDefault();
+                                                }
+                                            }}
+                                        />)
                             }
                         </Col>
                     </Row>

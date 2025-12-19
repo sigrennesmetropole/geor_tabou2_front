@@ -3,16 +3,21 @@ import Message from "@mapstore/components/I18N/Message";
 import isEmpty from "lodash/isEmpty";
 import {Row, Panel} from "react-bootstrap";
 import "@js/extension/css/vocation.css";
-import {renderField, shouldShowField, getCompositionProgrammationFields} from "../utils";
+import {renderField, shouldShowField, getCompositionProgrammationFields} from "./utils";
 
-export default function AutreProgrammation({
+/**
+ * Composant partagé pour afficher la composition de programmation
+ * Utilisé par habitat, activités, mixte et mobilité
+ */
+export default function CompositionProgrammation({
     operation = {},
     allowChange = false,
     layer = "",
     setValues = () => {
     },
     values,
-    i18n,
+    i18n = () => {
+    },
     messages
 }) {
     if (isEmpty(operation)) return <Message msgId="tabou2.vocation.noDisplay"/>;
@@ -20,9 +25,7 @@ export default function AutreProgrammation({
     const getFields = () => getCompositionProgrammationFields(values, setValues);
 
     return (
-        <Panel
-            className="contribPaddOap-style"
-        >
+        <Panel className="contribPaddOap-style">
             <Row className="attributeInfos">
                 <h4>
                     <strong><Message msgId="tabou2.vocation.compoTitle"/></strong>
@@ -34,3 +37,4 @@ export default function AutreProgrammation({
         </Panel>
     );
 }
+

@@ -1,15 +1,15 @@
 import React from "react";
-import { isEmpty, pick, get, find } from "lodash";
-import { Col, Row, Grid, Glyphicon, ControlLabel, FormControl } from "react-bootstrap";
-import Tabou2Combo from '@js/extension/components/form/Tabou2Combo';
-import { getRequestApi } from "@js/extension/api/requests";
-import { Multiselect } from "react-widgets";
+import {isEmpty, pick, get, find} from "lodash";
+import {Col, Row, Grid, Glyphicon, ControlLabel, FormControl} from "react-bootstrap";
+import Tabou2Select from '@js/extension/components/form/Tabou2Select';
+import {getRequestApi} from "@js/extension/api/requests";
 import "@js/extension/css/identify.css";
 import "@js/extension/css/tabou.css";
 import Message from "@mapstore/components/I18N/Message";
 
 import ButtonRB from '@mapstore/components/misc/Button';
 import tooltip from '@mapstore/components/misc/enhancers/tooltip';
+
 const Button = tooltip(ButtonRB);
 
 /**
@@ -27,18 +27,20 @@ const Tabou2GouvernanceAccord = ({
     tiers,
     setTiersFilter,
     authent,
-    change = () => { },
+    change = () => {
+    },
     apiCfg,
-    i18n = () => { }
+    i18n = () => {
+    }
 }) => {
 
-    let changeInfos = () => { };
+    let changeInfos;
 
     let changeAction = (t, fieldArray, search, field, value, src) => {
         // get item by type code
         let itemByCode = find(get(src, fieldArray), search);
         if (!itemByCode) {
-            itemByCode = { typeAction: find(t.typesAction, ['code', search[1]]) };
+            itemByCode = {typeAction: find(t.typesAction, ['code', search[1]])};
         }
         // change value
         itemByCode[field] = value;
@@ -46,14 +48,14 @@ const Tabou2GouvernanceAccord = ({
         const othersItems = src[fieldArray].filter(item => item.typeAction.code !== itemByCode.typeAction.code);
         // send to parent
         const concatAll = [...othersItems, itemByCode];
-        changeInfos({ actions: concatAll });
+        changeInfos({actions: concatAll});
     };
 
     let changeActeur = (t, fieldArray, search, field, value, src) => {
         // get item by type code
         let itemByCode = find(get(src, fieldArray), search);
         if (!itemByCode) {
-            itemByCode = { typeActeur: find(t.typesActeurs, ['code', search[1]]) };
+            itemByCode = {typeActeur: find(t.typesActeurs, ['code', search[1]])};
         }
         // change value
         itemByCode[field] = value;
@@ -61,7 +63,7 @@ const Tabou2GouvernanceAccord = ({
         const othersItems = src[fieldArray].filter(item => item.typeActeur.code !== itemByCode.typeActeur.code);
         // send to parent
         const concatAll = [...othersItems, itemByCode];
-        changeInfos({ acteurs: concatAll });
+        changeInfos({acteurs: concatAll});
     };
 
     const fields = [{
@@ -77,40 +79,60 @@ const Tabou2GouvernanceAccord = ({
         field: "decision.libelle",
         layers: ["layerSA", "layerOA"],
         type: "combo",
+        autocomplete: true,
         apiLabel: "libelle",
+        valueField: "id",
         api: "decisions",
         source: operation,
-        readOnly: false
+        readOnly: false,
+        value: () => initialItem.decision || operation.decision,
+        select: (v) => changeInfos({decision: v}),
+        change: (v) => changeInfos(v ? {decision: v} : {decision: null})
     }, {
         name: "maitriseOuvrage",
         label: "tabou2.identify.accordions.moa",
         field: "maitriseOuvrage.libelle",
         layers: ["layerOA"],
         type: "combo",
+        autocomplete: true,
         apiLabel: "libelle",
+        valueField: "id",
         api: "maitrise-ouvrage",
         source: operation,
-        readOnly: false
+        readOnly: false,
+        value: () => initialItem.maitriseOuvrage || operation.maitriseOuvrage,
+        select: (v) => changeInfos({maitriseOuvrage: v}),
+        change: (v) => changeInfos(v ? {maitriseOuvrage: v} : {maitriseOuvrage: null})
     }, {
         layers: ["layerSA", "layerOA"],
         name: "modeAmenagement",
         label: "tabou2.identify.accordions.modeAmenagement",
         field: "modeAmenagement.libelle",
         type: "combo",
+        autocomplete: true,
         apiLabel: "libelle",
+        valueField: "id",
         api: "mode-amenagement",
         source: initialItem,
-        readOnly: false
+        readOnly: false,
+        value: () => initialItem.modeAmenagement,
+        select: (v) => changeInfos({modeAmenagement: v}),
+        change: (v) => changeInfos(v ? {modeAmenagement: v} : {modeAmenagement: null})
     }, {
         name: "outilAmenagement",
         label: "tabou2.identify.accordions.outilAmenagement",
         field: "outilAmenagement.libelle",
         layers: ["layerSA", "layerOA"],
         type: "combo",
+        autocomplete: true,
         apiLabel: "libelle",
+        valueField: "id",
         api: "outil-amenagement",
         source: operation,
-        readOnly: false
+        readOnly: false,
+        value: () => initialItem.outilAmenagement || operation.outilAmenagement,
+        select: (v) => changeInfos({outilAmenagement: v}),
+        change: (v) => changeInfos(v ? {outilAmenagement: v} : {outilAmenagement: null})
     }, {
         name: "amenageur",
         field: "nom",
@@ -191,13 +213,13 @@ const Tabou2GouvernanceAccord = ({
     };
 
     return (
-        <Grid style={{ width: "100%" }} className={""}>
+        <Grid style={{width: "100%"}} className={""}>
             {
                 fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(item => (
                     <Row className="attributeInfos">
                         <Col xs={4}>
                             {
-                                item.label && (<ControlLabel><Message msgId={item.label} /></ControlLabel>)
+                                item.label && (<ControlLabel><Message msgId={item.label}/></ControlLabel>)
                             }
                         </Col>
                         <Col xs={allTiersButtons[item.name] ? 7 : 8}>
@@ -206,7 +228,7 @@ const Tabou2GouvernanceAccord = ({
                                     (<FormControl
                                         componentClass={item.isArea ? "textarea" : "input"}
                                         placeholder={i18n(messages, item?.placeholder || item.label)}
-                                        style={{ height: item.isArea ? "100px" : "auto" }}
+                                        style={{height: item.isArea ? "100px" : "auto"}}
                                         type={item.type}
                                         min="0"
                                         step={item?.step}
@@ -221,36 +243,63 @@ const Tabou2GouvernanceAccord = ({
                                         onClick={() => item.click()}
                                         bsStyle="primary"
                                         bsSize={item.size || "xs"}>
-                                        <Glyphicon glyph="user" />
+                                        <Glyphicon glyph="user"/>
                                     </Button>
                                 )
                             }{
-                                item.type === "combo" && (
-                                    <Tabou2Combo
-                                        load={() => getRequestApi(item.api, apiCfg, {})}
-                                        placeholder={i18n(messages, item?.label || "")}
-                                        filter="contains"
+                                item.type === "combo" && item?.autocomplete && (
+                                    <Tabou2Select
                                         textField={item.apiLabel}
-                                        disabled={item?.readOnly || !allowChange}
-                                        onLoad={(r) => r?.elements || r}
-                                        name={item.name}
-                                        value={get(initialItem, item.name)}
-                                        onSelect={(v) => changeInfos({ [item.name]: v })}
-                                        onChange={(v) => !v ? changeInfos({ [item.name]: v }) : null}
-                                        messages={{
-                                            emptyList: i18n(messages, "tabou2.emptyList"),
-                                            openCombobox: i18n(messages, "tabou2.displayList")
+                                        valueField={item.valueField || "id"}
+                                        value={item.value ? item.value() : null}
+                                        search={(text) => {
+                                            if (!text || text.length < 1) {
+                                                return getRequestApi(item.api, apiCfg, {})
+                                                    .then(results => Array.isArray(results) ? results : (results.elements || []));
+                                            }
+                                            return getRequestApi(item.api, apiCfg, {[item.apiLabel]: `${text}*`})
+                                                .then(results => Array.isArray(results) ? results : (results.elements || []));
                                         }}
+                                        onSelect={item.select}
+                                        onChange={item.change}
+                                        placeholder={i18n(messages, item?.label || "")}
+                                        disabled={item?.readOnly || !allowChange}
+                                        allowClear
+                                    />
+                                )
+                            }{
+                                item.type === "combo" && !item?.autocomplete && (
+                                    <Tabou2Select
+                                        textField={item.apiLabel}
+                                        valueField={item.valueField || "id"}
+                                        value={item.value ? item.value() : get(initialItem, item.name)}
+                                        search={() => {
+                                            return getRequestApi(item.api, apiCfg, {})
+                                                .then(results => Array.isArray(results) ? results : (results.elements || []));
+                                        }}
+                                        onSelect={(v) => changeInfos({[item.name]: v})}
+                                        onChange={(v) => !v ? changeInfos({[item.name]: v}) : null}
+                                        placeholder={i18n(messages, item?.label || "")}
+                                        disabled={item?.readOnly || !allowChange}
+                                        allowClear
                                     />
                                 )
                             }{
                                 item.type === "multi" && (
-                                    <Multiselect
+                                    <Tabou2Select
+                                        isMulti
                                         placeholder={i18n(messages, item?.label || "")}
-                                        readOnly={item.readOnly || !allowChange}
-                                        value={item.data}
-                                        className={item.readOnly ? "tagColor noClick" : "tagColor"}
-                                        onChange={() => { }}
+                                        disabled={item.readOnly || !allowChange}
+                                        value={Array.isArray(item.data) ? item.data.map(d => typeof d === 'string' ? {
+                                            label: d,
+                                            value: d
+                                        } : d) : []}
+                                        load={() => Promise.resolve(Array.isArray(item.data) ? item.data.map(d => typeof d === 'string' ? {
+                                            label: d,
+                                            value: d
+                                        } : d) : [])}
+                                        textField="label"
+                                        valueField="value"
                                     />
                                 )
                             }
@@ -263,7 +312,7 @@ const Tabou2GouvernanceAccord = ({
                                         onClick={() => allTiersButtons[item.name].click()}
                                         bsStyle="primary"
                                         bsSize="small">
-                                        <Glyphicon glyph="user" />
+                                        <Glyphicon glyph="user"/>
                                     </Button>
                                 </Col>
                             )

@@ -1,18 +1,18 @@
 import React, {useState, useEffect, useRef} from 'react';
 import ResizableModal from '@mapstore/components/misc/ResizableModal';
-import { Grid, Checkbox, Col, Table, Row } from 'react-bootstrap';
-import { isEqual, orderBy, find, omit, isEmpty, some, includes } from 'lodash';
-import Tabou2Combo from '@js/extension/components/form/Tabou2Combo';
+import {Grid, Checkbox, Col, Table, Row} from 'react-bootstrap';
+import {isEqual, orderBy, find, omit, isEmpty, some, includes} from 'lodash';
+import Tabou2Select from '@js/extension/components/form/Tabou2Select';
 import Tabou2TextForm from '@js/extension/components/form/Tabou2TextForm';
 import Tabou2TiersActions from "../../tabou2IdentifyPanel/modals/Tabou2TiersActions";
 import Tabou2TiersForm from '../../form/Tabou2TiersForm';
-import { TIERS_SCHEMA, REQUIRED_TIERS } from '@js/extension/constants';
-import { getRequestApi, searchTiers } from "@js/extension/api/requests";
+import {TIERS_SCHEMA, REQUIRED_TIERS} from '@js/extension/constants';
+import {getRequestApi, searchTiers} from "@js/extension/api/requests";
 import Message from "@mapstore/components/I18N/Message";
 import {getMessageById} from "@mapstore/utils/LocaleUtils";
-import SearchCombo from '@js/extension/components/form/SearchCombo';
 import "@js/extension/css/identify.css";
 import "@js/extension/css/tabou.css";
+
 /**
  * Tier modal
  * TODO : NEED API FIX TO BE TESTED AND FINISH !!
@@ -21,15 +21,16 @@ import "@js/extension/css/tabou.css";
  */
 export default function Tabou2TiersModal({
     visible,
-    onClick = () => {},
+    onClick = () => {
+    },
     ...props
 }) {
     const [tiers, setTiers] = useState([]);
-    const [sortField, setSortField] = useState([["id"], ["asc"]]); // eslint-disable-line no-unused-vars
+    const [sortField] = useState(["id"]); // eslint-disable-line no-unused-vars
     const editionActivate = useRef(false);
     const [associateTier, setAssociateTier] = useState({});
     const [opened, setOpened] = useState(-1);
-    const readOnly = props?.authent?.isReferent || props?.authent?.isContrib ? false : true;
+    const readOnly = !(props?.authent?.isReferent || props?.authent?.isContrib);
     const [filterText, setFilterText] = useState("");
 
     // hook to manage tiers refresh from API and refresh component only if needed
@@ -44,7 +45,6 @@ export default function Tabou2TiersModal({
     }, [visible]);
     // hook to for refresh on tiers change, sort action of search text
     useEffect(() => {
-        return;
     }, [tiers, sortField, filterText]);
 
     // manage if form panel component is visible or hidden
@@ -112,7 +112,11 @@ export default function Tabou2TiersModal({
         if (newTier.associate) {
             setTiers([...tiers.filter(t => t.id !== newTier.id), newTier]);
         } else {
-            setTiers([...tiers.filter(el => ![oldTier?.id, newTier.id].includes(el.id)), {...newTier, associate: false, edit: true}]);
+            setTiers([...tiers.filter(el => ![oldTier?.id, newTier.id].includes(el.id)), {
+                ...newTier,
+                associate: false,
+                edit: true
+            }]);
         }
     };
 
@@ -171,10 +175,14 @@ export default function Tabou2TiersModal({
     };
 
     const isTypeDisplay = (tierItem) => {
-        if (props.tiersFilter && props.tiersFilter.filter) {
+        if (props.tiersFilter?.filter) {
             return props.tiersFilter.filter === tierItem.typeTiers.id;
         }
         return true;
+    };
+
+    const handleTiersSearch = (text) => {
+        return searchTiers(text).then(results => results.elements);
     };
 
     return (
@@ -200,7 +208,7 @@ export default function Tabou2TiersModal({
                                     onChange={(e) => {
                                         setFilterText(e.target.value);
                                     }}
-                                    placeholder={getMessageById(props.messages, "tabou2.tiersModal.searchName")} />
+                                    placeholder={getMessageById(props.messages, "tabou2.tiersModal.searchName")}/>
                             </Col>
                         </Row>
                     ) : null
@@ -213,11 +221,16 @@ export default function Tabou2TiersModal({
                                     <Table>
                                         <thead>
                                             <tr>
-                                                <th className="col-xs-1"><Message msgId="tabou2.tiersModal.actif"/></th>
-                                                <th className="col-xs-1"><Message msgId="tabou2.tiersModal.private"/></th>
-                                                <th className="col-xs-3"><Message msgId="tabou2.tiersModal.type"/></th>
-                                                <th className="col-xs-3"><Message msgId="tabou2.tiersModal.name"/></th>
-                                                {!readOnly ? (<th><Message msgId="tabou2.tiersModal.actions"/></th>) : null}
+                                                <th className="col-xs-1"><Message
+                                                    msgId="tabou2.tiersModal.actif"/></th>
+                                                <th className="col-xs-1"><Message
+                                                    msgId="tabou2.tiersModal.private"/></th>
+                                                <th className="col-xs-3"><Message
+                                                    msgId="tabou2.tiersModal.type"/></th>
+                                                <th className="col-xs-3"><Message
+                                                    msgId="tabou2.tiersModal.name"/></th>
+                                                {!readOnly ? (<th><Message msgId="tabou2.tiersModal.actions"/>
+                                                </th>) : null}
                                             </tr>
                                         </thead>
                                         <tbody style={{overflow: "auto"}}>
@@ -244,11 +257,14 @@ export default function Tabou2TiersModal({
                                                                 <td>
                                                                     <Checkbox
                                                                         checked={tier.tiers.estPrive}
-                                                                        disabled={tier.dateInactif || opened !== tier.id ? true : false}
+                                                                        disabled={!!(tier.dateInactif || opened !== tier.id)}
                                                                         inline
                                                                         id={`${tier.id}-${new Date().getTime()}}`}
                                                                         onChange={() => {
-                                                                            changeTier({...tier, estPrive: !tier.tiers.estPrive});
+                                                                            changeTier({
+                                                                                ...tier,
+                                                                                estPrive: !tier.tiers.estPrive
+                                                                            });
                                                                         }}
                                                                         className="col-xs-2"
                                                                         change
@@ -256,30 +272,41 @@ export default function Tabou2TiersModal({
                                                                 </td>
                                                                 <td>
                                                                     {tier.associate ? (
-                                                                        <Tabou2Combo
-                                                                            load={() => getRequestApi("types-tiers?asc=true", props.pluginCfg.apiCfg, {})}
-                                                                            defaultValue={tier.typeTiers.libelle}
-                                                                            placeholder={getMessageById(props.messages, "tabou2.tiersModal.typePlaceholder")}
-                                                                            textField={"libelle"}
-                                                                            filter={false}
-                                                                            value={associateTier?.typeTiers?.libelle}
-                                                                            onLoad={(r) => r?.elements || r}
-                                                                            disabled={false}
-                                                                            onSelect={(t) =>  {
-                                                                                changeTier({...tier, typeTiers: {...tier.typeTiers, ...t}});
-                                                                                setAssociateTier({...associateTier, typeTiers: t});
+                                                                        <Tabou2Select
+                                                                            textField="libelle"
+                                                                            valueField="id"
+                                                                            value={associateTier?.typeTiers}
+                                                                            search={() => {
+                                                                                return getRequestApi("types-tiers?asc=true", props.pluginCfg.apiCfg, {})
+                                                                                    .then(results => results.elements || []);
+                                                                            }}
+                                                                            onSelect={(t) => {
+                                                                                changeTier({
+                                                                                    ...tier,
+                                                                                    typeTiers: {...tier.typeTiers, ...t}
+                                                                                });
+                                                                                setAssociateTier({
+                                                                                    ...associateTier,
+                                                                                    typeTiers: t
+                                                                                });
                                                                             }}
                                                                             onChange={(t) => {
                                                                                 if (!t) {
-                                                                                    changeTier({...tier, typeTiers: {...tier.typeTiers, libelle: ""}});
-                                                                                    setAssociateTier({...associateTier, type: t});
+                                                                                    changeTier({
+                                                                                        ...tier,
+                                                                                        typeTiers: {
+                                                                                            ...tier.typeTiers,
+                                                                                            libelle: ""
+                                                                                        }
+                                                                                    });
+                                                                                    setAssociateTier({
+                                                                                        ...associateTier,
+                                                                                        typeTiers: null
+                                                                                    });
                                                                                 }
-                                                                            }
-                                                                            }
-                                                                            messages={{
-                                                                                emptyList: getMessageById(props.messages, "tabou2.emptyList"),
-                                                                                openCombobox: getMessageById(props.messages, "tabou2.displaylist")
                                                                             }}
+                                                                            placeholder={getMessageById(props.messages, "tabou2.tiersModal.typePlaceholder")}
+                                                                            allowClear
                                                                         />
                                                                     ) : tier.typeTiers.libelle}
                                                                 </td>
@@ -287,21 +314,23 @@ export default function Tabou2TiersModal({
                                                                     {
                                                                         tier.associate ?
                                                                             (
-                                                                                <SearchCombo
-                                                                                    minLength={1}
-                                                                                    textField={"nom"}
-                                                                                    valueField={"id"}
-                                                                                    value={associateTier?.tiers?.nom}
-                                                                                    forceSelection
-                                                                                    search={
-                                                                                        text => searchTiers(text)
-                                                                                            .then(results =>
-                                                                                                results.elements.map(v => v)
-                                                                                            )
-                                                                                    }
-                                                                                    onSelect={(t) =>  setAssociateTier({...associateTier, tiers: t})}
+                                                                                <Tabou2Select
+                                                                                    textField="nom"
+                                                                                    valueField="id"
+                                                                                    value={associateTier?.tiers}
+                                                                                    search={(text) => {
+                                                                                        if (!text || text.length < 1) {
+                                                                                            return searchTiers("").then(results => results.elements || []);
+                                                                                        }
+                                                                                        return handleTiersSearch(text);
+                                                                                    }}
+                                                                                    onSelect={(t) => setAssociateTier({
+                                                                                        ...associateTier,
+                                                                                        tiers: t
+                                                                                    })}
                                                                                     onChange={(t) => !t ? setAssociateTier(omit(associateTier, ["tiers"])) : null}
                                                                                     placeholder={getMessageById(props.messages, "tabou2.tiersModal.tierPlaceholder")}
+                                                                                    allowClear
                                                                                 />
                                                                             ) : tier.tiers.nom
                                                                     }

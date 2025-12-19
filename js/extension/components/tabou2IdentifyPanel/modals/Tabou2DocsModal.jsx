@@ -1,13 +1,19 @@
 import React, {useEffect, useState, useRef} from 'react';
-import { connect } from 'react-redux';
-import { isEmpty } from "lodash";
+import {connect} from 'react-redux';
+import {isEmpty} from "lodash";
 
 import ResizableModal from '@mapstore/components/misc/ResizableModal';
 import Message from "@mapstore/components/I18N/Message";
-import { getDocuments, downloadDocument, deleteDocument, addTabouDocument, modifyDocument } from "../../../actions/tabou2";
-import { getFeatureDocuments, getAuthInfos, getPluginCfg, documentsLoading } from "../../../selectors/tabou2";
+import {
+    getDocuments,
+    downloadDocument,
+    deleteDocument,
+    addTabouDocument,
+    modifyDocument
+} from "../../../actions/tabou2";
+import {getFeatureDocuments, getAuthInfos, getPluginCfg, documentsLoading} from "../../../selectors/tabou2";
 import Tabou2DocsActions from "./Tabou2DocsActions";
-import { Data } from "react-data-grid-addons";
+import {Data} from "react-data-grid-addons";
 import Tabou2DocsForm from '../../form/Tabou2DocsForm';
 
 import Loader from '@mapstore/components/misc/Loader';
@@ -23,7 +29,7 @@ function Tabou2DocsModal({
     ...props // {click(), documents[]}
 }) {
     const canvas = useRef(null);
-    const translate = { i18n: props.i18n, messages: props.messages };
+    const translate = {i18n: props.i18n, messages: props.messages};
     const [isLoading, setIsLoading] = useState(false);
     const [page, setPage] = useState(0);
     const [rows, setRows] = useState([]);
@@ -38,6 +44,7 @@ function Tabou2DocsModal({
     /**
      * To get or refresh all document list
      * @param {number} p as page
+     * @param {object} headerFilters - filters to apply on the documents list
      */
     const refresh = (p, headerFilters) => {
         setRow({});
@@ -55,7 +62,8 @@ function Tabou2DocsModal({
         if (newDoc?.action) {
             return setRow(newDoc);
         }
-        return () => {};
+        return () => {
+        };
     }, [newDoc?.action, props.loaderDocuments]);
     // update on modal visible change
     useEffect(() => {
@@ -69,12 +77,19 @@ function Tabou2DocsModal({
                 setFilters({});
                 setMaxPages(Math.ceil(props.documents?.totalElements / props.config?.apiCfg?.documentsByPage));
             }
-            // get max pages number
+            // Remplacer complètement la liste pour refléter les mises à jour
+            // Au lieu d'ajouter seulement les nouveaux documents
             let newRows = props.documents?.elements || [];
-            const oldRowsId = rows.map(r => r.id);
-            newRows = newRows.filter(n => !oldRowsId.includes(n.id));
-            // force to hide deleted - link to issue 193
-            setRows([...rows.filter(r => r.id !== deleted), ...newRows.filter(n => !oldRowsId.includes(n.id))]);
+
+            // Si c'est un rechargement complet (page 0 ou filtered), remplacer toute la liste
+            if (page === 0 || filtered) {
+                setRows(newRows.filter(n => n.id !== deleted));
+            } else {
+                // Sinon, ajouter les nouveaux documents (pagination)
+                const oldRowsId = rows.map(r => r.id);
+                newRows = newRows.filter(n => !oldRowsId.includes(n.id));
+                setRows([...rows.filter(r => r.id !== deleted), ...newRows]);
+            }
         } else {
             setRows([]);
         }
@@ -106,7 +121,7 @@ function Tabou2DocsModal({
      * Trigger on scroll event
      * @param {string} scrollDirection
      */
-    const onScroll = ({ scrollDirection }) => {
+    const onScroll = ({scrollDirection}) => {
         const gridCanvas = canvas.current.canvas;
         const isAtBottom = gridCanvas.scrollTop + 10 >= gridCanvas.scrollHeight - gridCanvas.clientHeight;
         const nextPage = page + 1;
@@ -144,7 +159,7 @@ function Tabou2DocsModal({
      * 5 - download
      * 6 - save new doc
      * 7 - save update edition
-     * @param {target} any row selected
+     * @param {object} target - row selected with action information
      * @returns trigger click method
      */
     const triggerAction = (target) => {
@@ -194,7 +209,7 @@ function Tabou2DocsModal({
             borderColor: "rgb(40,167,69)"
         },
         tooltip: "Ajouter un document",
-        onClick: () => setNewDoc({ document: SCHEMA_DOC, action: 6 })
+        onClick: () => setNewDoc({document: SCHEMA_DOC, action: 6})
     }, {
         text: "",
         bsSize: "lg",
@@ -244,15 +259,15 @@ function Tabou2DocsModal({
         key: "id",
         name: "Actions",
         formatter: rowActionsformatter
-    }].map(c => ({ ...c, ...defaultColumnProperties }));
+    }].map(c => ({...c, ...defaultColumnProperties}));
     const rowKeyGetter = (r) => {
         return r.id;
     };
     const getRows = () => {
-        return Data.Selectors.getRows({ rows, filters });
+        return Data.Selectors.getRows({rows, filters});
     };
     const handleFilterChange = filter => filters => { // eslint-disable-line no-shadow
-        const newFilters = { ...filters };
+        const newFilters = {...filters};
         if (filter.filterTerm) {
             newFilters[filter.column.key] = filter;
         } else {
@@ -281,8 +296,8 @@ function Tabou2DocsModal({
                     <Tabou2Information
                         isVisible={!rows.length && isEmpty(newDoc) && !isEmpty(row)}
                         glyph="folder-open"
-                        title={<Message msgId="tabou2.docsModal.noRows" />}
-                        message={<Message msgId="tabou2.docsModal.createRowMsg" />}
+                        title={<Message msgId="tabou2.docsModal.noRows"/>}
+                        message={<Message msgId="tabou2.docsModal.createRowMsg"/>}
                     />
                     <TabouAdaptiveDataGrid
                         id="tabou-documents-grid"
@@ -313,19 +328,19 @@ function Tabou2DocsModal({
                     <>
                         <Tabou2Information
                             isVisible={props.loadDocuments}
-                            style={{ margin: "5% auto" }}
+                            style={{margin: "5% auto"}}
                             glyph=""
                             message="Récupération des documents en cours"
                             title="Chargement..."
                         />
-                        <Loader size={size} style={{ padding: size / 10, margin: "auto", display: "flex" }} />
+                        <Loader size={size} style={{padding: size / 10, margin: "auto", display: "flex"}}/>
                     </>
                 ) : null
             }
             {
                 props.loaderDocuments && displayTable ? (
                     <div className="doc-load-text">
-                        <Loader size={size} style={{ padding: size / 10, margin: "auto", display: "flex" }} />
+                        <Loader size={size} style={{padding: size / 10, margin: "auto", display: "flex"}}/>
                         <span>Chargement des données</span>
                     </div>
                 ) : null

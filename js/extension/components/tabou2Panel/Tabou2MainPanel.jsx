@@ -1,9 +1,9 @@
 import React from 'react';
-import { Row, Col, Glyphicon } from 'react-bootstrap';
+import {Row, Col, Glyphicon} from 'react-bootstrap';
 import Message from "@mapstore/components/I18N/Message";
 import Tabou2MainTabs from './Tabou2MainTabs';
 import Tabou2MainToolContainer from './Tabou2MainToolContainer';
-import { PANEL_SIZE } from '../../constants';
+import {PANEL_SIZE} from '../../constants';
 import "@js/extension/css/tabou.css";
 
 import {getMessageById} from "@mapstore/utils/LocaleUtils";
@@ -18,11 +18,12 @@ import ResponsivePanel from "@mapstore/components/misc/panels/ResponsivePanel";
 export default function Tabou2MainPanel({
     enabled,
     dockStyle,
-    onClose = () => { },
+    onClose = () => {
+    },
     ...props
 }) {
     if (!enabled) return null;
-    const helpLink = props.help && props.help.url;
+    const helpLink = props.help?.url;
 
     const i18n = getMessageById;
 
@@ -36,7 +37,7 @@ export default function Tabou2MainPanel({
             size={PANEL_SIZE}
             position="right"
             bsStyle="primary"
-            title={<Message msgId="tabou2.windowTitle" />}
+            title={<Message msgId="tabou2.windowTitle"/>}
             onClose={() => onClose()}
             glyph="sheet"
             style={dockStyle}
@@ -52,7 +53,7 @@ export default function Tabou2MainPanel({
                         </a>) : ""
                     }
                     <Col xs={12} style={{marginTop: "10px"}}>
-                        {<Tabou2MainTabs {...props} i18n={i18n} />}
+                        {<Tabou2MainTabs {...props} i18n={i18n}/>}
                     </Col>
                 </Row>
             }

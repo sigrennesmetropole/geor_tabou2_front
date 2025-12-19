@@ -1,5 +1,5 @@
 import * as Rx from 'rxjs';
-import { get, isEmpty } from 'lodash';
+import {get, isEmpty} from 'lodash';
 import {
     loadEvents,
     RELOAD_LAYER,
@@ -13,13 +13,12 @@ import {
     getTabouVocationsInfos,
     setSelectedFeature
 } from '../actions/tabou2';
-import { getMessageById } from "@mapstore/utils/LocaleUtils";
+import {getMessageById} from "@mapstore/utils/LocaleUtils";
 
 import {
     isTabou2Activate,
     getSelection,
-    getInfos,
-    getParentSA
+    getInfos
 } from '../selectors/tabou2';
 
 import {
@@ -33,12 +32,11 @@ import {
     createNewTabouFeature
 } from '../api/requests';
 
-import { URL_ADD } from '../constants';
-import { wrapStartStop } from "@mapstore/observables/epics";
-import { error, success } from "@mapstore/actions/notifications";
-import { refreshLayerVersion } from "@mapstore/actions/layers";
-import { layersSelector } from '@mapstore/selectors/layers';
-import { getAreaFeature } from '../utils/layers';
+import {URL_ADD} from '../constants';
+import {wrapStartStop} from "@mapstore/observables/epics";
+import {error, success} from "@mapstore/actions/notifications";
+import {refreshLayerVersion} from "@mapstore/actions/layers";
+import {layersSelector} from '@mapstore/selectors/layers';
 
 import uuid from "uuid";
 
@@ -58,6 +56,169 @@ const selectInfos = {
 };
 
 /**
+ * Helper: Create info object for OA layer
+ * @param {object} programmes - Programmes data
+ * @param {object} searchItem - Search item
+ * @param {array} tiers - Tiers array
+ * @param {object} mapFeature - Map feature
+ * @returns Observable
+ */
+const createOAInfos = (programmes, searchItem, tiers, mapFeature) => {
+    const identifyPanelInfos = {
+        ...selectInfos,
+        uuid: uuid.v1(),
+        programmes: programmes.data,
+        operation: {...searchItem},
+        tiers: tiers,
+        mapFeature: mapFeature
+    };
+    return Rx.Observable.of(loadFicheInfos(identifyPanelInfos))
+        .concat(Rx.Observable.of(getTabouVocationsInfos(searchItem?.id)));
+};
+
+/**
+ * Helper: Create info object for SA layer
+ * @param {object} parentData - Parent operation data
+ * @param {object} searchItem - Search item
+ * @param {array} tiers - Tiers array
+ * @param {object} mapFeature - Map feature
+ * @returns Observable
+ */
+const createSAInfos = (parentData, searchItem, tiers, mapFeature) => {
+    const identifyPanelInfos = {
+        ...selectInfos,
+        uuid: uuid.v1(),
+        operation: {...searchItem},
+        operationParent: {...parentData?.data},
+        tiers: tiers,
+        mapFeature: mapFeature
+    };
+    return Rx.Observable.of(loadFicheInfos(identifyPanelInfos))
+        .concat(Rx.Observable.of(getTabouVocationsInfos(searchItem?.id)));
+};
+
+/**
+ * Helper: Create info object for PA layer
+ * @param {object} agapeo - Agapeo data
+ * @param {object} permis - Permis data
+ * @param {object} operation - Operation data
+ * @param {object} searchItem - Search item
+ * @param {array} tiers - Tiers array
+ * @param {object} mapFeature - Map feature
+ * @returns object
+ */
+const createPAInfos = (agapeo, permis, operation, searchItem, tiers, mapFeature) => {
+    return {
+        ...selectInfos,
+        uuid: uuid.v1(),
+        agapeo: agapeo.data.elements,
+        programme: searchItem,
+        permis: permis.data,
+        tiers: tiers,
+        operation: operation?.data,
+        mapFeature: mapFeature
+    };
+};
+
+/**
+ * Helper: Fetch agapeo and permis data for PA layer
+ * @param {object} searchItem - Search item
+ * @returns Observable
+ */
+const fetchAgapeoAndPermis = (searchItem) => {
+    const agapeo$ = Rx.Observable.defer(() => getProgrammeAgapeo(searchItem?.id))
+        .catch(e => {
+            console.log("Error on get Agapeo data request");
+            console.log(e);
+            return Rx.Observable.of({elements: []});
+        });
+
+    const permis$ = Rx.Observable.defer(() => getProgrammePermis(searchItem?.id))
+        .catch(e => {
+            console.log("Error retrieving PA permis request");
+            console.log(e);
+            return Rx.Observable.of({data: []});
+        });
+
+    return {agapeo$, permis$};
+};
+
+/**
+ * Helper: Process PA layer data
+ * @param {object} operation - Operation data
+ * @param {object} searchItem - Search item
+ * @param {array} tiers - Tiers array
+ * @param {object} mapFeature - Map feature
+ * @param {object} messages - Messages object
+ * @returns Observable
+ */
+const processPALayerData = (operation, searchItem, tiers, mapFeature, messages) => {
+    if (!searchItem?.operationId) {
+        console.log("Can't read correct infos !");
+        return Rx.Observable.of(
+            error({
+                title: getMessageById(messages, "tabou2.infos.failApi"),
+                message: getMessageById(messages, "tabou2.infos.failErrorData")
+            })
+        );
+    }
+
+    const {agapeo$, permis$} = fetchAgapeoAndPermis(searchItem);
+
+    return agapeo$.switchMap(agapeo => {
+        return permis$.switchMap(permis => {
+            const infos = createPAInfos(agapeo, permis, operation, searchItem, tiers, mapFeature);
+            return Rx.Observable.of(loadFicheInfos(infos));
+        });
+    });
+};
+
+/**
+ * Helper: Build second observable based on layer type
+ * @param {string} layerCfg - Layer configuration
+ * @param {object} searchItem - Search item
+ * @param {array} tiers - Tiers array
+ * @param {object} mapFeature - Map feature
+ * @param {object} messages - Messages object
+ * @returns Observable
+ */
+const buildSecondObservable = (layerCfg, searchItem, tiers, mapFeature, messages) => {
+    if (layerCfg === "layerOA") {
+        return Rx.Observable.defer(() => getOperationProgrammes(searchItem?.id))
+            .catch(e => {
+                console.log("Error retrieving on OA or SA programmes request");
+                console.log(e);
+                return Rx.Observable.of({data: []});
+            })
+            .switchMap(programmes => createOAInfos(programmes, searchItem, tiers, mapFeature));
+    }
+
+    if (layerCfg === "layerSA") {
+        return Rx.Observable.defer(() => {
+            if (searchItem?.parentId) {
+                return getOperation(searchItem.parentId);
+            }
+            return Rx.Observable.of(null);
+        })
+            .catch(e => {
+                console.log("Error retrieving get operation request");
+                console.log(e);
+                return Rx.Observable.of({data: []});
+            })
+            .switchMap(parentData => createSAInfos(parentData, searchItem, tiers, mapFeature));
+    }
+
+    // PA layer
+    return Rx.Observable.defer(() => getOperation(searchItem.operationId))
+        .catch(e => {
+            console.log("Error retrieving get operation request");
+            console.log(e);
+            return Rx.Observable.of({data: []});
+        })
+        .switchMap(operation => processPALayerData(operation, searchItem, tiers, mapFeature, messages));
+};
+
+/**
  * Process to get all info from selected feature.
  * Many services was called, and some infos was keep from clicked map feature.
  * @param {any} action$
@@ -68,140 +229,21 @@ export function getSelectionInfos(action$, store) {
     return action$.ofType(SELECT_FEATURE)
         .filter((action) => isTabou2Activate(store.getState()) && get(action?.selectedFeature?.feature, "properties.id_tabou"))
         .switchMap((action) => {
-            let messages = store.getState()?.locale.messages;
-            // get infos from layer's feature directly
+            const messages = store.getState()?.locale.messages;
             const idTabou = get(action.selectedFeature.feature, "properties.id_tabou");
-            let tiers = [];
-            let layerCfg = action.selectedFeature.layer;
-            let layerUrl = get(URL_ADD, layerCfg);
+            const tiers = [];
+            const layerCfg = action.selectedFeature.layer;
+            const layerUrl = get(URL_ADD, layerCfg);
             let searchItem = null;
-            let mapFeature = action.selectedFeature.feature;
-            const parent = getParentSA(store.getState());
-            let parentArea = 0;
-            if (!isEmpty(parent)) {
-                parentArea = parent.properties?.surfaceTotale || getAreaFeature(parent.geometry);
-                parentArea = Math.round(parentArea) / 10000; // ha unit
-            }
+            const mapFeature = action.selectedFeature.feature;
 
-            // get events from API
-            /**
-             * WARNING
-             * - API GET operations/{id}/programmes not works for SA layer
-             */
-            let secondObservable$ = Rx.Observable.empty();
-            if (layerCfg === "layerOA") {
-                // GET operation's programmes
-                secondObservable$ = Rx.Observable.defer(() => getOperationProgrammes(searchItem?.id))
-                    .catch(e => {
-                        console.log("Error retrieving on OA or SA programmes request");
-                        console.log(e);
-                        return Rx.Observable.of({ data: [] });
-                    })
-                    .switchMap(programmes => {
-                        // store data
-                        let identifyPanelInfos = {
-                            ...selectInfos,
-                            uuid: uuid.v1(),
-                            programmes: programmes.data,
-                            operation: {
-                                ...searchItem
-                            },
-                            tiers: tiers,
-                            mapFeature: mapFeature
-                        };
-                        return Rx.Observable.of(loadFicheInfos(identifyPanelInfos))
-                            .concat(Rx.Observable.of(getTabouVocationsInfos(searchItem?.id)));
-                    });
-            } else if (layerCfg === "layerSA") {
-                secondObservable$ = Rx.Observable.defer(() => {
-                    if (searchItem?.parentId) {
-                        return getOperation(searchItem.parentId);
-                    }
-                    return Rx.Observable.of(null);
-                }).catch(e => {
-                    console.log("Error retrieving get operation request");
-                    console.log(e);
-                    return Rx.Observable.of({ data: [] });
-                }).switchMap(parent => {
-                    // store data
-                    let identifyPanelInfos = {
-                        ...selectInfos,
-                        uuid: uuid.v1(),
-                        operation: {
-                            ...searchItem
-                        },
-                        operationParent: {
-                            ...parent?.data
-                        },
-                        tiers: tiers,
-                        mapFeature: mapFeature
-                    };
-                    return Rx.Observable.of(loadFicheInfos(identifyPanelInfos))
-                        .concat(Rx.Observable.of(getTabouVocationsInfos(searchItem?.id)));
-                })
-            } else {
-                secondObservable$ = Rx.Observable.defer(() => getOperation(searchItem.operationId))
-                    .catch(e => {
-                        console.log("Error retrieving get operation request");
-                        console.log(e);
-                        return Rx.Observable.of({ data: [] });
-                    })
-                    .switchMap(operation => {
-                        return Rx.Observable.of(operation);
-                    })
-                    .switchMap(operation => {
-                        if (!searchItem?.operationId) {
-                            return Rx.Observable.of(
-                                // error message
-                                error({
-                                    title: getMessageById(messages, "tabou2.infos.failApi"),
-                                    message: getMessageById(messages, "tabou2.infos.failErrorData")
-                                }),
-                                console.log("Can't read correct infos !")
-                            );
-                        }
-                        // GET programme's permis
-                        return Rx.Observable.defer(() => getProgrammeAgapeo(searchItem?.id))
-                            .catch(e => {
-                                console.log("Error on get Agapeo data request");
-                                console.log(e);
-                                return Rx.Observable.of({ elements: [] });
-                            })
-                            .switchMap(agapeo => {
-                                return Rx.Observable.defer(() => getProgrammePermis(searchItem?.id))
-                                    .catch(e => {
-                                        console.log("Error retrieving PA permis request");
-                                        console.log(e);
-                                        return Rx.Observable.of({ data: [] });
-                                    })
-                                    .switchMap(permis => {
-                                        // store data
-                                        let infos = {
-                                            ...selectInfos,
-                                            uuid: uuid.v1(),
-                                            agapeo: agapeo.data.elements,
-                                            programme: searchItem,
-                                            permis: permis.data,
-                                            tiers: tiers,
-                                            operation: operation?.data,
-                                            mapFeature: mapFeature
-                                        };
-                                        return Rx.Observable.of(loadFicheInfos(infos));
-                                    }
-                                    );
-                            });
-                    });
-            }
-
-            let firstObservable$ = Rx.Observable.empty();
-            firstObservable$ = Rx.Observable.defer(() => getFeatureEvents(layerUrl, idTabou))
+            const firstObservable$ = Rx.Observable.defer(() => getFeatureEvents(layerUrl, idTabou))
                 .catch(e => {
                     console.log("Error retrieving on OA or SA events request");
                     console.log(e);
-                    return Rx.Observable.of({ data: [] });
+                    return Rx.Observable.of({data: []});
                 })
                 .switchMap(response => {
-                    // GET Feature's Events
                     return Rx.Observable.of(loadEvents(response?.data?.elements || []));
                 })
                 .concat(Rx.Observable.of(mapTiers()))
@@ -212,11 +254,9 @@ export function getSelectionInfos(action$, store) {
                             console.log(e);
                             return Rx.Observable.of(e);
                         })
-                        // GET OA, PA or SA clicked Feature
                         .switchMap((response) => {
                             if (isEmpty(response?.data)) {
                                 return Rx.Observable.of(
-                                    // error message
                                     error({
                                         title: getMessageById(messages, "tabou2.infos.failApi"),
                                         message: getMessageById(messages, "tabou2.infos.apiGETError")
@@ -224,9 +264,10 @@ export function getSelectionInfos(action$, store) {
                                 );
                             }
                             searchItem = response.data;
-                            return secondObservable$;
+                            return buildSecondObservable(layerCfg, searchItem, tiers, mapFeature, messages);
                         })
                 );
+
             return firstObservable$.let(
                 wrapStartStop(
                     [loading(true, "identify")],
@@ -265,26 +306,26 @@ export function createTabouFeature(action$, store) {
                     console.log(e);
                     return Rx.Observable.of(e,
                         reloadLayer(layer),
-                        setSelectedFeature({ ...selected, id: selected.id, feature: selected.feature })
+                        setSelectedFeature({...selected, id: selected.id, feature: selected.feature})
                     );
                 })
                 .switchMap((el) => {
                     // create new feature with updated id tabou after new tabou item
-                    const newFeature = { ...selected.feature, properties: { ...selected.feature.properties, id: el.data.id } };
+                    const newFeature = {...selected.feature, properties: {...selected.feature.properties, id: el.data.id}};
                     return el?.status !== 200 ? Rx.Observable.of(
-                        // fail message
+                    // fail message
                         error({
                             title: getMessageById(messages, "tabou2.infos.failApi"),
                             message: getMessageById(messages, "tabou2.infos.failAddFeature")
                         })
                     ) : Rx.Observable.of(
-                        // success message
+                    // success message
                         success({
                             title: getMessageById(messages, "tabou2.infos.successApi"),
                             message: getMessageById(messages, "tabou2.infos.successAddFeature")
                         }),
                         reloadLayer(layer),
-                        displayFeature({ feature: el.data, layer: layer }),
+                        displayFeature({feature: el.data, layer: layer}),
                         setSelectedFeature({...selected, id: selected.id, feature: newFeature})
                     );
                 });

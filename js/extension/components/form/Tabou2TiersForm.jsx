@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from "react";
-import { Col, FormGroup, FormControl, ControlLabel, Row, Checkbox } from "react-bootstrap";
-import { get, has, set } from "lodash";
+import {Col, FormGroup, FormControl, ControlLabel, Row, Checkbox} from "react-bootstrap";
+import {get, set} from "lodash";
 import Toolbar from '@mapstore/components/misc/toolbar/Toolbar';
 import Message from "@mapstore/components/I18N/Message";
 import "../../css/tabou.css";
@@ -126,7 +126,8 @@ export default function Tabou2TiersForm({...props}) {
                             <Col xs={f.colLabel || 4} style={{marginTop: marginTop}}>
                                 <ControlLabel><Message msgId={f.label}/>{f.required ? "*" : ""}</ControlLabel>
                             </Col>
-                            <Col xs={f.colForm || 8} className={f.required && !get(thisTier, f.apiField) ? "has-error" : ""}>
+                            <Col xs={f.colForm || 8}
+                                className={f.required && !get(thisTier, f.apiField) ? "has-error" : ""}>
                                 {
                                     f.type !== "combo" && f.type !== "checkbox" ? (
                                         <FormControl
@@ -142,8 +143,8 @@ export default function Tabou2TiersForm({...props}) {
                                 {
                                     f.type === "checkbox" ? (
                                         <Checkbox
-                                            checked={has(thisTier.tiers, "estPrive") ? thisTier.tiers.estPrive : f?.defaultValue || false}
-                                            disabled={thisTier?.tiers?.dateInactif ? true : false}
+                                            checked={thisTier.tiers?.estPrive ?? f?.defaultValue ?? false}
+                                            disabled={!!thisTier?.tiers?.dateInactif}
                                             style={{marginBottom: "10px"}}
                                             id={`${props.tier.id}-priv-${new Date().getTime()}}`}
                                             onChange={() => {

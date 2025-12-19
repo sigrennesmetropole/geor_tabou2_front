@@ -1,11 +1,10 @@
-import { CONTROL_NAME, TABOU_VECTOR_ID, TABOU_MARKER_LAYER_ID, URL_ADD } from '../constants';
-import { keys, pickBy, isEmpty, get, memoize } from 'lodash';
-import { userGroupSecuritySelector, userSelector } from '@mapstore/selectors/security';
-import { additionalLayersSelector } from '@mapstore/selectors/additionallayers';
+import {CONTROL_NAME, TABOU_VECTOR_ID, TABOU_MARKER_LAYER_ID, URL_ADD} from '../constants';
+import {keys, pickBy, isEmpty, get, memoize} from 'lodash';
+import {userGroupSecuritySelector, userSelector} from '@mapstore/selectors/security';
+import {additionalLayersSelector} from '@mapstore/selectors/additionallayers';
 import {mapLayoutSelector} from "@mapstore/selectors/maplayout";
-import tabou2 from "@js/extension/reducers/tabou2";
 
-export const boundingSidebarRectSelector = (state) => state.maplayout && state.maplayout.boundingSidebarRect || {};
+export const boundingSidebarRectSelector = (state) => state.maplayout?.boundingSidebarRect || {};
 
 /**
  * Retrieve only specific attribute from map layout
@@ -29,8 +28,8 @@ export const mapLayoutValuesSelector = memoize((state, attributes = {}, isDock =
     {}) || {};
 }, (state, attributes, isDock) =>
     JSON.stringify(mapLayoutSelector(state)) +
-    JSON.stringify(boundingSidebarRectSelector(state)) +
-    JSON.stringify(attributes) + (isDock ? '_isDock' : ''));
+        JSON.stringify(boundingSidebarRectSelector(state)) +
+        JSON.stringify(attributes) + (isDock ? '_isDock' : ''));
 
 /**
  * Get active tab id
@@ -40,14 +39,16 @@ export const mapLayoutValuesSelector = memoize((state, attributes = {}, isDock =
 export function currentActiveTabSelector(state) {
     return state?.tabou2.activeTab;
 }
+
 /**
  * Get tabou2 status
  * @param {*} state
  * @returns {boolean}
  */
 export function isTabou2Activate(state) {
-    return (state.controls && state.controls[CONTROL_NAME] && state.controls[CONTROL_NAME].enabled) || (state[CONTROL_NAME] && state[CONTROL_NAME].closing) || false;
+    return (state.controls && state.controls[CONTROL_NAME]?.enabled) || (state[CONTROL_NAME] && state[CONTROL_NAME].closing) || false;
 }
+
 /**
  * Get current tabou filers
  * @param {*} state
@@ -56,6 +57,7 @@ export function isTabou2Activate(state) {
 export function currentTabouFilters(state) {
     return state?.tabou2.filterObj;
 }
+
 /**
  * Get default infoformat for right query panel
  * @param {*} state
@@ -64,6 +66,7 @@ export function currentTabouFilters(state) {
 export function defaultInfoFormat(state) {
     return state?.tabou2.infoFormat;
 }
+
 /**
  * Get original OGC map click response
  * @param {*} state
@@ -72,6 +75,7 @@ export function defaultInfoFormat(state) {
 export function getTabouResponse(state) {
     return state?.tabou2?.response;
 }
+
 /**
  * Get OGC map click response for each OA, PA, SA layers
  * @param {*} state
@@ -80,6 +84,7 @@ export function getTabouResponse(state) {
 export function getTabouResponseLayers(state) {
     return keys(state?.tabou2.response);
 }
+
 /**
  * Get feature index selected if many map features was clicked
  * @param {*} state
@@ -88,6 +93,7 @@ export function getTabouResponseLayers(state) {
 export function getTabouIndexSelectors(state) {
     return state?.tabou2.selectorsIndex;
 }
+
 /**
  * Get search filter applied for every layer
  * @param {*} state
@@ -100,6 +106,7 @@ export function getLayerFilterObj(state) {
 export function getFilteredFeatures(state) {
     return state?.tabou2.filteredFeatures;
 }
+
 /**
  * Get Tabou plugin config
  * @param {*} state
@@ -108,6 +115,7 @@ export function getFilteredFeatures(state) {
 export function getPluginCfg(state) {
     return state?.tabou2.pluginCfg;
 }
+
 /**
  * Get layer name from tabou config
  * @param {any} state
@@ -117,6 +125,7 @@ export function getLayersName(state) {
     let layerCfg = getPluginCfg(state).layersCfg;
     return keys(layerCfg).map(k => layerCfg[k].nom);
 }
+
 /**
  * Get selected feature from identify panel
  * @param {any} state
@@ -129,6 +138,7 @@ export function getSelection(state) {
 export function getSelectionPoint(state) {
     return state.tabou2?.point || {};
 }
+
 /**
  * Get Selected layer from identify panel
  * @param {any} state
@@ -137,6 +147,7 @@ export function getSelectionPoint(state) {
 export function getLayer(state) {
     return state?.tabou2?.selectedLayer;
 }
+
 /**
  * Get config fot selected layer from identify panel
  * @param {any} state
@@ -145,6 +156,7 @@ export function getLayer(state) {
 export function getSelectedCfgLayer(state) {
     return keys(pickBy(getPluginCfg(state).layersCfg, lyr => lyr.nom === getLayer(state)))[0];
 }
+
 /**
  * Get events for the selected tabou map feature
  * @param {any} state
@@ -153,6 +165,7 @@ export function getSelectedCfgLayer(state) {
 export function getEvents(state) {
     return state?.tabou2?.events;
 }
+
 /**
  * Get all infos for the identify panel fields
  * @param {any} state
@@ -161,6 +174,7 @@ export function getEvents(state) {
 export function getFicheInfos(state) {
     return state?.tabou2?.ficheInfos;
 }
+
 /**
  * Get all tiers for clicked map tabou feature
  * @param {*} state
@@ -169,6 +183,7 @@ export function getFicheInfos(state) {
 export function getTiers(state) {
     return state?.tabou2?.tiers;
 }
+
 /**
  * Get security infos.
  * @param {any} state
@@ -176,7 +191,7 @@ export function getTiers(state) {
  */
 export function getAuthInfos(state) {
     const groups = userGroupSecuritySelector(state) ?? [];
-    const groupNames = groups.map(({ groupName }) => `${groupName}`);
+    const groupNames = groups.map(({groupName}) => `${groupName}`);
     return {
         user: userSelector(state)?.name ?? "",
         isAdmin: groupNames.includes("MAPSTORE_ADMIN"),
@@ -185,6 +200,7 @@ export function getAuthInfos(state) {
         isConsult: groupNames.includes("EL_APPLIS_TABOU_CONSULT")
     };
 }
+
 /**
  * Get search loader status
  * @param {any} state
@@ -193,6 +209,7 @@ export function getAuthInfos(state) {
 export function searchLoading(state) {
     return state?.tabou2?.loadFlags?.search;
 }
+
 /**
  * Get documents loader status
  * @param {any} state
@@ -201,6 +218,7 @@ export function searchLoading(state) {
 export function documentsLoading(state) {
     return state?.tabou2?.loadFlags?.documents;
 }
+
 /**
  * Get identify loader status
  * @param {any} state
@@ -209,6 +227,7 @@ export function documentsLoading(state) {
 export function identifyLoading(state) {
     return state?.tabou2?.loadFlags?.identify;
 }
+
 /**
  * Get security infos.
  * @param {any} state
@@ -217,6 +236,7 @@ export function identifyLoading(state) {
 export function getFeatureAdded(state) {
     return state?.tabou2?.featureAdded;
 }
+
 /**
  * Get info from identify panel after map feature click
  * @param {any} state
@@ -225,6 +245,7 @@ export function getFeatureAdded(state) {
 export function getIdentifyInfos(state) {
     return state?.tabou2?.identifyInfos;
 }
+
 /**
  * Get all tabou errors info
  * @param {any} state
@@ -233,6 +254,7 @@ export function getIdentifyInfos(state) {
 export function getTabouErrors(state) {
     return state?.tabou2?.errors;
 }
+
 /**
  * Get filter use to filter tiers table
  * @param {any} state
@@ -253,6 +275,7 @@ export function getClickedFeatures(state) {
 export function layerStylesSelector(state) {
     return state.tabou2?.styles;
 }
+
 export function getSelectedStyle(state) {
     return layerStylesSelector(state)?.selected;
 }
@@ -263,12 +286,12 @@ export function getDefaultStyle(state) {
 
 export function getTabouVectorLayer(state) {
     const additionalLayers = additionalLayersSelector(state) ?? [];
-    return additionalLayers.filter(({ id }) => id === TABOU_VECTOR_ID)?.[0]?.options;
+    return additionalLayers.filter(({id}) => id === TABOU_VECTOR_ID)?.[0]?.options;
 }
 
 export function getTabouMarkerLayer(state) {
     const additionalLayers = additionalLayersSelector(state) ?? [];
-    return additionalLayers.filter(({ id }) => id === TABOU_MARKER_LAYER_ID)?.[0]?.options;
+    return additionalLayers.filter(({id}) => id === TABOU_MARKER_LAYER_ID)?.[0]?.options;
 }
 
 export function getGfiData(state) {
@@ -278,7 +301,7 @@ export function getGfiData(state) {
 export function getParentSA(state) {
     const oaTocName = getPluginCfg(state).layersCfg.layerOA.nom;
     const clicked = getClickedFeatures(state);
-    if (clicked && clicked[oaTocName] && clicked[oaTocName].length === 1) {
+    if (clicked?.[oaTocName]?.length === 1) {
         return getClickedFeatures(state)[oaTocName][0];
     }
     return [];
