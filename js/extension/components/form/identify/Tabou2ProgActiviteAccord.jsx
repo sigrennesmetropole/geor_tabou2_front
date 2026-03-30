@@ -5,10 +5,7 @@ import "@js/extension/css/identify.css";
 import Message from "@mapstore/components/I18N/Message";
 
 const avoidReRender = (prevProps, nextProps) => {
-    if (isEqual(prevProps.initialItem, nextProps.initialItem)) {
-        return true;
-    }
-    return false; // re render
+    return isEqual(prevProps.initialItem, nextProps.initialItem);
 };
 /**
  * Accordion to display info for this specific panel section - only for feature linked with id tabou
@@ -81,7 +78,7 @@ const Tabou2ProgActiviteAccord = ({
                     <Row className="attributeInfos">
                         <Col xs={4}>
                             {
-                                item.type !== "checkbox" ? <ControlLabel><Message msgId={item.label}/></ControlLabel> :  null
+                                item.type !== "checkbox" ? <ControlLabel style={item.labelStyle || {}}><Message msgId={item.label}/></ControlLabel> :  null
                             }
                             {
                                 item.type === "checkbox" ?
@@ -93,7 +90,7 @@ const Tabou2ProgActiviteAccord = ({
                                         id={`chbox-${item.name}`}
                                         onChange={() => changeInfos({[item.name]: !getValue(item)})}
                                         className="col-xs-12">
-                                        <ControlLabel><Message msgId={item.label}/></ControlLabel>
+                                        <ControlLabel style={item.labelStyle || {}}><Message msgId={item.label}/></ControlLabel>
                                     </Checkbox>) : null
                             }
                         </Col>

@@ -36,10 +36,9 @@ export default function ProgrammationActivite({
                     setValues(
                         changeByType(
                             getCodeIdByCode(typesProgrammation, "ACTIVITES"),
-                            value,
                             values,
                             "informationsProgrammation",
-                            getCodeIdByCode(typesProgrammation, "ACTIVITES")
+                            value
                         )
                     );
                 },

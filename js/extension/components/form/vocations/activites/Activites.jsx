@@ -8,10 +8,10 @@ import ProgrammationActivite from './ProgrammationActivite';
 
 export default function Activites({...props}) {
     const tabs = [
-        <Message msgId="tabou2.vocation.tabComposition"/>,
-        <Message msgId="tabou2.vocation.tabActivity"/>,
-        <Message msgId="tabou2.vocation.tabOtherProg"/>,
-        <Message msgId="tabou2.vocation.tabContrib"/>
+        {key: "composition", title: <Message msgId="tabou2.vocation.tabComposition"/>, component: <CompositionProgrammation {...subFormProps}/>},
+        {key: "activity", title: <Message msgId="tabou2.vocation.tabActivity"/>, component: <ProgrammationActivite {...subFormProps}/>},
+        {key: "otherProg", title: <Message msgId="tabou2.vocation.tabOtherProg"/>, component: <AutreProgrammation {...subFormProps}/>},
+        {key: "contrib", title: <Message msgId="tabou2.vocation.tabContrib"/>, component: <ContributionPaddOap {...subFormProps}/>}
     ];
 
     const subFormProps = {
@@ -22,14 +22,11 @@ export default function Activites({...props}) {
         <Col xs={12}>
             <Tabs defaultActiveKey={1} id="vocation-activite-tabs">
                 {
-                    tabs.map((tab, i) => (
+                    tabs.map(({key, title, component}, i) => (
                         <Tab
-                            key={i} eventKey={i} title={tab}
+                            key={key} eventKey={i} title={title}
                         >
-                            {i === 0 && (<CompositionProgrammation {...subFormProps}/>)}
-                            {i === 1 && (<ProgrammationActivite {...subFormProps}/>)}
-                            {i === 2 && (<AutreProgrammation {...subFormProps}/>)}
-                            {i === 3 && (<ContributionPaddOap {...subFormProps}/>)}
+                            {component}
                         </Tab>
                     ))
                 }

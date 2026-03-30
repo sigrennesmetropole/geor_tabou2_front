@@ -219,7 +219,7 @@ const Tabou2GouvernanceAccord = ({
                     <Row className="attributeInfos">
                         <Col xs={4}>
                             {
-                                item.label && (<ControlLabel><Message msgId={item.label}/></ControlLabel>)
+                                item.label && (<ControlLabel style={item.labelStyle || {}}><Message msgId={item.label}/></ControlLabel>)
                             }
                         </Col>
                         <Col xs={allTiersButtons[item.name] ? 7 : 8}>

@@ -3,16 +3,23 @@ variables:
     description: "Message du commit poussé vers le GitHub (cf job push-to-github). Par défaut : $CI_COMMIT_REF_NAME (nom de la branche ou du tag)."
     value: $CI_COMMIT_REF_NAME
   OSS_MVN_DISABLE: "true"
+  OSS_NPM_IMAGE:  node:18.16.1
 
 include:
-  - project: 'boost/template-ci/pipelines/common'
-    file: 'securite/oss-index/oss-index-template.yml'
+  - component: $CI_SERVER_FQDN/boost/ci-component/security/oss-npm@2.0.0
+    inputs:
+      oss_package_json : "package-lock.json"
   - component: '$CI_SERVER_FQDN/boost/ci-component/security/software-supply-chain-npm@1.4.0'
     inputs:
       ssc_lock_file: "package-lock.json"
+  - component: $CI_SERVER_FQDN/boost/ci-component/security/dependency-track@2.0.0
+  - component: $CI_SERVER_FQDN/boost/ci-component/security/cdxgen-sbom@2.0.1      
+    inputs:
+      exclude_paths: "MapStore2"
 
 stages:
   - sast
+  - post_sast
   - build
   - test
   - delivering
@@ -23,6 +30,7 @@ tabou2-front:build:
   only:
     refs:
       - develop
+      - main
   script:
     - git submodule update --init --recursive
     - npm ci

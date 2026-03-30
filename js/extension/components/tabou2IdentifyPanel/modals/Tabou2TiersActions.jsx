@@ -73,15 +73,13 @@ export default function Tabou2TiersActions({ ...props }) {
     ];
 
     return (
-        <>
-            <Toolbar
-                btnDefaultProps={{
-                    className: "square-button-md",
-                    bsStyle: "primary"
-                }}
-                buttons={tiersActions.filter(action => action.showCondition())}
-            />
-        </>
+        <Toolbar
+            btnDefaultProps={{
+                className: "square-button-md",
+                bsStyle: "primary"
+            }}
+            buttons={tiersActions.filter(action => action.showCondition())}
+        />
     );
 
 }

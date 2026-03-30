@@ -99,6 +99,19 @@ const Tabou2Select = ({
         return null;
     };
 
+    const hasValue = isMulti ? (value && value.length > 0) : !!value;
+    const controlColor = hasValue ? '#495057' : '#6c757d';
+
+    const handleChange = selected => {
+        if (isMulti) {
+            onSelect(selected || []);
+            onChange(selected || []);
+        } else {
+            onSelect(selected);
+            onChange(selected);
+        }
+    }
+
     return (
         <div style={{position: 'relative'}}>
             <Select
@@ -106,15 +119,7 @@ const Tabou2Select = ({
                 value={getSelectValue()}
                 getOptionLabel={opt => opt[textField]}
                 getOptionValue={opt => opt[valueField]}
-                onChange={selected => {
-                    if (isMulti) {
-                        onSelect(selected || []);
-                        onChange(selected || []);
-                    } else {
-                        onSelect(selected);
-                        onChange(selected);
-                    }
-                }}
+                onChange={handleChange}
                 isMulti={isMulti}
                 isDisabled={disabled}
                 isClearable={allowClear && !disabled}
@@ -139,9 +144,7 @@ const Tabou2Select = ({
                     control: (base, state) => ({
                         ...base,
                         backgroundColor: disabled ? '#e9ecef' : 'white',
-                        color: isMulti
-                            ? (value && value.length > 0 ? '#495057' : '#6c757d')
-                            : (value ? '#495057' : '#6c757d'),
+                        color: controlColor,
                         minHeight: '32px',
                         boxShadow: state.isFocused ? '0 0 0 1px #2684FF' : base.boxShadow
                     })

@@ -18,7 +18,7 @@ export const findValueByType = (codeId, values, type) => {
 export const renderField = (item, i18n, messages, allowChange) => (
     <Row key={item.name}>
         <Col xs={4}>
-            <ControlLabel><Message msgId={item.label}/></ControlLabel>
+            <ControlLabel style={item.labelStyle || {}}><Message msgId={item.label}/></ControlLabel>
         </Col>
         <Col xs={4}>
             {
@@ -53,7 +53,7 @@ export const shouldShowField = (field, layer) => {
     return isEmpty(field.layers) || field.layers?.indexOf(layer) > -1;
 };
 
-export const changeByType = (codeId, value = "", values, type) => {
+export const changeByType = (codeId, values, type, value = "") => {
     const field = type === "contributions" ? "typeContribution" : "typeProgrammation";
     const infos = values[type];
     const newInfos = infos.filter(f => f[field].id !== codeId);
@@ -94,7 +94,7 @@ export const getCompositionProgrammationFields = (values, setValues) => [
 export const renderProgrammationField = (item, i18n, messages, allowChange, values) => (
     <Row key={item.name}>
         <Col xs={4}>
-            <ControlLabel><Message msgId={item.label}/></ControlLabel>
+            <ControlLabel style={item.labelStyle || {}}><Message msgId={item.label}/></ControlLabel>
         </Col>
         <Col xs={4}>
             {

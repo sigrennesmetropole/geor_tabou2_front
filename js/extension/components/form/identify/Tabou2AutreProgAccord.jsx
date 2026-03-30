@@ -37,7 +37,7 @@ const Tabou2AutreProgAccord = ({
         {
             name: "surfaceBureauxNextAds",
             label: "tabou2.identify.accordions.autreProgFields.bureauxNextAds",
-            field: "surfaceBureauxNextAds",
+            field: "surfaceBureaux",
             layers: ["layerPA"],
             type: "number",
             source: programme.programmationNextAds,
@@ -55,7 +55,7 @@ const Tabou2AutreProgAccord = ({
         {
             name: "surfaceCommercesNextAds",
             label: "tabou2.identify.accordions.autreProgFields.commercesNextAds",
-            field: "surfaceCommercesNextAds",
+            field: "surfaceCommerces",
             layers: ["layerPA"],
             type: "number",
             source: programme.programmationNextAds,
@@ -73,7 +73,7 @@ const Tabou2AutreProgAccord = ({
         {
             name: "surfaceIndustrieNextAds",
             label: "tabou2.identify.accordions.autreProgFields.industrielArtisanatNextAds",
-            field: "surfaceIndustrieNextAds",
+            field: "surfaceIndustrie",
             layers: ["layerPA"],
             type: "number",
             source: programme.programmationNextAds,
@@ -91,7 +91,7 @@ const Tabou2AutreProgAccord = ({
         {
             name: "surfaceEquipementsNextAds",
             label: "tabou2.identify.accordions.autreProgFields.equipementsNextAds",
-            field: "surfaceEquipementsNextAds",
+            field: "surfaceEquipements",
             layers: ["layerPA"],
             type: "number",
             source: programme.programmationNextAds,
@@ -109,13 +109,15 @@ const Tabou2AutreProgAccord = ({
         {
             name: "surfaceAutresNextAds",
             label: "tabou2.identify.accordions.autreProgFields.autresActivitesNextAds",
-            field: "surfaceAutresNextAds",
+            field: "surfaceAutres",
             layers: ["layerPA"],
             type: "number",
             source: programme.programmationNextAds,
             readOnly: true
         }
-    ].filter(el => el?.layers?.includes(layer) || !el?.layers);
+    ]
+    .filter(el => el?.layers?.includes(layer) || !el?.layers)
+    .map((el, index) => ({...el, key: `${el.name}-${index}`}));
 
     // hooks
     useEffect(() => {
@@ -204,10 +206,10 @@ const Tabou2AutreProgAccord = ({
             </Row>
             {
                 getFieldPairs().map((pair, index) => (
-                    <Row key={`pair-${index}`} className="autre-prog-row">
+                    <Row key={pair.key} className="autre-prog-row">
                         {/* Label de la ligne - 1/3 de la largeur */}
                         <Col xs={4}>
-                            <ControlLabel>
+                            <ControlLabel style={pair.labelStyle || {}}>
                                 <Message msgId={pair.editable.label}/>
                             </ControlLabel>
                         </Col>
@@ -231,7 +233,7 @@ const Tabou2AutreProgAccord = ({
                                 type={pair.readOnly.type}
                                 step="any"
                                 placeholder={i18n(messages, "tabou2.identify.accordions.autreProgFields.placeholder")}
-                                value={getValue(pair.readOnly) || ""}
+                                value={getValue(pair.readOnly) ?? ""}
                                 readOnly
                                 disabled
                                 className="readonly-field number-input-no-spinner"

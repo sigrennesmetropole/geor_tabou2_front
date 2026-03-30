@@ -1,3 +1,4 @@
+require('./build/patchWebpackMd4');
 const path = require("path");
 
 const themeEntries = require('./MapStore2/build/themes.js').themeEntries;
@@ -12,7 +13,7 @@ const paths = {
     code: [path.join(__dirname, "js"), path.join(__dirname, "MapStore2", "web", "client")]
 };
 
-module.exports = require('./MapStore2/build/buildConfig')(
+const config = require('./MapStore2/build/buildConfig')(
     {
         'MapStoreExtension': path.join(__dirname, "js", "app"),
         'MapStoreExtension-embedded': path.join(__dirname, "MapStore2", "web", "client", "product", "embedded"),
@@ -52,3 +53,6 @@ module.exports = require('./MapStore2/build/buildConfig')(
         "@js": path.resolve(__dirname, "js")
     }
 );
+
+module.exports = { ...config, output: { ...config.output, hashFunction: 'sha256' } };
+

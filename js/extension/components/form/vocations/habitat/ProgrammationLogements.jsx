@@ -84,10 +84,9 @@ export default function ProgrammationLogements({
                 setValues(
                     changeByType(
                         getCodeIdByCode(typesProgrammation, "HABITAT"),
-                        value,
                         values,
                         "informationsProgrammation",
-                        getCodeIdByCode(typesProgrammation, "HABITAT")
+                        value
                     )
                 );
             },
@@ -102,7 +101,8 @@ export default function ProgrammationLogements({
             layers: [],
             source: () => values,
             change: (value) => setValues({logtsHFV: value}),
-            readOnly: false
+            readOnly: false,
+            labelStyle: {fontStyle: "italic"}
         },
         {
             name: "scot",

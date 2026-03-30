@@ -7,29 +7,26 @@ import CompositionProgrammation from '../CompositionProgrammation';
 import ProgrammationMixte from './ProgrammationMixte';
 
 export default function Mixte({...props}) {
-    const tabs = [
-        <Message msgId="tabou2.vocation.tabComposition"/>,
-        <Message msgId="tabou2.vocation.tabMixte"/>,
-        <Message msgId="tabou2.vocation.tabOtherProg"/>,
-        <Message msgId="tabou2.vocation.tabContrib"/>
-    ];
-
     const subFormProps = {
         ...props,
         owner: {isReferent: true}
     };
+    const tabs = [
+        {key: "composition", title: <Message msgId="tabou2.vocation.tabComposition"/>, component: <CompositionProgrammation {...subFormProps}/>},
+        {key: "mixte", title: <Message msgId="tabou2.vocation.tabMixte"/>, component: <ProgrammationMixte {...subFormProps}/>},
+        {key: "otherProg", title: <Message msgId="tabou2.vocation.tabOtherProg"/>, component: <AutreProgrammation {...subFormProps}/>},
+        {key: "contrib", title: <Message msgId="tabou2.vocation.tabContrib"/>, component: <ContributionPaddOap {...subFormProps}/>}
+    ];
+
     return (
         <Col xs={12}>
             <Tabs defaultActiveKey={1} id="vocation-activite-tabs">
                 {
-                    tabs.map((tab, i) => (
+                    tabs.map(({key, title, component}, i) => (
                         <Tab
-                            key={i} eventKey={i} title={tab}
+                            key={key} eventKey={i} title={title}
                         >
-                            {i === 0 && (<CompositionProgrammation {...subFormProps}/>)}
-                            {i === 1 && (<ProgrammationMixte {...subFormProps}/>)}
-                            {i === 2 && (<AutreProgrammation {...subFormProps}/>)}
-                            {i === 3 && (<ContributionPaddOap {...subFormProps}/>)}
+                            {component}
                         </Tab>
                     ))
                 }

@@ -106,7 +106,6 @@ function Tabou2SuiviPLHModal({
         }
     };
     return (
-        <>
             <ResizableModal
                 title={<Message msgId="tabou2.suiviPLH.title"/>}
                 bodyClassName="ms-flex"
@@ -273,7 +272,6 @@ function Tabou2SuiviPLHModal({
                     </>
                 }
             </ResizableModal>
-        </>
     );
 }
 

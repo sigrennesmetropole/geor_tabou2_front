@@ -27,6 +27,7 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
         idEmprise: "",
         nomEmprise: "",
         nature: "",
+        vocation: "",
         secteur: false,
         parentoa: null,
         limitPa: false
@@ -38,6 +39,8 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
     const [invalides, setInvalides] = useState([]);
     const naturesInfos = useRef([]);
     const natureId = useRef(-1);
+    const vocationInfos = useRef([]);
+    const vocationId = useRef(-1);
     const etapesInfos = useRef([]);
     const [type, setType] = useState("");
 
@@ -47,7 +50,7 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
         // only kee fields expected by API
         if (type === "layerPA") {
             // to create PA object
-            keysToFilter = keys(obj).filter(name => !["nomEmprise", "secteur", "nature", "limitPa"].includes(name));
+            keysToFilter = keys(obj).filter(name => !["nomEmprise", "secteur", "nature", "limitPa", "vocation"].includes(name));
         } else if (type === "layerSA") {
             // to create SA object
             keysToFilter = keys(obj).filter(name => !["nomEmprise", "secteur", "limitPa"].includes(name));
@@ -70,7 +73,7 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
             formElement[combo.name] = value;
         }
 
-        if (["etape", "nature"].includes(combo.name)) {
+        if (["etape", "nature", "vocation"].includes(combo.name)) {
             apiElement[combo.name] = {
                 id: selection?.id
             };
@@ -97,6 +100,11 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
             natureId.current = selection.id;
             newInfos.natureId = selection.id;
             newFeatureObj.natureId = selection.id;
+        }
+        if (combo.name === "vocation") {
+            vocationId.current = selection.id;
+            newInfos.vocationId = selection.id;
+            newFeatureObj.vocationId = selection.id;
         }
 
         setInvalides(getInvalides(newInfos));
@@ -153,9 +161,11 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
             };
         } else {
             let natureIdValue = isObject(newFeature.nature) ? newFeature.nature : {id: find(naturesInfos.current, ['libelle', newFeature.nature])?.id};
+            let vocationIdValue = isObject(newFeature.vocation) ? newFeature.vocation : {id: find(vocationInfos.current, ['libelle', newFeature.vocation])?.id};
             params = {
                 ...params,
-                nature: natureIdValue
+                nature: natureIdValue,
+                vocation: vocationIdValue
             };
         }
         params = omit(params, keys(params).filter(k => !keys(dataSchema).includes(k)));
@@ -171,6 +181,7 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
             idEmprise: get(fProp, ADD_FIELDS.idEmprise[layer]) || infos.idEmprise,
             nomEmprise: get(fProp, ADD_FIELDS.nomEmprise[layer]) || infos.nomEmprise,
             nature: get(fProp, ADD_FIELDS.nature[layer]) || infos.nature,
+            vocation: get(fProp, ADD_FIELDS.vocation[layer]) || infos.vocation,
             secteur: layer === "layerSA",
             nom: get(fProp, ADD_FIELDS.nom[layer]) || infos.nom,
             code: get(fProp, ADD_FIELDS.code[layer]) || infos.code,
@@ -302,6 +313,11 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
         if (item.name === "nature" && infos.nature) {
             naturesInfos.current = dataItem;
             natureId.current = find(dataItem, ["libelle", infos.nature])?.id;
+        }
+
+        if (item.name === "vocation" && infos.vocation) {
+            vocationInfos.current = dataItem;
+            vocationId.current = find(dataItem, ["libelle", infos.vocation])?.id;
         }
 
         if (item.name === "etape") {

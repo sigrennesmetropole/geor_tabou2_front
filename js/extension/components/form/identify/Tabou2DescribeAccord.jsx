@@ -135,14 +135,6 @@ const Tabou2DescribeAccord = ({
         value: () => mapFeature?.properties?.aire_geo_ha ?? null,
         readOnly: true
     }, {
-        name: "surfaceSHAB",
-        field: "surfaceSHAB",
-        label: "tabou2.identify.accordions.SHABSpace",
-        type: "number",
-        step: 0.1,
-        layers: ["layerPA"],
-        source: initialItem
-    }, {
         name: "mos",
         type: "text",
         label: "tabou2.identify.accordions.mos",
@@ -197,7 +189,7 @@ const Tabou2DescribeAccord = ({
                 fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(item => (
                     <Row className="attributeInfos">
                         <Col xs={4}>
-                            <ControlLabel><Message msgId={item.label}/></ControlLabel>
+                            <ControlLabel style={item.labelStyle || {}}><Message msgId={item.label}/></ControlLabel>
                         </Col>
                         <Col xs={8}>
                             {

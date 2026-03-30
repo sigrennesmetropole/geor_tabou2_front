@@ -253,88 +253,86 @@ function Tabou2SearchPanel({
     };
 
     return (
-        <>
-            <Grid className={"col-xs-12"}>
-                <div id="tabou2-tbar-container" className="text-center">
-                    <Tabou2SearchToolbar
-                        {...props}
-                        filters={getFiltersObj}
-                        apply={props.applyFilterObj}
-                        reset={reset}/>
-                </div>
-                {props.getTabouErrors.msg ? (
-                    <Alert className={"alert-" + props.getTabouErrors.typeMsg}>
-                        <Glyphicon glyph="filter"/>
-                        <Message msgId={props.i18n(props.messages, props.getTabouErrors?.msg || " ")}/>
-                    </Alert>) : null
-                }
-                <Row>
-                    <Panel
-                        header={(
-                            <label><Message msgId="tabou2.search.partOne"/></label>
-                        )}
-                        className="tabou-panel"
-                    >
-                        {SEARCH_ITEMS.filter(f => f.group === 1).map((cb) => getCombo(cb))}
-                        <div className="col-xs-12">
-                            <Checkbox
-                                className="tabou-search-combo"
-                                checked={get(comboValues, "pbil") || false}
-                                onChange={() => changeChecked("pbil")}
-                                inline
-                                id={"search-pbil" + new Date().getTime()}>
-                                <Message msgId="tabou2.search.pbil"/>
-                            </Checkbox>
-                        </div>
-                    </Panel>
-                </Row>
-                <Row>
-                    <Panel
-                        header={(
-                            <label><Message msgId="tabou2.search.partTwo"/></label>
-                        )}
-                        className="tabou-panel"
-                    >
-                        {SEARCH_ITEMS.filter(f => f.group === 2).map((cb) => getCombo(cb))}
-                    </Panel>
-                </Row>
-                <Row>
-                    <Panel
-                        header={(
-                            <label><Message msgId="tabou2.search.partThree"/></label>
-                        )}
-                        className="tabou-panel"
-                    >
-                        {SEARCH_ITEMS.filter(f => f.group === 3).map((cb) => getCombo(cb))}
-                    </Panel>
-                </Row>
-                <Row>
-                    <Panel
-                        header={(
-                            <label><Message msgId="tabou2.search.partFour"/></label>
-                        )}
-                        className="tabou-panel"
-                    >
-                        <div className="col-xs-12">
-                            <Checkbox inline><Message msgId="tabou2.search.isHelp"/></Checkbox>
-                        </div>
-                        {
-                            SEARCH_ITEMS.filter(f => f.group === 4).map((el) => getCombo(el))
-                        }
-                        {
-                            SEARCH_CALENDARS.filter((el, i) => i < 4).map(els => (
-                                els.items.map(el => getDate(el))
-                            ))
-                        }
-                        {
-                            SEARCH_CALENDARS.filter((el, i) => i > 3).map(els => (
-                                els.items.map(el => getDate(el))
-                            ))
-                        }
-                    </Panel>
-                </Row>
-            </Grid>
-        </>
+        <Grid className={"col-xs-12"}>
+            <div id="tabou2-tbar-container" className="text-center">
+                <Tabou2SearchToolbar
+                    {...props}
+                    filters={getFiltersObj}
+                    apply={props.applyFilterObj}
+                    reset={reset}/>
+            </div>
+            {props.getTabouErrors.msg ? (
+                <Alert className={"alert-" + props.getTabouErrors.typeMsg}>
+                    <Glyphicon glyph="filter"/>
+                    <Message msgId={props.i18n(props.messages, props.getTabouErrors?.msg || " ")}/>
+                </Alert>) : null
+            }
+            <Row>
+                <Panel
+                    header={(
+                        <label><Message msgId="tabou2.search.partOne"/></label>
+                    )}
+                    className="tabou-panel"
+                >
+                    {SEARCH_ITEMS.filter(f => f.group === 1).map((cb) => getCombo(cb))}
+                    <div className="col-xs-12">
+                        <Checkbox
+                            className="tabou-search-combo"
+                            checked={get(comboValues, "pbil") || false}
+                            onChange={() => changeChecked("pbil")}
+                            inline
+                            id={"search-pbil" + new Date().getTime()}>
+                            <Message msgId="tabou2.search.pbil"/>
+                        </Checkbox>
+                    </div>
+                </Panel>
+            </Row>
+            <Row>
+                <Panel
+                    header={(
+                        <label><Message msgId="tabou2.search.partTwo"/></label>
+                    )}
+                    className="tabou-panel"
+                >
+                    {SEARCH_ITEMS.filter(f => f.group === 2).map((cb) => getCombo(cb))}
+                </Panel>
+            </Row>
+            <Row>
+                <Panel
+                    header={(
+                        <label><Message msgId="tabou2.search.partThree"/></label>
+                    )}
+                    className="tabou-panel"
+                >
+                    {SEARCH_ITEMS.filter(f => f.group === 3).map((cb) => getCombo(cb))}
+                </Panel>
+            </Row>
+            <Row>
+                <Panel
+                    header={(
+                        <label><Message msgId="tabou2.search.partFour"/></label>
+                    )}
+                    className="tabou-panel"
+                >
+                    <div className="col-xs-12">
+                        <Checkbox inline><Message msgId="tabou2.search.isHelp"/></Checkbox>
+                    </div>
+                    {
+                        SEARCH_ITEMS.filter(f => f.group === 4).map((el) => getCombo(el))
+                    }
+                    {
+                        SEARCH_CALENDARS.filter((el, i) => i < 4).map(els => (
+                            els.items.map(el => getDate(el))
+                        ))
+                    }
+                    {
+                        SEARCH_CALENDARS.filter((el, i) => i > 3).map(els => (
+                            els.items.map(el => getDate(el))
+                        ))
+                    }
+                </Panel>
+            </Row>
+        </Grid>
     );
 }
 

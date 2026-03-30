@@ -31,9 +31,9 @@ export default function ContributionPaddOap({
             change: (value) => setValues(
                 changeByType(
                     getCodeIdByCode(typesContribution, "CONTRIBUTION_ENJEUX"),
-                    value,
                     values,
-                    "contributions"
+                    "contributions",
+                    value
                 )
             ),
             code: "CONTRIBUTION_ENJEUX",
@@ -49,9 +49,9 @@ export default function ContributionPaddOap({
             change: (value) => setValues(
                 changeByType(
                     getCodeIdByCode(typesContribution, "CONTRIBUTION_TRAITEE"),
-                    value,
                     values,
-                    "contributions"
+                    "contributions",
+                    value
                 )
             ),
             code: "CONTRIBUTION_TRAITEE",
@@ -67,9 +67,9 @@ export default function ContributionPaddOap({
             change: (value) => setValues(
                 changeByType(
                     getCodeIdByCode(typesContribution, "CONTRIBUTION_AVENIR"),
-                    value,
                     values,
-                    "contributions"
+                    "contributions",
+                    value
                 )
             ),
             code: "CONTRIBUTION_AVENIR",

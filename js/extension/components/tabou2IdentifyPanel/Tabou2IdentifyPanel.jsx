@@ -106,15 +106,13 @@ export default function Tabou2IdentifyPanel({
             {
                 !isEmpty(props.featuresId) && feature?.properties?.id_tabou ?
                     (
-                        <>
-                            <Tabou2IdentifyContent
-                                feature={feature}
-                                featureId={get(feature, find(LAYER_FIELD_OPTION, ["name", configLayer])?.id)}
-                                response={props.queryData[selectedLayer]}
-                                tabouLayer={configLayer}
-                                {...props}
-                            />
-                        </>
+                        <Tabou2IdentifyContent
+                            feature={feature}
+                            featureId={get(feature, find(LAYER_FIELD_OPTION, ["name", configLayer])?.id)}
+                            response={props.queryData[selectedLayer]}
+                            tabouLayer={configLayer}
+                            {...props}
+                        />
                     )
                     : null
             }

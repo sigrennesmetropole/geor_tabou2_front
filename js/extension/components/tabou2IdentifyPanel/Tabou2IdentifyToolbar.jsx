@@ -98,6 +98,20 @@ export default function Tabou2IdentifyToolbar({ response, isValid, ...props }) {
             onClick: () => props.restore()
         }];
     }
+    modalBtns = [...modalBtns,
+        {
+            text: "RU",
+            tooltip: props.i18n(props.messages, "tabou2.identify.toolbar.nruTooltip"),
+            id: "accessNru",
+            onClick: () => {
+                open(props.nru?.url, "_blank");
+            },
+            style: {
+                marginLeft: "15px"
+            },
+            visible: !!props.nru?.url
+        }
+    ]
     return (
         <>
             <Toolbar

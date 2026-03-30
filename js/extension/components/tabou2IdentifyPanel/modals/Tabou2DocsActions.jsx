@@ -60,15 +60,13 @@ export default function Tabou2DocsActions({ document = {}, onClick = () => {}, r
     ];
 
     return (
-        <>
-            <Toolbar
-                btnDefaultProps={{
-                    className: "square-button-md",
-                    bsStyle: "primary"
-                }}
-                buttons={docActions}
-            />
-        </>
+        <Toolbar
+            btnDefaultProps={{
+                className: "square-button-md",
+                bsStyle: "primary"
+            }}
+            buttons={docActions}
+        />
     );
 
 }

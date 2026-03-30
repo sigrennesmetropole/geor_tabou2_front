@@ -16,11 +16,11 @@ const avoidReRender = (prevProps, nextProps) => {
     return isEqual(prevProps.initialItem, nextProps.initialItem);
 };
 /**
- * Accordion to display info for Identity panel section - only for feature linked with id tabou
+ * Accordion to display info for Prospectif panel section - only for feature linked with id tabou
  * @param {any} param
  * @returns component
  */
-const Tabou2IdentAccord = ({
+const Tabou2ProspectifAccord = ({
     initialItem,
     programme,
     operation,
@@ -108,42 +108,6 @@ const Tabou2IdentAccord = ({
             changeInfos({commune: v});
         }
     }, {
-        name: "nature",
-        label: "tabou2.identify.accordions.nature",
-        field: "nature.libelle",
-        type: "text",
-        source: operation,
-        readOnly: true,
-        require: true
-
-    }, {
-        layers: ["layerPA"],
-        name: "operationId",
-        label: "tabou2.identify.accordions.operation",
-        field: "nom",
-        type: "text",
-        source: operation,
-        readOnly: true
-    }, {
-        layers: ["layerSA"],
-        name: "parentId",
-        label: "tabou2.identify.accordions.operation",
-        field: "parentId",
-        value: () => has(values, "parentName") ? {nom: values.parentName, id: values.parentId} : operationParent,
-        select: (v) => changeInfos({parentId: v?.id || "", parentName: v?.nom || ""}),
-        change: (v) => changeInfos(v ? {parentId: v?.id || "", parentName: v?.nom || ""} : {
-            parentId: "",
-            parentName: ""
-        }),
-        type: "combo",
-        autocomplete: true,
-        apiLabel: "nom",
-        valueField: "id",
-        api: "operations?estSecteur=false&asc=true",
-        source: operationParent,
-        readOnly: false,
-        isSearchable: true
-    }, {
         name: "nom",
         field: "nom",
         label: "tabou2.identify.accordions.name",
@@ -152,25 +116,30 @@ const Tabou2IdentAccord = ({
         readOnly: false,
         require: true
     }, {
-        name: "consommationEspace",
-        field: "consommationEspace.libelle",
-        label: "tabou2.identify.accordions.consoSpace",
-        layers: ["layerSA", "layerOA"],
-        type: "combo",
-        autocomplete: true,
-        api: `consommation-espace?asc=true`,
-        apiLabel: "libelle",
-        valueField: "id",
-        placeholder: "tabou2.identify.accordions.emptySelect",
+        name: "vocation",
+        label: "tabou2.identify.accordions.vocation",
+        field: "vocation.libelle",
+        type: "text",
         source: operation,
+        readOnly: true,
+        require: true
+    }, {
+        name: "aireGeoHa",
+        field: "aireGeoHa",
+        label: "tabou2.identify.accordions.totalSpace",
+        type: "number",
+        value: () => mapFeature?.properties?.aire_geo_ha ?? null,
+        readOnly: true
+    }, {
+        name: "description",
+        label: "tabou2.identify.accordions.describe",
+        type: "text",
+        field: "description",
+        source: has(values, "description") ? values : initialItem,
         readOnly: false,
-        isSearchable: true,
-        value: () => values.consommationEspace || initialItem.consommationEspace,
-        select: (v) => changeInfos({consommationEspace: v}),
-        change: (v) => changeInfos(v ? {consommationEspace: v} : {consommationEspace: null})
+        isArea: true
     }, {
         name: "etape",
-        layers: ["layerOA"],
         label: "tabou2.identify.accordions.step",
         field: "etape.libelle",
         type: "combo",
@@ -187,31 +156,21 @@ const Tabou2IdentAccord = ({
         select: (v) => changeInfos({etape: v}),
         change: (v) => changeInfos(v ? {etape: v} : {etape: null})
     }, {
-        name: "etape",
-        layers: ["layerSA"],
-        label: "tabou2.identify.accordions.step",
-        field: "etape.libelle",
-        type: "combo",
-        autocomplete: true,
-        apiLabel: "libelle",
-        valueField: "id",
-        filter: false,
-        api: `operations/${initialItem.id}/etapes?orderBy=id&asc=true&secteur=true`,
-        source: operation,
-        readOnly: false,
-        require: true,
-        isSearchable: true,
-        value: () => values.etape || initialItem.etape,
-        select: (v) => changeInfos({etape: v}),
-        change: (v) => changeInfos(v ? {etape: v} : {etape: null})
-        }, {
-        name: "numAds",
-        label: "tabou2.identify.accordions.numAds",
-        field: "numAds",
-        type: "text",
-        source: values,
+        name: "operationnelDate",
+        label: "tabou2.identify.accordions.dateStart",
+        field: "operationnelDate",
+        type: "date",
+        value: initialItem?.operationnelDate || null,
         readOnly: false
-    }];
+    }, {
+        name: "livraisonDate",
+        label: "tabou2.identify.accordions.dateLiv",
+        field: "livraisonDate",
+        type: "date",
+        source: initialItem?.livraisonDate || null,
+        readOnly: false
+    }
+    ];
 
     const openTierModal = (type) => {
         let tiersBtn = document.getElementById('tiers');
@@ -334,14 +293,31 @@ const Tabou2IdentAccord = ({
                 />
             );
         }
-
-        if (item.type === "text") {
+        if (item.type === "text" || item.type === "number") {
             return (
                 <FormControl
-                    placeholder={i18n(messages, item?.label || "")}
-                    value={getValue(item) || ""}
+                    componentClass={item.isArea ? "textarea" : "input"}
+                    placeholder={i18n(messages, item?.placeholder || item.label)}
+                    style={{height: item.isArea ? "100px" : "auto"}}
+                    type={item.type}
+                    min="0"
+                    step={item?.step}
+                    value={item.value ? item.value(item) : getValue(item) || ""}
                     readOnly={item.readOnly || !allowChange}
-                    onChange={(v) => changeInfos({[item.name]: v.target.value})}
+                    onChange={(v) => {
+                        const val = item.type === "number" ? parseFloat(v.target.value) : v.target.value;
+                        return changeInfos({
+                            [item.name]: item.type === "number" && val < 0 ? "" : val
+                        });
+                    }}
+                    onKeyDown={(v) => {
+                        if (item.type !== "number") return;
+                        // only keep numeric and special key control as "Delete" or "Backspace"
+                        if (!/^[0-9.,]/.test(v.key) && v.key.length < 2) {
+                            v.returnValue = false;
+                            if (v.preventDefault) v.preventDefault();
+                        }
+                    }}
                 />
             );
         }
@@ -497,4 +473,4 @@ const Tabou2IdentAccord = ({
     );
 };
 
-export default memo(Tabou2IdentAccord, avoidReRender);
+export default memo(Tabou2ProspectifAccord, avoidReRender);

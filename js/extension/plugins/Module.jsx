@@ -77,7 +77,7 @@ class Tabou2Panel extends React.Component {
 
 const Tabou2Plugin = compose(
     connect((state) => ({
-        active: () => (state.controls && state.controls[CONTROL_NAME]?.enabled) || (state[CONTROL_NAME] && state[CONTROL_NAME].closing) || false,
+        active: () => state.controls?.[CONTROL_NAME]?.enabled || state[CONTROL_NAME]?.closing || false,
         enabled: isTabou2Activate(state),
         tocLayers: layersSelector(state),
         selectedLayerId: selectedLayerIdSelector(state),

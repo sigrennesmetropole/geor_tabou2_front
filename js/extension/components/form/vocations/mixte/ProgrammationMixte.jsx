@@ -44,10 +44,9 @@ export default function ProgrammationMixte({
                 setValues(
                     changeByType(
                         getCodeIdByCode(typesProgrammation, "HABITAT"),
-                        value,
                         values,
                         "informationsProgrammation",
-                        getCodeIdByCode(typesProgrammation, "HABITAT")
+                        value
                     )
                 );
             },
@@ -64,10 +63,9 @@ export default function ProgrammationMixte({
                 setValues(
                     changeByType(
                         getCodeIdByCode(typesProgrammation, "ACTIVITES"),
-                        value,
                         values,
                         "informationsProgrammation",
-                        getCodeIdByCode(typesProgrammation, "ACTIVITES")
+                        value
                     )
                 );
             },
@@ -112,6 +110,17 @@ export default function ProgrammationMixte({
             source: () => values,
             change: (value) => setValues({plh: {...values.plh, logementsLivres: value}}),
             readOnly: false
+        },
+        {
+            name: "logtsHFV",
+            label: "tabou2.vocation.ageFriendlyHousing",
+            field: "logtsHFV",
+            type: "number",
+            layers: [],
+            source: () => values,
+            change: (value) => setValues({logtsHFV: value}),
+            readOnly: false,
+            labelStyle: {fontStyle: "italic"}
         },
         {
             name: "vocationZa",

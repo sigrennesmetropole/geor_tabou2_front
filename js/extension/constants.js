@@ -169,20 +169,21 @@ export const SEARCH_CALENDARS = [{
 }];
 
 export const ACCORDIONS = [
-    {title: 'tabou2.identify.accordions.indicateurs', id: 'indicateurs'},
-    {title: 'tabou2.identify.accordions.identify', id: 'ident'},
-    {title: 'tabou2.identify.accordions.describe', id: 'describe'},
-    {title: 'tabou2.identify.accordions.gouv', id: 'gouvernance', layers: ['layerPA']},
-    {title: 'tabou2.identify.accordions.real', id: 'gouvernance', layers: ['layerOA', "layerSA"]},
+    {title: 'tabou2.identify.accordions.prospection', id: 'prospection', layers: ['layerOA'], display: (props) => props.prospection ?? false},
+    {title: 'tabou2.identify.accordions.indicateurs', id: 'indicateurs', display: (props) => !(props.prospection ?? false)},
+    {title: 'tabou2.identify.accordions.identify', id: 'ident', display: (props) => !(props.prospection ?? false)},
+    {title: 'tabou2.identify.accordions.describe', id: 'describe', display: (props) => !(props.prospection ?? false)},
+    {title: 'tabou2.identify.accordions.gouv', id: 'gouvernance', layers: ['layerPA'], display: (props) => !(props.prospection ?? false)},
+    {title: 'tabou2.identify.accordions.real', id: 'gouvernance', layers: ['layerOA', "layerSA"], display: (props) => !(props.prospection ?? false)},
     // TO DELETE OA SA FIELDS
-    {title: 'tabou2.identify.accordions.opTracking', id: 'suivi', layers: ['layerPA']},
-    {title: 'tabou2.identify.accordions.progHabitat', id: 'habitat', layers: ['layerPA']},
-    {title: 'tabou2.identify.accordions.autreProg', id: 'autreProg', layers: ['layerPA']},
+    {title: 'tabou2.identify.accordions.opTracking', id: 'suivi', layers: ['layerPA'], display: (props) => !(props.prospection ?? false)},
+    {title: 'tabou2.identify.accordions.progHabitat', id: 'habitat', layers: ['layerPA'], display: (props) => !(props.prospection ?? false)},
+    {title: 'tabou2.identify.accordions.autreProg', id: 'autreProg', layers: ['layerPA'], display: (props) => !(props.prospection ?? false)},
     //
-    {title: 'tabou2.identify.accordions.dds', id: 'dds', layers: ['layerPA']},
-    {title: 'tabou2.identify.accordions.secProg', id: 'secteursprog', layers: []},
-    {title: 'tabou2.identify.accordions.cadre', id: 'cadre', layers: ['layerOA', 'layerSA']},
-    {title: 'tabou2.identify.accordions.projetUrbain.section', id: 'projetUrbain', layers: ['layerOA']}
+    {title: 'tabou2.identify.accordions.dds', id: 'dds', layers: ['layerPA'], display: (props) => !(props.prospection ?? false)},
+    {title: 'tabou2.identify.accordions.secProg', id: 'secteursprog', layers: [], display: (props) => !(props.prospection ?? false)},
+    {title: 'tabou2.identify.accordions.cadre', id: 'cadre', layers: ['layerOA', 'layerSA'], display: (props) => !(props.prospection ?? false)},
+    {title: 'tabou2.identify.accordions.projetUrbain.section', id: 'projetUrbain', layers: ['layerOA'], display: (props) => !(props.prospection ?? false)}
 ];
 
 export const LAYER_FIELD_OPTION = [
@@ -314,6 +315,11 @@ export const ADD_FIELDS = {
         layerPA: "nature",
         layerSA: "nature"
     },
+    vocation: {
+        layerOA: "vocation",
+        layerPA: "vocation",
+        layerSA: "vocation"
+    },
     code: {
         layerOA: "code",
         layerPA: "code",
@@ -345,6 +351,15 @@ export const ADD_OA_FORM = [{
     parent: null,
     type: "combo"
 }, {
+    label: "tabou2.add.vocation",
+    api: "vocations",
+    name: "vocation",
+    group: 1,
+    apiField: "id",
+    apiLabel: "libelle",
+    parent: null,
+    type: "combo"
+}, {
     label: "tabou2.add.emprise",
     name: "nomEmprise",
     group: 1,
@@ -370,7 +385,7 @@ export const ADD_OA_FORM = [{
     label: "tabou2.add.step",
     apiField: "code",
     apiLabel: "libelle",
-    api: "operations/etapes?orderBy=id&asc=true",
+    api: "operations/etapes?orderBy=id&asc=true&type=START",
     name: "etape",
     placeholder: "Sélectionner une étape",
     required: true,
@@ -413,6 +428,15 @@ export const ADD_SA_FORM = [{
     parent: null,
     type: "combo"
 }, {
+    label: "tabou2.add.vocation",
+    api: "vocations",
+    name: "vocation",
+    group: 1,
+    apiField: "id",
+    apiLabel: "libelle",
+    parent: null,
+    type: "combo"
+}, {
     label: "tabou2.add.emprise",
     name: "nomEmprise",
     group: 1,
@@ -438,7 +462,7 @@ export const ADD_SA_FORM = [{
     label: "tabou2.add.step",
     apiField: "code",
     apiLabel: "libelle",
-    api: "operations/etapes?orderBy=id&asc=true",
+    api: "operations/etapes?orderBy=id&asc=true&type=START&secteur=true",
     name: "etape",
     placeholder: "Sélectionner une étape",
     required: true,
@@ -515,6 +539,9 @@ export const OA_SCHEMA = {
     "nature": {
         "id": 1
     },
+    "vocation":{
+        "id": 1
+    },
     "idEmprise": 0,
     "code": "",
     "nom": "",
@@ -525,13 +552,17 @@ export const OA_SCHEMA = {
     "aire_geo_ha": 0,
     "surfaceTotale": 0,
     "etape": {
-        "id": 0
+        "id": 0,
+        "prospectif": false
     }
 };
 
 export const SA_SCHEMA = {
     "diffusionRestreinte": false,
     "nature": {
+        "id": 1
+    },
+    "vocation":{
         "id": 1
     },
     "idEmprise": 0,

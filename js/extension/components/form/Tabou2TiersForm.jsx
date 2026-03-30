@@ -124,7 +124,7 @@ export default function Tabou2TiersForm({...props}) {
                     TIERS_FORMS.map(f => (
                         <Col xs={6}>
                             <Col xs={f.colLabel || 4} style={{marginTop: marginTop}}>
-                                <ControlLabel><Message msgId={f.label}/>{f.required ? "*" : ""}</ControlLabel>
+                                <ControlLabel style={f.labelStyle || {}}><Message msgId={f.label}/>{f.required ? "*" : ""}</ControlLabel>
                             </Col>
                             <Col xs={f.colForm || 8}
                                 className={f.required && !get(thisTier, f.apiField) ? "has-error" : ""}>

@@ -126,7 +126,7 @@ const Tabou2ProjetUrbainAccord = ({
             return (
                 <Col xs={12}>
                     <h4 style={{borderBottom: "1px solid"}}>
-                        <ControlLabel><Message msgId={item.label}/></ControlLabel>
+                        <ControlLabel style={item.labelStyle || {}}><Message msgId={item.label}/></ControlLabel>
                     </h4>
                 </Col>
             );
@@ -135,7 +135,7 @@ const Tabou2ProjetUrbainAccord = ({
         return (
             <>
                 <Col xs={4}>
-                    <ControlLabel><Message msgId={item.label}/></ControlLabel>
+                    <ControlLabel style={item.labelStyle || {}}><Message msgId={item.label}/></ControlLabel>
                 </Col>
                 <Col xs={8}>
                     {renderFieldInput(item)}

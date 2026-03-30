@@ -43,6 +43,14 @@ const Tabou2ProgHabitatAccord = ({
             source: has(values, "logementsTotal") ? values : programme,
             readOnly: false
         }, {
+            name: "surfaceSHAB",
+            field: "surfaceSHAB",
+            label: "tabou2.identify.accordions.SHABSpace",
+            type: "number",
+            step: 0.1,
+            layers: ["layerPA"],
+            source: initialItem
+        }, {
             name: "logementsAccessAidePrevu",
             label: "tabou2.identify.accordions.helpAccess",
             field: "logementsAccessAidePrevu",
@@ -104,6 +112,7 @@ const Tabou2ProgHabitatAccord = ({
             type: "number",
             min: 0,
             source: has(values, "nbLogementsHFV") ? values : programme,
+            labelStyle: {fontStyle: "italic"},
             readOnly: false
         }, {
             name: "suiviPLH",
@@ -197,7 +206,7 @@ const Tabou2ProgHabitatAccord = ({
                                 </Alert>) : null
                         }
                         <Col xs={item.type === "table" ? 12 : 5}>
-                            <ControlLabel>
+                            <ControlLabel style={item.labelStyle || {}}>
                                 <Message msgId={item.label}/>
                                 {
                                     item.msg && (
@@ -246,7 +255,7 @@ const Tabou2ProgHabitatAccord = ({
                                                 onKeyDown={(v) => {
                                                     if (item.type !== "number") return;
                                                     // only keep numeric and special key control as "Delete" or "Backspace"
-                                                    if (!new RegExp('^[0-9]+$').test(v.key) && v.key.length < 2 && v.key !== ",") {
+                                                    if (!/^\d+$/.test(v.key) && v.key.length < 2 && v.key !== ",") {
                                                         v.returnValue = false;
                                                         if (v.preventDefault) v.preventDefault();
                                                     }
@@ -292,9 +301,7 @@ const Tabou2ProgHabitatAccord = ({
                                                 item.source.map(programmeItem => (
                                                     <tr>
                                                         {item.fields.map(field => (
-                                                            <>
-                                                                <td>{getValueByField(field, get(programmeItem, field))}</td>
-                                                            </>
+                                                            <td>{getValueByField(field, get(programmeItem, field))}</td>
                                                         ))}
                                                     </tr>
                                                 ))

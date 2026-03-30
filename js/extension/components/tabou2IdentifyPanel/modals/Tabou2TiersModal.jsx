@@ -243,7 +243,6 @@ export default function Tabou2TiersModal({
                                                     , sortField[0], sortField[1])
                                                     .filter(t => t.associate || isTypeDisplay(t))
                                                     .map((tier) => (
-                                                        <>
                                                             <tr>
                                                                 <td>
                                                                     <Checkbox
@@ -355,7 +354,6 @@ export default function Tabou2TiersModal({
                                                                     />
                                                                 </td>
                                                             </tr>
-                                                        </>
                                                     ))
                                             }
                                         </tbody>

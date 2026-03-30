@@ -34,9 +34,9 @@ export default function AutreProgrammation({
             change: (value) => setValues(
                 changeByType(
                     getCodeIdByCode(typesProgrammation, "EQUIPEMENT"),
-                    value,
                     values,
-                    "informationsProgrammation"
+                    "informationsProgrammation",
+                    value
                 )
             ),
             code: "EQUIPEMENT",
@@ -52,9 +52,9 @@ export default function AutreProgrammation({
             change: (value) => setValues(
                 changeByType(
                     getCodeIdByCode(typesProgrammation, "AUTRE"),
-                    value,
                     values,
-                    "informationsProgrammation"
+                    "informationsProgrammation",
+                    value
                 )
             ),
             code: "AUTRE",

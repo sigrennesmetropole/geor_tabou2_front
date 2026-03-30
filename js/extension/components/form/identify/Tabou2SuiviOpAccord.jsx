@@ -56,30 +56,6 @@ const Tabou2SuiviOpAccord = ({
         select: (v) => changeInfos({etape: v}),
         change: (v) => changeInfos({etape: v || null})
     }, {
-        name: "livraisonDate",
-        label: "tabou2.identify.accordions.dateLiv",
-        field: "livraisonDate",
-        layers: ["layerPA"],
-        type: "date",
-        source: values?.livraisonDate ? values : operation,
-        readOnly: false
-    }, {
-        name: "clotureDate",
-        label: "tabou2.identify.accordions.dateClose",
-        field: "clotureDate",
-        layers: ["layerPA"],
-        type: "date",
-        source: values?.clotureDate ? values : operation,
-        readOnly: false
-    }, {
-        name: "annulationDate",
-        label: "tabou2.identify.accordions.dateCancelStep",
-        field: "annulationDate",
-        layers: ["layerPA"],
-        type: "date",
-        source: values?.annulationDate ? values : operation,
-        readOnly: false
-    }, {
         name: "attributionFonciereAnnee",
         label: "tabou2.identify.accordions.yearAttrib",
         field: "attributionFonciereAnnee",
@@ -109,6 +85,30 @@ const Tabou2SuiviOpAccord = ({
         type: "date",
         layers: ["layerPA"],
         source: has(values, "commercialisationDate") ? values : programme,
+        readOnly: false
+    }, {
+        name: "livraisonDate",
+        label: "tabou2.identify.accordions.dateLiv",
+        field: "livraisonDate",
+        layers: ["layerPA"],
+        type: "date",
+        source: values?.livraisonDate ? values : operation,
+        readOnly: false
+    }, {
+        name: "clotureDate",
+        label: "tabou2.identify.accordions.dateClose",
+        field: "clotureDate",
+        layers: ["layerPA"],
+        type: "date",
+        source: values?.clotureDate ? values : operation,
+        readOnly: false
+    }, {
+        name: "annulationDate",
+        label: "tabou2.identify.accordions.dateCancelStep",
+        field: "annulationDate",
+        layers: ["layerPA"],
+        type: "date",
+        source: values?.annulationDate ? values : operation,
         readOnly: false
     }
     ].filter(el => el?.layers?.includes(layer) || !el?.layers);
@@ -144,7 +144,7 @@ const Tabou2SuiviOpAccord = ({
                 fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(item => (
                     <Row className="attributeInfos">
                         <Col xs={4}>
-                            <ControlLabel><Message msgId={item.label}/></ControlLabel>
+                            <ControlLabel style={item.labelStyle || {}}><Message msgId={item.label}/></ControlLabel>
                         </Col>
                         <Col xs={8}>
                             {
@@ -239,7 +239,7 @@ const Tabou2SuiviOpAccord = ({
                                             onKeyDown={(v) => {
                                                 if (item.type !== "number") return;
                                                 // only keep numeric and special key control as "Delete" or "Backspace"
-                                                if (!new RegExp('^[0-9]+$').test(v.key) && v.key.length < 2 && v.key !== ",") {
+                                                if (!/^\d+$/.test(v.key) && v.key.length < 2 && v.key !== ",") {
                                                     v.returnValue = false;
                                                     if (v.preventDefault) v.preventDefault();
                                                 }

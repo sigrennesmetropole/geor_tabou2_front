@@ -18,6 +18,7 @@ import Tabou2Information from '@js/extension/components/common/Tabou2Information
 import Message from "@mapstore/components/I18N/Message";
 import "@js/extension/css/tabou.css";
 import Tabou2ProjetUrbainAccord from "@js/extension/components/form/identify/Tabou2ProjetUrbainAccord";
+import Tabou2ProspectifAccord from "@js/extension/components/form/identify/Tabou2ProspectifAccord";
 
 /**
  * Content of identify panel component - separate to be more readable
@@ -48,55 +49,11 @@ const Tabou2IdentifyContent = ({
             [idx]: !prev[idx]
         }));
     };
-    // hooks to refresh if necessary if user change selected layer or if response change
-    useEffect(() => {
-        const isContributor = props.authent.isContrib || props.authent.isReferent;
-        setAccordions(ACCORDIONS.filter(acc => {
-            // Filtrer par layer si défini
-            if (acc.layers && acc.layers.indexOf(tabouLayer) === -1) {
-                return false;
-            }
-            // Filtrer l'accordéon indicateurs et suivi si pas contributeur
-            return !((acc.id === 'indicateurs' || acc.id === 'suivi') && !isContributor);
-        }));
-        if (!isEmpty(props?.tabouInfos)) {
-            let selected = props?.tabouInfos?.programme || props?.tabouInfos?.operation;
-            if (!isEqual(props?.tabouInfos?.operation, operation) || !isEqual(infos, selected)) {
-                setInfos(selected);
-                setOperation(props?.tabouInfos?.operation);
-                setOperationParent(props?.tabouInfos?.operationParent);
-                setMapFeature(props?.tabouInfos?.mapFeature);
-            }
-        }
-    }, [tabouLayer, props.tabouInfos.uuid, JSON.stringify(typesFicheInfos)]);
-
-    const save = () => {
-        props.changeFeature({
-            feature: infos,
-            layer: props.selection.layer
-        });
-    };
-
-    const restore = () => {
-        setInfos(props?.tabouInfos?.programme || props?.tabouInfos?.operation);
-    };
-    if (props.identifyLoading) {
-        let size = 100;
-        return (
-            <>
-                <Tabou2Information
-                    isVisible
-                    glyph=""
-                    message={<Message msgId="tabou2.identify.getInfos"/>}
-                    title={<Message msgId="tabou2.load"/>}/>
-                <Loader size={size} style={{padding: size / 10, margin: "auto", display: "flex"}}/>
-            </>
-        );
-    }
     const tabsProps = {
         programme: props.tabouInfos?.programme,
         operation: operation,
         operationParent: operationParent,
+        prospection: props.tabouInfos?.operation?.etape?.prospectif,
         mapFeature: mapFeature,
         initialItem: infos,
         change: (values, required) => {
@@ -122,6 +79,55 @@ const Tabou2IdentifyContent = ({
         messages: props.messages,
         i18n: props.i18n
     };
+    // hooks to refresh if necessary if user change selected layer or if response change
+    useEffect(() => {
+        const isContributor = props.authent.isContrib || props.authent.isReferent;
+        if (!isEmpty(props?.tabouInfos)) {
+            let selected = props?.tabouInfos?.programme || props?.tabouInfos?.operation;
+            if (!isEqual(props?.tabouInfos?.operation, operation) || !isEqual(infos, selected)) {
+                setInfos(selected);
+                setOperation(props?.tabouInfos?.operation);
+                setOperationParent(props?.tabouInfos?.operationParent);
+                setMapFeature(props?.tabouInfos?.mapFeature);
+            }
+        }
+        setAccordions(ACCORDIONS.filter(acc => {
+            // Filtrer par layer si défini
+            if (acc.layers && acc.layers.indexOf(tabouLayer) === -1) {
+                return false;
+            }
+            // On veut pouvoir filtrer les onglets par rapport à certains critères
+            if (!acc.display(tabsProps)) {
+                return false;
+            }
+            // Filtrer l'accordéon indicateurs et suivi si pas contributeur
+            return !((acc.id === 'indicateurs' || acc.id === 'suivi') && !isContributor);
+        }));
+    }, [tabouLayer, props.tabouInfos.uuid, JSON.stringify(typesFicheInfos)]);
+
+    const save = () => {
+        props.changeFeature({
+            feature: infos,
+            layer: props.selection.layer
+        });
+    };
+
+    const restore = () => {
+        setInfos(props?.tabouInfos?.programme || props?.tabouInfos?.operation);
+    };
+    if (props.identifyLoading) {
+        let size = 100;
+        return (
+            <>
+                <Tabou2Information
+                    isVisible
+                    glyph=""
+                    message={<Message msgId="tabou2.identify.getInfos"/>}
+                    title={<Message msgId="tabou2.load"/>}/>
+                <Loader size={size} style={{padding: size / 10, margin: "auto", display: "flex"}}/>
+            </>
+        );
+    }
 
     return (
         <div className="tabou-identify-panel">
@@ -159,8 +165,10 @@ const Tabou2IdentifyContent = ({
                                             <Message msgId={item.title}/>
                                         </label>
                                     </span>
+
                                 )}
                                 eventKey={index.toString()}>
+                                {item.id === "prospection" ? <Tabou2ProspectifAccord {...tabsProps} /> : null}
                                 {item.id === "indicateurs" ? <Tabou2IndicateursAccord {...tabsProps} /> : null}
                                 {item.id === "ident" ? <Tabou2IdentAccord {...tabsProps} /> : null}
                                 {item.id === "describe" ? <Tabou2DescribeAccord {...tabsProps} /> : null}

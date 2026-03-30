@@ -1,3 +1,4 @@
+require('../patchWebpackMd4');
 const path = require("path");
 const fs = require("fs");
 
@@ -69,4 +70,8 @@ const urlLoader = {
 
 const {module: moduleObj, ...extensionConfig} = createExtensionWebpackConfig({ prod: true, name, ...commons, plugins});
 
-module.exports = { ...extensionConfig, module: {...moduleObj, rules: [...moduleObj.rules, fileLoader, urlLoader]}};
+module.exports = {
+    ...extensionConfig,
+    output: { ...extensionConfig.output, hashFunction: 'sha256' },
+    module: {...moduleObj, rules: [...moduleObj.rules, fileLoader, urlLoader]}
+};

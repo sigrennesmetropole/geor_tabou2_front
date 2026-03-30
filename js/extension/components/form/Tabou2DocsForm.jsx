@@ -129,16 +129,7 @@ export default function Tabou2DocsForm({
     // Charge toutes les données, le filtrage est géré côté client par Tabou2Select
     const handleDocumentSearch = () => {
         return searchDocumentsTypes("")
-            .then((response) => {
-            // Gérer les deux formats possibles: {elements: [...]} ou [...]
-                if (response && response.elements) {
-                    return response.elements;
-                }
-                if (Array.isArray(response)) {
-                    return response;
-                }
-                return [];
-            })
+            .then((response) => response?.elements ?? (Array.isArray(response) ? response : []))
             .catch((error) => {
                 console.error("Erreur lors de la recherche des types de documents:", error);
                 return [];
@@ -182,7 +173,7 @@ export default function Tabou2DocsForm({
                     {fieldsMetadata.map((field) => (
                         <Col xs={12} key={field.key}>
                             <Col xs={3} style={{marginTop: marginTop}}>
-                                <ControlLabel>
+                                <ControlLabel style={field.labelStyle || {}}>
                                     <Message msgId={field.libelle}/>{field.required ? "*" : ""} :
                                 </ControlLabel>
                             </Col>

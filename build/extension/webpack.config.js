@@ -1,3 +1,4 @@
+require('../patchWebpackMd4');
 
 const createExtensionWebpackConfig = require('../../MapStore2/build/createExtensionWebpackConfig');
 
@@ -17,4 +18,4 @@ const webpackConfig = createExtensionWebpackConfig({
     }
 });
 
-module.exports = webpackConfig;
+module.exports = { ...webpackConfig, output: { ...webpackConfig.output, hashFunction: 'sha256' } };

@@ -39,6 +39,9 @@ const Tabou2IndicateursAccord = ({
     const [required, setRequired] = useState({});
 
     // Définition des champs pour les indicateurs principaux
+    const etapeSource = values?.etape ? values : (layer === "layerPA" ? initialItem : operation);
+    const operationnelDateSource = values?.operationnelDate ? values : (layer === "layerSA" && !isEmpty(operationParent) ? operationParent : operation);
+    const avancementAdministratifSource = values?.avancementAdministratif ? values : (layer === "layerSA" && !isEmpty(operationParent) ? operationParent : operation);
     const getFields = () => [{
         name: "commune",
         field: "properties.commune",
@@ -51,8 +54,7 @@ const Tabou2IndicateursAccord = ({
         field: "nom",
         label: "tabou2.identify.accordions.name",
         type: "text",
-        source: values?.nom ? values : initialItem,
-        readOnly: true
+        source: values?.nom ? values : initialItem
     }, {
         name: "etape",
         label: "tabou2.identify.accordions.step",
@@ -63,29 +65,30 @@ const Tabou2IndicateursAccord = ({
         api: layer === "layerPA"
             ? `programmes/${initialItem.id}/etapes?orderBy=id&asc=true`
             : `operations/${initialItem.id}/etapes?orderBy=id&asc=true`,
-        source: layer === "layerPA" ? values?.etape ? values : initialItem : values?.etape ? values : operation,
-        readOnly: false,
-        layers: ["layerPA", "layerOA", "layerSA"]
+        source: etapeSource
     }, {
         name: "vocation",
         label: "tabou2.identify.accordions.vocation",
-        field: "vocation.libelle",
-        type: "text",
-        source: layer === "layerSA" && !isEmpty(operationParent) ? operationParent : operation,
-        readOnly: true
+        field: "vocation",
+        type: "select",
+        apiLabel: "libelle",
+        apiValue: "id",
+        api: "vocations?orderBy=id&asc=true",
+        source: values?.vocation ? values : (layer === "layerSA" && !isEmpty(operationParent) ? operationParent : operation),
+        readOnly: layer === "layerPA"
     }, {
         name: "operationnelDate",
         label: "tabou2.identify.accordions.dateStart",
         field: "operationnelDate",
         type: "date",
-        source: values?.operationnelDate ? values : (layer === "layerSA" && !isEmpty(operationParent) ? operationParent : operation),
+        source: operationnelDateSource,
         readOnly: layer === "layerPA"
     }, {
         name: "avancementAdministratif",
         label: "tabou2.identify.accordions.avancementAdministratif",
         field: "avancementAdministratif",
         type: "text",
-        source: values?.avancementAdministratif ? values : (layer === "layerSA" && !isEmpty(operationParent) ? operationParent : operation),
+        source: avancementAdministratifSource,
         readOnly: layer === "layerPA",
         isArea: true
     }].filter(el => el?.layers?.includes(layer) || !el?.layers);
@@ -132,7 +135,7 @@ const Tabou2IndicateursAccord = ({
                 fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(item => (
                     <Row className="attributeInfos" key={item.name}>
                         <Col xs={4}>
-                            <ControlLabel><Message msgId={item.label}/></ControlLabel>
+                            <ControlLabel style={item.labelStyle || {}}><Message msgId={item.label}/></ControlLabel>
                         </Col>
                         <Col xs={8}>
                             {
@@ -142,7 +145,7 @@ const Tabou2IndicateursAccord = ({
                                         valueField={item.apiValue}
                                         search={(text) => getRequestApi(item.api, apiCfg, text ? {libelle: `*${text}*`} : {})
                                             .then(r => r?.elements || r || [])}
-                                        value={get(values, item.name) || null}
+                                        value={getValue(item) || null}
                                         disabled={item.readOnly || !allowChange}
                                         onSelect={(selected) => changeInfos({[item.name]: selected})}
                                         placeholder={i18n(messages, item.label)}
@@ -203,7 +206,7 @@ const Tabou2IndicateursAccord = ({
                                             onKeyDown={(v) => {
                                                 if (item.type !== "number") return;
                                                 // Ne garder que les chiffres et les touches de contrôle spéciales comme "Delete" ou "Backspace"
-                                                if (!new RegExp('^[0-9]+$').test(v.key) && v.key.length < 2 && v.key !== ",") {
+                                                if (!/^\d+$/.test(v.key) && v.key.length < 2 && v.key !== ",") {
                                                     v.returnValue = false;
                                                     if (v.preventDefault) v.preventDefault();
                                                 }

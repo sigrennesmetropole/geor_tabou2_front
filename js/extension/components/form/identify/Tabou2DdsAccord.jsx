@@ -8,10 +8,7 @@ import Message from "@mapstore/components/I18N/Message";
 import ControlledPopover from '@mapstore/components/widgets/widget/ControlledPopover';
 
 const avoidReRender = (prevProps, nextProps) => {
-    if (isEqual(prevProps.initialItem, nextProps.initialItem)) {
-        return true;
-    }
-    return false; // re render
+    return isEqual(prevProps.initialItem, nextProps.initialItem);
 };
 
 /**
@@ -152,7 +149,7 @@ const Tabou2DdsAccord = ({
                         <Col xs={item.type === "table" ? 12 : 4}>
                             {
                                 item.type !== "boolean" && (
-                                    <ControlLabel>
+                                    <ControlLabel style={item.labelStyle || {}}>
                                         <Message msgId={item.label} />
                                         {
                                             item.msg && (
@@ -204,9 +201,7 @@ const Tabou2DdsAccord = ({
                                                 item.source.map(programmeItem => (
                                                     <tr>
                                                         {item.fields.map(field => (
-                                                            <>
-                                                                <td>{getValueByField(field, get(programmeItem, field))}</td>
-                                                            </>
+                                                            <td>{getValueByField(field, get(programmeItem, field))}</td>
                                                         ))}
                                                     </tr>
                                                 ))

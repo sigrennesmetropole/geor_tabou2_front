@@ -100,9 +100,9 @@
           "tooltip": "Tiers"
         },
         "accordions": {
-          "chargeOp": "Chargé d'opération",
           "tiersDetail": "Voir ces tiers",
-          "indicateurs": "Principaux indicateurs (en bref)",
+          "prospection": "Prospectif",
+          "indicateurs": "En résumé (Urba Flash)",
           "identify": "Identification",
           "describe": "Descriptif",
           "gouv": "Gouvernance",
@@ -161,7 +161,7 @@
           "controlAccess": "Accession maitrisée",
           "controlAcces": "Accession maîtrisée",
           "privateLoc": "Locatif régulé privé",
-          "nbLogementsHFV": "Logts HFV",
+          "nbLogementsHFV": "dont logts HFV",
           "suiviPLH": "Suivi PLH",
           "agapeoData": "Données issue de Agapéo (Service Habitat)",
           "locHelp": "Locatif aidé",
@@ -172,7 +172,7 @@
           "locRegHlm": "Loc. rég. HLM",
           "locRegPriv": "Loc. rég. privé",
           "accessHelpTitle": "Acces. aidée",
-          "autreProg": "Autre programmation",
+          "autreProg": "Autre programmation (SDP m²)",
           "autreProgFields": {
             "bureaux": "Bureaux",
             "bureauxNextAds": "Bureaux (NextADS)",
@@ -228,7 +228,7 @@
           "financements": "Financement",
           "financementPPI": "Financement (inscription à la PPI)",
           "elementsFinanciers": "Éléments financiers dont équipements publics",
-          "referents": "Chargé d'opération",
+          "referents": "Chargé de suivi",
           "rmActions": "Actions à mener par RM",
           "acteursExt": "Acteurs et partenaires externes",
           "acteursInt": "Services ou personnes internes",
@@ -240,6 +240,7 @@
         "selectFeatureMsg": "Cliquer sur une emprise, programme, opération ou secteur visible sur la carte pour commencer",
         "toolbar": {
           "displaySaPa": "Voir les secteurs et programmes liés sur la carte",
+          "nruTooltip": "Accéder à la recherche d'une Note de Renseignements d'Urbanisme",
           "tiers": "Tiers",
           "docs": "Documents",
           "logs": "Journal de bord",
@@ -255,6 +256,7 @@
         "oaSelectType": " Choisissez si c'est un secteur, puis sélectionnez la nature et l'emprise",
         "sector": "Secteur",
         "nature": "Nature",
+        "vocation": "Vocation",
         "emprise": "Emprise",
         "name": "Nom",
         "code": "Code",
@@ -342,7 +344,7 @@
       },
       "vocation": {
         "progHabitat": "Produits logements/répartition",
-        "ageFriendlyHousing": "Logts HFV",
+        "ageFriendlyHousing": "dont logts HFV",
         "title": "Vocation – informations complémentaires",
         "btnLabel": "Voir les attributs",
         "changeSuccess": "Modifications sauvegardées !",

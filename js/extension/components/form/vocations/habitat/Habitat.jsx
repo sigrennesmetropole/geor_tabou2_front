@@ -7,29 +7,26 @@ import CompositionProgrammation from '../CompositionProgrammation';
 import ProgrammationLogements from './ProgrammationLogements';
 
 export default function Habitat({...props}) {
-    const tabs = [
-        <Message msgId="tabou2.vocation.tabComposition"/>,
-        <Message msgId="tabou2.vocation.tabHousing"/>,
-        <Message msgId="tabou2.vocation.tabOtherProg"/>,
-        <Message msgId="tabou2.vocation.tabContrib"/>
-    ];
-
     const subFormProps = {
         ...props,
         owner: {isReferent: true}
     };
+    const tabs = [
+        {key: "composition", title: <Message msgId="tabou2.vocation.tabComposition"/>, component: <CompositionProgrammation {...subFormProps}/>},
+        {key: "housing", title: <Message msgId="tabou2.vocation.tabHousing"/>, component: <ProgrammationLogements {...subFormProps}/>},
+        {key: "otherProg", title: <Message msgId="tabou2.vocation.tabOtherProg"/>, component: <AutreProgrammation {...subFormProps}/>},
+        {key: "contrib", title: <Message msgId="tabou2.vocation.tabContrib"/>, component: <ContributionPaddOap {...subFormProps}/>}
+    ];
+
     return (
         <Col xs={12}>
             <Tabs defaultActiveKey={1} id="vocation-activite-tabs">
                 {
-                    tabs.map((tab, i) => (
+                    tabs.map(({key, title, component}, i) => (
                         <Tab
-                            key={i} eventKey={i} title={tab}
+                            key={key} eventKey={i} title={title}
                         >
-                            {i === 0 && (<CompositionProgrammation {...subFormProps}/>)}
-                            {i === 1 && (<ProgrammationLogements {...subFormProps}/>)}
-                            {i === 2 && (<AutreProgrammation {...subFormProps}/>)}
-                            {i === 3 && (<ContributionPaddOap {...subFormProps}/>)}
+                            {component}
                         </Tab>
                     ))
                 }

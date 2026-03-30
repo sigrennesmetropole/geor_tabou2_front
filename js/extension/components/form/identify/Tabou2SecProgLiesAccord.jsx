@@ -4,10 +4,7 @@ import { Table, Col, Row, Grid } from "react-bootstrap";
 import "@js/extension/css/identify.css";
 
 const avoidReRender = (prevProps, nextProps) => {
-    if (isEqual(prevProps.initialItem, nextProps.initialItem)) {
-        return true;
-    }
-    return false; // re render
+    return isEqual(prevProps.initialItem, nextProps.initialItem);
 };
 
 const Tabou2SecProgLiesAccord = ({
@@ -86,9 +83,7 @@ const Tabou2SecProgLiesAccord = ({
                                                 item.source.map(programmeItem => (
                                                     <tr>
                                                         {item.fields.map(field => (
-                                                            <>
-                                                                <td>{getValueByField(field, get(programmeItem, field))}</td>
-                                                            </>
+                                                            <td>{getValueByField(field, get(programmeItem, field))}</td>
                                                         ))}
                                                     </tr>
                                                 ))
