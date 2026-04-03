@@ -11,7 +11,7 @@ jobs:
       - name: "Checkout branch"
         uses: actions/checkout@v3
         with:
-          ref: main
+          ref: master
       # only keep branche submodule version
       - name: "Checkout submodules"
         run: git submodule update --init --recursive
