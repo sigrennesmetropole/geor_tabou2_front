@@ -183,7 +183,7 @@ export const ACCORDIONS = [
     {title: 'tabou2.identify.accordions.dds', id: 'dds', layers: ['layerPA'], display: (props) => !(props.prospection ?? false)},
     {title: 'tabou2.identify.accordions.secProg', id: 'secteursprog', layers: [], display: (props) => !(props.prospection ?? false)},
     {title: 'tabou2.identify.accordions.cadre', id: 'cadre', layers: ['layerOA', 'layerSA'], display: (props) => !(props.prospection ?? false)},
-    {title: 'tabou2.identify.accordions.projetUrbain.section', id: 'projetUrbain', layers: ['layerOA'], display: (props) => !(props.prospection ?? false)}
+    {title: 'tabou2.identify.accordions.projetUrbain.section', id: 'projetUrbain', display: (props) => !(props.prospection ?? false)}
 ];
 
 export const LAYER_FIELD_OPTION = [
@@ -487,7 +487,7 @@ export const ADD_PA_FORM = [{
     variant: "info"
 }, {
     label: "tabou2.add.selectPaParent",
-    api: "v1/operations?estSecteur=false&asc=true",
+    api: "v1/operations?asc=true",
     name: "parentoa",
     autocomplete: "nom",
     min: 3,

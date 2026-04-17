@@ -39,7 +39,6 @@ const Tabou2ProjetUrbainAccord = ({
         type: "text",
         label: "tabou2.identify.accordions.projetUrbain.title",
         field: "projetUrbain.title",
-        layers: ["layerOA"],
         readOnly: false,
         isArea: false,
         value: get(initialItem, "projetUrbain.title"),
@@ -49,7 +48,6 @@ const Tabou2ProjetUrbainAccord = ({
         type: "text",
         label: "tabou2.identify.accordions.projetUrbain.chapeau",
         field: "projetUrbain.chapeau",
-        layers: ["layerOA"],
         readOnly: false,
         isArea: true,
         value: get(initialItem, "projetUrbain.chapeau"),
@@ -59,31 +57,28 @@ const Tabou2ProjetUrbainAccord = ({
         type: "text",
         label: "tabou2.identify.accordions.projetUrbain.projet",
         field: "projetUrbain.projet",
-        layers: ["layerOA"],
         readOnly: false,
         isArea: true,
         value: get(initialItem, "projetUrbain.projet"),
         change: (v, t, src) => changeInfos({projetUrbain: {...src.projetUrbain, projet: v}})
     }, {
-        name: "actualites",
-        type: "text",
-        label: "tabou2.identify.accordions.projetUrbain.actualites",
-        field: "projetUrbain.actualites",
-        layers: ["layerOA"],
-        readOnly: false,
-        isArea: true,
-        value: get(initialItem, "projetUrbain.actualites"),
-        change: (v, t, src) => changeInfos({projetUrbain: {...src.projetUrbain, actualites: v}})
-    }, {
         name: "savoir",
         type: "text",
         label: "tabou2.identify.accordions.projetUrbain.savoir",
         field: "projetUrbain.savoir",
-        layers: ["layerOA"],
         readOnly: false,
         isArea: true,
         value: get(initialItem, "projetUrbain.savoir"),
         change: (v, t, src) => changeInfos({projetUrbain: {...src.projetUrbain, savoir: v}})
+    }, {
+        name: "plusInformations",
+        type: "text",
+        label: "tabou2.identify.accordions.projetUrbain.plusInformations",
+        field: "projetUrbain.plusInformations",
+        readOnly: false,
+        isArea: true,
+        value: get(initialItem, "projetUrbain.plusInformations"),
+        change: (v, t, src) => changeInfos({projetUrbain: {...src.projetUrbain, plusInformations: v}})
     }];
 
     const required = fields.filter(f => f.require).map(f => f.name);

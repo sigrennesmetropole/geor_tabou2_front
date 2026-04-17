@@ -201,9 +201,9 @@
             "section": "Information publique",
             "title": "Titre",
             "chapeau": "Chapeau",
-            "projet": "Projet",
-            "actualites": "Actualités",
-            "savoir": "Le saviez-vous"
+            "projet": "Projet d'aménagement",
+            "savoir": "Le saviez-vous ?",
+            "plusInformations": "Plus d'informations"
           },
           "pluiAdaptation": "Adaptations PLUI",
           "pluiDisposition": "Dispositions réglementaires",
