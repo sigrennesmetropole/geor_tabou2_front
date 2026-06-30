@@ -30,8 +30,8 @@ export const PANEL_SIZE = 600;
 export const URL_ADD = {
     "tabou2": "",
     "layerPA": "programmes",
-    "layerOA": "v2/operations",
-    "layerSA": "v2/operations"
+    "layerOA": "operations",
+    "layerSA": "operations"
 };
 
 export const REQUIRED_TIERS = ["nom", "adresseVille"];
@@ -177,7 +177,7 @@ export const ACCORDIONS = [
     {title: 'tabou2.identify.accordions.real', id: 'gouvernance', layers: ['layerOA', "layerSA"], display: (props) => !(props.prospection ?? false)},
     // TO DELETE OA SA FIELDS
     {title: 'tabou2.identify.accordions.opTracking', id: 'suivi', layers: ['layerPA'], display: (props) => !(props.prospection ?? false)},
-    {title: 'tabou2.identify.accordions.progHabitat', id: 'habitat', layers: ['layerPA'], display: (props) => !(props.prospection ?? false)},
+    {title: 'tabou2.identify.accordions.progHabitat', id: 'habitat', layers: ['layerPA', 'layerOA'], display: (props) => !(props.prospection ?? false)},
     {title: 'tabou2.identify.accordions.autreProg', id: 'autreProg', layers: ['layerPA'], display: (props) => !(props.prospection ?? false)},
     //
     {title: 'tabou2.identify.accordions.dds', id: 'dds', layers: ['layerPA'], display: (props) => !(props.prospection ?? false)},
@@ -395,7 +395,7 @@ export const ADD_OA_FORM = [{
 
 export const ADD_SA_FORM = [{
     label: "tabou2.add.selectPaParent",
-    api: "v1/operations?estSecteur=false&asc=true",
+    api: "operations?estSecteur=false&asc=true",
     name: "parentoa",
     autocomplete: "nom",
     min: 3,
@@ -487,7 +487,7 @@ export const ADD_PA_FORM = [{
     variant: "info"
 }, {
     label: "tabou2.add.selectPaParent",
-    api: "v1/operations?asc=true",
+    api: "operations?asc=true",
     name: "parentoa",
     autocomplete: "nom",
     min: 3,

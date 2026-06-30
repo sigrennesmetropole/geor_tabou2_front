@@ -39,9 +39,11 @@ const Tabou2IndicateursAccord = ({
     const [required, setRequired] = useState({});
 
     // Définition des champs pour les indicateurs principaux
-    const etapeSource = values?.etape ? values : (layer === "layerPA" ? initialItem : operation);
-    const operationnelDateSource = values?.operationnelDate ? values : (layer === "layerSA" && !isEmpty(operationParent) ? operationParent : operation);
-    const avancementAdministratifSource = values?.avancementAdministratif ? values : (layer === "layerSA" && !isEmpty(operationParent) ? operationParent : operation);
+    const programmeOrOperation = layer === "layerPA" ? initialItem : operation;
+    const parentOrOperation = layer === "layerSA" && !isEmpty(operationParent) ? operationParent : operation;
+    const etapeSource = values?.etape ? values : programmeOrOperation;
+    const operationnelDateSource = values?.operationnelDate ? values : parentOrOperation;
+    const avancementAdministratifSource = values?.avancementAdministratif ? values : parentOrOperation;
     const getFields = () => [{
         name: "commune",
         field: "properties.commune",
@@ -74,7 +76,7 @@ const Tabou2IndicateursAccord = ({
         apiLabel: "libelle",
         apiValue: "id",
         api: "vocations?orderBy=id&asc=true",
-        source: values?.vocation ? values : (layer === "layerSA" && !isEmpty(operationParent) ? operationParent : operation),
+        source: values?.vocation ? values : parentOrOperation,
         readOnly: layer === "layerPA"
     }, {
         name: "operationnelDate",

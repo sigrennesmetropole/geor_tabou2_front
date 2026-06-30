@@ -92,7 +92,7 @@ export default function Tabou2LogsModal({
         onClick: () => insertNewLog({id: isEmpty(logs) ? 1 : maxBy(logs, "id")?.id + 1, eventDate: new Date().toISOString()})
     }];
 
-    const readOnly = props?.authent?.isReferent || props?.authent?.isContrib ? false : true;
+    const readOnly = !(props?.authent?.isReferent || props?.authent?.isContrib);
     return (
         <ResizableModal
             title={<Message msgId="tabou2.logsModal.title"/>}

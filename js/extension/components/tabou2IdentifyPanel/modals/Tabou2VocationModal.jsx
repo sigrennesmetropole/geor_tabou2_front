@@ -28,12 +28,16 @@ export default function Tabou2VocationModal({
         "vocation",
         "plui",
         "nbLogementsPrevu",
+        "nbLogementsHFV",
+        "hebergementResidSeniorPrevu",
+        "hebergementResidSeniorRealise",
         "informationsProgrammation",
         "vocationZa",
         "plh",
         "scot",
         "densiteScot",
-        "contributions"
+        "contributions",
+        "logementsSpecifiques"
     ];
     const [newOperation, setNewOperation] = useState(Object.assign({}, ...fieldsToFollow.map(f => ({[f]: initialItems[f]}))));
 

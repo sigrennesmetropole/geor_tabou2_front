@@ -288,7 +288,7 @@ export function getOperationProgrammes(id) {
  * @returns {object} - axios response
  */
 export function getOperation(id) {
-    return axios.get(`${baseURL}/v2/operations/${id}`);
+    return axios.get(`${baseURL}/operations/${id}`);
 }
 
 /**
@@ -429,7 +429,7 @@ export function getVocationZa() {
     return axios.get(`${baseURL}/vocations-za`, {params: {asc: true}}).then(({data}) => data);
 }
 
-export const changeOperation = (operation) => axios.put(`${baseURL}/v2/operations`, operation);
+export const changeOperation = (operation) => axios.put(`${baseURL}/operations`, operation);
 
 export const getTypesProgrammationId = () => axios.get(`${baseURL}/types-programmations`, {params: {asc: true}});
 
@@ -450,9 +450,12 @@ export const getTypesActeurs = () => axios.get(`${baseURL}/types-acteurs`, {para
  * Get all typePLH
  * @returns {object} - axios response
  */
-export const getTypesPLH = (programmeId) => axios.get(`${baseURL}/type-plh`, {
+export const getTypesPLH = (programmeId, operationId) => axios.get(`${baseURL}/type-plh`, {
     params: {
         programmeId: programmeId,
+        operationId: operationId,
+        start: 0,
+        resultsNumber: 50,
         asc: true
     }
 }).then(({data}) => data);
@@ -498,6 +501,56 @@ export function getProgrammeTypePLH(programmeId, typePLHId) {
  */
 export function deleteProgrammeTypePLH(programmeId, typePLHId) {
     return axios.delete(`${baseURL}/programmes/${programmeId}/plh/${typePLHId}`).then(data => data);
+}
+
+/**
+ * Add typePLH to an operation
+ * @param {integer} operationId - id operation
+ * @param {integer} typePLHId - id typePLH
+ * @returns {object} - axios response
+ */
+export function createOperationTypePLH(operationId, typePLHId) {
+    return axios.post(`${baseURL}/operations/${operationId}/plh/${typePLHId}`).then(data => data);
+}
+
+/**
+ * Get list of typePLH associated to an operation
+ * @param {integer} operationId - id operation
+ * @returns {object} - axios response
+ */
+export function getOperationPLHs(operationId) {
+    return axios.get(`${baseURL}/operations/${operationId}/plhs`).then(({data}) => data);
+}
+
+/**
+ * Get typePLH of a given operation
+ * @param {integer} operationId - id operation
+ * @param {integer} typePLHId - id typePLH
+ * @returns {object} - axios response
+ */
+export function getOperationTypePLH(operationId, typePLHId) {
+    return axios.get(`${baseURL}/operations/${operationId}/plh/${typePLHId}`).then(data => data);
+}
+
+/**
+ * Update typePLH of an operation
+ * @param {integer} operationId - id operation
+ * @param {integer} typePLHId - id typePLH
+ * @param {object} data - typePLH
+ * @returns {object} - axios response
+ */
+export function updateOperationTypePLH(operationId, typePLHId, data) {
+    return axios.put(`${baseURL}/operations/${operationId}/plh/${typePLHId}`, data).then(response => response);
+}
+
+/**
+ * Delete a typePLH of an operation
+ * @param {integer} operationId - id operation
+ * @param {integer} typePLHId - id typePLH
+ * @returns {object} - axios response
+ */
+export function deleteOperationTypePLH(operationId, typePLHId) {
+    return axios.delete(`${baseURL}/operations/${operationId}/plh/${typePLHId}`).then(data => data);
 }
 
 /** --------------------------------------------------------------------------------------------------**/

@@ -15,3 +15,13 @@
     margin-left: 15px;
 }
 
+.plh-paired-container {
+    display: flex;
+    gap: 20px;
+}
+
+.plh-paired-column {
+    flex: 1;
+    min-width: 0;
+}
+

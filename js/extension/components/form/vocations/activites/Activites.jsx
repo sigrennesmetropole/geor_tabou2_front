@@ -7,17 +7,17 @@ import CompositionProgrammation from '../CompositionProgrammation';
 import ProgrammationActivite from './ProgrammationActivite';
 
 export default function Activites({...props}) {
+    const subFormProps = {
+        ...props,
+        owner: {isReferent: true}
+    };
+
     const tabs = [
         {key: "composition", title: <Message msgId="tabou2.vocation.tabComposition"/>, component: <CompositionProgrammation {...subFormProps}/>},
         {key: "activity", title: <Message msgId="tabou2.vocation.tabActivity"/>, component: <ProgrammationActivite {...subFormProps}/>},
         {key: "otherProg", title: <Message msgId="tabou2.vocation.tabOtherProg"/>, component: <AutreProgrammation {...subFormProps}/>},
         {key: "contrib", title: <Message msgId="tabou2.vocation.tabContrib"/>, component: <ContributionPaddOap {...subFormProps}/>}
     ];
-
-    const subFormProps = {
-        ...props,
-        owner: {isReferent: true}
-    };
     return (
         <Col xs={12}>
             <Tabs defaultActiveKey={1} id="vocation-activite-tabs">

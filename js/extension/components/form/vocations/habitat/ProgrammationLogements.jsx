@@ -5,6 +5,7 @@ import {Panel, Row} from "react-bootstrap";
 import "@js/extension/css/vocation.css";
 import "@js/extension/css/tabou.css";
 import {findValueByType, changeByType, getCodeIdByCode, shouldShowField, renderProgrammationField} from "../utils";
+import LogementsSpecifiquesTable from "../LogementsSpecifiquesTable";
 
 export default function ProgrammationLogements({
     operation = {},
@@ -94,15 +95,37 @@ export default function ProgrammationLogements({
             readOnly: false
         },
         {
-            name: "logtsHFV",
+            name: "nbLogementsHFV",
             label: "tabou2.vocation.ageFriendlyHousing",
-            field: "logtsHFV",
+            field: "nbLogementsHFV",
             type: "number",
             layers: [],
             source: () => values,
-            change: (value) => setValues({logtsHFV: value}),
+            change: (value) => setValues({nbLogementsHFV: value}),
             readOnly: false,
             labelStyle: {fontStyle: "italic"}
+        },
+        {
+            name: "hebergementResidSenior",
+            label: "tabou2.vocation.hebergementResidSenior",
+            labelStyle: {fontStyle: "italic"},
+            type: "pairedNumber",
+            layers: [],
+            subFields: [
+                {
+                    label: "tabou2.vocation.prevu",
+                    field: "hebergementResidSeniorPrevu",
+                    source: () => values,
+                    change: (value) => setValues({hebergementResidSeniorPrevu: value})
+                },
+                {
+                    label: "tabou2.vocation.realise",
+                    field: "hebergementResidSeniorRealise",
+                    source: () => values,
+                    change: (value) => setValues({hebergementResidSeniorRealise: value})
+                }
+            ],
+            readOnly: false
         },
         {
             name: "scot",
@@ -136,6 +159,11 @@ export default function ProgrammationLogements({
         }
     ];
 
+    const filteredFields = getFields().filter(field => shouldShowField(field, layer));
+    const hfvIndex = filteredFields.findIndex(f => f.name === "logtsHFV");
+    const fieldsBeforeTable = hfvIndex >= 0 ? filteredFields.slice(0, hfvIndex + 1) : filteredFields;
+    const fieldsAfterTable = hfvIndex >= 0 ? filteredFields.slice(hfvIndex + 1) : [];
+
     return (
         <Panel
             className="contribPaddOap-style"
@@ -145,7 +173,15 @@ export default function ProgrammationLogements({
                     <strong><Message msgId="tabou2.vocation.progHousing"/></strong>
                 </h4>
                 {
-                    getFields().filter(field => shouldShowField(field, layer)).map(item => renderProgrammationField(item, i18n, messages, allowChange, values))
+                    fieldsBeforeTable.map(item => renderProgrammationField(item, i18n, messages, allowChange, values))
+                }
+                <LogementsSpecifiquesTable
+                    values={values}
+                    setValues={setValues}
+                    allowChange={allowChange}
+                />
+                {
+                    fieldsAfterTable.map(item => renderProgrammationField(item, i18n, messages, allowChange, values))
                 }
             </Row>
         </Panel>

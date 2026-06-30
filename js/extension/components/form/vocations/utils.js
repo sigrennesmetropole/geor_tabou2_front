@@ -91,91 +91,121 @@ export const getCompositionProgrammationFields = (values, setValues) => [
     }
 ];
 
-export const renderProgrammationField = (item, i18n, messages, allowChange, values) => (
-    <Row key={item.name}>
-        <Col xs={4}>
-            <ControlLabel style={item.labelStyle || {}}><Message msgId={item.label}/></ControlLabel>
-        </Col>
-        <Col xs={4}>
-            {
-                ["text", "number"].includes(item.type) && (
-                    <FormControl
-                        componentClass={item.isArea ? "textarea" : "input"}
-                        placeholder={i18n(messages, item.label)}
-                        style={{height: item.isArea ? "100px" : "auto"}}
-                        type={item.type}
-                        min="0"
-                        step={item?.step}
-                        value={get(item.source(), item.field)}
-                        readOnly={item.readOnly || !allowChange}
-                        onChange={(v) => {
-                            return item.change(v.target.value);
-                        }}
-                        onKeyDown={(v) => {
-                            if (item.type !== "number") return;
-                            // only keep numeric and special key control as "Delete" or "Backspace"
-                            if (!/^[0-9.,]/.test(v.key) && v.key.length < 2) {
-                                v.returnValue = false;
-                                if (v.preventDefault) v.preventDefault();
-                            }
-                        }}
-                    />
-                )
-            }
-            {item.type === "checkbox" && (
-                <Checkbox
-                    checked={get(values, item.field) || false}
-                    disabled={!allowChange}
-                    style={{marginBottom: "10px"}}
-                    id={`${item.name}-progLogements-${new Date().getTime()}`}
-                    onChange={() => {
-                        item.change();
-                    }}
-                    change
-                />)
-            }
-            {
-                item.type === "combo" && (
-                    <Tabou2Select
-                        load={item.api}
-                        defaultValue={get(values, item.field)}
-                        placeholder={i18n(messages, item.label)}
-                        textField={item.apiLabel}
+export const renderProgrammationField = (item, i18n, messages, allowChange, values) => {
+    if (item.type === "pairedNumber") {
+        return (
+            <Row key={item.name}>
+                <Col xs={4}>
+                    <ControlLabel style={item.labelStyle || {}}><Message msgId={item.label}/></ControlLabel>
+                </Col>
+                {item.subFields.map(sf => (
+                    <Col xs={4} key={sf.field}>
+                        <ControlLabel><Message msgId={sf.label}/></ControlLabel>
+                        <FormControl
+                            type="number"
+                            min={0}
+                            placeholder={i18n(messages, sf.label)}
+                            value={get(sf.source(), sf.field) ?? ""}
+                            readOnly={item.readOnly || !allowChange}
+                            onChange={(v) => sf.change(v.target.value === "" ? null : v.target.value)}
+                            onKeyDown={(v) => {
+                                if (!/^[0-9.,]/.test(v.key) && v.key.length < 2) {
+                                    v.returnValue = false;
+                                    if (v.preventDefault) v.preventDefault();
+                                }
+                            }}
+                        />
+                    </Col>
+                ))}
+            </Row>
+        );
+    }
+    return (
+        <Row key={item.name}>
+            <Col xs={4}>
+                <ControlLabel style={item.labelStyle || {}}><Message msgId={item.label}/></ControlLabel>
+            </Col>
+            <Col xs={4}>
+                {
+                    ["text", "number"].includes(item.type) && (
+                        <FormControl
+                            componentClass={item.isArea ? "textarea" : "input"}
+                            placeholder={i18n(messages, item.label)}
+                            style={{height: item.isArea ? "100px" : "auto"}}
+                            type={item.type}
+                            min="0"
+                            step={item?.step}
+                            value={get(item.source(), item.field)}
+                            readOnly={item.readOnly || !allowChange}
+                            onChange={(v) => {
+                                return item.change(v.target.value);
+                            }}
+                            onKeyDown={(v) => {
+                                if (item.type !== "number") return;
+                                // only keep numeric and special key control as "Delete" or "Backspace"
+                                if (!/^[0-9.,]/.test(v.key) && v.key.length < 2) {
+                                    v.returnValue = false;
+                                    if (v.preventDefault) v.preventDefault();
+                                }
+                            }}
+                        />
+                    )
+                }
+                {item.type === "checkbox" && (
+                    <Checkbox
+                        checked={get(values, item.field) || false}
                         disabled={!allowChange}
-                        filter={false}
-                        value={get(values, item.field) || ""}
-                        onLoad={(r) => r?.elements || r}
+                        style={{marginBottom: "10px"}}
+                        id={`${item.name}-progLogements-${new Date().getTime()}`}
+                        onChange={() => {
+                            item.change();
+                        }}
+                        change
+                    />)
+                }
+                {
+                    item.type === "combo" && (
+                        <Tabou2Select
+                            load={item.api}
+                            defaultValue={get(values, item.field)}
+                            placeholder={i18n(messages, item.label)}
+                            textField={item.apiLabel}
+                            disabled={!allowChange}
+                            filter={false}
+                            value={get(values, item.field) || ""}
+                            onLoad={(r) => r?.elements || r}
+                            onSelect={(t) => {
+                                item.change(t);
+                            }}
+                            onChange={(t) => {
+                                if (!t) item.change("");
+                            }}
+                        />
+                    )
+                }
+                {item.type === "date" && (
+                    <Tabou2Date
+                        type="date"
+                        className="identifyDate"
+                        placeholder={i18n(messages, item.label)}
+                        readOnly={item?.readOnly || !allowChange}
+                        calendar
+                        culture="fr"
+                        time={false}
+                        value={get(values, item.field) ? new Date(get(values, item.field)) : null}
+                        format="DD/MM/YYYY"
                         onSelect={(t) => {
-                            item.change(t);
+                            item.change(t ? new Date(t).toISOString() : null);
                         }}
                         onChange={(t) => {
-                            if (!t) item.change("");
+                            item.change(t ? new Date(t).toISOString() : null);
                         }}
                     />
-                )
-            }
-            {item.type === "date" && (
-                <Tabou2Date
-                    type="date"
-                    className="identifyDate"
-                    placeholder={i18n(messages, item.label)}
-                    readOnly={item?.readOnly || !allowChange}
-                    calendar
-                    culture="fr"
-                    time={false}
-                    value={get(values, item.field) ? new Date(get(values, item.field)) : null}
-                    format="DD/MM/YYYY"
-                    onSelect={(t) => {
-                        item.change(t ? new Date(t).toISOString() : null);
-                    }}
-                    onChange={(t) => {
-                        item.change(t ? new Date(t).toISOString() : null);
-                    }}
-                />
-            )}
-        </Col>
-    </Row>
-);
+                )}
+            </Col>
+        </Row>
+    );
+};
 
 /**
  * Get date value from item and source for identify accordions

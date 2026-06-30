@@ -118,7 +118,7 @@ export default function Tabou2TiersForm({...props}) {
             </Row>
             <FormGroup>
                 <Col xs={12} className="text-right">
-                    <label style={{fontStyle: "italic", fontSier: "12px"}}>* informations obligatoire</label>
+                    <span style={{fontStyle: "italic", fontSize: "12px"}}>* informations obligatoire</span>
                 </Col>
                 {
                     TIERS_FORMS.map(f => (
