@@ -151,6 +151,7 @@ export const onSelectionUpdate = (action$, store) =>
 export const onTabouMapClick = (action$, store) =>
     action$.ofType(CLICK_ON_MAP)
         .filter(() => isTabou2Activate(store.getState()))
+        .filter(({point}) => point?.latlng?.lat != null && point?.latlng?.lng != null)
         .switchMap(({point}) => {
             const list = getVisibleLayersList(store, point);
 

@@ -99,8 +99,9 @@ function handleRequestError(e) {
 }
 
 function processFeatures(response, filter, searchLimit) {
-    if (!response?.totalFeatures || response.features.length >= searchLimit) {
-        if (response.features.length > searchLimit) {
+    const features = response?.features || [];
+    if (!response?.totalFeatures || features.length >= searchLimit) {
+        if (features.length > searchLimit) {
             return {isOverLimit: true};
         }
         const idsCql = `${filter.idField} = -1`;
@@ -158,7 +159,12 @@ function handleResponse(response, filter, messages, searchLimit, store) {
 function processFilter(filter, messages, searchLimit, store) {
     return Rx.Observable.defer(() => createOGCRequest(filter.params, getPluginCfg(store.getState()).geoserverURL))
         .catch(handleRequestError)
-        .switchMap(response => handleResponse(response, filter, messages, searchLimit, store));
+        .switchMap(response => handleResponse(response, filter, messages, searchLimit, store))
+        .catch(() => {
+            return Rx.Observable.of(
+                setTabouErrors(false, "filter", "warning", getMessageById(messages, "tabou2.search.noResultLayer"))
+            );
+        });
 }
 
 function wrapObservableWithErrorHandling(observable$, messages) {

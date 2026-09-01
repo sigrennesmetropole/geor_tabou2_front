@@ -131,7 +131,7 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
         }
         if (["layerOA", "layerSA"].includes(type)) {
             // need nature and secteur to request API get operation/emprises
-            params = infos.secteur && infos.nature ? {...params, estSecteur: infos.secteur} : {};
+            params = infos.nature ? {...params, estSecteur: infos.secteur} : {};
         } else if (type === "layerPA" && combo.parent) {
             params = combo.parent(infos);
         }

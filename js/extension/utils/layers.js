@@ -13,14 +13,22 @@ export const featuresToJSON = (features) => {
  */
 const getGeometry = (point, from, to) => {
     const geometry = point?.geometricFilter?.value?.geometry;
-    if (geometry) {
+    if (geometry && geometry.coordinates) {
         return geometry;
     }
-    let lng = point.lng || point.latlng.lng;
+    const latlng = point?.latlng;
+    let lng = point?.lng ?? latlng?.lng;
+    let lat = point?.lat ?? latlng?.lat;
+    if (lng == null || lat == null) {
+        return null;
+    }
     let lngCorrected = lng - 360 * Math.floor(lng / 360 + 0.5);
-    let lonLat = [lngCorrected, point.lat || point.latlng.lat];
+    let lonLat = [lngCorrected, lat];
     if (from && to) {
-        lonLat = reproject(lonLat, from, to);
+        const reprojected = reproject(lonLat, from, to);
+        if (reprojected) {
+            lonLat = reprojected;
+        }
     }
     return {
         coordinates: lonLat,
@@ -32,6 +40,9 @@ const getGeometry = (point, from, to) => {
 // TODO : set geom field from config
 export const createParams = (point, layer) => {
     const geometry = getGeometry(point, "EPSG:4326", "EPSG:3948");
+    if (!geometry || !geometry.coordinates) {
+        return null;
+    }
     return {
         CQL_FILTER: `INTERSECTS(the_geom,POINT(${geometry.coordinates[0] || geometry.coordinates.x} ${geometry.coordinates[1] || geometry.coordinates.y}))`,
         OUTPUTFORMAT: "application/json",

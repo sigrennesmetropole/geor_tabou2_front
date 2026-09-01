@@ -372,6 +372,7 @@
         "tabContrib": "Contribution PADD, OAP",
         "progItems": "Programmation équipement",
         "otherProg": "Programmation autre",
+        "otherProgTitle": "Autre programmation",
         "noDisplay": "Aucune Opération à afficher !",
         "compoTitle": "Composition",
         "compoProg": "Composition urbaine, mixité fonctionnelle",

@@ -5,7 +5,7 @@ import {connect} from "react-redux";
 import {toggleControl} from "@mapstore/actions/controls";
 import {changeLayerProperties, changeLayerParams} from "@mapstore/actions/layers";
 import {search} from "@mapstore/actions/queryform";
-import {syncLayers, selectLayers} from "@mapstore/selectors/layerinfo";
+import {syncLayers, selectLayers} from "@mapstore/actions/layerinfo";
 import {layersSelector} from '@mapstore/selectors/layers';
 import {selectedLayerIdSelector} from '@mapstore/selectors/featuregrid';
 import {getMessageById} from "@mapstore/utils/LocaleUtils";
