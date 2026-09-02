@@ -19,7 +19,7 @@ jobs:
       - name: "setting up npm"
         uses: actions/setup-node@v2
         with:
-            node-version: '18.x'
+            node-version: '18.16.1'
 
       ###############
       # NPM CHECKS
