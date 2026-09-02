@@ -207,19 +207,21 @@ export function newfilterLayerByList(layer, values, field, cql, crossLayer) {
         },
         "exception": null
     }));
-    // prepare filter
-    let finalFilter = {
-        layerToFilter: layer,
-        tocFilter: null
-    };
     if (crossLayer) {
         newFilter.crossLayerFilter.collectGeometries.queryCollection.filterFields = filterFields;
     } else {
         newFilter.filterFields = filterFields;
         newFilter.cql = cql || valuesToCql;
     }
-    newFilter.tocFilter = newFilter;
-    return {...finalFilter, ...newFilter};
+    // prepare filter: "tocFilter" holds the MapStore layer filter object.
+    // It must be a distinct object (not a self-reference to newFilter), otherwise the
+    // structure is circular and breaks JSON.stringify when MapStore serializes the
+    // layer state once the filter is applied.
+    return {
+        ...newFilter,
+        layerToFilter: layer,
+        tocFilter: {...newFilter}
+    };
 }
 
 /**

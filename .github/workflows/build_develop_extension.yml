@@ -24,8 +24,8 @@ jobs:
       ###############
       # NPM CHECKS
       #############
-      - name: npm install
-        run: npm install
+      - name: npm ci
+        run: npm ci
 
       - name: build
         run: npm run ext:build

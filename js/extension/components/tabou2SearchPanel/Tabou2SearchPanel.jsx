@@ -80,7 +80,13 @@ function Tabou2SearchPanel({
             cqlCondition = filterConf.cqlCcondition[value];
         }
         const layers = keys(layersInfos);
-        let filtersObj = getFiltersObj;
+        // Work on immutable copies: never mutate the redux state objects
+        // (currentFilters / getFiltersObj) in place. Mutating them and re-dispatching the
+        // same reference defeats react-redux change detection and leaves the panel working
+        // from stale state. This is why clearing combos one by one (in-place mutation) broke
+        // subsequent searches while the "reset" button (which rebuilds a fresh object) worked.
+        const nextFilters = {...currentFilters};
+        const nextFiltersObj = {...getFiltersObj};
         let filters = [];
         layers.forEach(lyr => {
             let cql;
@@ -99,28 +105,23 @@ function Tabou2SearchPanel({
                 };
                 cql = getSpatialCQL(options);
             }
-            if (!currentFilters[lyr]) {
-                currentFilters[lyr] = {};
-            }
-            delete currentFilters[lyr][filter];
+            const layerFilters = {...(nextFilters[lyr] || {})};
+            delete layerFilters[filter];
             if (value) {
-                currentFilters[lyr][filter] = `${cql}`;
+                layerFilters[filter] = `${cql}`;
             }
-            changeFilters(currentFilters);
+            nextFilters[lyr] = layerFilters;
 
             // get WFS features from CQL
-            let allFilters = currentFilters[lyr];
-            let CQLStr = keys(allFilters).map(k => allFilters[k]);
+            let CQLStr = keys(layerFilters).map(k => layerFilters[k]);
             if (!CQLStr.length) {
                 // Manage case when user select "All" value for each combo
-                filtersObj[lyr] = getNewFilter(lyr, null, [], null);
-                // stock MapStore layer filter object
-                return changeFiltersObj(filtersObj);
+                nextFiltersObj[lyr] = getNewFilter(lyr, null, [], null);
+                return;
             }
-            CQLStr.push('id_tabou IS NOT NULL');
-            CQLStr = CQLStr.filter(el => el);
+            CQLStr = [...CQLStr, 'id_tabou IS NOT NULL'].filter(el => el);
             // To change TOC wms request params
-            return filters.push({
+            filters.push({
                 layer: lyr,
                 params: createWfsPostRequest(CQLStr.join(' AND '), lyr),
                 idField: layersInfos[lyr]?.id,
@@ -128,6 +129,8 @@ function Tabou2SearchPanel({
                 geomField: layersInfos[lyr].geom
             });
         });
+        changeFilters(nextFilters);
+        changeFiltersObj(nextFiltersObj);
         props.searchIds(filters);
     };
 
@@ -135,7 +138,10 @@ function Tabou2SearchPanel({
     const changeFilter = (item, value = "") => {
         setComboValues({...comboValues, [item.name]: value});
         change({...comboValues, [item.name]: value});
-        changeCqlFilter(get(item, "type"), item.name, value[get(config, `${item.name}.apiField`)], config[item.name]);
+        // value is null when the combo is cleared (react-select clear indicator): use optional
+        // chaining so we don't dereference null. changeCqlFilter handles a falsy value by
+        // removing the corresponding filter.
+        changeCqlFilter(get(item, "type"), item.name, value?.[get(config, `${item.name}.apiField`)], config[item.name]);
     };
 
     // if date was changed

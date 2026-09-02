@@ -70,7 +70,7 @@ const Tabou2ProspectifAccord = ({
         layers: ["layerSA", "layerOA"],
         type: "combo",
         autocomplete: true,
-        api: `entites-referentes`,
+        api: `entites-referentes?actifUniquement=true`,
         apiLabel: "libelle",
         valueField: "id",
         placeholder: "tabou2.identify.accordions.emptySelect",
