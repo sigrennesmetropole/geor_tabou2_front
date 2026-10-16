@@ -34,7 +34,9 @@ const Tabou2SuiviOpAccord = ({
         let newValues = {...values, ...item};
         setValues(newValues);
         // send to parent to save
-        let accordValues = pick(newValues, fields.filter(f => !f.readOnly).map(f => f.name));
+        const editableKeys = fields.filter(f => !f.readOnly)
+            .flatMap(f => f.prevuField ? [f.prevuField, f.realiseField] : [f.name]);
+        let accordValues = pick(newValues, editableKeys);
         change(accordValues, pick(accordValues, required));
     };
 
@@ -85,6 +87,38 @@ const Tabou2SuiviOpAccord = ({
         type: "date",
         layers: ["layerPA"],
         source: has(values, "commercialisationDate") ? values : programme,
+        readOnly: false
+    }, {
+        name: "dateOptionReservation",
+        label: "tabou2.identify.accordions.dateOptionReservation",
+        type: "pairedDate",
+        prevuField: "dateOptionReservationPrevue",
+        realiseField: "dateOptionReservationReelle",
+        layers: ["layerPA"],
+        readOnly: false
+    }, {
+        name: "dateOptionCession",
+        label: "tabou2.identify.accordions.dateOptionCession",
+        type: "pairedDate",
+        prevuField: "dateOptionCessionPrevue",
+        realiseField: "dateOptionCessionReelle",
+        layers: ["layerPA"],
+        readOnly: false
+    }, {
+        name: "dateSignatureActeCession",
+        label: "tabou2.identify.accordions.dateSignatureActeCession",
+        type: "pairedDate",
+        prevuField: "dateSignatureActeCessionPrevue",
+        realiseField: "dateSignatureActeCessionReelle",
+        layers: ["layerPA"],
+        readOnly: false
+    }, {
+        name: "dureeBail",
+        label: "tabou2.identify.accordions.dureeBail",
+        type: "pairedNumber",
+        prevuField: "dureeBailPrevue",
+        realiseField: "dureeBailReelle",
+        layers: ["layerPA"],
         readOnly: false
     }, {
         name: "livraisonDate",
@@ -138,6 +172,57 @@ const Tabou2SuiviOpAccord = ({
 
     const allowChange = authent.isContrib || authent.isReferent;
 
+    const changePairedValue = (item, key, raw) => {
+        let val = null;
+        if (item.type === "pairedDate") {
+            val = raw ? new Date(raw).toISOString() : null;
+        } else if (raw !== "" && raw !== null && raw !== undefined) {
+            const parsed = parseInt(raw, 10);
+            val = isNaN(parsed) || parsed < 0 ? null : parsed;
+        }
+        changeInfos({[key]: val});
+    };
+
+    const renderPairedInput = (item, key) => {
+        const value = get(values, key);
+        if (item.type === "pairedDate") {
+            return (
+                <Tabou2Date
+                    type="date"
+                    className="identifyDate"
+                    inline="true"
+                    refreshValue={initialItem}
+                    refresh={(o, n) => isEqual(o, n)}
+                    dropUp
+                    readOnly={item.readOnly || !allowChange}
+                    calendar
+                    time={false}
+                    culture="fr"
+                    value={value ? new Date(value) : null}
+                    format="DD/MM/YYYY"
+                    onSelect={(v) => changePairedValue(item, key, v)}
+                    onChange={(v) => changePairedValue(item, key, v)}
+                />
+            );
+        }
+        return (
+            <FormControl
+                type="number"
+                min={0}
+                step={1}
+                value={value ?? ""}
+                readOnly={item.readOnly || !allowChange}
+                onChange={(v) => changePairedValue(item, key, v.target.value)}
+                onKeyDown={(v) => {
+                    if (!/^\d$/.test(v.key) && v.key.length < 2) {
+                        v.returnValue = false;
+                        if (v.preventDefault) v.preventDefault();
+                    }
+                }}
+            />
+        );
+    };
+
     return (
         <Grid style={{width: "100%"}} className={""}>
             {
@@ -147,6 +232,20 @@ const Tabou2SuiviOpAccord = ({
                             <ControlLabel style={item.labelStyle || {}}><Message msgId={item.label}/></ControlLabel>
                         </Col>
                         <Col xs={8}>
+                            {
+                                (item.type === "pairedDate" || item.type === "pairedNumber") && (
+                                    <Row>
+                                        <Col xs={6}>
+                                            <ControlLabel><Message msgId="tabou2.identify.accordions.prevue"/></ControlLabel>
+                                            {renderPairedInput(item, item.prevuField)}
+                                        </Col>
+                                        <Col xs={6}>
+                                            <ControlLabel><Message msgId="tabou2.identify.accordions.reelle"/></ControlLabel>
+                                            {renderPairedInput(item, item.realiseField)}
+                                        </Col>
+                                    </Row>
+                                )
+                            }
                             {
                                 item.type === "combo" && item?.autocomplete ? (
                                     <Tabou2Select

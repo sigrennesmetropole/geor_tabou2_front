@@ -5,6 +5,7 @@ import AutreProgrammation from '../AutreProgrammation';
 import ContributionPaddOap from '../ContributionPaddOap';
 import CompositionProgrammation from '../CompositionProgrammation';
 import ProgrammationActivite from './ProgrammationActivite';
+import ProgrammeActivite from '../ProgrammeActivite';
 
 export default function Activites({...props}) {
     const subFormProps = {
@@ -16,7 +17,8 @@ export default function Activites({...props}) {
         {key: "composition", title: <Message msgId="tabou2.vocation.tabComposition"/>, component: <CompositionProgrammation {...subFormProps}/>},
         {key: "activity", title: <Message msgId="tabou2.vocation.tabActivity"/>, component: <ProgrammationActivite {...subFormProps}/>},
         {key: "otherProg", title: <Message msgId="tabou2.vocation.tabOtherProg"/>, component: <AutreProgrammation {...subFormProps}/>},
-        {key: "contrib", title: <Message msgId="tabou2.vocation.tabContrib"/>, component: <ContributionPaddOap {...subFormProps}/>}
+        {key: "contrib", title: <Message msgId="tabou2.vocation.tabContrib"/>, component: <ContributionPaddOap {...subFormProps}/>},
+        {key: "progActivity", title: <Message msgId="tabou2.vocation.tabProgActivity"/>, component: <ProgrammeActivite {...subFormProps}/>}
     ];
     return (
         <Col xs={12}>

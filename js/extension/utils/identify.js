@@ -2,6 +2,29 @@ import { LAYER_FIELD_OPTION } from "../constants";
 import { get, find } from 'lodash';
 
 /**
+ * Noms des tiers associés pour un code de type de tiers donné
+ * @param {array} tiers associations tiers / type de tiers de la fiche
+ * @param {string} code code du type de tiers
+ * @returns {string} noms séparés par "; "
+ */
+export const getTiersNomsByType = (tiers = [], code) => tiers
+    .filter(t => t?.typeTiers?.code === code)
+    .map(t => t?.tiers?.nom)
+    .filter(Boolean)
+    .join("; ");
+
+/**
+ * Ouvre la popin des tiers filtrée sur un type de tiers (id ou code)
+ */
+export const openTiersModal = (setTiersFilter, featureId, typeTiers) => {
+    const tiersBtn = document.getElementById('tiers');
+    if (setTiersFilter && typeTiers && tiersBtn) {
+        setTiersFilter(featureId, typeTiers);
+        tiersBtn.click();
+    }
+};
+
+/**
  * Create data to display into layer identify selector - combobox.
  * Will be available if a user click into many layers (OA, PA, SA Layers only) .
  * !! WARNING !! 

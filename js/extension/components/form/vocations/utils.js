@@ -8,7 +8,40 @@ import Message from "@mapstore/components/I18N/Message";
 import Tabou2Select from '@js/extension/components/form/Tabou2Select';
 import Tabou2Date from '@js/extension/components/common/Tabou2Date';
 import SearchCombo from '@js/extension/components/form/SearchCombo';
-import {getRequestApi} from "@js/extension/api/requests";
+import {getRequestApi, getVocationsPlae, getRenouvellementsEconomiquesPlae} from "@js/extension/api/requests";
+
+export const VOCATIONS_PLAE_API = "vocations-plae?orderBy=id&actifUniquement=true";
+export const RENOUVELLEMENTS_ECONOMIQUES_PLAE_API = "renouvellements-economiques-plae?orderBy=id&actifUniquement=true";
+
+// Comme "Vocation ZA", les indicateurs PLAE ne concernent que les vocations Activités et Mixte
+export const isVocationPlae = (vocation) => ["ACTIVITE", "MIXTE"].includes(vocation?.code);
+
+export const getPlaeFields = (values, setValues) => [
+    {
+        name: "vocationPlae",
+        label: "tabou2.vocation.vocationPlae",
+        apiLabel: "libelle",
+        field: "vocationPlae",
+        type: "combo",
+        api: getVocationsPlae,
+        layers: [],
+        source: () => values,
+        change: (value) => setValues({vocationPlae: value || null}),
+        readOnly: false
+    },
+    {
+        name: "renouvellementEconomiquePlae",
+        label: "tabou2.vocation.renouvellementEconomiquePlae",
+        apiLabel: "libelle",
+        field: "renouvellementEconomiquePlae",
+        type: "combo",
+        api: getRenouvellementsEconomiquesPlae,
+        layers: [],
+        source: () => values,
+        change: (value) => setValues({renouvellementEconomiquePlae: value || null}),
+        readOnly: false
+    }
+];
 
 export const findValueByType = (codeId, values, type) => {
     const field = type === "contributions" ? "typeContribution" : "typeProgrammation";

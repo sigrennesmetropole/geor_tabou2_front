@@ -50,7 +50,7 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
         // only kee fields expected by API
         if (type === "layerPA") {
             // to create PA object
-            keysToFilter = keys(obj).filter(name => !["nomEmprise", "secteur", "nature", "limitPa", "vocation"].includes(name));
+            keysToFilter = keys(obj).filter(name => !["nomEmprise", "secteur", "nature", "limitPa"].includes(name));
         } else if (type === "layerSA") {
             // to create SA object
             keysToFilter = keys(obj).filter(name => !["nomEmprise", "secteur", "limitPa"].includes(name));
@@ -153,15 +153,16 @@ export default function Tabou2AddOaPaForm({layer, feature, pluginCfg = {}, ...pr
             ...newFeature,
             code: infos.code
         };
+        let vocationIdValue = isObject(newFeature.vocation) ? newFeature.vocation : {id: find(vocationInfos.current, ['libelle', newFeature.vocation])?.id};
         if (type === "layerPA") {
             params = {
                 ...params,
                 numAds: "",
+                vocation: vocationIdValue,
                 etape: isObject(newFeature.etape) ? newFeature.etape : find(etapesInfos.current, ['libelle', newFeature.etape])
             };
         } else {
             let natureIdValue = isObject(newFeature.nature) ? newFeature.nature : {id: find(naturesInfos.current, ['libelle', newFeature.nature])?.id};
-            let vocationIdValue = isObject(newFeature.vocation) ? newFeature.vocation : {id: find(vocationInfos.current, ['libelle', newFeature.vocation])?.id};
             params = {
                 ...params,
                 nature: natureIdValue,

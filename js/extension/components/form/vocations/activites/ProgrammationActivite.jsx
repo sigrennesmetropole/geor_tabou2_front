@@ -4,13 +4,12 @@ import isEmpty from "lodash/isEmpty";
 import {Panel, Row} from "react-bootstrap";
 import "@js/extension/css/vocation.css";
 import "@js/extension/css/tabou.css";
-import {findValueByType, changeByType, getCodeIdByCode, shouldShowField, renderProgrammationField} from "../utils";
+import { shouldShowField, renderProgrammationField, getPlaeFields} from "../utils";
 import {getVocationZa} from "@js/extension/api/requests";
 
 export default function ProgrammationActivite({
     operation = {},
     layer = "",
-    typesProgrammation,
     setValues = () => {
     },
     i18n = () => {
@@ -25,27 +24,6 @@ export default function ProgrammationActivite({
     const getFields = () => {
         return [
             {
-                name: "activites",
-                label: "tabou2.vocation.progActivity",
-                field: "description",
-                type: "text",
-                isArea: true,
-                layers: [],
-                source: () => findValueByType(getCodeIdByCode(typesProgrammation, "ACTIVITES"), values, "informationsProgrammation"),
-                change: (value) => {
-                    setValues(
-                        changeByType(
-                            getCodeIdByCode(typesProgrammation, "ACTIVITES"),
-                            values,
-                            "informationsProgrammation",
-                            value
-                        )
-                    );
-                },
-                code: "ACTIVITES",
-                readOnly: false
-            },
-            {
                 name: "vocationZa",
                 label: "tabou2.vocation.vocZa",
                 apiLabel: "libelle",
@@ -59,6 +37,7 @@ export default function ProgrammationActivite({
                 code: "Autres",
                 readOnly: false
             },
+            ...getPlaeFields(values, setValues),
             {
                 name: "scot",
                 label: "tabou2.vocation.scot",

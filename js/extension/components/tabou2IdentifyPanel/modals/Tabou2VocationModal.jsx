@@ -33,6 +33,8 @@ export default function Tabou2VocationModal({
         "hebergementResidSeniorRealise",
         "informationsProgrammation",
         "vocationZa",
+        "vocationPlae",
+        "renouvellementEconomiquePlae",
         "plh",
         "scot",
         "densiteScot",
@@ -80,7 +82,10 @@ export default function Tabou2VocationModal({
                 {
                     text: <Message msgId="tabou2.vocation.reset" />,
                     visible: allowChange,
-                    onClick: () => setNewOperation(initialItems)
+                    onClick: () => {
+                        setVocation(initialItems.vocation || {});
+                        setNewOperation(initialItems);
+                    }
                 }
             ]}
             onClose={() => close()}
@@ -92,9 +97,10 @@ export default function Tabou2VocationModal({
                         style={{width: "30%"}}
                         data={typesVocation}
                         dataKey="code"
+                        valueField="code"
                         textField="libelle"
-                        defaultValue={{...initialItems, ...newOperation}?.vocation?.libelle || ""}
-                        onSelect={val => changeVocation(val)}
+                        value={vocation?.code ? vocation : null}
+                        onChange={val => changeVocation(val)}
                         placeholder="Choisir une vocation..."
                     />
                 </div>

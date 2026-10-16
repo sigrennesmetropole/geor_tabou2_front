@@ -429,6 +429,14 @@ export function getVocationZa() {
     return axios.get(`${baseURL}/vocations-za`, {params: {asc: true}}).then(({data}) => data);
 }
 
+export function getVocationsPlae() {
+    return axios.get(`${baseURL}/vocations-plae`, {params: {orderBy: "id", asc: true, actifUniquement: true}}).then(({data}) => data);
+}
+
+export function getRenouvellementsEconomiquesPlae() {
+    return axios.get(`${baseURL}/renouvellements-economiques-plae`, {params: {orderBy: "id", asc: true, actifUniquement: true}}).then(({data}) => data);
+}
+
 export const changeOperation = (operation) => axios.put(`${baseURL}/operations`, operation);
 
 export const getTypesProgrammationId = () => axios.get(`${baseURL}/types-programmations`, {params: {asc: true}});

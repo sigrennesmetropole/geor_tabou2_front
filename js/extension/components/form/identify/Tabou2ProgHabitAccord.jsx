@@ -222,7 +222,6 @@ const Tabou2ProgHabitatAccord = ({
      */
     const buildUpdatedProgramme = (updatedHabitat) => {
         const updatedProgramme = {
-            ...programme,
             programmationHabitat: updatedHabitat,
             logementsTotal: updatedHabitat.nbLogements,
             surfaceSHAB: updatedHabitat.surfaceSHAB,
@@ -260,10 +259,9 @@ const Tabou2ProgHabitatAccord = ({
             }
         });
 
-        // Envoyer le programme complet avec programmationHabitat mis à jour
+        // Envoyer uniquement les champs modifiés : la fiche fusionne avec les saisies des autres sections
         // On garde aussi les anciens champs plats pour la rétrocompatibilité
         const updatedProgramme = {
-            ...programme,
             programmationHabitat: updatedHabitat,
             // Rétrocompatibilité : mapper les nouveaux champs vers les anciens
             logementsTotal: updatedHabitat.nbLogements,

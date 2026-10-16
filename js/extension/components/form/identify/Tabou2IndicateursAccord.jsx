@@ -1,8 +1,13 @@
 import React, {useEffect, useState, memo} from "react";
-import {isEmpty, isEqual, pick, get} from "lodash";
+import {isEmpty, isEqual, pick, get, has} from "lodash";
 import {Col, Row, FormControl, Grid, ControlLabel} from "react-bootstrap";
 import Tabou2Select from '@js/extension/components/form/Tabou2Select';
 import {getRequestApi} from "@js/extension/api/requests";
+import {
+    isVocationPlae,
+    VOCATIONS_PLAE_API,
+    RENOUVELLEMENTS_ECONOMIQUES_PLAE_API
+} from "@js/extension/components/form/vocations/utils";
 import Tabou2Date from "../../common/Tabou2Date";
 import "@js/extension/css/identify.css";
 import Message from "@mapstore/components/I18N/Message";
@@ -38,9 +43,14 @@ const Tabou2IndicateursAccord = ({
     const [fields, setFields] = useState([]);
     const [required, setRequired] = useState({});
 
+    // Pour un programme, les indicateurs PLAE sont toujours affichés
+    const showPlae = (vocation) => layer === "layerPA" || isVocationPlae(vocation);
+
     // Définition des champs pour les indicateurs principaux
     const programmeOrOperation = layer === "layerPA" ? initialItem : operation;
     const parentOrOperation = layer === "layerSA" && !isEmpty(operationParent) ? operationParent : operation;
+    // Programme : valeurs propres, sans repli sur celles de l'opération parente
+    const plaeSource = (field) => layer === "layerPA" || has(values, field) ? values : operation;
     const etapeSource = values?.etape ? values : programmeOrOperation;
     const operationnelDateSource = values?.operationnelDate ? values : parentOrOperation;
     const avancementAdministratifSource = values?.avancementAdministratif ? values : parentOrOperation;
@@ -76,8 +86,29 @@ const Tabou2IndicateursAccord = ({
         apiLabel: "libelle",
         apiValue: "id",
         api: "vocations?orderBy=id&asc=true",
-        source: values?.vocation ? values : parentOrOperation,
-        readOnly: layer === "layerPA"
+        // Programme : vocation propre, sans repli sur celle de l'opération ou du secteur parent
+        source: layer === "layerPA" ? values : (values?.vocation ? values : parentOrOperation),
+        allowClear: layer !== "layerPA"
+    }, {
+        name: "vocationPlae",
+        label: "tabou2.vocation.vocationPlae",
+        field: "vocationPlae",
+        type: "select",
+        apiLabel: "libelle",
+        apiValue: "id",
+        api: VOCATIONS_PLAE_API,
+        showIf: showPlae,
+        source: plaeSource("vocationPlae")
+    }, {
+        name: "renouvellementEconomiquePlae",
+        label: "tabou2.vocation.renouvellementEconomiquePlae",
+        field: "renouvellementEconomiquePlae",
+        type: "select",
+        apiLabel: "libelle",
+        apiValue: "id",
+        api: RENOUVELLEMENTS_ECONOMIQUES_PLAE_API,
+        showIf: showPlae,
+        source: plaeSource("renouvellementEconomiquePlae")
     }, {
         name: "operationnelDate",
         label: "tabou2.identify.accordions.dateStart",
@@ -130,11 +161,16 @@ const Tabou2IndicateursAccord = ({
     // Vérification des droits de modification
     // Les contributeurs et référents peuvent modifier les champs (les autres rôles sont en lecture seule)
     const allowChange = authent.isContrib || authent.isReferent;
+    // Vocation propre de l'opération ou du secteur (et non celle de l'opération parente)
+    const currentVocation = values?.vocation || operation?.vocation;
+    const visibleFields = fields
+        .filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1)
+        .filter(f => !f.showIf || f.showIf(currentVocation));
 
     return (
         <Grid style={{width: "100%"}} className={""}>
             {
-                fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(item => (
+                visibleFields.map(item => (
                     <Row className="attributeInfos" key={item.name}>
                         <Col xs={4}>
                             <ControlLabel style={item.labelStyle || {}}><Message msgId={item.label}/></ControlLabel>
@@ -151,7 +187,7 @@ const Tabou2IndicateursAccord = ({
                                         disabled={item.readOnly || !allowChange}
                                         onSelect={(selected) => changeInfos({[item.name]: selected})}
                                         placeholder={i18n(messages, item.label)}
-                                        allowClear
+                                        allowClear={item.allowClear ?? true}
                                         minLength={0}
                                     />
                                 )

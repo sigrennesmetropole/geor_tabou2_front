@@ -3,6 +3,11 @@ import {isEmpty, isEqual, pick, has, get} from "lodash";
 import {Col, Row, FormControl, Grid, ControlLabel, Button} from "react-bootstrap";
 import Tabou2Select from '@js/extension/components/form/Tabou2Select';
 import {getRequestApi} from "@js/extension/api/requests";
+import {
+    isVocationPlae,
+    VOCATIONS_PLAE_API,
+    RENOUVELLEMENTS_ECONOMIQUES_PLAE_API
+} from "@js/extension/components/form/vocations/utils";
 import "@js/extension/css/identify.css";
 import "@js/extension/css/vocation.css";
 import Message from "@mapstore/components/I18N/Message";
@@ -69,6 +74,26 @@ const Tabou2DescribeAccord = ({
         readOnly: false,
         isArea: true
     }, {
+        name: "vocationPlae",
+        label: "tabou2.vocation.vocationPlae",
+        type: "combo",
+        apiLabel: "libelle",
+        api: VOCATIONS_PLAE_API,
+        placeholder: "tabou2.identify.accordions.emptySelect",
+        layers: ["layerSA", "layerOA"],
+        showIf: isVocationPlae,
+        readOnly: false
+    }, {
+        name: "renouvellementEconomiquePlae",
+        label: "tabou2.vocation.renouvellementEconomiquePlae",
+        type: "combo",
+        apiLabel: "libelle",
+        api: RENOUVELLEMENTS_ECONOMIQUES_PLAE_API,
+        placeholder: "tabou2.identify.accordions.emptySelect",
+        layers: ["layerSA", "layerOA"],
+        showIf: isVocationPlae,
+        readOnly: false
+    }, {
         name: "description",
         label: "tabou2.identify.accordions.localisation",
         type: "text",
@@ -99,6 +124,35 @@ const Tabou2DescribeAccord = ({
         readOnly: false
 
     }, {
+        name: "vocation",
+        label: "tabou2.identify.accordions.vocation",
+        field: "vocation",
+        layers: ["layerPA"],
+        type: "combo",
+        apiLabel: "libelle",
+        api: "vocations?orderBy=id&asc=true",
+        placeholder: "tabou2.identify.accordions.vocationEmpty",
+        allowClear: false,
+        readOnly: false
+    }, {
+        name: "vocationPlae",
+        label: "tabou2.vocation.vocationPlae",
+        type: "combo",
+        apiLabel: "libelle",
+        api: VOCATIONS_PLAE_API,
+        placeholder: "tabou2.identify.accordions.emptySelect",
+        layers: ["layerPA"],
+        readOnly: false
+    }, {
+        name: "renouvellementEconomiquePlae",
+        label: "tabou2.vocation.renouvellementEconomiquePlae",
+        type: "combo",
+        apiLabel: "libelle",
+        api: RENOUVELLEMENTS_ECONOMIQUES_PLAE_API,
+        placeholder: "tabou2.identify.accordions.emptySelect",
+        layers: ["layerPA"],
+        readOnly: false
+    }, {
         layers: ["layerPA"],
         name: "aireGeoHa",
         label: "tabou2.identify.accordions.programSpace",
@@ -107,11 +161,41 @@ const Tabou2DescribeAccord = ({
         readOnly: true
     }, {
         layers: ["layerPA"],
+        name: "surfacePrevisionnelle",
+        field: "surfacePrevisionnelle",
+        label: "tabou2.identify.accordions.surfacePrevisionnelle",
+        type: "number",
+        integer: true,
+        step: 1,
+        source: values,
+        readOnly: false
+    }, {
+        layers: ["layerPA"],
         name: "aireGeoHaParent",
         label: "tabou2.identify.accordions.totalSpace",
         value: () => mapFeature?.properties?.aire_geo_ha_parent ?? null,
         type: "number",
         readOnly: true
+    }, {
+        // Même donnée que la SHAB de l'onglet "Programmation habitat"
+        layers: ["layerPA"],
+        name: "surfaceSHAB",
+        field: "surfaceSHAB",
+        label: "tabou2.identify.accordions.SHABSpace",
+        type: "number",
+        step: 0.1,
+        habitat: true,
+        source: {surfaceSHAB: has(values, "surfaceSHAB") ? values.surfaceSHAB : get(values, "programmationHabitat.surfaceSHAB")},
+        readOnly: false
+    }, {
+        layers: ["layerPA"],
+        name: "surfaceConstruite",
+        field: "surfaceConstruite",
+        label: "tabou2.identify.accordions.surfaceConstruite",
+        type: "number",
+        step: 0.1,
+        source: values,
+        readOnly: false
     }, {
         layers: ["layerSA"],
         name: "aireGeoHaParent",
@@ -182,11 +266,28 @@ const Tabou2DescribeAccord = ({
         change(accordValues, pick(accordValues, required));
     };
 
+    // La SHAB est portée par la programmation habitat du programme
+    const changeSurfaceSHAB = (surfaceSHAB) => {
+        const programmationHabitat = {...(values?.programmationHabitat || {}), surfaceSHAB};
+        setValues({...values, surfaceSHAB, programmationHabitat});
+        change({surfaceSHAB, programmationHabitat}, {});
+    };
+
+    const parseNumber = (item, raw) => {
+        if (raw === "" || raw === null || raw === undefined) return null;
+        const val = item.integer ? parseInt(raw, 10) : parseFloat(raw);
+        return isNaN(val) || val < 0 ? null : val;
+    };
+
     const allowChange = authent.isContrib || authent.isReferent;
+    const currentVocation = values?.vocation || operation?.vocation;
+    const visibleFields = fields
+        .filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1)
+        .filter(f => !f.showIf || f.showIf(currentVocation));
     return (
         <Grid style={{width: "100%"}} className={""}>
             {
-                fields.filter(f => isEmpty(f.layers) || f?.layers.indexOf(layer) > -1).map(item => (
+                visibleFields.map(item => (
                     <Row className="attributeInfos">
                         <Col xs={4}>
                             <ControlLabel style={item.labelStyle || {}}><Message msgId={item.label}/></ControlLabel>
@@ -201,18 +302,20 @@ const Tabou2DescribeAccord = ({
                                         type={item.type}
                                         min="0"
                                         step={item?.step}
-                                        value={item.value ? item.value(item) : getValue(item) || ""}
+                                        value={item.value ? item.value(item) : (getValue(item) ?? "")}
                                         readOnly={item.readOnly || !allowChange}
                                         onChange={(v) => {
-                                            const val = item.type === "number" ? parseFloat(v.target.value) : v.target.value;
-                                            return changeInfos({
-                                                [item.name]: item.type === "number" && val < 0 ? "" : val
-                                            });
+                                            if (item.type !== "number") {
+                                                return changeInfos({[item.name]: v.target.value});
+                                            }
+                                            const val = parseNumber(item, v.target.value);
+                                            return item.habitat ? changeSurfaceSHAB(val) : changeInfos({[item.name]: val});
                                         }}
                                         onKeyDown={(v) => {
                                             if (item.type !== "number") return;
                                             // only keep numeric and special key control as "Delete" or "Backspace"
-                                            if (!/^[0-9.,]/.test(v.key) && v.key.length < 2) {
+                                            const allowed = item.integer ? /^\d/ : /^[0-9.,]/;
+                                            if (!allowed.test(v.key) && v.key.length < 2) {
                                                 v.returnValue = false;
                                                 if (v.preventDefault) v.preventDefault();
                                             }
@@ -232,7 +335,7 @@ const Tabou2DescribeAccord = ({
                                         onChange={(v) => !v ? changeInfos({[item.name]: v}) : null}
                                         placeholder={i18n(messages, item?.placeholder || "")}
                                         disabled={item.readOnly || !allowChange}
-                                        allowClear
+                                        allowClear={item.allowClear ?? true}
                                     />
                                 ) : null
                             }{
@@ -247,17 +350,20 @@ const Tabou2DescribeAccord = ({
                                             onClick={() => setOpened(true)}>
                                             {i18n(messages, "tabou2.vocation.btnLabel")}
                                         </Button>
-                                        <Tabou2VocationModal
-                                            i18n={i18n}
-                                            messages={messages}
-                                            operation={operation}
-                                            initialItems={initialItem}
-                                            update={changeProp}
-                                            opened={opened}
-                                            allowChange={allowChange}
-                                            close={() => setOpened(false)}
-                                            {...vocationsInfos}
-                                        />
+                                        {opened && (
+                                            // Montée à l'ouverture pour repartir des valeurs courantes de la fiche
+                                            <Tabou2VocationModal
+                                                i18n={i18n}
+                                                messages={messages}
+                                                operation={operation}
+                                                initialItems={initialItem}
+                                                update={changeProp}
+                                                opened={opened}
+                                                allowChange={allowChange}
+                                                close={() => setOpened(false)}
+                                                {...vocationsInfos}
+                                            />
+                                        )}
                                     </>
                                 )
                             }

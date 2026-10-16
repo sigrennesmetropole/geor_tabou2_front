@@ -5,6 +5,7 @@ import AutreProgrammation from '../AutreProgrammation';
 import ContributionPaddOap from '../ContributionPaddOap';
 import CompositionProgrammation from '../CompositionProgrammation';
 import ProgrammationMixte from './ProgrammationMixte';
+import ProgrammeActivite from '../ProgrammeActivite';
 
 export default function Mixte({...props}) {
     const subFormProps = {
@@ -15,7 +16,8 @@ export default function Mixte({...props}) {
         {key: "composition", title: <Message msgId="tabou2.vocation.tabComposition"/>, component: <CompositionProgrammation {...subFormProps}/>},
         {key: "mixte", title: <Message msgId="tabou2.vocation.tabMixte"/>, component: <ProgrammationMixte {...subFormProps}/>},
         {key: "otherProg", title: <Message msgId="tabou2.vocation.tabOtherProg"/>, component: <AutreProgrammation {...subFormProps}/>},
-        {key: "contrib", title: <Message msgId="tabou2.vocation.tabContrib"/>, component: <ContributionPaddOap {...subFormProps}/>}
+        {key: "contrib", title: <Message msgId="tabou2.vocation.tabContrib"/>, component: <ContributionPaddOap {...subFormProps}/>},
+        {key: "progActivity", title: <Message msgId="tabou2.vocation.tabProgActivity"/>, component: <ProgrammeActivite {...subFormProps}/>}
     ];
 
     return (

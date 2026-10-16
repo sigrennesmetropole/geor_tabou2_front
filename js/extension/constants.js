@@ -35,6 +35,12 @@ export const URL_ADD = {
 };
 
 export const REQUIRED_TIERS = ["nom", "adresseVille"];
+// Codes des types de tiers (tabou_type_tiers) affichés dans des champs dédiés de la fiche Programme
+export const TYPES_TIERS = {
+    CHARGE_OPERATION: "CHARGE_OPERATION",
+    OCCUPANT: "OCCUPANT",
+    OPERATEUR_INVESTISSEUR: "OPERATEUR_INVESTISSEUR"
+};
 export const TIERS_SCHEMA = {
     id: 0,
     tiers: {
@@ -178,6 +184,7 @@ export const ACCORDIONS = [
     // TO DELETE OA SA FIELDS
     {title: 'tabou2.identify.accordions.opTracking', id: 'suivi', layers: ['layerPA'], display: (props) => !(props.prospection ?? false)},
     {title: 'tabou2.identify.accordions.progHabitat', id: 'habitat', layers: ['layerPA', 'layerOA'], display: (props) => !(props.prospection ?? false)},
+    {title: 'tabou2.identify.accordions.progActivity', id: 'activite', layers: ['layerPA'], display: (props) => !(props.prospection ?? false)},
     {title: 'tabou2.identify.accordions.autreProg', id: 'autreProg', layers: ['layerPA'], display: (props) => !(props.prospection ?? false)},
     //
     {title: 'tabou2.identify.accordions.dds', id: 'dds', layers: ['layerPA'], display: (props) => !(props.prospection ?? false)},
@@ -532,6 +539,15 @@ export const ADD_PA_FORM = [{
     placeholder: "Sélectionner une étape",
     required: true,
     type: "combo"
+}, {
+    label: "tabou2.add.vocation",
+    api: "vocations?orderBy=id&asc=true",
+    name: "vocation",
+    apiField: "id",
+    apiLabel: "libelle",
+    parent: null,
+    required: true,
+    type: "combo"
 }];
 
 export const OA_SCHEMA = {
@@ -585,6 +601,9 @@ export const PA_SCHEMA = {
     "operationId": 0,
     "idEmprise": 0,
     "diffusionRestreinte": false,
+    "vocation": {
+        "id": 0
+    },
     "code": "",
     "nom": "",
     "description": "",

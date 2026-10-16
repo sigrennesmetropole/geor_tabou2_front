@@ -4,7 +4,7 @@ import isEmpty from "lodash/isEmpty";
 import {Panel, Row} from "react-bootstrap";
 import "@js/extension/css/vocation.css";
 import "@js/extension/css/tabou.css";
-import {findValueByType, changeByType, getCodeIdByCode, shouldShowField, renderProgrammationField} from "../utils";
+import {findValueByType, changeByType, getCodeIdByCode, shouldShowField, renderProgrammationField, getPlaeFields} from "../utils";
 import {getVocationZa} from "@js/extension/api/requests";
 import LogementsSpecifiquesTable from "../LogementsSpecifiquesTable";
 
@@ -45,25 +45,6 @@ export default function ProgrammationMixte({
                 setValues(
                     changeByType(
                         getCodeIdByCode(typesProgrammation, "HABITAT"),
-                        values,
-                        "informationsProgrammation",
-                        value
-                    )
-                );
-            },
-            readOnly: false
-        },
-        {
-            name: "activites",
-            label: "tabou2.vocation.progActivity",
-            field: "description",
-            type: "text",
-            layers: [],
-            source: () => findValueByType(getCodeIdByCode(typesProgrammation, "ACTIVITES"), values, "informationsProgrammation"),
-            change: (value) => {
-                setValues(
-                    changeByType(
-                        getCodeIdByCode(typesProgrammation, "ACTIVITES"),
                         values,
                         "informationsProgrammation",
                         value
@@ -159,6 +140,7 @@ export default function ProgrammationMixte({
             code: "Autres",
             readOnly: false
         },
+        ...getPlaeFields(values, setValues),
         {
             name: "scot",
             label: "tabou2.vocation.scot",

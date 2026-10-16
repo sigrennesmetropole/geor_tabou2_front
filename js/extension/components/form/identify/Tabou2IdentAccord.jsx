@@ -2,6 +2,8 @@ import React, {useEffect, useState, memo} from "react";
 import {isEmpty, isEqual, pick, get, has} from "lodash";
 import {Col, Row, FormControl, Grid, ControlLabel, Glyphicon} from "react-bootstrap";
 import {getRequestApi} from "@js/extension/api/requests";
+import {TYPES_TIERS} from "@js/extension/constants";
+import {getTiersNomsByType, openTiersModal} from "@js/extension/utils/identify";
 import "@js/extension/css/identify.css";
 import Message from "@mapstore/components/I18N/Message";
 import Tabou2Select from '@js/extension/components/form/Tabou2Select';
@@ -13,7 +15,7 @@ import Tabou2Date from "@js/extension/components/common/Tabou2Date";
 const Button = tooltip(ButtonRB);
 
 const avoidReRender = (prevProps, nextProps) => {
-    return isEqual(prevProps.initialItem, nextProps.initialItem);
+    return isEqual(prevProps.initialItem, nextProps.initialItem) && isEqual(prevProps.tiers, nextProps.tiers);
 };
 /**
  * Accordion to display info for Identity panel section - only for feature linked with id tabou
@@ -152,6 +154,13 @@ const Tabou2IdentAccord = ({
         readOnly: false,
         require: true
     }, {
+        name: "chargeOperation",
+        label: "tabou2.identify.accordions.chargeOperation",
+        type: "tiers",
+        tiersCode: TYPES_TIERS.CHARGE_OPERATION,
+        layers: ["layerPA"],
+        readOnly: true
+    }, {
         name: "consommationEspace",
         field: "consommationEspace.libelle",
         label: "tabou2.identify.accordions.consoSpace",
@@ -226,6 +235,11 @@ const Tabou2IdentAccord = ({
             type: "button",
             tooltip: "tabou2.identify.accordions.tiersDetail",
             click: () => openTierModal(3)
+        },
+        chargeOperation: {
+            type: "button",
+            tooltip: "tabou2.identify.accordions.tiersDetail",
+            click: () => openTiersModal(setTiersFilter, programme?.id, TYPES_TIERS.CHARGE_OPERATION)
         }
     };
 
@@ -342,6 +356,16 @@ const Tabou2IdentAccord = ({
                     value={getValue(item) || ""}
                     readOnly={item.readOnly || !allowChange}
                     onChange={(v) => changeInfos({[item.name]: v.target.value})}
+                />
+            );
+        }
+
+        if (item.type === "tiers") {
+            return (
+                <FormControl
+                    placeholder={i18n(messages, item?.label || "")}
+                    value={getTiersNomsByType(tiers, item.tiersCode)}
+                    readOnly
                 />
             );
         }

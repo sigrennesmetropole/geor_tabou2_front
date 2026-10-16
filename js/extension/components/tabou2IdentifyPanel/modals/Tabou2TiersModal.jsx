@@ -176,7 +176,7 @@ export default function Tabou2TiersModal({
 
     const isTypeDisplay = (tierItem) => {
         if (props.tiersFilter?.filter) {
-            return props.tiersFilter.filter === tierItem.typeTiers.id;
+            return [tierItem.typeTiers?.id, tierItem.typeTiers?.code].includes(props.tiersFilter.filter);
         }
         return true;
     };

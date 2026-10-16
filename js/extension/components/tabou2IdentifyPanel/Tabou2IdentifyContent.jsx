@@ -10,6 +10,7 @@ import Tabou2SecProgLiesAccord from '@js/extension/components/form/identify/Tabo
 import Tabou2SuiviOpAccord from '@js/extension/components/form/identify/Tabou2SuiviOpAccord';
 import Tabou2CadreAccord from '../form/identify/Tabou2CadreAccord';
 import Tabou2ProgHabitAccord from '@js/extension/components/form/identify/Tabou2ProgHabitAccord';
+import Tabou2ProgActiviteAccord from '@js/extension/components/form/identify/Tabou2ProgActiviteAccord';
 import Tabou2AutreProgAccord from '@js/extension/components/form/identify/Tabou2AutreProgAccord';
 import {ACCORDIONS} from '@js/extension/constants';
 import Tabou2IdentifyToolbar from './Tabou2IdentifyToolbar';
@@ -176,6 +177,7 @@ const Tabou2IdentifyContent = ({
                                 {item.id === "suivi" ? <Tabou2SuiviOpAccord {...tabsProps} /> : null}
                                 {item.id === "dds" ? <Tabou2DdsAccord {...tabsProps} /> : null}
                                 {item.id === "habitat" ? <Tabou2ProgHabitAccord {...tabsProps} /> : null}
+                                {item.id === "activite" ? <Tabou2ProgActiviteAccord {...tabsProps} /> : null}
                                 {item.id === "autreProg" ? <Tabou2AutreProgAccord {...tabsProps} /> : null}
                                 {item.id === "secteursprog" ? <Tabou2SecProgLiesAccord {...tabsProps} /> : null}
                                 {item.id === "cadre" ? <Tabou2CadreAccord {...tabsProps} /> : null}
