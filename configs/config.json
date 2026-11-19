@@ -88,12 +88,12 @@
       {
         "id": "tabou:tabou_v_oa_operation__3",
         "format": "image/png",
-        "search": { "url": "https://gis.jdev.fr/geoserver/wfs", "type": "wfs" },
+        "search": { "url": "/tabou2/carto/ows", "type": "wfs" },
         "name": "tabou:tabou_v_oa_operation",
         "description": "tabou_v_oa_operation",
         "title": "Opérations",
         "type": "wms",
-        "url": "https://gis.jdev.fr/geoserver/ows",
+        "url": "/tabou2/carto/ows",
         "bbox": {
           "crs": "EPSG:4326",
           "bounds": {

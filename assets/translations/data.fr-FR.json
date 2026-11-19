@@ -21,6 +21,7 @@
         "successApi": "Opération réussie !",
         "successSaveInfos": "Informations sauvegardées !",
         "apiGETError": "Erreur à la récupération des informations.",
+        "operationNotAccessible": "Opération non accessible",
         "failPrint": "Le téléchargement de la fiche de suivi a échoué",
         "failDownload": "Le téléchargement a échoué !",
         "successPrint": "Document téléchargé !",

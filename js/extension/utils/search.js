@@ -9,7 +9,7 @@ import {keys, get} from 'lodash';
 const fixStringCql = (type, value) => {
     let cqlVal = value;
     if (type === 'string' && value) {
-        cqlVal = `''${value.replace(/'/g, "''''")}''`;
+        cqlVal = `'${value.replace(/'/g, "''")}'`;
     }
     return cqlVal;
 };
@@ -53,37 +53,6 @@ export function getNewFilter(layerTypeName = '', spatialFilter = {}, textFilters
     };
 }
 
-/**
- * Create spatial filter to apply to TOC layer
- * @param {*} operation - operation to realize between geoms
- * @param {String} geom - geom field
- * @param {String} cqlFilter - cql expression
- * @param {Array} filterFields - list of filter fields object
- * @param {String} crossGeom - geom field name of layer use to filter
- * @param {String} crossName - typeName of layer use to filter
- * @returns cross layer filter object
- */
-export function getNewCrossLayerFilter(operation, geom, cqlFilter, filterFields, crossGeom, crossName) {
-    let crossFilter = {
-        operation: operation || "INTERSECTS",
-        attribute: geom,
-        collectGeometries: {
-            queryCollection: {
-                filterFields: filterFields,
-                geometryName: crossGeom,
-                typeName: crossName,
-                groupFields: [{
-                    id: 1,
-                    logic: "OR",
-                    index: 0
-                }]
-            }
-        }
-    };
-    if (cqlFilter) crossFilter.collectGeometries.queryCollection.cqlFilter = cqlFilter;
-    return crossFilter;
-}
-
 export function getFilterField(field, values, valueType, operator, groupId) {
     return values.map(value => ({
         attribute: field,
@@ -121,36 +90,117 @@ export function getCQL(type, field, value, condition) {
 
 
 /**
- * Create standard CQL Cross Layer filter expression
+ * Describe a cross layer filter: features of a layer intersecting features of another layer.
+ * The filter is not serialized to CQL here because it can not always be sent as is to GeoServer:
+ * the operations layer is reachable only through the API proxy, which refuses `queryCollection`.
+ * See resolveCondition in epics/search.js.
  * @param {string} type - date or empty or string
  * @param {string} geomA - geom field to filtered
- * @param {string} layer - TOC id to filtered
+ * @param {string} layer - typeName of the layer used as filter
  * @param {string} geomB - geom field name from use as filter
  * @param {string} field - optionnal - Limit layer use as filter by cql expression.
  * @param {string} value - optionnal. Value for previous field param.
  * @param {boolean} onlyTabou - optionnal - filter only tabou layer.
  * @param {string} condition - pass a condition directly
- * @returns {string} CQL expression
+ * @returns {object|null} {geomA, layer, geomB, cql} where cql is the plain condition applied on `layer`
  */
-export function getSpatialCQL({type, geomA, layer, geomB, field, value, onlyTabou, condition}) {
+export function getSpatialFilter({type, geomA, layer, geomB, field, value, onlyTabou, condition}) {
+    const onlyTabouCql = onlyTabou ? "id_tabou IS NOT NULL AND " : "";
+    let cql;
     if (condition) {
-        return `(INTERSECTS(${geomA},collectGeometries(queryCollection('${layer}', '${geomB}','(${onlyTabou ? "id_tabou IS NOT NULL AND " : ""}${condition})'))))`;
-    }
-    if (type === "date" && (value.start || value.end)) {
+        cql = `(${onlyTabouCql}${condition})`;
+    } else if (type === "date" && (value.start || value.end)) {
         // allow to input only one date filter
         let vals = [
-            // spcific for query filter ->  use ("field" >= ''string'') and not ("field" >= 'string')
-            value.start ? `"${field}" >=''${value.start}''` : "",
-            value.end ? `"${field}" <= ''${value.end}''` : ""
+            value.start ? `"${field}" >='${value.start}'` : "",
+            value.end ? `"${field}" <= '${value.end}'` : ""
         ].filter(m => m);
-        let cql = `${vals.join(" AND ")}`;
-        return `(INTERSECTS(${geomA},collectGeometries(queryCollection('${layer}', '${geomB}','(${onlyTabou ? "id_tabou IS NOT NULL AND " : ""}${cql})'))))`;
+        cql = `(${onlyTabouCql}${vals.join(" AND ")})`;
     } else if (type === "date") {
-        return "";
+        return null;
     } else if (!field && value) {
-        return `(INTERSECTS(${geomA},collectGeometries(queryCollection('${layer}', '${geomB}','INCLUDE'))))`;
+        cql = 'INCLUDE';
+    } else {
+        cql = `(${onlyTabouCql}"${field}" = ${fixStringCql(type, value)})`;
     }
-    return `(INTERSECTS(${geomA},collectGeometries(queryCollection('${layer}', '${geomB}','(${onlyTabou ? "id_tabou IS NOT NULL AND " : ""}"${field}" = ${fixStringCql(type, value)})'))))`;
+    return {geomA, layer, geomB, cql};
+}
+
+/**
+ * Serialize a cross layer filter to the native GeoServer CQL syntax (collectGeometries / queryCollection).
+ * Only usable on layers directly reachable on GeoServer, never on the operations layer.
+ * @param {object} spatialFilter - see getSpatialFilter
+ * @returns {string} CQL expression
+ */
+export function spatialFilterToCql({geomA, layer, geomB, cql}) {
+    // the inner CQL is a string literal of queryCollection: quotes must be doubled
+    return `(INTERSECTS(${geomA},collectGeometries(queryCollection('${layer}', '${geomB}','${cql.replace(/'/g, "''")}'))))`;
+}
+
+const ringToWkt = (ring) => `(${ring.map(([x, y]) => `${x} ${y}`).join(", ")})`;
+const polygonToWkt = (rings) => `(${rings.map(ringToWkt).join(", ")})`;
+
+/**
+ * Convert a GeoJSON geometry to WKT. Only polygons are supported.
+ * @param {object} geometry - GeoJSON geometry
+ * @returns {string|null} WKT, or null for an unsupported geometry
+ */
+export function geometryToWkt(geometry) {
+    if (geometry?.type === "Polygon") {
+        return `POLYGON${polygonToWkt(geometry.coordinates)}`;
+    }
+    if (geometry?.type === "MultiPolygon") {
+        return `MULTIPOLYGON(${geometry.coordinates.map(polygonToWkt).join(", ")})`;
+    }
+    return null;
+}
+
+/**
+ * Create a CQL expression selecting features intersecting literal geometries.
+ * One clause by feature to avoid building an invalid collection from overlapping geometries.
+ * @param {string} geomA - geom field of the filtered layer
+ * @param {Array} features - GeoJSON features
+ * @returns {string} CQL expression, EXCLUDE if there is no usable geometry
+ */
+export function geometriesToCql(geomA, features) {
+    const clauses = (features || [])
+        .map(feature => geometryToWkt(feature?.geometry))
+        .filter(wkt => wkt)
+        .map(wkt => `INTERSECTS(${geomA}, ${wkt})`);
+    return clauses.length ? `(${clauses.join(" OR ")})` : "EXCLUDE";
+}
+
+/**
+ * Get the plugin configuration (layersCfg) of a layer from its typeName.
+ * @param {object} pluginCfg
+ * @param {string} typeName - layer typeName
+ * @returns {object|undefined} layer configuration
+ */
+export function getLayerCfg(pluginCfg, typeName) {
+    return Object.values(pluginCfg?.layersCfg || {}).find(layerCfg => layerCfg?.nom === typeName);
+}
+
+/**
+ * Get the OGC service URL to use for a layer: the `url` of its layersCfg entry if there is one (a layer behind
+ * the API proxy, like the operations layer), the GeoServer URL otherwise.
+ * @param {object} pluginCfg
+ * @param {string} typeName - layer typeName
+ * @returns {string} OGC service URL
+ */
+export function getOGCUrl(pluginCfg, typeName) {
+    return getLayerCfg(pluginCfg, typeName)?.url || `${pluginCfg?.geoserverURL}/ows`;
+}
+
+/**
+ * Control that a cross layer filter must be resolved by the client instead of by GeoServer:
+ * a layer with its own url (behind the API proxy) is on one side of the filter, and the proxy refuses `queryCollection`.
+ * @param {object} spatialFilter - see getSpatialFilter
+ * @param {string} targetLayer - typeName of the filtered layer
+ * @param {object} pluginCfg
+ * @returns {boolean}
+ */
+export function involvesLayer(spatialFilter, targetLayer, pluginCfg) {
+    return !!(getLayerCfg(pluginCfg, spatialFilter.layer)?.url || getLayerCfg(pluginCfg, targetLayer)?.url);
 }
 
 /**
@@ -228,15 +278,17 @@ export function newfilterLayerByList(layer, values, field, cql, crossLayer) {
  * Create params object expected by Ajax POST request
  * @param {String} cql - expression
  * @param {String} layer - name from geoserver typeName
+ * @param {object} extraParams - optionnal - other WFS params
  * @returns object
  */
-export function createWfsPostRequest(cql, layer) {
+export function createWfsPostRequest(cql, layer, extraParams = {}) {
     return {
         CQL_FILTER: cql,
         SERVICE: 'WFS',
         REQUEST: 'GetFeature',
         TYPENAME: layer, // tabou2:iris
         OUTPUTFORMAT: 'application/json',
-        VERSION: '1.0.0'
+        VERSION: '1.0.0',
+        ...extraParams
     };
 }

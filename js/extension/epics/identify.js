@@ -12,7 +12,7 @@ import {buildIdentifyRequest} from '@mapstore/utils/MapInfoUtils';
 import {layersSelector} from '@mapstore/selectors/layers';
 import {error, success} from "@mapstore/actions/notifications";
 import {getMessageById} from "@mapstore/utils/LocaleUtils";
-import {newfilterLayerByList, getNewCrossLayerFilter} from '../utils/search';
+import {newfilterLayerByList, geometriesToCql} from '../utils/search';
 import {
     changeMapInfoFormat,
     updateFeatureInfoClickPoint
@@ -55,7 +55,8 @@ import {
     putRequestApi,
     getTypesFoncier,
     getTypesActeurs,
-    getTypesActions
+    getTypesActions,
+    getFeaturesFromCql
 } from '../api/requests';
 
 import {getFeatureInfo} from "@mapstore/api/identify";
@@ -270,29 +271,37 @@ export function dipslayPASAByOperation(action$, store) {
         .switchMap(() => {
             const idTabou = getSelection(store.getState()).id;
             const idsPA = store.getState().tabou2.ficheInfos.programmes.elements.map(p => p.id);
-            let layers = getPluginCfg(store.getState()).layersCfg;
+            const pluginCfg = getPluginCfg(store.getState());
+            let layers = pluginCfg.layersCfg;
             let layerPA = get(layers, "layerPA").nom;
             let layerOA = get(layers, "layerOA").nom;
             let layerSA = get(layers, "layerSA").nom;
-            // SA filter
-            let crossLayerFilter = getNewCrossLayerFilter("INTERSECTS", "the_geom", "", [], "the_geom", layerOA);
-            // prepare filter
-            let filters = {
-                ...getLayerFilterObj(store.getState()),
-                [layerPA]: newfilterLayerByList(layerPA, idsPA, ID_TABOU),
-                [layerOA]: newfilterLayerByList(layerOA, [idTabou], ID_TABOU),
-                [layerSA]: {
-                    ...newfilterLayerByList(layerSA, [idTabou], ID_TABOU, "", crossLayerFilter),
-                    groupLevels: 5,
-                    maxFeaturesWPS: 5
-                }
-            };
-            return Rx.Observable.of(
-                setTabouFilterObj(filters),
-                applyFilterObj(layerPA),
-                applyFilterObj(layerOA),
-                applyFilterObj(layerSA)
-            );
+            const geomOA = get(layers, "layerOA").geomField;
+            const geomSA = get(layers, "layerSA").geomField;
+            // SA filter: the operation layer is only reachable through the API proxy, which refuses cross layer
+            // filters. So the geometry of the operation is requested first, then used to get the SA ids.
+            return Rx.Observable.defer(() => getFeaturesFromCql(layerOA, `${ID_TABOU} = ${idTabou}`, geomOA, pluginCfg))
+                .switchMap(features => getFeaturesFromCql(layerSA, geometriesToCql(geomSA, features), ID_TABOU, pluginCfg))
+                .map(features => features.map(f => f.properties?.[ID_TABOU]).filter(id => id))
+                .catch(e => {
+                    console.log("Error retrieving sectors of the operation", e);
+                    return Rx.Observable.of([]);
+                })
+                .switchMap(idsSA => {
+                    // prepare filter
+                    let filters = {
+                        ...getLayerFilterObj(store.getState()),
+                        [layerPA]: newfilterLayerByList(layerPA, idsPA, ID_TABOU),
+                        [layerOA]: newfilterLayerByList(layerOA, [idTabou], ID_TABOU),
+                        [layerSA]: newfilterLayerByList(layerSA, idsSA.length ? idsSA : [-1], ID_TABOU)
+                    };
+                    return Rx.Observable.of(
+                        setTabouFilterObj(filters),
+                        applyFilterObj(layerPA),
+                        applyFilterObj(layerOA),
+                        applyFilterObj(layerSA)
+                    );
+                });
         });
 }
 

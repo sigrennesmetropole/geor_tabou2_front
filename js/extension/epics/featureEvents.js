@@ -55,6 +55,9 @@ const selectInfos = {
     permis: null
 };
 
+// the API refuses (403) the operations the user is not allowed to read (US-323)
+const isForbidden = (e) => e?.response?.status === 403 || e?.status === 403;
+
 /**
  * Helper: Create info object for OA layer
  * @param {object} programmes - Programmes data
@@ -255,6 +258,14 @@ export function getSelectionInfos(action$, store) {
                             return Rx.Observable.of(e);
                         })
                         .switchMap((response) => {
+                            if (isForbidden(response)) {
+                                return Rx.Observable.of(
+                                    error({
+                                        title: getMessageById(messages, "tabou2.infos.failApi"),
+                                        message: getMessageById(messages, "tabou2.infos.operationNotAccessible")
+                                    })
+                                );
+                            }
                             if (isEmpty(response?.data)) {
                                 return Rx.Observable.of(
                                     error({

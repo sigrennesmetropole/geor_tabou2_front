@@ -1,17 +1,19 @@
 import axios from "@mapstore/libs/ajax";
 import { API_BASE_URL } from "../constants";
 import { keys } from "lodash";
+import { getOGCUrl } from "../utils/search";
 const baseURL = "/tabou2";
 
 /**
- * Create geoserver request to get featrures IDs
+ * Create geoserver request to get featrures IDs.
+ * A layer with its own url in layersCfg (the operations layer) is requested through it.
  * @param {*} params - request params
- * @param {*} geoserverURL - Geoserver URL or path
+ * @param {*} pluginCfg - plugin configuration
  * @returns - geoserver response
  */
-export function getIdsFromSearch(params, geoserverURL) {
-    let paramsToStr = keys(params).map(k => `${k}=${params[k]}`);
-    return axios.post(`${geoserverURL}/ows`, paramsToStr.join('&'), {
+export function getIdsFromSearch(params, pluginCfg) {
+    let paramsToStr = keys(params).map(k => `${k}=${encodeURIComponent(params[k])}`);
+    return axios.post(getOGCUrl(pluginCfg, params.TYPENAME), paramsToStr.join('&'), {
         timeout: 60000,
         headers: {'Content-Type': 'application/x-www-form-urlencoded'}
     }).then(({ data }) => data);

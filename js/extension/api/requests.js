@@ -1,21 +1,38 @@
 import axios from "@mapstore/libs/ajax";
 import {API_BASE_URL} from "../constants";
 import {keys} from "lodash";
+import {getOGCUrl, createWfsPostRequest} from "../utils/search";
 
 const baseURL = "/tabou2";
 
 /**
- * Create geoserver request to get features IDs
+ * Create geoserver request to get features IDs.
+ * A layer with its own url in layersCfg (the operations layer) is requested through it.
  * @param {*} params - request params
- * @param {*} geoserverURL - Geoserver URL or path
+ * @param {*} pluginCfg - plugin configuration
  * @returns - geoserver response
  */
-export function createOGCRequest(params, geoserverURL) {
-    let paramsToStr = keys(params).map(k => `${k}=${params[k]}`);
-    return axios.post(`${geoserverURL}/ows`, paramsToStr.join('&'), {
+export function createOGCRequest(params, pluginCfg) {
+    let paramsToStr = keys(params).map(k => `${k}=${encodeURIComponent(params[k])}`);
+    return axios.post(getOGCUrl(pluginCfg, params.TYPENAME), paramsToStr.join('&'), {
         timeout: 60000,
         headers: {'Content-Type': 'application/x-www-form-urlencoded'}
     }).then(({data}) => data);
+}
+
+/**
+ * Get features of a layer from a CQL filter, with only the requested properties.
+ * @param {string} layer - layer typeName
+ * @param {string} cql - CQL filter
+ * @param {string} propertyName - properties to return
+ * @param {object} pluginCfg - plugin configuration
+ * @returns {Promise<Array>} GeoJSON features
+ */
+export function getFeaturesFromCql(layer, cql, propertyName, pluginCfg) {
+    // geometries are used as literal in a filter on another layer: same CRS is needed
+    const srs = pluginCfg?.searchCfg?.srsName || "EPSG:3948";
+    const params = createWfsPostRequest(cql, layer, {PROPERTYNAME: propertyName, SRSNAME: srs});
+    return createOGCRequest(params, pluginCfg).then(data => data?.features || []);
 }
 
 /**

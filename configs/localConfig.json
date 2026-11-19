@@ -348,6 +348,7 @@
             },
             "layerOA": {
               "nom": "tabou:tabou_v_oa_operation",
+              "url": "/tabou2/carto/ows",
               "geomField": "the_geom",
               "idField": "objectid",
               "idType": "number"

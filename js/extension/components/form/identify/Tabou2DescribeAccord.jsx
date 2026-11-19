@@ -2,6 +2,7 @@ import React, {useEffect, useState, memo} from "react";
 import {isEmpty, isEqual, pick, has, get} from "lodash";
 import {Col, Row, FormControl, Grid, ControlLabel, Button} from "react-bootstrap";
 import Tabou2Select from '@js/extension/components/form/Tabou2Select';
+import SurfaceInput from "@js/extension/components/form/SurfaceInput";
 import {getRequestApi} from "@js/extension/api/requests";
 import {
     isVocationPlae,
@@ -158,6 +159,7 @@ const Tabou2DescribeAccord = ({
         label: "tabou2.identify.accordions.programSpace",
         value: () => mapFeature?.properties?.aire_geo_ha ?? null,
         type: "number",
+        isSurface: true,
         readOnly: true
     }, {
         layers: ["layerPA"],
@@ -165,8 +167,8 @@ const Tabou2DescribeAccord = ({
         field: "surfacePrevisionnelle",
         label: "tabou2.identify.accordions.surfacePrevisionnelle",
         type: "number",
-        integer: true,
-        step: 1,
+        step: "any",
+        isSurface: true,
         source: values,
         readOnly: false
     }, {
@@ -175,6 +177,7 @@ const Tabou2DescribeAccord = ({
         label: "tabou2.identify.accordions.totalSpace",
         value: () => mapFeature?.properties?.aire_geo_ha_parent ?? null,
         type: "number",
+        isSurface: true,
         readOnly: true
     }, {
         // Même donnée que la SHAB de l'onglet "Programmation habitat"
@@ -183,7 +186,8 @@ const Tabou2DescribeAccord = ({
         field: "surfaceSHAB",
         label: "tabou2.identify.accordions.SHABSpace",
         type: "number",
-        step: 0.1,
+        step: "any",
+        isSurface: true,
         habitat: true,
         source: {surfaceSHAB: has(values, "surfaceSHAB") ? values.surfaceSHAB : get(values, "programmationHabitat.surfaceSHAB")},
         readOnly: false
@@ -193,7 +197,8 @@ const Tabou2DescribeAccord = ({
         field: "surfaceConstruite",
         label: "tabou2.identify.accordions.surfaceConstruite",
         type: "number",
-        step: 0.1,
+        step: "any",
+        isSurface: true,
         source: values,
         readOnly: false
     }, {
@@ -202,6 +207,7 @@ const Tabou2DescribeAccord = ({
         label: "tabou2.identify.accordions.totalSpace",
         value: () => mapFeature?.properties?.aire_geo_ha_parent ?? null,
         type: "number",
+        isSurface: true,
         readOnly: true
     }, {
         name: "aireGeoHa",
@@ -210,6 +216,7 @@ const Tabou2DescribeAccord = ({
         type: "number",
         layers: ["layerOA"],
         value: () => mapFeature?.properties?.aire_geo_ha ?? null,
+        isSurface: true,
         readOnly: true
     }, {
         name: "aireGeoHa",
@@ -217,6 +224,7 @@ const Tabou2DescribeAccord = ({
         type: "number",
         layers: ["layerSA"],
         value: () => mapFeature?.properties?.aire_geo_ha ?? null,
+        isSurface: true,
         readOnly: true
     }, {
         name: "mos",
@@ -275,7 +283,7 @@ const Tabou2DescribeAccord = ({
 
     const parseNumber = (item, raw) => {
         if (raw === "" || raw === null || raw === undefined) return null;
-        const val = item.integer ? parseInt(raw, 10) : parseFloat(raw);
+        const val = Number(raw);
         return isNaN(val) || val < 0 ? null : val;
     };
 
@@ -295,7 +303,17 @@ const Tabou2DescribeAccord = ({
                         <Col xs={8}>
                             {
                                 item.type === "text" || item.type === "number" ?
-                                    (<FormControl
+                                    (item.isSurface ? (
+                                        <SurfaceInput
+                                            placeholder={i18n(messages, item?.placeholder || item.label)}
+                                            value={item.value ? item.value(item) : (getValue(item) ?? "")}
+                                            readOnly={item.readOnly || !allowChange}
+                                            onChange={(value) => {
+                                                const val = parseNumber(item, value);
+                                                return item.habitat ? changeSurfaceSHAB(val) : changeInfos({[item.name]: val});
+                                            }}
+                                        />
+                                    ) : (<FormControl
                                         componentClass={item.isArea ? "textarea" : "input"}
                                         placeholder={i18n(messages, item?.placeholder || item.label)}
                                         style={{height: item.isArea ? "100px" : "auto"}}
@@ -311,16 +329,7 @@ const Tabou2DescribeAccord = ({
                                             const val = parseNumber(item, v.target.value);
                                             return item.habitat ? changeSurfaceSHAB(val) : changeInfos({[item.name]: val});
                                         }}
-                                        onKeyDown={(v) => {
-                                            if (item.type !== "number") return;
-                                            // only keep numeric and special key control as "Delete" or "Backspace"
-                                            const allowed = item.integer ? /^\d/ : /^[0-9.,]/;
-                                            if (!allowed.test(v.key) && v.key.length < 2) {
-                                                v.returnValue = false;
-                                                if (v.preventDefault) v.preventDefault();
-                                            }
-                                        }}
-                                    />) : null
+                                    />)) : null
                             }{
                                 item.type === "combo" ? (
                                     <Tabou2Select

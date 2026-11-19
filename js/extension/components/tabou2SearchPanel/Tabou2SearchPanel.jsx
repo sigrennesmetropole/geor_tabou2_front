@@ -14,7 +14,7 @@ import SearchCombo from '@js/extension/components/form/SearchCombo';
 import Tabou2Select from '../form/Tabou2Select';
 import {getRequestApi, searchPlui} from '../../api/requests';
 import {setTabouFilterObj, setTabouFilters, resetSearchFilters} from '../../actions/tabou2';
-import {getNewFilter, getSpatialCQL, getCQL, getTabouLayersInfos, createWfsPostRequest} from '../../utils/search';
+import {getNewFilter, getSpatialFilter, getCQL, getTabouLayersInfos} from '../../utils/search';
 import {SEARCH_ITEMS, SEARCH_CALENDARS} from '@js/extension/constants';
 import Message from "@mapstore/components/I18N/Message";
 import Tabou2Date from '../common/Tabou2Date';
@@ -89,9 +89,10 @@ function Tabou2SearchPanel({
         const nextFiltersObj = {...getFiltersObj};
         let filters = [];
         layers.forEach(lyr => {
-            let cql;
+            // plain CQL, or cross layer filter object resolved when the search is sent
+            let condition;
             if (lyr === filterConf.layer) {
-                cql = getCQL(type, filterConf.filterField, value, cqlCondition);
+                condition = getCQL(type, filterConf.filterField, value, cqlCondition);
             } else {
                 const options = {
                     type,
@@ -103,27 +104,27 @@ function Tabou2SearchPanel({
                     onlyTabou: layers.includes(filterConf.layer),
                     condition: cqlCondition
                 };
-                cql = getSpatialCQL(options);
+                condition = getSpatialFilter(options) ?? "";
             }
             const layerFilters = {...(nextFilters[lyr] || {})};
             delete layerFilters[filter];
             if (value) {
-                layerFilters[filter] = `${cql}`;
+                layerFilters[filter] = condition;
             }
             nextFilters[lyr] = layerFilters;
 
-            // get WFS features from CQL
-            let CQLStr = keys(layerFilters).map(k => layerFilters[k]);
-            if (!CQLStr.length) {
+            // get WFS features from conditions
+            let conditions = keys(layerFilters).map(k => layerFilters[k]);
+            if (!conditions.length) {
                 // Manage case when user select "All" value for each combo
                 nextFiltersObj[lyr] = getNewFilter(lyr, null, [], null);
                 return;
             }
-            CQLStr = [...CQLStr, 'id_tabou IS NOT NULL'].filter(el => el);
+            conditions = [...conditions, 'id_tabou IS NOT NULL'].filter(el => el);
             // To change TOC wms request params
             filters.push({
                 layer: lyr,
-                params: createWfsPostRequest(CQLStr.join(' AND '), lyr),
+                conditions,
                 idField: layersInfos[lyr]?.id,
                 idType: layersInfos[lyr].type,
                 geomField: layersInfos[lyr].geom

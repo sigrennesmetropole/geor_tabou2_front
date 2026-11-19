@@ -6,6 +6,7 @@ import isEqual from "lodash/isEqual";
 import {Row, Col, FormControl, ControlLabel, Checkbox} from "react-bootstrap";
 import Message from "@mapstore/components/I18N/Message";
 import Tabou2Select from '@js/extension/components/form/Tabou2Select';
+import SurfaceInput from "@js/extension/components/form/SurfaceInput";
 import Tabou2Date from '@js/extension/components/common/Tabou2Date';
 import SearchCombo from '@js/extension/components/form/SearchCombo';
 import {getRequestApi, getVocationsPlae, getRenouvellementsEconomiquesPlae} from "@js/extension/api/requests";
@@ -160,7 +161,14 @@ export const renderProgrammationField = (item, i18n, messages, allowChange, valu
             </Col>
             <Col xs={4}>
                 {
-                    ["text", "number"].includes(item.type) && (
+                    ["text", "number"].includes(item.type) && (item.isSurface ? (
+                        <SurfaceInput
+                            placeholder={i18n(messages, item?.label || "")}
+                            value={get(item.source(), item.field)}
+                            readOnly={item.readOnly || !allowChange}
+                            onChange={item.change}
+                        />
+                    ) : (
                         <FormControl
                             componentClass={item.isArea ? "textarea" : "input"}
                             placeholder={i18n(messages, item.label)}
@@ -182,7 +190,7 @@ export const renderProgrammationField = (item, i18n, messages, allowChange, valu
                                 }
                             }}
                         />
-                    )
+                    ))
                 }
                 {item.type === "checkbox" && (
                     <Checkbox
@@ -336,7 +344,14 @@ export const renderIdentifyStandardCombo = (item, apiCfg, i18n, messages, allowC
  * Render text or number field for identify accordions
  */
 export const renderIdentifyTextOrNumberField = (item, i18n, messages, allowChange, types, initialItem) => (
-    <FormControl
+    item.isSurface ? (
+        <SurfaceInput
+            placeholder={i18n(messages, item?.label || "")}
+            value={item.value}
+            readOnly={item.readOnly || !allowChange}
+            onChange={(value) => item.change(value, types, initialItem)}
+        />
+    ) : <FormControl
         componentClass={item.isArea ? "textarea" : "input"}
         placeholder={i18n(messages, item?.label || "")}
         value={item.value}

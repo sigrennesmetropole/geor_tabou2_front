@@ -23,8 +23,14 @@ import {changeLayerParams, changeLayerProperties} from "@mapstore/actions/layers
 import {wrapStartStop} from "@mapstore/observables/epics";
 import {error, success} from "@mapstore/actions/notifications";
 import {getMessageById} from "@mapstore/utils/LocaleUtils";
-import {newfilterLayerByList} from "../utils/search";
-import {createOGCRequest} from "../api/requests";
+import {
+    newfilterLayerByList,
+    createWfsPostRequest,
+    spatialFilterToCql,
+    geometriesToCql,
+    involvesLayer
+} from "../utils/search";
+import {createOGCRequest, getFeaturesFromCql} from "../api/requests";
 import VectorSource from 'ol/source/Vector';
 import MultiPolygon from 'ol/geom/MultiPolygon';
 import Feature from 'ol/Feature';
@@ -156,8 +162,33 @@ function handleResponse(response, filter, messages, searchLimit, store) {
     );
 }
 
+/**
+ * Resolve a search condition to a CQL expression.
+ * A cross layer filter involving the operations layer can not be evaluated by GeoServer (the API proxy refuses
+ * `queryCollection`, and the layer is not readable by the user directly): geometries of the filter layer are
+ * requested first, then sent as literals.
+ * @param {string|object} condition - CQL string or cross layer filter
+ * @param {object} filter - search filter of the filtered layer
+ * @param {object} pluginCfg - plugin configuration
+ * @returns {Observable<string>} CQL expression
+ */
+function resolveCondition(condition, filter, pluginCfg) {
+    if (typeof condition === "string") {
+        return Rx.Observable.of(condition);
+    }
+    if (!involvesLayer(condition, filter.layer, pluginCfg)) {
+        return Rx.Observable.of(spatialFilterToCql(condition));
+    }
+    return Rx.Observable.defer(() => getFeaturesFromCql(condition.layer, condition.cql, condition.geomB, pluginCfg))
+        .map(features => geometriesToCql(condition.geomA, features));
+}
+
 function processFilter(filter, messages, searchLimit, store) {
-    return Rx.Observable.defer(() => createOGCRequest(filter.params, getPluginCfg(store.getState()).geoserverURL))
+    const pluginCfg = getPluginCfg(store.getState());
+    return Rx.Observable.from(filter.conditions)
+        .concatMap(condition => resolveCondition(condition, filter, pluginCfg))
+        .toArray()
+        .switchMap(cqls => createOGCRequest(createWfsPostRequest(cqls.join(' AND '), filter.layer), pluginCfg))
         .catch(handleRequestError)
         .switchMap(response => handleResponse(response, filter, messages, searchLimit, store))
         .catch(() => {

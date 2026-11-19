@@ -7,6 +7,21 @@ export const featuresToJSON = (features) => {
 };
 
 /**
+ * Get the TOC layers of the plugin layers having their own url (layersCfg.<layer>.url, e.g. the operations layer
+ * behind the API proxy) which do not use it yet.
+ * @param {Array} layers - TOC layers
+ * @param {object} layersCfg - plugin layers configuration
+ * @returns {Array} [{layer, url}] layers to redirect and the url to use
+ */
+export const getLayersToRedirect = (layers = [], layersCfg = {}) => {
+    return Object.values(layersCfg)
+        .filter(layerCfg => layerCfg?.url)
+        .flatMap(({nom, url}) => layers
+            .filter(layer => layer.name === nom && (layer.url !== url || layer.search?.url !== url))
+            .map(layer => ({layer, url})));
+};
+
+/**
 * Generate a simple point geometry using position data
  * @param {object} point/position data from the map
  * @return {{coordinates: [number, string], projection: string, type: string}|*} geometry of type Point
@@ -38,13 +53,13 @@ const getGeometry = (point, from, to) => {
 };
 
 // TODO : set geom field from config
-export const createParams = (point, layer) => {
+export const createParams = (point, layer, geomField = "the_geom") => {
     const geometry = getGeometry(point, "EPSG:4326", "EPSG:3948");
     if (!geometry || !geometry.coordinates) {
         return null;
     }
     return {
-        CQL_FILTER: `INTERSECTS(the_geom,POINT(${geometry.coordinates[0] || geometry.coordinates.x} ${geometry.coordinates[1] || geometry.coordinates.y}))`,
+        CQL_FILTER: `INTERSECTS(${geomField},POINT(${geometry.coordinates[0] || geometry.coordinates.x} ${geometry.coordinates[1] || geometry.coordinates.y}))`,
         OUTPUTFORMAT: "application/json",
         REQUEST: "GetFeature",
         SERVICE: "WFS",

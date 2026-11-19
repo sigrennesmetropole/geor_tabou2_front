@@ -5,6 +5,7 @@ import Tabou2Date from '@js/extension/components/common/Tabou2Date';
 import "@js/extension/css/identify.css";
 import "@js/extension/css/tabou.css";
 import Message from "@mapstore/components/I18N/Message";
+import SurfaceInput from "@js/extension/components/form/SurfaceInput";
 
 import ControlledPopover from '@mapstore/components/widgets/widget/ControlledPopover';
 import Tabou2SuiviPLHModal from "@js/extension/components/tabou2IdentifyPanel/modals/Tabou2SuiviPLHModal";
@@ -77,7 +78,8 @@ const Tabou2ProgHabitatAccord = ({
                 fallbackField: "surfaceSHAB",
                 label: "tabou2.identify.accordions.SHABSpace",
                 type: "number",
-                step: 0.1,
+                step: "any",
+                isSurface: true,
                 layers: ["layerPA"],
                 readOnly: false
             }, {
@@ -429,25 +431,32 @@ const Tabou2ProgHabitatAccord = ({
                                 )
                             }
                             {
-                                (item.type === "text" || item.type === "number") &&
-                                            (<FormControl
-                                                type={item.type}
-                                                min={item?.min}
-                                                max={item?.max}
-                                                step={item?.step}
-                                                placeholder={i18n(messages, item?.label || "")}
-                                                value={getValue(item) ?? ""}
-                                                readOnly={!allowChange || item.readOnly}
-                                                onChange={(v) => changeInfos({[item.name]: v.target.value})}
-                                                onKeyDown={(v) => {
-                                                    if (item.type !== "number") return;
-                                                    // only keep numeric and special key control as "Delete" or "Backspace"
-                                                    if (!/^[\d.,]$/.test(v.key) && v.key.length < 2) {
-                                                        v.returnValue = false;
-                                                        if (v.preventDefault) v.preventDefault();
-                                                    }
-                                                }}
-                                            />)
+                                item.isSurface ? (
+                                    <SurfaceInput
+                                        placeholder={i18n(messages, item?.label || "")}
+                                        value={getValue(item)}
+                                        readOnly={!allowChange || item.readOnly}
+                                        onChange={(value) => changeInfos({[item.name]: value === "" ? null : Number(value)})}
+                                    />
+                                ) : (item.type === "text" || item.type === "number") &&
+                                    (<FormControl
+                                        type={item.type}
+                                        min={item?.min}
+                                        max={item?.max}
+                                        step={item?.step}
+                                        placeholder={i18n(messages, item?.label || "")}
+                                        value={getValue(item) ?? ""}
+                                        readOnly={!allowChange || item.readOnly}
+                                        onChange={(v) => changeInfos({[item.name]: v.target.value})}
+                                        onKeyDown={(v) => {
+                                            if (item.type !== "number") return;
+                                            // only keep numeric and special key control as "Delete" or "Backspace"
+                                            if (!/^[\d.,]$/.test(v.key) && v.key.length < 2) {
+                                                v.returnValue = false;
+                                                if (v.preventDefault) v.preventDefault();
+                                            }
+                                        }}
+                                    />)
                             }
                             {
                                 item.type === "logementsSpecifiques" && (() => {

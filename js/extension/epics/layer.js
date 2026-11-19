@@ -80,7 +80,7 @@ const getVisibleLayersList = (store, point) => {
     const layers = getPluginCfg(store.getState()).layersCfg;
     return keys(layers).map(l => ({
         name: l,
-        params: createParams(point, get(layers, l).nom),
+        params: createParams(point, get(layers, l).nom, get(layers, l).geomField),
         tocLayer: layersSelector(store.getState()).filter(lyr => lyr.name === get(layers, l).nom)[0]
     })).filter(a => a.tocLayer.visibility);
 };

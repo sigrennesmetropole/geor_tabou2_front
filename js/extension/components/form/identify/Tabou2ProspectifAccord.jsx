@@ -5,6 +5,7 @@ import {getRequestApi} from "@js/extension/api/requests";
 import "@js/extension/css/identify.css";
 import Message from "@mapstore/components/I18N/Message";
 import Tabou2Select from '@js/extension/components/form/Tabou2Select';
+import SurfaceInput from "@js/extension/components/form/SurfaceInput";
 
 import ButtonRB from '@mapstore/components/misc/Button';
 import tooltip from '@mapstore/components/misc/enhancers/tooltip';
@@ -128,6 +129,7 @@ const Tabou2ProspectifAccord = ({
         field: "aireGeoHa",
         label: "tabou2.identify.accordions.totalSpace",
         type: "number",
+        isSurface: true,
         value: () => mapFeature?.properties?.aire_geo_ha ?? null,
         readOnly: true
     }, {
@@ -294,6 +296,16 @@ const Tabou2ProspectifAccord = ({
             );
         }
         if (item.type === "text" || item.type === "number") {
+            if (item.isSurface) {
+                return (
+                    <SurfaceInput
+                        placeholder={i18n(messages, item?.placeholder || item.label)}
+                        value={item.value ? item.value(item) : getValue(item)}
+                        readOnly={item.readOnly || !allowChange}
+                        onChange={(value) => changeInfos({[item.name]: Number(value)})}
+                    />
+                );
+            }
             return (
                 <FormControl
                     componentClass={item.isArea ? "textarea" : "input"}

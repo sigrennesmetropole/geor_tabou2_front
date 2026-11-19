@@ -190,6 +190,7 @@ const Tabou2CadreAccord = ({
         label: "tabou2.identify.accordions.surfaceRealisee",
         field: "surfaceRealisee",
         layers: ["layerSA", "layerOA"],
+        isSurface: true,
         readOnly: false,
         isArea: false,
         value: get(initialItem, "surfaceRealisee"),

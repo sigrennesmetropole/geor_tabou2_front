@@ -4,6 +4,7 @@ import {Col, Row, FormControl, Grid, ControlLabel} from "react-bootstrap";
 import "@js/extension/css/identify.css";
 import "@js/extension/css/tabou.css";
 import Message from "@mapstore/components/I18N/Message";
+import SurfaceInput, {formatSurfaceValue} from "@js/extension/components/form/SurfaceInput";
 
 const avoidReRender = (prevProps, nextProps) => isEqual(prevProps.initialItem, nextProps.initialItem);
 
@@ -216,13 +217,11 @@ const Tabou2AutreProgAccord = ({
 
                         {/* Champ éditable - 1/3 de la largeur */}
                         <Col xs={4}>
-                            <FormControl
-                                type={pair.editable.type}
-                                step="any"
+                            <SurfaceInput
                                 placeholder={i18n(messages, "tabou2.identify.accordions.autreProgFields.placeholder")}
                                 value={getValue(pair.editable)}
                                 readOnly={!allowChange || pair.editable.readOnly}
-                                onChange={(v) => changeInfos({[pair.editable.name]: v.target.value})}
+                                onChange={(value) => changeInfos({[pair.editable.name]: value})}
                                 className="number-input-no-spinner"
                             />
                         </Col>
@@ -230,10 +229,9 @@ const Tabou2AutreProgAccord = ({
                         {/* Champ lecture seule NextADS - 1/3 de la largeur */}
                         <Col xs={4}>
                             <FormControl
-                                type={pair.readOnly.type}
-                                step="any"
+                                type="text"
                                 placeholder={i18n(messages, "tabou2.identify.accordions.autreProgFields.placeholder")}
-                                value={getValue(pair.readOnly) ?? ""}
+                                value={formatSurfaceValue(getValue(pair.readOnly))}
                                 readOnly
                                 disabled
                                 className="readonly-field number-input-no-spinner"

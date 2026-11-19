@@ -3,6 +3,7 @@ import Proj4js from 'proj4';
 
 const proj4 = Proj4js;
 import {register} from 'ol/proj/proj4';
+import {getLayersToRedirect} from './layers';
 
 // Initialize proj4 projection definition
 const initializeProjection = () => {
@@ -15,7 +16,9 @@ const TabouInitWrapper = (Component) => (props) => {
     const {
         setUp = () => {
         }, closeTabou = () => {
-        }, enabled, pluginCfg
+        }, enabled, pluginCfg,
+        tocLayers = [], changeLayerProperties = () => {
+        }
     } = props;
 
     useEffect(() => {
@@ -27,6 +30,17 @@ const TabouInitWrapper = (Component) => (props) => {
             closeTabou(pluginCfg);
         };
     }, [enabled, setUp, closeTabou, pluginCfg]);
+
+    // A layer with its own url in layersCfg (the operations layer, only readable through the API proxy, US-323) is
+    // redirected to it, whatever the url saved in the context or in a user map. Done even when the panel is closed.
+    useEffect(() => {
+        getLayersToRedirect(tocLayers, pluginCfg?.layersCfg).forEach(({layer, url}) => changeLayerProperties(layer.id, {
+            url,
+            search: {type: "wfs", ...layer.search, url},
+            // an url change alone does not rebuild the OpenLayers source, a forceProxy change does
+            forceProxy: false
+        }));
+    }, [tocLayers, pluginCfg, changeLayerProperties]);
 
     return <Component {...props} />;
 };
